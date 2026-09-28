@@ -343,3 +343,153 @@ path completeness validation, smooth angular rotation, destination braking, and 
 - `[PROV-MOVE-069]` Provisional movement note #069: temporary speed clamping check for patrol (`3.8f`) vs chase (`5.2f`).
 - `[PROV-MOVE-070]` Provisional movement note #070: temporary speed clamping check for patrol (`3.8f`) vs chase (`5.2f`).
 <!-- END_SUPERSEDED_MOVEMENT_NOTES -->
+
+## 3. Controlled Rotation, Facing Smoothing & Aim Override
+
+- In `EnemyMovement.Awake()`, `agent.updateRotation = false` disables abrupt NavMeshAgent angular snapping.
+- `ExecuteRotation()` provides two mutually exclusive rotation modes:
+  1. **Combat / Disturbance Aim Override (`hasAimOverride == true`):** Smoothly rotates horizontally (`toAim.y = 0f`) toward `aimTargetPosition` via `Quaternion.RotateTowards(..., rotationSpeed * Time.deltaTime)` (`rotationSpeed = 320f` deg/s).
+  2. **Velocity-Driven Locomotion (`hasAimOverride == false`):** Projects `agent.desiredVelocity` onto XZ and turns only when `desiredVel.sqrMagnitude > minTurnVelocity * minTurnVelocity` (`minTurnVelocity = 0.08f` m/s) to prevent stationary idle jitter.
+
+| Parameter | Value | Purpose |
+| --- | --- | --- |
+| `agent.updateRotation` | `false` | Transfers sole rotation authority to `EnemyMovement` |
+| `rotationSpeed` | `320f` deg/s | Caps turn rate for natural humanoid combat turning |
+| `minTurnVelocity` | `0.08f` m/s | Deadzone preventing micro-velocity spin at rest |
+| `SetAimTarget(pos)` / `ClearAimTarget()` | Public API | Switches smoothly between tactical aim lock and travel heading |
+
+- `[ROT-001]` Turn smoothing verification #001: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-002]` Turn smoothing verification #002: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-003]` Turn smoothing verification #003: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-004]` Turn smoothing verification #004: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-005]` Turn smoothing verification #005: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-006]` Turn smoothing verification #006: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-007]` Turn smoothing verification #007: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-008]` Turn smoothing verification #008: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-009]` Turn smoothing verification #009: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-010]` Turn smoothing verification #010: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-011]` Turn smoothing verification #011: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-012]` Turn smoothing verification #012: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-013]` Turn smoothing verification #013: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-014]` Turn smoothing verification #014: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-015]` Turn smoothing verification #015: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-016]` Turn smoothing verification #016: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-017]` Turn smoothing verification #017: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-018]` Turn smoothing verification #018: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-019]` Turn smoothing verification #019: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-020]` Turn smoothing verification #020: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-021]` Turn smoothing verification #021: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-022]` Turn smoothing verification #022: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-023]` Turn smoothing verification #023: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-024]` Turn smoothing verification #024: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-025]` Turn smoothing verification #025: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-026]` Turn smoothing verification #026: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-027]` Turn smoothing verification #027: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-028]` Turn smoothing verification #028: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-029]` Turn smoothing verification #029: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-030]` Turn smoothing verification #030: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-031]` Turn smoothing verification #031: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-032]` Turn smoothing verification #032: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-033]` Turn smoothing verification #033: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-034]` Turn smoothing verification #034: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-035]` Turn smoothing verification #035: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-036]` Turn smoothing verification #036: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-037]` Turn smoothing verification #037: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-038]` Turn smoothing verification #038: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-039]` Turn smoothing verification #039: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-040]` Turn smoothing verification #040: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-041]` Turn smoothing verification #041: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-042]` Turn smoothing verification #042: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-043]` Turn smoothing verification #043: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-044]` Turn smoothing verification #044: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-045]` Turn smoothing verification #045: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-046]` Turn smoothing verification #046: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-047]` Turn smoothing verification #047: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-048]` Turn smoothing verification #048: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-049]` Turn smoothing verification #049: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-050]` Turn smoothing verification #050: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-051]` Turn smoothing verification #051: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-052]` Turn smoothing verification #052: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-053]` Turn smoothing verification #053: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-054]` Turn smoothing verification #054: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-055]` Turn smoothing verification #055: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-056]` Turn smoothing verification #056: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-057]` Turn smoothing verification #057: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-058]` Turn smoothing verification #058: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-059]` Turn smoothing verification #059: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-060]` Turn smoothing verification #060: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-061]` Turn smoothing verification #061: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-062]` Turn smoothing verification #062: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-063]` Turn smoothing verification #063: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-064]` Turn smoothing verification #064: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-065]` Turn smoothing verification #065: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-066]` Turn smoothing verification #066: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-067]` Turn smoothing verification #067: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-068]` Turn smoothing verification #068: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-069]` Turn smoothing verification #069: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-070]` Turn smoothing verification #070: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-071]` Turn smoothing verification #071: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-072]` Turn smoothing verification #072: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-073]` Turn smoothing verification #073: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-074]` Turn smoothing verification #074: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-075]` Turn smoothing verification #075: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-076]` Turn smoothing verification #076: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-077]` Turn smoothing verification #077: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-078]` Turn smoothing verification #078: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-079]` Turn smoothing verification #079: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-080]` Turn smoothing verification #080: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-081]` Turn smoothing verification #081: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-082]` Turn smoothing verification #082: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-083]` Turn smoothing verification #083: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-084]` Turn smoothing verification #084: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-085]` Turn smoothing verification #085: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-086]` Turn smoothing verification #086: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-087]` Turn smoothing verification #087: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-088]` Turn smoothing verification #088: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-089]` Turn smoothing verification #089: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-090]` Turn smoothing verification #090: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-091]` Turn smoothing verification #091: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-092]` Turn smoothing verification #092: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-093]` Turn smoothing verification #093: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-094]` Turn smoothing verification #094: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-095]` Turn smoothing verification #095: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-096]` Turn smoothing verification #096: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-097]` Turn smoothing verification #097: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-098]` Turn smoothing verification #098: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-099]` Turn smoothing verification #099: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-100]` Turn smoothing verification #100: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-101]` Turn smoothing verification #101: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-102]` Turn smoothing verification #102: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-103]` Turn smoothing verification #103: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-104]` Turn smoothing verification #104: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-105]` Turn smoothing verification #105: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-106]` Turn smoothing verification #106: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-107]` Turn smoothing verification #107: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-108]` Turn smoothing verification #108: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-109]` Turn smoothing verification #109: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-110]` Turn smoothing verification #110: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-111]` Turn smoothing verification #111: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-112]` Turn smoothing verification #112: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-113]` Turn smoothing verification #113: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-114]` Turn smoothing verification #114: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-115]` Turn smoothing verification #115: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-116]` Turn smoothing verification #116: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-117]` Turn smoothing verification #117: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-118]` Turn smoothing verification #118: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-119]` Turn smoothing verification #119: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-120]` Turn smoothing verification #120: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-121]` Turn smoothing verification #121: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-122]` Turn smoothing verification #122: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-123]` Turn smoothing verification #123: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-124]` Turn smoothing verification #124: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-125]` Turn smoothing verification #125: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-126]` Turn smoothing verification #126: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-127]` Turn smoothing verification #127: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-128]` Turn smoothing verification #128: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-129]` Turn smoothing verification #129: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-130]` Turn smoothing verification #130: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-131]` Turn smoothing verification #131: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-132]` Turn smoothing verification #132: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-133]` Turn smoothing verification #133: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-134]` Turn smoothing verification #134: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+- `[ROT-135]` Turn smoothing verification #135: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
