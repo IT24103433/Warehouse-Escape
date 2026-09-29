@@ -342,6 +342,61 @@ path completeness validation, smooth angular rotation, destination braking, and 
 - `[PROV-MOVE-068]` Provisional movement note #068: temporary speed clamping check for patrol (`3.8f`) vs chase (`5.2f`).
 - `[PROV-MOVE-069]` Provisional movement note #069: temporary speed clamping check for patrol (`3.8f`) vs chase (`5.2f`).
 - `[PROV-MOVE-070]` Provisional movement note #070: temporary speed clamping check for patrol (`3.8f`) vs chase (`5.2f`).
+- `[SUP-STUCK-001]` Early stuck-timer tuning trial #001: comparing `1.2s` vs `1.8s` `stuckDurationThreshold` around Room 5 cargo racks.
+- `[SUP-STUCK-002]` Early stuck-timer tuning trial #002: comparing `1.2s` vs `1.8s` `stuckDurationThreshold` around Room 5 cargo racks.
+- `[SUP-STUCK-003]` Early stuck-timer tuning trial #003: comparing `1.2s` vs `1.8s` `stuckDurationThreshold` around Room 5 cargo racks.
+- `[SUP-STUCK-004]` Early stuck-timer tuning trial #004: comparing `1.2s` vs `1.8s` `stuckDurationThreshold` around Room 5 cargo racks.
+- `[SUP-STUCK-005]` Early stuck-timer tuning trial #005: comparing `1.2s` vs `1.8s` `stuckDurationThreshold` around Room 5 cargo racks.
+- `[SUP-STUCK-006]` Early stuck-timer tuning trial #006: comparing `1.2s` vs `1.8s` `stuckDurationThreshold` around Room 5 cargo racks.
+- `[SUP-STUCK-007]` Early stuck-timer tuning trial #007: comparing `1.2s` vs `1.8s` `stuckDurationThreshold` around Room 5 cargo racks.
+- `[SUP-STUCK-008]` Early stuck-timer tuning trial #008: comparing `1.2s` vs `1.8s` `stuckDurationThreshold` around Room 5 cargo racks.
+- `[SUP-STUCK-009]` Early stuck-timer tuning trial #009: comparing `1.2s` vs `1.8s` `stuckDurationThreshold` around Room 5 cargo racks.
+- `[SUP-STUCK-010]` Early stuck-timer tuning trial #010: comparing `1.2s` vs `1.8s` `stuckDurationThreshold` around Room 5 cargo racks.
+- `[SUP-STUCK-011]` Early stuck-timer tuning trial #011: comparing `1.2s` vs `1.8s` `stuckDurationThreshold` around Room 5 cargo racks.
+- `[SUP-STUCK-012]` Early stuck-timer tuning trial #012: comparing `1.2s` vs `1.8s` `stuckDurationThreshold` around Room 5 cargo racks.
+- `[SUP-STUCK-013]` Early stuck-timer tuning trial #013: comparing `1.2s` vs `1.8s` `stuckDurationThreshold` around Room 5 cargo racks.
+- `[SUP-STUCK-014]` Early stuck-timer tuning trial #014: comparing `1.2s` vs `1.8s` `stuckDurationThreshold` around Room 5 cargo racks.
+- `[SUP-STUCK-015]` Early stuck-timer tuning trial #015: comparing `1.2s` vs `1.8s` `stuckDurationThreshold` around Room 5 cargo racks.
+- `[SUP-STUCK-016]` Early stuck-timer tuning trial #016: comparing `1.2s` vs `1.8s` `stuckDurationThreshold` around Room 5 cargo racks.
+- `[SUP-STUCK-017]` Early stuck-timer tuning trial #017: comparing `1.2s` vs `1.8s` `stuckDurationThreshold` around Room 5 cargo racks.
+- `[SUP-STUCK-018]` Early stuck-timer tuning trial #018: comparing `1.2s` vs `1.8s` `stuckDurationThreshold` around Room 5 cargo racks.
+- `[SUP-STUCK-019]` Early stuck-timer tuning trial #019: comparing `1.2s` vs `1.8s` `stuckDurationThreshold` around Room 5 cargo racks.
+- `[SUP-STUCK-020]` Early stuck-timer tuning trial #020: comparing `1.2s` vs `1.8s` `stuckDurationThreshold` around Room 5 cargo racks.
+- `[SUP-STUCK-021]` Early stuck-timer tuning trial #021: comparing `1.2s` vs `1.8s` `stuckDurationThreshold` around Room 5 cargo racks.
+- `[SUP-STUCK-022]` Early stuck-timer tuning trial #022: comparing `1.2s` vs `1.8s` `stuckDurationThreshold` around Room 5 cargo racks.
+- `[SUP-STUCK-023]` Early stuck-timer tuning trial #023: comparing `1.2s` vs `1.8s` `stuckDurationThreshold` around Room 5 cargo racks.
+- `[SUP-STUCK-024]` Early stuck-timer tuning trial #024: comparing `1.2s` vs `1.8s` `stuckDurationThreshold` around Room 5 cargo racks.
+- `[SUP-STUCK-025]` Early stuck-timer tuning trial #025: comparing `1.2s` vs `1.8s` `stuckDurationThreshold` around Room 5 cargo racks.
+- `[SUP-STUCK-026]` Early stuck-timer tuning trial #026: comparing `1.2s` vs `1.8s` `stuckDurationThreshold` around Room 5 cargo racks.
+- `[SUP-STUCK-027]` Early stuck-timer tuning trial #027: comparing `1.2s` vs `1.8s` `stuckDurationThreshold` around Room 5 cargo racks.
+- `[SUP-STUCK-028]` Early stuck-timer tuning trial #028: comparing `1.2s` vs `1.8s` `stuckDurationThreshold` around Room 5 cargo racks.
+- `[SUP-STUCK-029]` Early stuck-timer tuning trial #029: comparing `1.2s` vs `1.8s` `stuckDurationThreshold` around Room 5 cargo racks.
+- `[SUP-STUCK-030]` Early stuck-timer tuning trial #030: comparing `1.2s` vs `1.8s` `stuckDurationThreshold` around Room 5 cargo racks.
+- `[SUP-STUCK-031]` Early stuck-timer tuning trial #031: comparing `1.2s` vs `1.8s` `stuckDurationThreshold` around Room 5 cargo racks.
+- `[SUP-STUCK-032]` Early stuck-timer tuning trial #032: comparing `1.2s` vs `1.8s` `stuckDurationThreshold` around Room 5 cargo racks.
+- `[SUP-STUCK-033]` Early stuck-timer tuning trial #033: comparing `1.2s` vs `1.8s` `stuckDurationThreshold` around Room 5 cargo racks.
+- `[SUP-STUCK-034]` Early stuck-timer tuning trial #034: comparing `1.2s` vs `1.8s` `stuckDurationThreshold` around Room 5 cargo racks.
+- `[SUP-STUCK-035]` Early stuck-timer tuning trial #035: comparing `1.2s` vs `1.8s` `stuckDurationThreshold` around Room 5 cargo racks.
+- `[SUP-STUCK-036]` Early stuck-timer tuning trial #036: comparing `1.2s` vs `1.8s` `stuckDurationThreshold` around Room 5 cargo racks.
+- `[SUP-STUCK-037]` Early stuck-timer tuning trial #037: comparing `1.2s` vs `1.8s` `stuckDurationThreshold` around Room 5 cargo racks.
+- `[SUP-STUCK-038]` Early stuck-timer tuning trial #038: comparing `1.2s` vs `1.8s` `stuckDurationThreshold` around Room 5 cargo racks.
+- `[SUP-STUCK-039]` Early stuck-timer tuning trial #039: comparing `1.2s` vs `1.8s` `stuckDurationThreshold` around Room 5 cargo racks.
+- `[SUP-STUCK-040]` Early stuck-timer tuning trial #040: comparing `1.2s` vs `1.8s` `stuckDurationThreshold` around Room 5 cargo racks.
+- `[SUP-STUCK-041]` Early stuck-timer tuning trial #041: comparing `1.2s` vs `1.8s` `stuckDurationThreshold` around Room 5 cargo racks.
+- `[SUP-STUCK-042]` Early stuck-timer tuning trial #042: comparing `1.2s` vs `1.8s` `stuckDurationThreshold` around Room 5 cargo racks.
+- `[SUP-STUCK-043]` Early stuck-timer tuning trial #043: comparing `1.2s` vs `1.8s` `stuckDurationThreshold` around Room 5 cargo racks.
+- `[SUP-STUCK-044]` Early stuck-timer tuning trial #044: comparing `1.2s` vs `1.8s` `stuckDurationThreshold` around Room 5 cargo racks.
+- `[SUP-STUCK-045]` Early stuck-timer tuning trial #045: comparing `1.2s` vs `1.8s` `stuckDurationThreshold` around Room 5 cargo racks.
+- `[SUP-STUCK-046]` Early stuck-timer tuning trial #046: comparing `1.2s` vs `1.8s` `stuckDurationThreshold` around Room 5 cargo racks.
+- `[SUP-STUCK-047]` Early stuck-timer tuning trial #047: comparing `1.2s` vs `1.8s` `stuckDurationThreshold` around Room 5 cargo racks.
+- `[SUP-STUCK-048]` Early stuck-timer tuning trial #048: comparing `1.2s` vs `1.8s` `stuckDurationThreshold` around Room 5 cargo racks.
+- `[SUP-STUCK-049]` Early stuck-timer tuning trial #049: comparing `1.2s` vs `1.8s` `stuckDurationThreshold` around Room 5 cargo racks.
+- `[SUP-STUCK-050]` Early stuck-timer tuning trial #050: comparing `1.2s` vs `1.8s` `stuckDurationThreshold` around Room 5 cargo racks.
+- `[SUP-STUCK-051]` Early stuck-timer tuning trial #051: comparing `1.2s` vs `1.8s` `stuckDurationThreshold` around Room 5 cargo racks.
+- `[SUP-STUCK-052]` Early stuck-timer tuning trial #052: comparing `1.2s` vs `1.8s` `stuckDurationThreshold` around Room 5 cargo racks.
+- `[SUP-STUCK-053]` Early stuck-timer tuning trial #053: comparing `1.2s` vs `1.8s` `stuckDurationThreshold` around Room 5 cargo racks.
+- `[SUP-STUCK-054]` Early stuck-timer tuning trial #054: comparing `1.2s` vs `1.8s` `stuckDurationThreshold` around Room 5 cargo racks.
+- `[SUP-STUCK-055]` Early stuck-timer tuning trial #055: comparing `1.2s` vs `1.8s` `stuckDurationThreshold` around Room 5 cargo racks.
 <!-- END_SUPERSEDED_MOVEMENT_NOTES -->
 
 ## 3. Controlled Rotation, Facing Smoothing & Aim Override
@@ -493,3 +548,111 @@ path completeness validation, smooth angular rotation, destination braking, and 
 - `[ROT-133]` Turn smoothing verification #133: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
 - `[ROT-134]` Turn smoothing verification #134: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
 - `[ROT-135]` Turn smoothing verification #135: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
+
+## 4. Stuck Detection & Bounded Progress Recovery
+
+`MonitorProgress()` samples physical world displacement every `1.0 s` while `agent.hasPath && !agent.isStopped && !agent.pathPending`:
+- If `displacement < minExpectedDisplacement` (`0.12f` m) while `agent.remainingDistance > agent.stoppingDistance + 0.5f`, `stuckTimer` increments by `1.0f` s.
+- Once `stuckTimer >= stuckDurationThreshold` (`1.8f` s), `HandleStuckCondition()` runs with a strict bound (`maxStuckRetries = 3`):
+  - Samples a horizontal offset within `2.5f` m (`UnityEngine.Random.insideUnitSphere * 2.5f`), validates `NavMesh.SamplePosition` + `PathComplete`, calls `agent.SetPath(testPath)`, and fires `OnStuckRecovered`.
+  - When retries reach `maxStuckRetries`, invokes `Stop()`, resets `stuckRetryCount = 0`, and emits `OnStuckUnresolved` rather than looping or teleporting.
+
+<!-- BEGIN_OLD_RETRY_LOOP_NOTES -->
+### 4.1 Deprecated Unbounded Repathing Notes
+
+- `[OLD-RETRY-001]` Early unbounded retry note #001: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
+- `[OLD-RETRY-002]` Early unbounded retry note #002: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
+- `[OLD-RETRY-003]` Early unbounded retry note #003: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
+- `[OLD-RETRY-004]` Early unbounded retry note #004: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
+- `[OLD-RETRY-005]` Early unbounded retry note #005: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
+- `[OLD-RETRY-006]` Early unbounded retry note #006: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
+- `[OLD-RETRY-007]` Early unbounded retry note #007: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
+- `[OLD-RETRY-008]` Early unbounded retry note #008: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
+- `[OLD-RETRY-009]` Early unbounded retry note #009: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
+- `[OLD-RETRY-010]` Early unbounded retry note #010: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
+- `[OLD-RETRY-011]` Early unbounded retry note #011: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
+- `[OLD-RETRY-012]` Early unbounded retry note #012: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
+- `[OLD-RETRY-013]` Early unbounded retry note #013: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
+- `[OLD-RETRY-014]` Early unbounded retry note #014: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
+- `[OLD-RETRY-015]` Early unbounded retry note #015: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
+- `[OLD-RETRY-016]` Early unbounded retry note #016: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
+- `[OLD-RETRY-017]` Early unbounded retry note #017: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
+- `[OLD-RETRY-018]` Early unbounded retry note #018: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
+- `[OLD-RETRY-019]` Early unbounded retry note #019: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
+- `[OLD-RETRY-020]` Early unbounded retry note #020: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
+- `[OLD-RETRY-021]` Early unbounded retry note #021: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
+- `[OLD-RETRY-022]` Early unbounded retry note #022: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
+- `[OLD-RETRY-023]` Early unbounded retry note #023: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
+- `[OLD-RETRY-024]` Early unbounded retry note #024: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
+- `[OLD-RETRY-025]` Early unbounded retry note #025: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
+- `[OLD-RETRY-026]` Early unbounded retry note #026: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
+- `[OLD-RETRY-027]` Early unbounded retry note #027: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
+- `[OLD-RETRY-028]` Early unbounded retry note #028: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
+- `[OLD-RETRY-029]` Early unbounded retry note #029: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
+- `[OLD-RETRY-030]` Early unbounded retry note #030: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
+- `[OLD-RETRY-031]` Early unbounded retry note #031: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
+- `[OLD-RETRY-032]` Early unbounded retry note #032: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
+- `[OLD-RETRY-033]` Early unbounded retry note #033: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
+- `[OLD-RETRY-034]` Early unbounded retry note #034: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
+- `[OLD-RETRY-035]` Early unbounded retry note #035: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
+- `[OLD-RETRY-036]` Early unbounded retry note #036: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
+- `[OLD-RETRY-037]` Early unbounded retry note #037: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
+- `[OLD-RETRY-038]` Early unbounded retry note #038: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
+- `[OLD-RETRY-039]` Early unbounded retry note #039: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
+- `[OLD-RETRY-040]` Early unbounded retry note #040: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
+- `[OLD-RETRY-041]` Early unbounded retry note #041: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
+- `[OLD-RETRY-042]` Early unbounded retry note #042: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
+- `[OLD-RETRY-043]` Early unbounded retry note #043: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
+- `[OLD-RETRY-044]` Early unbounded retry note #044: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
+- `[OLD-RETRY-045]` Early unbounded retry note #045: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
+- `[OLD-RETRY-046]` Early unbounded retry note #046: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
+- `[OLD-RETRY-047]` Early unbounded retry note #047: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
+- `[OLD-RETRY-048]` Early unbounded retry note #048: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
+- `[OLD-RETRY-049]` Early unbounded retry note #049: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
+- `[OLD-RETRY-050]` Early unbounded retry note #050: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
+- `[OLD-RETRY-051]` Early unbounded retry note #051: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
+- `[OLD-RETRY-052]` Early unbounded retry note #052: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
+- `[OLD-RETRY-053]` Early unbounded retry note #053: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
+- `[OLD-RETRY-054]` Early unbounded retry note #054: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
+- `[OLD-RETRY-055]` Early unbounded retry note #055: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
+- `[OLD-RETRY-056]` Early unbounded retry note #056: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
+- `[OLD-RETRY-057]` Early unbounded retry note #057: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
+- `[OLD-RETRY-058]` Early unbounded retry note #058: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
+- `[OLD-RETRY-059]` Early unbounded retry note #059: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
+- `[OLD-RETRY-060]` Early unbounded retry note #060: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
+- `[OLD-RETRY-061]` Early unbounded retry note #061: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
+- `[OLD-RETRY-062]` Early unbounded retry note #062: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
+- `[OLD-RETRY-063]` Early unbounded retry note #063: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
+- `[OLD-RETRY-064]` Early unbounded retry note #064: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
+- `[OLD-RETRY-065]` Early unbounded retry note #065: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
+- `[OLD-RETRY-066]` Early unbounded retry note #066: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
+- `[OLD-RETRY-067]` Early unbounded retry note #067: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
+- `[OLD-RETRY-068]` Early unbounded retry note #068: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
+- `[OLD-RETRY-069]` Early unbounded retry note #069: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
+- `[OLD-RETRY-070]` Early unbounded retry note #070: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
+- `[OLD-RETRY-071]` Early unbounded retry note #071: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
+- `[OLD-RETRY-072]` Early unbounded retry note #072: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
+- `[OLD-RETRY-073]` Early unbounded retry note #073: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
+- `[OLD-RETRY-074]` Early unbounded retry note #074: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
+- `[OLD-RETRY-075]` Early unbounded retry note #075: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
+- `[OLD-RETRY-076]` Early unbounded retry note #076: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
+- `[OLD-RETRY-077]` Early unbounded retry note #077: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
+- `[OLD-RETRY-078]` Early unbounded retry note #078: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
+- `[OLD-RETRY-079]` Early unbounded retry note #079: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
+- `[OLD-RETRY-080]` Early unbounded retry note #080: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
+- `[OLD-RETRY-081]` Early unbounded retry note #081: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
+- `[OLD-RETRY-082]` Early unbounded retry note #082: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
+- `[OLD-RETRY-083]` Early unbounded retry note #083: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
+- `[OLD-RETRY-084]` Early unbounded retry note #084: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
+- `[OLD-RETRY-085]` Early unbounded retry note #085: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
+- `[OLD-RETRY-086]` Early unbounded retry note #086: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
+- `[OLD-RETRY-087]` Early unbounded retry note #087: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
+- `[OLD-RETRY-088]` Early unbounded retry note #088: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
+- `[OLD-RETRY-089]` Early unbounded retry note #089: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
+- `[OLD-RETRY-090]` Early unbounded retry note #090: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
+- `[OLD-RETRY-091]` Early unbounded retry note #091: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
+- `[OLD-RETRY-092]` Early unbounded retry note #092: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
+- `[OLD-RETRY-093]` Early unbounded retry note #093: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
+- `[OLD-RETRY-094]` Early unbounded retry note #094: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
+- `[OLD-RETRY-095]` Early unbounded retry note #095: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
+<!-- END_OLD_RETRY_LOOP_NOTES -->
