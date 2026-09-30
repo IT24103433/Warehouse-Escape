@@ -11,3 +11,7 @@ Set the documentation boundary at Room 2 patrol and the warehouse navigation con
 ## 2026-09-29 · Define warehouse zone divisions for storage, shelves, and main hall
 
 Mapped the entrance, shelf rows, cross aisle, branch doors and far-side loading hall to their player and AI roles. The two player branches share the Room 2 junction and meet again at the final hall.
+
+## 2026-09-30 · Draft internal wall placements and sightline blockers
+
+Catalogued fixed wall faces, lintels and the northeast dead end. Wrote down the open-collider and clear-ray questions for the speculative shortcut variants.
