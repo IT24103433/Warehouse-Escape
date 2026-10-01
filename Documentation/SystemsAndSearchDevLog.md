@@ -11,3 +11,7 @@ Filtered non-interactive geometry layers so doorway frames and props do not occl
 ## 2026-09-30 — Draft AccessCard pickup state and ownership tracking logic
 Defined AccessCard identity tags and player ownership flags for Route A and Route B clearance tracking.
 Ensured picked-up cards deactivate cleanly in the scene while persisting ownership across room transitions.
+
+## 2026-10-01 — Add contextual UI prompt specs for E-key card pickup
+Documented hover prompt formatting for E-key interaction cues when targeting AccessCard pickups and terminals.
+Added clear prompt suppression rules when a card has already been collected or is out of reach.
