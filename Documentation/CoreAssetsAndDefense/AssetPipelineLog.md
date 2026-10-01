@@ -146,6 +146,61 @@ edge highlights under overhead spotlighting and baked ambient occlusion.
 <!-- END:TOPO_DRAFT_NOTES -->
 <!-- END:TOPOLOGY_GUIDELINES -->
 <!-- SECTION:CARGO_RACK -->
+## 3. `Warehouse_Cargo_Crate` and `Warehouse_Steel_Rack` Base Meshes
+
+### 3.1 `Warehouse_Cargo_Crate` (`Assets/Meshes/Props/Warehouse_Cargo_Crate.fbx`)
+
+- **Physical Footprint:** `1.20 m x 1.20 m x 1.20 m` at `1.0x` scale. Placed in Room 4 east
+  alcove as `DeadEnd_Crate_E1` (`1.2x` scale at `(25.5, 0, 3.5)`) and `DeadEnd_Crate_E2`
+  (`1.0x` scale at `(25.5, 0, 5.0)`).
+- **Sub-Mesh Component Breakdown (`864 tris` final):**
+  - `CornerStiles` (`144 tris`) + `TopBottomRails` (`176 tris`): outer structural timbers
+    extruded `0.045 m` proud of inner plank panels to catch high-bay directional shadows.
+  - `PlankPanels_NS` (`120 tris`) + `PlankPanels_EW` (`120 tris`): recessed side boards
+    mapped to `Tex_Wood_Crate.png`.
+  - `DiagBraces_NS` (`96 tris`) + `DiagBraces_EW` (`96 tris`): 45-deg bracing struts.
+  - `TopLidDeck` (`56 tris`) + `PalletSkids` (`56 tris`): top board & bottom `0.10 m` runners.
+- **Decimation Result:** Collapsed coplanar loops across inner plank boards and reduced
+  corner bevels from 3 segments to 1 chamfer, cutting `1,840 tris` -> `864 tris` (`-53.0%`).
+
+### 3.2 `Warehouse_Steel_Rack` (`Assets/Meshes/Props/Warehouse_Steel_Rack.fbx`)
+
+- **Physical Footprint:** `2.40 m` wide x `1.10 m` deep x `3.10 m` tall (`1.1x` scale in
+  Room 4 east alcove `DeadEnd_Blender_Rack_E` at `(25.5, 0, 7.5)`).
+- **Sub-Mesh Component Breakdown (`2,680 tris` final):**
+  - `Uprights_West` (`380 tris`) + `Uprights_East` (`380 tris`): slotted L-channels (`Mat_Rack_Blue`).
+  - `LoadBeams_T1..T3` (`640 tris` total): 3 horizontal stepped beam tiers (`Mat_Rack_Orange`).
+  - `DeckPlate_T1..T3` (`540 tris` total): inset galvanized steel deck shelves (`Mat_Shelf_Level`).
+  - `CrossBraces` (`480 tris`): 4-sided rectangular K-braces replacing cylindrical tubes.
+  - `FootPlates` (`260 tris`): 4 floor anchor pads with bottom cap polygons culled.
+- **Decimation Result:** Replacing 16-segment cylindrical cross-braces with 4-sided tubes
+  and merging overlapping bracket vertices cut `6,420 tris` -> `2,680 tris` (`-58.3%`).
+
+| Prop Sub-Assembly | Draft Tris | OBJ Interm. | Final FBX Tris | Reduction | Material Slot |
+| --- | --- | --- | --- | --- | --- |
+| `Cargo_Crate: Frame & Rails` | `710` | `420` | `320` | `-54.9%` | `Mat_Crate_Wood` |
+| `Cargo_Crate: Plank Panels` | `540` | `330` | `240` | `-55.6%` | `Mat_Crate_Wood` |
+| `Cargo_Crate: Braces & Skids` | `590` | `370` | `304` | `-48.5%` | `Mat_Crate_Dark` |
+| `Steel_Rack: Uprights (W/E)` | `1,680` | `1,060` | `760` | `-54.8%` | `Mat_Rack_Blue` |
+| `Steel_Rack: Load Beams (3x)` | `1,420` | `890` | `640` | `-54.9%` | `Mat_Rack_Orange` |
+| `Steel_Rack: Deck Plates (3x)` | `1,180` | `760` | `540` | `-54.2%` | `Mat_Shelf_Level` |
+| `Steel_Rack: Braces & Feet` | `2,140` | `1,270` | `740` | `-65.4%` | `Mat_Rack_Blue` |
+
+<!-- BLOCK:DUAL_FORMAT_NOTE -->
+### 3.3 Temporary Dual-Format Export Log (To Prune)
+
+- `[TEMP-FMT-01]` Retained `.obj`/`.mtl` exports (`Warehouse_Cargo_Crate.obj`,
+  `Warehouse_Steel_Rack.obj`, `Warehouse_Security_Barrier.obj`) alongside `.fbx` while
+  testing multi-material slot assignment order in Unity.
+- `[TEMP-FMT-02]` `ExpandWarehouseLayout.cs` explicitly loads `.fbx` via `AssetDatabase.LoadAssetAtPath`.
+- `[TEMP-FMT-03]` Remove `.obj` rows from inventory once `.fbx` pivot/scale pass completes.
+- `[TEMP-FMT-04]` Legacy `.mtl` references in `Assets/Meshes/Props/` will remain untouched in
+  Unity meta tracking; documentation inventory will drop deprecated `.obj` tracking rows.
+- `[TEMP-FMT-05]` Verified `.obj` exports suffered vertex-normal splitting on UV seams (`+28%` verts)
+  compared to binary `.fbx` with `Smoothing: Face` and `WEIGHTED_NORMAL` applied.
+- `[TEMP-FMT-06]` Compared `.obj` ASCII parse time vs binary `.fbx` reimport across clean CI.
+<!-- END:DUAL_FORMAT_NOTE -->
+<!-- END:CARGO_RACK -->
 <!-- SECTION:PANEL_BARRIER -->
 <!-- SECTION:UV_CHECKS -->
 <!-- SECTION:WEAPONS -->
