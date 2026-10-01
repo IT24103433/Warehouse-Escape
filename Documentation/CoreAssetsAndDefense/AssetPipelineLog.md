@@ -80,6 +80,71 @@ material setup for the warehouse props, Route A/B keycards, and hero firearms.
 <!-- END:DRAFT_TROUBLESHOOT -->
 
 <!-- SECTION:TOPOLOGY_GUIDELINES -->
+## 2. Low-Poly Topology & Shading Guidelines
+
+All warehouse props are authored to hit real-time URP frame budgets while keeping clean
+edge highlights under overhead spotlighting and baked ambient occlusion.
+
+### 2.1 Mesh Construction Standards
+
+1. **Quad-First Modeling:** Author base volumes with clean quad loops and avoid n-gons
+   across curved or beveled silhouettes so Unity's FBX importer triangulates predictably.
+2. **Controlled Bevels + Weighted Normals:** Replace dense Subdivision Surface stacks with
+   1–3 segment `BEVEL` modifiers paired with `WEIGHTED_NORMAL`. Flat face normals stay
+   planar without normal-interpolation bowing across large steel or concrete panels.
+3. **Hidden-Face Removal:** Delete interior cap faces resting on `Y = 0` (crate bottom
+   skids, rack footplates, barrier bases) to eliminate invisible overdraw and wasted tris.
+4. **Consistent Winding & Manifold Checks:** Run Blender `Mesh -> Normals -> Recalculate
+   Outside` and `Select Non-Manifold` prior to every FBX export.
+5. **Physics vs. Render Isolation:** Small decorative parts (bolts, vent louvers, status
+   lenses) are visual-only geometry; gameplay collision relies on clean box primitives or
+   NavMesh obstacle carving on primary walls/racks.
+6. **Modular Edge Loops:** Maintain uniform loop spacing around recessed crate planks and
+   barrier chamfers so vertex lighting and lightmap UVs never produce dark diagonal banding.
+7. **Smooth Angle & Hard-Edge Discipline:** Keep `use_auto_smooth = True` (`35 deg` props,
+   `45 deg` weapons) and mark UV seams along sharp edges so tangent space stays consistent.
+
+### 2.2 Target Triangle Budgets & Bevel Tiers
+
+| Asset Class | Target Budget | Bevel Segments | Shading Rule | Collision Strategy |
+| --- | --- | --- | --- | --- |
+| Small Pickups (`Access_Card`) | `<= 250 tris` | `1` (chamfer) | Smooth + weighted face normals | Trigger `BoxCollider` only |
+| Cover Props (`Crate`, `Barrier`) | `<= 1,200 tris` | `1–2` | Auto-smooth `35 deg` + bevels | Box collider / NavMesh carve |
+| Heavy Racks (`Steel_Rack`) | `<= 3,000 tris` | `1` | Flat upright beams + bevel | Simplified box bounds |
+| Wall Detail (`ServicePanel`) | `<= 2,500 tris` | `2–3` | Smooth + `WEIGHTED_NORMAL` | Zero collider (`Cinematic_Visual_Details`) |
+| Hero Weapons (`MP5`, `Shotgun`) | `<= 5,000 tris` | `1–2` | Smooth barrel normals | Pickup trigger only |
+
+### 2.3 Modifier & Decimation Checklist
+
+| Modifier / Operation | Parameter Target | Expected Savings | Reason |
+| --- | --- | --- | --- |
+| `BEVEL` (Props) | `width = 0.01–0.035 m`, `segments = 1–3`, `Clamp Overlap = ON` | Baseline specular | Catch overhead spotlight rims without pinching corners |
+| `WEIGHTED_NORMAL` | `Weighting Mode = Face Area`, `Keep Sharp = ON` | `0` extra tris | Keep planar cabinet/door panels flat with smooth bevels |
+| `Merge by Distance` | `threshold = 0.0001 m` | `3–6%` verts | Remove overlapping duplicate vertices after boolean/inset |
+| `Dissolve Limited` | `max_angle = 5 deg` on planar spans | `18–30%` tris | Collapse redundant edge loops on flat concrete/plank planes |
+| `Delete Loose / Interior` | Bottom caps & occluded overlaps | `8–15%` tris | Eliminate floor-buried & interior backface geometry |
+| `Cylinder Segment Cap` | `12` verts bolts / `16` verts barrels / `4`-sided struts | `45–60%` tris | Cut sub-part polycount without silhouette loss |
+
+<!-- BLOCK:TOPO_DRAFT_NOTES -->
+### 2.4 Legacy Topology Issues to Resolve (Draft)
+
+- `[DRAFT-TOPO-01]` Early `.obj` exports split vertices along UV seams, doubling runtime vertex count.
+- `[DRAFT-TOPO-02]` Cylindrical rack cross-braces used 16 segments per strut; convert to 4-sided tubes.
+- `[DRAFT-TOPO-03]` Service panel bolts initially used 24-vertex cylinders; reduce to 12-vertex cylinders.
+- `[DRAFT-TOPO-04]` Check crate inner plank insets for coplanar z-fighting at mip levels > 2.
+- `[DRAFT-TOPO-05]` Remove legacy `Subsurf` modifiers left disabled in early `.blend` backups.
+- `[DRAFT-TOPO-06]` Audit `Security_Barrier` base cutouts for inverted normals on inner lip.
+- `[DRAFT-TOPO-07]` Collapse stacked longitudinal loops on `Warehouse_Cargo_Crate` corner stiles.
+- `[DRAFT-TOPO-08]` Remove unseen back face of `IndustrialServicePanel` recessed interior cavity.
+- `[DRAFT-TOPO-09]` Verify `MP5_SMG` perforated handguard holes use normal/bump relief instead of boolean cutouts.
+- `[DRAFT-TOPO-10]` Simplify `Combat_Shotgun` forend ribs from 12 bevelled grooves to 6 clean loops.
+- `[DRAFT-TOPO-11]` Audit `Access_Card` perimeter chamfer so card thickness reads at `2.5x` pickup scale.
+- `[DRAFT-TOPO-12]` Replace high-poly bolted gusset brackets on `Warehouse_Steel_Rack` with stamped quads.
+- `[DRAFT-TOPO-13]` Verify `MP5_SMG` curved magazine follower recess uses baked AO rather than 3D lip.
+- `[DRAFT-TOPO-14]` Audit `Warehouse_Security_Barrier` top steel rail end-caps for zero-area degenerate tris.
+- `[DRAFT-TOPO-15]` Standardize sharp-edge crease weights before running Unity `Import Normals = Import`.
+<!-- END:TOPO_DRAFT_NOTES -->
+<!-- END:TOPOLOGY_GUIDELINES -->
 <!-- SECTION:CARGO_RACK -->
 <!-- SECTION:PANEL_BARRIER -->
 <!-- SECTION:UV_CHECKS -->
