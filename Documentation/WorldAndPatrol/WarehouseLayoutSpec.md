@@ -50,6 +50,26 @@ Use the guard eye and the player's head/chest target heights when examining
 cover. A ray at ankle height can report a different obstruction. A partition
 can block perception and still leave a complete route around its end.
 
+## Shelf spacing and doorway clearance
+
+Measure the shortest horizontal face-to-face distance at each pinch point.
+Record the obstacle transforms and the effective collider extents, especially
+for rotated barricades, shelf endcaps and crate corners. Preserve room to
+turn after exiting an aisle so outer corners do not intersect the new heading.
+
+| Station | Record | Acceptance evidence |
+| --- | --- | --- |
+| South crossing | Clear face gap and two approach headings | Side-to-side complete path with space at both turns |
+| East shelf end | Tip of shelf to nearest adjacent collider | Approach and return both complete around the cover stack |
+| West shelf end | Clearance toward the shock-pad bypass | Path can turn without relying on the trap trigger |
+| North split | Jamb, guide and signed doorway alignments | Both branch entrances remain independently usable |
+| Loading hall merge | Central connector and outer aisle corners | Alternate route stays usable when one connector is blocked |
+
+Use the [clearance worksheet](LightingAndOptimizationLog.md#navmesh-clearance)
+for the nominal radius calculation. Inspect curved approaches with test
+origins offset left, centered and offset right. A centered straight line only
+tests one approach.
+
 ## Draft shortcuts to challenge
 
 | Draft | Entry | Proposed exit | Walkable assumption | Sightline question | Failure expected |
@@ -69,3 +89,14 @@ Draft checks to collect before accepting any shortcut:
 4. Compare stationary perception at the lip and at the proposed midpoint.
 5. Make one blockout change per trial to attribute the difference.
 6. Preserve at least one complete reverse route for every kept point.
+
+## Draft shelf throat variants
+
+| Placement | Nominal centerline | Likely collision concern | Decision |
+| --- | --- | --- | --- |
+| Move west rack outboard | Hug west wall | Rack and wall may overlap the return funnel | Keep a reversal test before moving cover |
+| Move east rack inboard | Head toward center crossing | Crate outcrop may intersect diagonal | Inspect at guard radius |
+| Rotate shelf 45° | Cut behind corner | Projected width increases at the throat | Inspect collision corners |
+| Put a barrel at jamb | Follow door axis | Curved silhouette still consumes turning radius | Place marker off-path instead |
+| Offset north cover inward | Approach across both branches | Competes with signs and branch route readability | Test separate branch approaches |
+| Keep an empty post near rack | End near the outboard shelf face | Sampling may snap to the far side | Label the sampled side if measured |

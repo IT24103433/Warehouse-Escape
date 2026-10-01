@@ -15,3 +15,7 @@ Mapped the entrance, shelf rows, cross aisle, branch doors and far-side loading 
 ## 2026-09-30 · Draft internal wall placements and sightline blockers
 
 Catalogued fixed wall faces, lintels and the northeast dead end. Wrote down the open-collider and clear-ray questions for the speculative shortcut variants.
+
+## 2026-10-01 · Document shelf aisle spacing and primary navigation corridors
+
+Identified face-to-face clearance as the measurement to record. Shelf mesh bounds and painted walkway lines can misrepresent clearance if the colliders differ.
