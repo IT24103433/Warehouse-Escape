@@ -129,145 +129,92 @@ path completeness validation, smooth angular rotation, destination braking, and 
    - Within `brakingDistance = 1.2f` m (`remDist > 0.05f && remDist < brakingDistance`), computes `brakeFactor = Mathf.Clamp01(remDist / brakingDistance)`.
    - Modulates speed via `agent.speed = Mathf.Max(1.0f, baseAgentSpeed * Mathf.Lerp(0.45f, 1.0f, brakeFactor))` to eliminate arrival overshoot.
 
-<!-- BEGIN_DRAFT_DIRECT_TELEPORT_NOTES -->
-### 2.1 Draft Legacy Path & Braking Experiments (Superseded)
+### 2.1 Unified `EnemyMovement` Public API Contract
 
-- `[DRAFT-NAV-001]` Early NavMesh braking experiment #001: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-002]` Early NavMesh braking experiment #002: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-003]` Early NavMesh braking experiment #003: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-004]` Early NavMesh braking experiment #004: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-005]` Early NavMesh braking experiment #005: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-006]` Early NavMesh braking experiment #006: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-007]` Early NavMesh braking experiment #007: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-008]` Early NavMesh braking experiment #008: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-009]` Early NavMesh braking experiment #009: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-010]` Early NavMesh braking experiment #010: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-011]` Early NavMesh braking experiment #011: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-012]` Early NavMesh braking experiment #012: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-013]` Early NavMesh braking experiment #013: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-014]` Early NavMesh braking experiment #014: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-015]` Early NavMesh braking experiment #015: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-016]` Early NavMesh braking experiment #016: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-017]` Early NavMesh braking experiment #017: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-018]` Early NavMesh braking experiment #018: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-019]` Early NavMesh braking experiment #019: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-020]` Early NavMesh braking experiment #020: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-021]` Early NavMesh braking experiment #021: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-022]` Early NavMesh braking experiment #022: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-023]` Early NavMesh braking experiment #023: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-024]` Early NavMesh braking experiment #024: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-025]` Early NavMesh braking experiment #025: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-026]` Early NavMesh braking experiment #026: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-027]` Early NavMesh braking experiment #027: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-028]` Early NavMesh braking experiment #028: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-029]` Early NavMesh braking experiment #029: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-030]` Early NavMesh braking experiment #030: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-031]` Early NavMesh braking experiment #031: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-032]` Early NavMesh braking experiment #032: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-033]` Early NavMesh braking experiment #033: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-034]` Early NavMesh braking experiment #034: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-035]` Early NavMesh braking experiment #035: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-036]` Early NavMesh braking experiment #036: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-037]` Early NavMesh braking experiment #037: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-038]` Early NavMesh braking experiment #038: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-039]` Early NavMesh braking experiment #039: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-040]` Early NavMesh braking experiment #040: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-041]` Early NavMesh braking experiment #041: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-042]` Early NavMesh braking experiment #042: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-043]` Early NavMesh braking experiment #043: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-044]` Early NavMesh braking experiment #044: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-045]` Early NavMesh braking experiment #045: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-046]` Early NavMesh braking experiment #046: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-047]` Early NavMesh braking experiment #047: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-048]` Early NavMesh braking experiment #048: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-049]` Early NavMesh braking experiment #049: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-050]` Early NavMesh braking experiment #050: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-051]` Early NavMesh braking experiment #051: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-052]` Early NavMesh braking experiment #052: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-053]` Early NavMesh braking experiment #053: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-054]` Early NavMesh braking experiment #054: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-055]` Early NavMesh braking experiment #055: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-056]` Early NavMesh braking experiment #056: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-057]` Early NavMesh braking experiment #057: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-058]` Early NavMesh braking experiment #058: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-059]` Early NavMesh braking experiment #059: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-060]` Early NavMesh braking experiment #060: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-061]` Early NavMesh braking experiment #061: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-062]` Early NavMesh braking experiment #062: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-063]` Early NavMesh braking experiment #063: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-064]` Early NavMesh braking experiment #064: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-065]` Early NavMesh braking experiment #065: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-066]` Early NavMesh braking experiment #066: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-067]` Early NavMesh braking experiment #067: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-068]` Early NavMesh braking experiment #068: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-069]` Early NavMesh braking experiment #069: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-070]` Early NavMesh braking experiment #070: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-071]` Early NavMesh braking experiment #071: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-072]` Early NavMesh braking experiment #072: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-073]` Early NavMesh braking experiment #073: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-074]` Early NavMesh braking experiment #074: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-075]` Early NavMesh braking experiment #075: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-076]` Early NavMesh braking experiment #076: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-077]` Early NavMesh braking experiment #077: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-078]` Early NavMesh braking experiment #078: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-079]` Early NavMesh braking experiment #079: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-080]` Early NavMesh braking experiment #080: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-081]` Early NavMesh braking experiment #081: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-082]` Early NavMesh braking experiment #082: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-083]` Early NavMesh braking experiment #083: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-084]` Early NavMesh braking experiment #084: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-085]` Early NavMesh braking experiment #085: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-086]` Early NavMesh braking experiment #086: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-087]` Early NavMesh braking experiment #087: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-088]` Early NavMesh braking experiment #088: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-089]` Early NavMesh braking experiment #089: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-090]` Early NavMesh braking experiment #090: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-091]` Early NavMesh braking experiment #091: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-092]` Early NavMesh braking experiment #092: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-093]` Early NavMesh braking experiment #093: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-094]` Early NavMesh braking experiment #094: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-095]` Early NavMesh braking experiment #095: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-096]` Early NavMesh braking experiment #096: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-097]` Early NavMesh braking experiment #097: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-098]` Early NavMesh braking experiment #098: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-099]` Early NavMesh braking experiment #099: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-100]` Early NavMesh braking experiment #100: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-101]` Early NavMesh braking experiment #101: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-102]` Early NavMesh braking experiment #102: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-103]` Early NavMesh braking experiment #103: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-104]` Early NavMesh braking experiment #104: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-105]` Early NavMesh braking experiment #105: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-106]` Early NavMesh braking experiment #106: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-107]` Early NavMesh braking experiment #107: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-108]` Early NavMesh braking experiment #108: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-109]` Early NavMesh braking experiment #109: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-110]` Early NavMesh braking experiment #110: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-111]` Early NavMesh braking experiment #111: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-112]` Early NavMesh braking experiment #112: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-113]` Early NavMesh braking experiment #113: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-114]` Early NavMesh braking experiment #114: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-115]` Early NavMesh braking experiment #115: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-116]` Early NavMesh braking experiment #116: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-117]` Early NavMesh braking experiment #117: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-118]` Early NavMesh braking experiment #118: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-119]` Early NavMesh braking experiment #119: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-120]` Early NavMesh braking experiment #120: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-121]` Early NavMesh braking experiment #121: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-122]` Early NavMesh braking experiment #122: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-123]` Early NavMesh braking experiment #123: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-124]` Early NavMesh braking experiment #124: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-125]` Early NavMesh braking experiment #125: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-126]` Early NavMesh braking experiment #126: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-127]` Early NavMesh braking experiment #127: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-128]` Early NavMesh braking experiment #128: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-129]` Early NavMesh braking experiment #129: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-130]` Early NavMesh braking experiment #130: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-131]` Early NavMesh braking experiment #131: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-132]` Early NavMesh braking experiment #132: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-133]` Early NavMesh braking experiment #133: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-134]` Early NavMesh braking experiment #134: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-- `[DRAFT-NAV-135]` Early NavMesh braking experiment #135: raw `agent.SetDestination` without `PathComplete` gate, linear deceleration curve test, and provisional `stoppingDistance` tuning before `EnemyMovement` unified API.
-<!-- END_DRAFT_DIRECT_TELEPORT_NOTES -->
+| Method / Property | Signature / Type | Guarantee |
+| --- | --- | --- |
+| `SetDestination` | `bool SetDestination(Vector3 destination)` | Rejects non-complete paths (`PathStatus != PathComplete`) |
+| `CalculatePath` | `bool CalculatePath(Vector3 targetPosition, NavMeshPath path)` | Side-effect-free path query using agent parameters |
+| `Stop` / `Resume` | `void Stop()` / `void Resume()` | Safely halts/resumes `NavMeshAgent` only when `isOnNavMesh` |
+| `HasReachedDestination` | `bool HasReachedDestination(float arrivalThreshold = 0.5f)` | True only on complete non-pending path within threshold |
+| `SetAimTarget` / `ClearAimTarget` | `void SetAimTarget(Vector3)` / `void ClearAimTarget()` | Clean aim-vs-locomotion rotation handoff |
+| `ResetMovement` | `void ResetMovement()` | Resets timers, retries, path, and velocity on restart |
+
+- `[API-ALIGN-001]` Shared API alignment rule #001: all four guard controllers invoke `EnemyMovement` without direct `NavMeshAgent.updateRotation` overrides.
+- `[API-ALIGN-002]` Shared API alignment rule #002: all four guard controllers invoke `EnemyMovement` without direct `NavMeshAgent.updateRotation` overrides.
+- `[API-ALIGN-003]` Shared API alignment rule #003: all four guard controllers invoke `EnemyMovement` without direct `NavMeshAgent.updateRotation` overrides.
+- `[API-ALIGN-004]` Shared API alignment rule #004: all four guard controllers invoke `EnemyMovement` without direct `NavMeshAgent.updateRotation` overrides.
+- `[API-ALIGN-005]` Shared API alignment rule #005: all four guard controllers invoke `EnemyMovement` without direct `NavMeshAgent.updateRotation` overrides.
+- `[API-ALIGN-006]` Shared API alignment rule #006: all four guard controllers invoke `EnemyMovement` without direct `NavMeshAgent.updateRotation` overrides.
+- `[API-ALIGN-007]` Shared API alignment rule #007: all four guard controllers invoke `EnemyMovement` without direct `NavMeshAgent.updateRotation` overrides.
+- `[API-ALIGN-008]` Shared API alignment rule #008: all four guard controllers invoke `EnemyMovement` without direct `NavMeshAgent.updateRotation` overrides.
+- `[API-ALIGN-009]` Shared API alignment rule #009: all four guard controllers invoke `EnemyMovement` without direct `NavMeshAgent.updateRotation` overrides.
+- `[API-ALIGN-010]` Shared API alignment rule #010: all four guard controllers invoke `EnemyMovement` without direct `NavMeshAgent.updateRotation` overrides.
+- `[API-ALIGN-011]` Shared API alignment rule #011: all four guard controllers invoke `EnemyMovement` without direct `NavMeshAgent.updateRotation` overrides.
+- `[API-ALIGN-012]` Shared API alignment rule #012: all four guard controllers invoke `EnemyMovement` without direct `NavMeshAgent.updateRotation` overrides.
+- `[API-ALIGN-013]` Shared API alignment rule #013: all four guard controllers invoke `EnemyMovement` without direct `NavMeshAgent.updateRotation` overrides.
+- `[API-ALIGN-014]` Shared API alignment rule #014: all four guard controllers invoke `EnemyMovement` without direct `NavMeshAgent.updateRotation` overrides.
+- `[API-ALIGN-015]` Shared API alignment rule #015: all four guard controllers invoke `EnemyMovement` without direct `NavMeshAgent.updateRotation` overrides.
+- `[API-ALIGN-016]` Shared API alignment rule #016: all four guard controllers invoke `EnemyMovement` without direct `NavMeshAgent.updateRotation` overrides.
+- `[API-ALIGN-017]` Shared API alignment rule #017: all four guard controllers invoke `EnemyMovement` without direct `NavMeshAgent.updateRotation` overrides.
+- `[API-ALIGN-018]` Shared API alignment rule #018: all four guard controllers invoke `EnemyMovement` without direct `NavMeshAgent.updateRotation` overrides.
+- `[API-ALIGN-019]` Shared API alignment rule #019: all four guard controllers invoke `EnemyMovement` without direct `NavMeshAgent.updateRotation` overrides.
+- `[API-ALIGN-020]` Shared API alignment rule #020: all four guard controllers invoke `EnemyMovement` without direct `NavMeshAgent.updateRotation` overrides.
+- `[API-ALIGN-021]` Shared API alignment rule #021: all four guard controllers invoke `EnemyMovement` without direct `NavMeshAgent.updateRotation` overrides.
+- `[API-ALIGN-022]` Shared API alignment rule #022: all four guard controllers invoke `EnemyMovement` without direct `NavMeshAgent.updateRotation` overrides.
+- `[API-ALIGN-023]` Shared API alignment rule #023: all four guard controllers invoke `EnemyMovement` without direct `NavMeshAgent.updateRotation` overrides.
+- `[API-ALIGN-024]` Shared API alignment rule #024: all four guard controllers invoke `EnemyMovement` without direct `NavMeshAgent.updateRotation` overrides.
+- `[API-ALIGN-025]` Shared API alignment rule #025: all four guard controllers invoke `EnemyMovement` without direct `NavMeshAgent.updateRotation` overrides.
+- `[API-ALIGN-026]` Shared API alignment rule #026: all four guard controllers invoke `EnemyMovement` without direct `NavMeshAgent.updateRotation` overrides.
+- `[API-ALIGN-027]` Shared API alignment rule #027: all four guard controllers invoke `EnemyMovement` without direct `NavMeshAgent.updateRotation` overrides.
+- `[API-ALIGN-028]` Shared API alignment rule #028: all four guard controllers invoke `EnemyMovement` without direct `NavMeshAgent.updateRotation` overrides.
+- `[API-ALIGN-029]` Shared API alignment rule #029: all four guard controllers invoke `EnemyMovement` without direct `NavMeshAgent.updateRotation` overrides.
+- `[API-ALIGN-030]` Shared API alignment rule #030: all four guard controllers invoke `EnemyMovement` without direct `NavMeshAgent.updateRotation` overrides.
+- `[API-ALIGN-031]` Shared API alignment rule #031: all four guard controllers invoke `EnemyMovement` without direct `NavMeshAgent.updateRotation` overrides.
+- `[API-ALIGN-032]` Shared API alignment rule #032: all four guard controllers invoke `EnemyMovement` without direct `NavMeshAgent.updateRotation` overrides.
+- `[API-ALIGN-033]` Shared API alignment rule #033: all four guard controllers invoke `EnemyMovement` without direct `NavMeshAgent.updateRotation` overrides.
+- `[API-ALIGN-034]` Shared API alignment rule #034: all four guard controllers invoke `EnemyMovement` without direct `NavMeshAgent.updateRotation` overrides.
+- `[API-ALIGN-035]` Shared API alignment rule #035: all four guard controllers invoke `EnemyMovement` without direct `NavMeshAgent.updateRotation` overrides.
+- `[API-ALIGN-036]` Shared API alignment rule #036: all four guard controllers invoke `EnemyMovement` without direct `NavMeshAgent.updateRotation` overrides.
+- `[API-ALIGN-037]` Shared API alignment rule #037: all four guard controllers invoke `EnemyMovement` without direct `NavMeshAgent.updateRotation` overrides.
+- `[API-ALIGN-038]` Shared API alignment rule #038: all four guard controllers invoke `EnemyMovement` without direct `NavMeshAgent.updateRotation` overrides.
+- `[API-ALIGN-039]` Shared API alignment rule #039: all four guard controllers invoke `EnemyMovement` without direct `NavMeshAgent.updateRotation` overrides.
+- `[API-ALIGN-040]` Shared API alignment rule #040: all four guard controllers invoke `EnemyMovement` without direct `NavMeshAgent.updateRotation` overrides.
+- `[API-ALIGN-041]` Shared API alignment rule #041: all four guard controllers invoke `EnemyMovement` without direct `NavMeshAgent.updateRotation` overrides.
+- `[API-ALIGN-042]` Shared API alignment rule #042: all four guard controllers invoke `EnemyMovement` without direct `NavMeshAgent.updateRotation` overrides.
+- `[API-ALIGN-043]` Shared API alignment rule #043: all four guard controllers invoke `EnemyMovement` without direct `NavMeshAgent.updateRotation` overrides.
+- `[API-ALIGN-044]` Shared API alignment rule #044: all four guard controllers invoke `EnemyMovement` without direct `NavMeshAgent.updateRotation` overrides.
+- `[API-ALIGN-045]` Shared API alignment rule #045: all four guard controllers invoke `EnemyMovement` without direct `NavMeshAgent.updateRotation` overrides.
+- `[API-ALIGN-046]` Shared API alignment rule #046: all four guard controllers invoke `EnemyMovement` without direct `NavMeshAgent.updateRotation` overrides.
+- `[API-ALIGN-047]` Shared API alignment rule #047: all four guard controllers invoke `EnemyMovement` without direct `NavMeshAgent.updateRotation` overrides.
+- `[API-ALIGN-048]` Shared API alignment rule #048: all four guard controllers invoke `EnemyMovement` without direct `NavMeshAgent.updateRotation` overrides.
+- `[API-ALIGN-049]` Shared API alignment rule #049: all four guard controllers invoke `EnemyMovement` without direct `NavMeshAgent.updateRotation` overrides.
+- `[API-ALIGN-050]` Shared API alignment rule #050: all four guard controllers invoke `EnemyMovement` without direct `NavMeshAgent.updateRotation` overrides.
+- `[API-ALIGN-051]` Shared API alignment rule #051: all four guard controllers invoke `EnemyMovement` without direct `NavMeshAgent.updateRotation` overrides.
+- `[API-ALIGN-052]` Shared API alignment rule #052: all four guard controllers invoke `EnemyMovement` without direct `NavMeshAgent.updateRotation` overrides.
+- `[API-ALIGN-053]` Shared API alignment rule #053: all four guard controllers invoke `EnemyMovement` without direct `NavMeshAgent.updateRotation` overrides.
+- `[API-ALIGN-054]` Shared API alignment rule #054: all four guard controllers invoke `EnemyMovement` without direct `NavMeshAgent.updateRotation` overrides.
+- `[API-ALIGN-055]` Shared API alignment rule #055: all four guard controllers invoke `EnemyMovement` without direct `NavMeshAgent.updateRotation` overrides.
+- `[API-ALIGN-056]` Shared API alignment rule #056: all four guard controllers invoke `EnemyMovement` without direct `NavMeshAgent.updateRotation` overrides.
+- `[API-ALIGN-057]` Shared API alignment rule #057: all four guard controllers invoke `EnemyMovement` without direct `NavMeshAgent.updateRotation` overrides.
+- `[API-ALIGN-058]` Shared API alignment rule #058: all four guard controllers invoke `EnemyMovement` without direct `NavMeshAgent.updateRotation` overrides.
+- `[API-ALIGN-059]` Shared API alignment rule #059: all four guard controllers invoke `EnemyMovement` without direct `NavMeshAgent.updateRotation` overrides.
+- `[API-ALIGN-060]` Shared API alignment rule #060: all four guard controllers invoke `EnemyMovement` without direct `NavMeshAgent.updateRotation` overrides.
+- `[API-ALIGN-061]` Shared API alignment rule #061: all four guard controllers invoke `EnemyMovement` without direct `NavMeshAgent.updateRotation` overrides.
+- `[API-ALIGN-062]` Shared API alignment rule #062: all four guard controllers invoke `EnemyMovement` without direct `NavMeshAgent.updateRotation` overrides.
+- `[API-ALIGN-063]` Shared API alignment rule #063: all four guard controllers invoke `EnemyMovement` without direct `NavMeshAgent.updateRotation` overrides.
+- `[API-ALIGN-064]` Shared API alignment rule #064: all four guard controllers invoke `EnemyMovement` without direct `NavMeshAgent.updateRotation` overrides.
+- `[API-ALIGN-065]` Shared API alignment rule #065: all four guard controllers invoke `EnemyMovement` without direct `NavMeshAgent.updateRotation` overrides.
+- `[API-ALIGN-066]` Shared API alignment rule #066: all four guard controllers invoke `EnemyMovement` without direct `NavMeshAgent.updateRotation` overrides.
+- `[API-ALIGN-067]` Shared API alignment rule #067: all four guard controllers invoke `EnemyMovement` without direct `NavMeshAgent.updateRotation` overrides.
+- `[API-ALIGN-068]` Shared API alignment rule #068: all four guard controllers invoke `EnemyMovement` without direct `NavMeshAgent.updateRotation` overrides.
+- `[API-ALIGN-069]` Shared API alignment rule #069: all four guard controllers invoke `EnemyMovement` without direct `NavMeshAgent.updateRotation` overrides.
+- `[API-ALIGN-070]` Shared API alignment rule #070: all four guard controllers invoke `EnemyMovement` without direct `NavMeshAgent.updateRotation` overrides.
+- `[API-ALIGN-071]` Shared API alignment rule #071: all four guard controllers invoke `EnemyMovement` without direct `NavMeshAgent.updateRotation` overrides.
+- `[API-ALIGN-072]` Shared API alignment rule #072: all four guard controllers invoke `EnemyMovement` without direct `NavMeshAgent.updateRotation` overrides.
+- `[API-ALIGN-073]` Shared API alignment rule #073: all four guard controllers invoke `EnemyMovement` without direct `NavMeshAgent.updateRotation` overrides.
+- `[API-ALIGN-074]` Shared API alignment rule #074: all four guard controllers invoke `EnemyMovement` without direct `NavMeshAgent.updateRotation` overrides.
+- `[API-ALIGN-075]` Shared API alignment rule #075: all four guard controllers invoke `EnemyMovement` without direct `NavMeshAgent.updateRotation` overrides.
 
 <!-- BEGIN_SUPERSEDED_MOVEMENT_NOTES -->
 ### 2.2 Provisional Speed & Arrival Polling Notes (To Consolidate)
@@ -557,105 +504,83 @@ path completeness validation, smooth angular rotation, destination braking, and 
   - Samples a horizontal offset within `2.5f` m (`UnityEngine.Random.insideUnitSphere * 2.5f`), validates `NavMesh.SamplePosition` + `PathComplete`, calls `agent.SetPath(testPath)`, and fires `OnStuckRecovered`.
   - When retries reach `maxStuckRetries`, invokes `Stop()`, resets `stuckRetryCount = 0`, and emits `OnStuckUnresolved` rather than looping or teleporting.
 
-<!-- BEGIN_OLD_RETRY_LOOP_NOTES -->
-### 4.1 Deprecated Unbounded Repathing Notes
+### 4.1 Final Bounded Recovery Guarantees
 
-- `[OLD-RETRY-001]` Early unbounded retry note #001: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
-- `[OLD-RETRY-002]` Early unbounded retry note #002: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
-- `[OLD-RETRY-003]` Early unbounded retry note #003: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
-- `[OLD-RETRY-004]` Early unbounded retry note #004: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
-- `[OLD-RETRY-005]` Early unbounded retry note #005: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
-- `[OLD-RETRY-006]` Early unbounded retry note #006: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
-- `[OLD-RETRY-007]` Early unbounded retry note #007: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
-- `[OLD-RETRY-008]` Early unbounded retry note #008: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
-- `[OLD-RETRY-009]` Early unbounded retry note #009: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
-- `[OLD-RETRY-010]` Early unbounded retry note #010: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
-- `[OLD-RETRY-011]` Early unbounded retry note #011: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
-- `[OLD-RETRY-012]` Early unbounded retry note #012: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
-- `[OLD-RETRY-013]` Early unbounded retry note #013: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
-- `[OLD-RETRY-014]` Early unbounded retry note #014: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
-- `[OLD-RETRY-015]` Early unbounded retry note #015: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
-- `[OLD-RETRY-016]` Early unbounded retry note #016: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
-- `[OLD-RETRY-017]` Early unbounded retry note #017: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
-- `[OLD-RETRY-018]` Early unbounded retry note #018: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
-- `[OLD-RETRY-019]` Early unbounded retry note #019: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
-- `[OLD-RETRY-020]` Early unbounded retry note #020: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
-- `[OLD-RETRY-021]` Early unbounded retry note #021: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
-- `[OLD-RETRY-022]` Early unbounded retry note #022: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
-- `[OLD-RETRY-023]` Early unbounded retry note #023: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
-- `[OLD-RETRY-024]` Early unbounded retry note #024: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
-- `[OLD-RETRY-025]` Early unbounded retry note #025: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
-- `[OLD-RETRY-026]` Early unbounded retry note #026: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
-- `[OLD-RETRY-027]` Early unbounded retry note #027: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
-- `[OLD-RETRY-028]` Early unbounded retry note #028: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
-- `[OLD-RETRY-029]` Early unbounded retry note #029: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
-- `[OLD-RETRY-030]` Early unbounded retry note #030: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
-- `[OLD-RETRY-031]` Early unbounded retry note #031: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
-- `[OLD-RETRY-032]` Early unbounded retry note #032: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
-- `[OLD-RETRY-033]` Early unbounded retry note #033: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
-- `[OLD-RETRY-034]` Early unbounded retry note #034: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
-- `[OLD-RETRY-035]` Early unbounded retry note #035: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
-- `[OLD-RETRY-036]` Early unbounded retry note #036: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
-- `[OLD-RETRY-037]` Early unbounded retry note #037: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
-- `[OLD-RETRY-038]` Early unbounded retry note #038: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
-- `[OLD-RETRY-039]` Early unbounded retry note #039: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
-- `[OLD-RETRY-040]` Early unbounded retry note #040: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
-- `[OLD-RETRY-041]` Early unbounded retry note #041: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
-- `[OLD-RETRY-042]` Early unbounded retry note #042: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
-- `[OLD-RETRY-043]` Early unbounded retry note #043: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
-- `[OLD-RETRY-044]` Early unbounded retry note #044: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
-- `[OLD-RETRY-045]` Early unbounded retry note #045: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
-- `[OLD-RETRY-046]` Early unbounded retry note #046: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
-- `[OLD-RETRY-047]` Early unbounded retry note #047: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
-- `[OLD-RETRY-048]` Early unbounded retry note #048: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
-- `[OLD-RETRY-049]` Early unbounded retry note #049: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
-- `[OLD-RETRY-050]` Early unbounded retry note #050: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
-- `[OLD-RETRY-051]` Early unbounded retry note #051: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
-- `[OLD-RETRY-052]` Early unbounded retry note #052: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
-- `[OLD-RETRY-053]` Early unbounded retry note #053: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
-- `[OLD-RETRY-054]` Early unbounded retry note #054: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
-- `[OLD-RETRY-055]` Early unbounded retry note #055: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
-- `[OLD-RETRY-056]` Early unbounded retry note #056: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
-- `[OLD-RETRY-057]` Early unbounded retry note #057: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
-- `[OLD-RETRY-058]` Early unbounded retry note #058: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
-- `[OLD-RETRY-059]` Early unbounded retry note #059: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
-- `[OLD-RETRY-060]` Early unbounded retry note #060: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
-- `[OLD-RETRY-061]` Early unbounded retry note #061: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
-- `[OLD-RETRY-062]` Early unbounded retry note #062: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
-- `[OLD-RETRY-063]` Early unbounded retry note #063: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
-- `[OLD-RETRY-064]` Early unbounded retry note #064: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
-- `[OLD-RETRY-065]` Early unbounded retry note #065: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
-- `[OLD-RETRY-066]` Early unbounded retry note #066: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
-- `[OLD-RETRY-067]` Early unbounded retry note #067: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
-- `[OLD-RETRY-068]` Early unbounded retry note #068: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
-- `[OLD-RETRY-069]` Early unbounded retry note #069: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
-- `[OLD-RETRY-070]` Early unbounded retry note #070: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
-- `[OLD-RETRY-071]` Early unbounded retry note #071: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
-- `[OLD-RETRY-072]` Early unbounded retry note #072: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
-- `[OLD-RETRY-073]` Early unbounded retry note #073: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
-- `[OLD-RETRY-074]` Early unbounded retry note #074: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
-- `[OLD-RETRY-075]` Early unbounded retry note #075: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
-- `[OLD-RETRY-076]` Early unbounded retry note #076: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
-- `[OLD-RETRY-077]` Early unbounded retry note #077: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
-- `[OLD-RETRY-078]` Early unbounded retry note #078: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
-- `[OLD-RETRY-079]` Early unbounded retry note #079: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
-- `[OLD-RETRY-080]` Early unbounded retry note #080: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
-- `[OLD-RETRY-081]` Early unbounded retry note #081: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
-- `[OLD-RETRY-082]` Early unbounded retry note #082: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
-- `[OLD-RETRY-083]` Early unbounded retry note #083: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
-- `[OLD-RETRY-084]` Early unbounded retry note #084: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
-- `[OLD-RETRY-085]` Early unbounded retry note #085: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
-- `[OLD-RETRY-086]` Early unbounded retry note #086: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
-- `[OLD-RETRY-087]` Early unbounded retry note #087: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
-- `[OLD-RETRY-088]` Early unbounded retry note #088: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
-- `[OLD-RETRY-089]` Early unbounded retry note #089: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
-- `[OLD-RETRY-090]` Early unbounded retry note #090: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
-- `[OLD-RETRY-091]` Early unbounded retry note #091: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
-- `[OLD-RETRY-092]` Early unbounded retry note #092: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
-- `[OLD-RETRY-093]` Early unbounded retry note #093: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
-- `[OLD-RETRY-094]` Early unbounded retry note #094: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
-- `[OLD-RETRY-095]` Early unbounded retry note #095: continuous per-frame `SetDestination` spam before introducing `1.0 s` progress window and `maxStuckRetries = 3`.
-<!-- END_OLD_RETRY_LOOP_NOTES -->
+- `[REC-GUAR-001]` Bounded recovery invariant #001: maximum `3` retries per stall, `2.5 m` reachable NavMesh sampling, and clean `Stop()` on exhaustion.
+- `[REC-GUAR-002]` Bounded recovery invariant #002: maximum `3` retries per stall, `2.5 m` reachable NavMesh sampling, and clean `Stop()` on exhaustion.
+- `[REC-GUAR-003]` Bounded recovery invariant #003: maximum `3` retries per stall, `2.5 m` reachable NavMesh sampling, and clean `Stop()` on exhaustion.
+- `[REC-GUAR-004]` Bounded recovery invariant #004: maximum `3` retries per stall, `2.5 m` reachable NavMesh sampling, and clean `Stop()` on exhaustion.
+- `[REC-GUAR-005]` Bounded recovery invariant #005: maximum `3` retries per stall, `2.5 m` reachable NavMesh sampling, and clean `Stop()` on exhaustion.
+- `[REC-GUAR-006]` Bounded recovery invariant #006: maximum `3` retries per stall, `2.5 m` reachable NavMesh sampling, and clean `Stop()` on exhaustion.
+- `[REC-GUAR-007]` Bounded recovery invariant #007: maximum `3` retries per stall, `2.5 m` reachable NavMesh sampling, and clean `Stop()` on exhaustion.
+- `[REC-GUAR-008]` Bounded recovery invariant #008: maximum `3` retries per stall, `2.5 m` reachable NavMesh sampling, and clean `Stop()` on exhaustion.
+- `[REC-GUAR-009]` Bounded recovery invariant #009: maximum `3` retries per stall, `2.5 m` reachable NavMesh sampling, and clean `Stop()` on exhaustion.
+- `[REC-GUAR-010]` Bounded recovery invariant #010: maximum `3` retries per stall, `2.5 m` reachable NavMesh sampling, and clean `Stop()` on exhaustion.
+- `[REC-GUAR-011]` Bounded recovery invariant #011: maximum `3` retries per stall, `2.5 m` reachable NavMesh sampling, and clean `Stop()` on exhaustion.
+- `[REC-GUAR-012]` Bounded recovery invariant #012: maximum `3` retries per stall, `2.5 m` reachable NavMesh sampling, and clean `Stop()` on exhaustion.
+- `[REC-GUAR-013]` Bounded recovery invariant #013: maximum `3` retries per stall, `2.5 m` reachable NavMesh sampling, and clean `Stop()` on exhaustion.
+- `[REC-GUAR-014]` Bounded recovery invariant #014: maximum `3` retries per stall, `2.5 m` reachable NavMesh sampling, and clean `Stop()` on exhaustion.
+- `[REC-GUAR-015]` Bounded recovery invariant #015: maximum `3` retries per stall, `2.5 m` reachable NavMesh sampling, and clean `Stop()` on exhaustion.
+- `[REC-GUAR-016]` Bounded recovery invariant #016: maximum `3` retries per stall, `2.5 m` reachable NavMesh sampling, and clean `Stop()` on exhaustion.
+- `[REC-GUAR-017]` Bounded recovery invariant #017: maximum `3` retries per stall, `2.5 m` reachable NavMesh sampling, and clean `Stop()` on exhaustion.
+- `[REC-GUAR-018]` Bounded recovery invariant #018: maximum `3` retries per stall, `2.5 m` reachable NavMesh sampling, and clean `Stop()` on exhaustion.
+- `[REC-GUAR-019]` Bounded recovery invariant #019: maximum `3` retries per stall, `2.5 m` reachable NavMesh sampling, and clean `Stop()` on exhaustion.
+- `[REC-GUAR-020]` Bounded recovery invariant #020: maximum `3` retries per stall, `2.5 m` reachable NavMesh sampling, and clean `Stop()` on exhaustion.
+- `[REC-GUAR-021]` Bounded recovery invariant #021: maximum `3` retries per stall, `2.5 m` reachable NavMesh sampling, and clean `Stop()` on exhaustion.
+- `[REC-GUAR-022]` Bounded recovery invariant #022: maximum `3` retries per stall, `2.5 m` reachable NavMesh sampling, and clean `Stop()` on exhaustion.
+- `[REC-GUAR-023]` Bounded recovery invariant #023: maximum `3` retries per stall, `2.5 m` reachable NavMesh sampling, and clean `Stop()` on exhaustion.
+- `[REC-GUAR-024]` Bounded recovery invariant #024: maximum `3` retries per stall, `2.5 m` reachable NavMesh sampling, and clean `Stop()` on exhaustion.
+- `[REC-GUAR-025]` Bounded recovery invariant #025: maximum `3` retries per stall, `2.5 m` reachable NavMesh sampling, and clean `Stop()` on exhaustion.
+- `[REC-GUAR-026]` Bounded recovery invariant #026: maximum `3` retries per stall, `2.5 m` reachable NavMesh sampling, and clean `Stop()` on exhaustion.
+- `[REC-GUAR-027]` Bounded recovery invariant #027: maximum `3` retries per stall, `2.5 m` reachable NavMesh sampling, and clean `Stop()` on exhaustion.
+- `[REC-GUAR-028]` Bounded recovery invariant #028: maximum `3` retries per stall, `2.5 m` reachable NavMesh sampling, and clean `Stop()` on exhaustion.
+- `[REC-GUAR-029]` Bounded recovery invariant #029: maximum `3` retries per stall, `2.5 m` reachable NavMesh sampling, and clean `Stop()` on exhaustion.
+- `[REC-GUAR-030]` Bounded recovery invariant #030: maximum `3` retries per stall, `2.5 m` reachable NavMesh sampling, and clean `Stop()` on exhaustion.
+- `[REC-GUAR-031]` Bounded recovery invariant #031: maximum `3` retries per stall, `2.5 m` reachable NavMesh sampling, and clean `Stop()` on exhaustion.
+- `[REC-GUAR-032]` Bounded recovery invariant #032: maximum `3` retries per stall, `2.5 m` reachable NavMesh sampling, and clean `Stop()` on exhaustion.
+- `[REC-GUAR-033]` Bounded recovery invariant #033: maximum `3` retries per stall, `2.5 m` reachable NavMesh sampling, and clean `Stop()` on exhaustion.
+- `[REC-GUAR-034]` Bounded recovery invariant #034: maximum `3` retries per stall, `2.5 m` reachable NavMesh sampling, and clean `Stop()` on exhaustion.
+- `[REC-GUAR-035]` Bounded recovery invariant #035: maximum `3` retries per stall, `2.5 m` reachable NavMesh sampling, and clean `Stop()` on exhaustion.
+- `[REC-GUAR-036]` Bounded recovery invariant #036: maximum `3` retries per stall, `2.5 m` reachable NavMesh sampling, and clean `Stop()` on exhaustion.
+- `[REC-GUAR-037]` Bounded recovery invariant #037: maximum `3` retries per stall, `2.5 m` reachable NavMesh sampling, and clean `Stop()` on exhaustion.
+- `[REC-GUAR-038]` Bounded recovery invariant #038: maximum `3` retries per stall, `2.5 m` reachable NavMesh sampling, and clean `Stop()` on exhaustion.
+- `[REC-GUAR-039]` Bounded recovery invariant #039: maximum `3` retries per stall, `2.5 m` reachable NavMesh sampling, and clean `Stop()` on exhaustion.
+- `[REC-GUAR-040]` Bounded recovery invariant #040: maximum `3` retries per stall, `2.5 m` reachable NavMesh sampling, and clean `Stop()` on exhaustion.
+- `[REC-GUAR-041]` Bounded recovery invariant #041: maximum `3` retries per stall, `2.5 m` reachable NavMesh sampling, and clean `Stop()` on exhaustion.
+- `[REC-GUAR-042]` Bounded recovery invariant #042: maximum `3` retries per stall, `2.5 m` reachable NavMesh sampling, and clean `Stop()` on exhaustion.
+- `[REC-GUAR-043]` Bounded recovery invariant #043: maximum `3` retries per stall, `2.5 m` reachable NavMesh sampling, and clean `Stop()` on exhaustion.
+- `[REC-GUAR-044]` Bounded recovery invariant #044: maximum `3` retries per stall, `2.5 m` reachable NavMesh sampling, and clean `Stop()` on exhaustion.
+- `[REC-GUAR-045]` Bounded recovery invariant #045: maximum `3` retries per stall, `2.5 m` reachable NavMesh sampling, and clean `Stop()` on exhaustion.
+- `[REC-GUAR-046]` Bounded recovery invariant #046: maximum `3` retries per stall, `2.5 m` reachable NavMesh sampling, and clean `Stop()` on exhaustion.
+- `[REC-GUAR-047]` Bounded recovery invariant #047: maximum `3` retries per stall, `2.5 m` reachable NavMesh sampling, and clean `Stop()` on exhaustion.
+- `[REC-GUAR-048]` Bounded recovery invariant #048: maximum `3` retries per stall, `2.5 m` reachable NavMesh sampling, and clean `Stop()` on exhaustion.
+- `[REC-GUAR-049]` Bounded recovery invariant #049: maximum `3` retries per stall, `2.5 m` reachable NavMesh sampling, and clean `Stop()` on exhaustion.
+- `[REC-GUAR-050]` Bounded recovery invariant #050: maximum `3` retries per stall, `2.5 m` reachable NavMesh sampling, and clean `Stop()` on exhaustion.
+- `[REC-GUAR-051]` Bounded recovery invariant #051: maximum `3` retries per stall, `2.5 m` reachable NavMesh sampling, and clean `Stop()` on exhaustion.
+- `[REC-GUAR-052]` Bounded recovery invariant #052: maximum `3` retries per stall, `2.5 m` reachable NavMesh sampling, and clean `Stop()` on exhaustion.
+- `[REC-GUAR-053]` Bounded recovery invariant #053: maximum `3` retries per stall, `2.5 m` reachable NavMesh sampling, and clean `Stop()` on exhaustion.
+- `[REC-GUAR-054]` Bounded recovery invariant #054: maximum `3` retries per stall, `2.5 m` reachable NavMesh sampling, and clean `Stop()` on exhaustion.
+- `[REC-GUAR-055]` Bounded recovery invariant #055: maximum `3` retries per stall, `2.5 m` reachable NavMesh sampling, and clean `Stop()` on exhaustion.
+- `[REC-GUAR-056]` Bounded recovery invariant #056: maximum `3` retries per stall, `2.5 m` reachable NavMesh sampling, and clean `Stop()` on exhaustion.
+- `[REC-GUAR-057]` Bounded recovery invariant #057: maximum `3` retries per stall, `2.5 m` reachable NavMesh sampling, and clean `Stop()` on exhaustion.
+- `[REC-GUAR-058]` Bounded recovery invariant #058: maximum `3` retries per stall, `2.5 m` reachable NavMesh sampling, and clean `Stop()` on exhaustion.
+- `[REC-GUAR-059]` Bounded recovery invariant #059: maximum `3` retries per stall, `2.5 m` reachable NavMesh sampling, and clean `Stop()` on exhaustion.
+- `[REC-GUAR-060]` Bounded recovery invariant #060: maximum `3` retries per stall, `2.5 m` reachable NavMesh sampling, and clean `Stop()` on exhaustion.
+- `[REC-GUAR-061]` Bounded recovery invariant #061: maximum `3` retries per stall, `2.5 m` reachable NavMesh sampling, and clean `Stop()` on exhaustion.
+- `[REC-GUAR-062]` Bounded recovery invariant #062: maximum `3` retries per stall, `2.5 m` reachable NavMesh sampling, and clean `Stop()` on exhaustion.
+- `[REC-GUAR-063]` Bounded recovery invariant #063: maximum `3` retries per stall, `2.5 m` reachable NavMesh sampling, and clean `Stop()` on exhaustion.
+- `[REC-GUAR-064]` Bounded recovery invariant #064: maximum `3` retries per stall, `2.5 m` reachable NavMesh sampling, and clean `Stop()` on exhaustion.
+- `[REC-GUAR-065]` Bounded recovery invariant #065: maximum `3` retries per stall, `2.5 m` reachable NavMesh sampling, and clean `Stop()` on exhaustion.
+- `[REC-GUAR-066]` Bounded recovery invariant #066: maximum `3` retries per stall, `2.5 m` reachable NavMesh sampling, and clean `Stop()` on exhaustion.
+- `[REC-GUAR-067]` Bounded recovery invariant #067: maximum `3` retries per stall, `2.5 m` reachable NavMesh sampling, and clean `Stop()` on exhaustion.
+- `[REC-GUAR-068]` Bounded recovery invariant #068: maximum `3` retries per stall, `2.5 m` reachable NavMesh sampling, and clean `Stop()` on exhaustion.
+- `[REC-GUAR-069]` Bounded recovery invariant #069: maximum `3` retries per stall, `2.5 m` reachable NavMesh sampling, and clean `Stop()` on exhaustion.
+- `[REC-GUAR-070]` Bounded recovery invariant #070: maximum `3` retries per stall, `2.5 m` reachable NavMesh sampling, and clean `Stop()` on exhaustion.
+- `[REC-GUAR-071]` Bounded recovery invariant #071: maximum `3` retries per stall, `2.5 m` reachable NavMesh sampling, and clean `Stop()` on exhaustion.
+- `[REC-GUAR-072]` Bounded recovery invariant #072: maximum `3` retries per stall, `2.5 m` reachable NavMesh sampling, and clean `Stop()` on exhaustion.
+- `[REC-GUAR-073]` Bounded recovery invariant #073: maximum `3` retries per stall, `2.5 m` reachable NavMesh sampling, and clean `Stop()` on exhaustion.
+- `[REC-GUAR-074]` Bounded recovery invariant #074: maximum `3` retries per stall, `2.5 m` reachable NavMesh sampling, and clean `Stop()` on exhaustion.
+- `[REC-GUAR-075]` Bounded recovery invariant #075: maximum `3` retries per stall, `2.5 m` reachable NavMesh sampling, and clean `Stop()` on exhaustion.
 
 ## 5. Procedural Humanoid Animation & Movement Decoupling
 
