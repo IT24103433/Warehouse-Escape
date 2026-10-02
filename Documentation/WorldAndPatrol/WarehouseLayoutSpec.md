@@ -70,6 +70,23 @@ for the nominal radius calculation. Inspect curved approaches with test
 origins offset left, centered and offset right. A centered straight line only
 tests one approach.
 
+## Cover and prop placement
+
+Editor layout references from `ExpandRoom2` use X/Z positions in metres.
+
+| Prop family | Placement reference | Design constraint |
+| --- | --- | --- |
+| West barricade | (−7.5, −11) | Preserve a path past each open end |
+| East barricade | (7.5, −11) | Check the turn from storage to the northern approach |
+| Southwestern and northwestern crate stacks | (−8.5, −15.5) and (−8.5, −6.5) | Check cover gaps at both crouched and standing eye heights |
+| Southeastern and northeastern crate stacks | (8.5, −15.5) and (8.5, −6.5) | Keep the signed door face visible from the lane |
+| Barrels | Verify scene instances in peripheral bays | Keep their collider silhouettes and interaction space off branch throats |
+| Hardware details | Bands, fasteners, rings | Visual detail should preserve the parent prop's collision footprint |
+
+Occlusion depends on collision, masks and the ray targets. A dark corner
+can affect player readability while leaving the current AI sight test clear.
+A trigger volume can overlap a route that is mechanically walkable.
+
 ## Draft shortcuts to challenge
 
 | Draft | Entry | Proposed exit | Walkable assumption | Sightline question | Failure expected |
