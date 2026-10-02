@@ -15,3 +15,7 @@ Ensured picked-up cards deactivate cleanly in the scene while persisting ownersh
 ## 2026-10-01 — Add contextual UI prompt specs for E-key card pickup
 Documented hover prompt formatting for E-key interaction cues when targeting AccessCard pickups and terminals.
 Added clear prompt suppression rules when a card has already been collected or is out of reach.
+
+## 2026-10-02 — Design CardReader clearance check for Route A and Route B cards
+Structured CardReader validation to accept either Route A or Route B clearance without coupling the two paths.
+Isolated reader verification logic so objective state updates deterministically on valid card presentation.
