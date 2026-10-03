@@ -87,6 +87,26 @@ Occlusion depends on collision, masks and the ray targets. A dark corner
 can affect player readability while leaving the current AI sight test clear.
 A trigger volume can overlap a route that is mechanically walkable.
 
+## Branch and flank topology
+
+```mermaid
+flowchart TD
+    H["Room 2 crossing"] --> A["Route A entrance"]
+    H --> B["Route B entrance"]
+    A --> S["Room 3 search"]
+    B --> D["Room 4 defense"]
+    S --> W["Room 5 west merge"]
+    D --> E["Room 5 east merge"]
+    W --> C["Room 5 loading hall"]
+    E --> C
+```
+
+- Room 2: inspect the west and east lintels from positions still inside its predicate.
+- Route A: follow the western branch, sector and connector into the west merge.
+- Route B: follow the eastern branch, sector and connector into the east merge.
+- Room 5: keep the center spine and two side aisles usable for alternate approaches.
+- The northeast dead-end bay offers cover and a return path through its entrance.
+
 ## Draft shortcuts to challenge
 
 | Draft | Entry | Proposed exit | Walkable assumption | Sightline question | Failure expected |

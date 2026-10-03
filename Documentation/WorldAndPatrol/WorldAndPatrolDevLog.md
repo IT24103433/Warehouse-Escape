@@ -23,3 +23,7 @@ Identified face-to-face clearance as the measurement to record. Shelf mesh bound
 ## 2026-10-02 · Add crate and barrel obstacle placement layout for cover
 
 Recorded cover positions from the layout script where available. Marked additional crate and barrel spacings as study variants and separated cast shadows from collider occlusion.
+
+## 2026-10-03 · Design alternate flanking routes and checkpoint detours
+
+Sketched branches as a connectivity graph with the patrol's inspection endpoints inside Room 2. The longer forking paths belong to the warehouse route fixtures.
