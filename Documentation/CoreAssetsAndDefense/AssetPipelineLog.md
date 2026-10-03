@@ -202,6 +202,42 @@ edge highlights under overhead spotlighting and baked ambient occlusion.
 <!-- END:DUAL_FORMAT_NOTE -->
 <!-- END:CARGO_RACK -->
 <!-- SECTION:PANEL_BARRIER -->
+## 4. `Industrial_ServicePanel` and `Warehouse_Security_Barrier` Modelling Notes
+
+### 4.1 `Industrial_ServicePanel` (`Assets/Meshes/Props/IndustrialServicePanel.fbx`)
+
+- **Reproducible Blender Source:** Authored via `Documentation/Tools/generate_service_panel.py`
+  (Blender `--background --python`), saving `Assets/Meshes/Source/IndustrialServicePanel.blend`
+  and exporting `Assets/Meshes/Props/IndustrialServicePanel.fbx` with `-Z` forward, `Y` up.
+- **Modeled Sub-Part Geometry Table (`2,340 tris` total):**
+
+| Part Name | Dimensions / Count | Local Coords (m) | Material Slot | Bevel / Topology Spec |
+| --- | --- | --- | --- | --- |
+| `Enclosure` | `0.90 x 0.19 x 1.25` | `(0.00, 0.00, 0.00)` | `Panel_Steel` | `0.035 m` 3-seg bevel + `WEIGHTED_NORMAL` |
+| `Recessed_Door` | `0.79 x 0.035 x 1.10` | `(0.00, -0.09, 0.00)` | `Panel_Recess` | `0.018 m` bevel; inset `0.105 m` forward |
+| `Door_Plate` | `0.73 x 0.025 x 1.04` | `(0.00, -0.10, 0.00)` | `Panel_Steel` | `0.020 m` bevel; flush inner panel |
+| `Captive_Bolt` | `4x` (`r = 0.022`) | `(±0.30, -0.16, ±0.43)` | `Panel_Amber` | `12`-vertex cylinders (cut from `24`) |
+| `Vent_Slat` | `8x` (`0.46 x 0.012 x 0.018`) | `(0.00, -0.15, -0.35 + i*0.045)` | `Panel_Recess` | Angled louvers; `0.003 m` bevel |
+| `Caution_Plaque` | `0.31 x 0.012 x 0.17` | `(-0.14, -0.15, 0.34)` | `Panel_Amber` | Upper-left placard; `0.006 m` bevel |
+| `Status_Indicator` | `2x` (`0.045 x 0.025 x 0.045`) | `(0.18/0.26, -0.15, 0.34)` | `Panel_Green` | Indicator lenses at upper right |
+| `Handle` | `0.07 x 0.045 x 0.18` | `(-0.30, -0.15, 0.02)` | `Panel_Recess` | Vertical latch bar; `0.008 m` bevel |
+| `Hinge` | `2x` (`r = 0.018, d = 0.12`) | `(0.43, -0.13, ±0.38)` | `Panel_Recess` | `12`-vertex barrel hinges |
+| `Cable_Port` | `2x` (`r = 0.038, d = 0.12`) | `(±0.24, 0.00, 0.67)` | `Panel_Amber` | Top conduit collars (`-Z` mount) |
+
+- **Runtime Collision Isolation:** Placed under `Cinematic_Visual_Details` with zero
+  physics colliders and zero NavMesh carving so corridor widths stay exact.
+
+### 4.2 `Warehouse_Security_Barrier` (`Assets/Meshes/Props/Warehouse_Security_Barrier.fbx`)
+
+- **Physical Footprint:** `2.20 m` length x `0.65 m` base depth x `1.12 m` height.
+- **Tactical Cover Height Calibration (`DefensiveGuardAI.cs`):**
+  - `1.12 m` sits squarely between the AI torso ray (`+0.80 m`) and eye ray (`+1.50 m`).
+  - Behind `Defensive_Barrier_West` `(13.5, 0, 5.0)`, `Defensive_Barrier_Center` `(16.0, 0, 5.0)`,
+    and `Defensive_Barrier_East` `(20.0, 0, 7.5)`, `torsoClear == false` and `eyesClear == true`,
+    yielding maximum `cover = 1.0f` while keeping shotgun sightlines clear.
+- **Topology Optimization (`1,080 tris`, `-56.1%`):** Tapered New-Jersey cross section with
+  chamfered end caps and dual base forklift slots; culled hidden bottom face.
+<!-- END:PANEL_BARRIER -->
 <!-- SECTION:UV_CHECKS -->
 <!-- SECTION:WEAPONS -->
 <!-- SECTION:URP_MATERIALS -->
