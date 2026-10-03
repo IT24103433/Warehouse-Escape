@@ -19,3 +19,7 @@ Added clear prompt suppression rules when a card has already been collected or i
 ## 2026-10-02 — Design CardReader clearance check for Route A and Route B cards
 Structured CardReader validation to accept either Route A or Route B clearance without coupling the two paths.
 Isolated reader verification logic so objective state updates deterministically on valid card presentation.
+
+## 2026-10-03 — Document locked door feedback when access card is missing
+Added feedback specifications for denied CardReader attempts when the player lacks the required clearance card.
+Defined audio/UI indicator cues distinguishing missing-card denial from an unlocked transition.
