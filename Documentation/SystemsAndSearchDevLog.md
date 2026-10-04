@@ -23,3 +23,7 @@ Isolated reader verification logic so objective state updates deterministically 
 ## 2026-10-03 — Document locked door feedback when access card is missing
 Added feedback specifications for denied CardReader attempts when the player lacks the required clearance card.
 Defined audio/UI indicator cues distinguishing missing-card denial from an unlocked transition.
+
+## 2026-10-04 — Connect CardReader validation to single-trigger victory flow
+Wired successful CardReader authorization to the escape gate activation and single-trigger victory state.
+Guarded completion callbacks against duplicate E-key presses during the end-of-run transition.
