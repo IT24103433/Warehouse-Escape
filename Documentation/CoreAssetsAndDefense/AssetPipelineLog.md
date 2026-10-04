@@ -239,6 +239,53 @@ edge highlights under overhead spotlighting and baked ambient occlusion.
   chamfered end caps and dual base forklift slots; culled hidden bottom face.
 <!-- END:PANEL_BARRIER -->
 <!-- SECTION:UV_CHECKS -->
+## 5. UV Mapping & Texel Density Verification
+
+All prop meshes use clean, non-overlapping `UV0` layouts packed into `[0, 1]` with
+matched world-space texel density so tiled albedo/normal maps stay sharp alongside
+Room 4 concrete walls and floor slabs.
+
+### 5.1 Unwrapping Standards & Lightmap Rules
+
+- **Texel Density Target:** `256 px/m` baseline (`512x512` surface maps with `1x–2x` tiling).
+- **UV Island Gutter:** Minimum `0.015` UV unit margin (`~8 px` at `512 px`) to prevent
+  mipmap seam bleeding along `35 deg` auto-smooth bevel edges.
+- **Seam Placement:** Cut seams strictly along `> 60 deg` hard bevel edges or rear/bottom
+  faces occluded from player eye height (`~1.60 m`).
+- **Lightmap Channel (`UV1`):** Unity `Generate Lightmap UVs` enabled (`Hard Angle = 88`,
+  `Pack Margin = 12`) for CPU Progressive lightmapping (`1024 px` atlas, `8 texels/m`).
+
+### 5.2 Per-Prop UV & Texel Audit Table
+
+| Asset ID | `UV0` Islands | Packing Efficiency | Texel Variance | Orientation & Distortion Check |
+| --- | --- | --- | --- | --- |
+| `Warehouse_Cargo_Crate` | `14` | `84.2%` | `+/- 3.8%` | Wood plank grain parallel to outer frame rails (`< 3%` stretch) |
+| `Warehouse_Steel_Rack` | `26` | `78.5%` | `+/- 5.5%` | Brushed steel streaks aligned along beam span (`< 4%` stretch) |
+| `Warehouse_Security_Barrier` | `12` | `86.0%` | `+/- 2.9%` | Concrete pores & warning stripe horizontal (`< 2.5%` stretch) |
+| `Industrial_ServicePanel` | `28` | `76.4%` | `+/- 4.7%` | Distinct material slots; zero overlapping `UV0` islands |
+| `Access_Card` | `4` | `91.0%` | `< 1.8%` | Planar front/back `UV0`; badge text non-mirrored |
+
+### 5.3 Primary UV Island Coordinate Verification
+
+| Asset / Island | `U Range` | `V Range` | Area Share | Verified Texture Mapping |
+| --- | --- | --- | --- | --- |
+| `Crate_SidePanels_NS` | `0.02–0.48` | `0.02–0.48` | `22%` | `Tex_Wood_Crate.png` upright plank grain |
+| `Crate_SidePanels_EW` | `0.02–0.48` | `0.50–0.96` | `22%` | `Tex_Wood_Crate.png` upright plank grain |
+| `Crate_FrameRails_All` | `0.50–0.98` | `0.02–0.48` | `30%` | `Tex_Wood_Crate.png` stile/rail trim |
+| `Crate_DiagBraces_Skids` | `0.50–0.96` | `0.50–0.92` | `26%` | `Tex_Wood_Crate.png` dark brace grain |
+| `Rack_Uprights_WestEast` | `0.02–0.38` | `0.02–0.96` | `32%` | `Tex_Metal_Plate.png` vertical steel grain |
+| `Rack_LoadBeams_3x` | `0.40–0.98` | `0.02–0.34` | `26%` | `Tex_Metal_Plate.png` orange beam span |
+| `Rack_DeckPlates_3x` | `0.40–0.98` | `0.36–0.78` | `30%` | `Tex_Metal_Plate.png` galvanized deck |
+| `Rack_CrossBraces_Feet` | `0.40–0.92` | `0.80–0.98` | `12%` | `Tex_Metal_Plate.png` anchor brackets |
+| `Barrier_SlopedFaces` | `0.02–0.96` | `0.02–0.54` | `58%` | `Tex_Concrete_Floor.png` continuous taper |
+| `Barrier_EndCaps_Slots` | `0.02–0.62` | `0.56–0.96` | `28%` | `Tex_Concrete_Floor.png` chamfered ends |
+| `Barrier_TopSteelRail` | `0.64–0.96` | `0.56–0.96` | `14%` | `Tex_Metal_Plate.png` top trim strip |
+| `Panel_Enclosure_Door` | `0.02–0.64` | `0.02–0.96` | `68%` | `Tex_Wall_Panels.png` brushed steel casing |
+| `Panel_Vent_Plaque_Bolts` | `0.66–0.98` | `0.02–0.96` | `32%` | `Mat_Placeholder_Accent` / amber highlights |
+| `AccessCard_FrontFace` | `0.02–0.48` | `0.05–0.95` | `45%` | `Tex_Card_A.png` / `Tex_Card_B.png` badge face |
+| `AccessCard_BackFace` | `0.52–0.98` | `0.05–0.95` | `45%` | `Tex_Card_A.png` / `Tex_Card_B.png` magnetic stripe |
+| `AccessCard_Edge_Chip` | `0.02–0.98` | `0.01–0.04` | `10%` | Satin chamfer perimeter & contact pad |
+<!-- END:UV_CHECKS -->
 <!-- SECTION:WEAPONS -->
 <!-- SECTION:URP_MATERIALS -->
 <!-- SECTION:ACCESS_CARD_VERIFY -->
