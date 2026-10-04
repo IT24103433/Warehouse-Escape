@@ -27,3 +27,7 @@ Recorded cover positions from the layout script where available. Marked addition
 ## 2026-10-03 · Design alternate flanking routes and checkpoint detours
 
 Sketched branches as a connectivity graph with the patrol's inspection endpoints inside Room 2. The longer forking paths belong to the warehouse route fixtures.
+
+## 2026-10-04 · Document low-poly material assignments and industrial palette
+
+Grouped wall, shelf, barrier, crate, floor and marking materials by orientation and readability role. Captured which palette choices should be compared under the same exposure.
