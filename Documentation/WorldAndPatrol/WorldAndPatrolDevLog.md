@@ -31,3 +31,7 @@ Sketched branches as a connectivity graph with the patrol's inspection endpoints
 ## 2026-10-04 · Document low-poly material assignments and industrial palette
 
 Grouped wall, shelf, barrier, crate, floor and marking materials by orientation and readability role. Captured which palette choices should be compared under the same exposure.
+
+## 2026-10-05 · Draft URP baked lighting and reflection probe placement plan
+
+Added lighting-source references, a probe checklist and draft comparison cases. The proposed comparison takes use matching camera positions and render scale.
