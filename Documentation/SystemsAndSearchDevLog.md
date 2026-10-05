@@ -27,3 +27,7 @@ Defined audio/UI indicator cues distinguishing missing-card denial from an unloc
 ## 2026-10-04 — Connect CardReader validation to single-trigger victory flow
 Wired successful CardReader authorization to the escape gate activation and single-trigger victory state.
 Guarded completion callbacks against duplicate E-key presses during the end-of-run transition.
+
+## 2026-10-05 — Refine interactive door opening and collision response notes
+Refined hinged and sliding warehouse door opening arcs alongside collider state updates during animation.
+Ensured NavMesh obstacles and physical colliders remain synchronized as doors transition open or shut.
