@@ -31,3 +31,7 @@ Guarded completion callbacks against duplicate E-key presses during the end-of-r
 ## 2026-10-05 — Refine interactive door opening and collision response notes
 Refined hinged and sliding warehouse door opening arcs alongside collider state updates during animation.
 Ensured NavMesh obstacles and physical colliders remain synchronized as doors transition open or shut.
+
+## 2026-10-06 — Log barricade and physics-based interactive prop constraints
+Documented rigidbody mass, drag, and push-interaction constraints for movable warehouse barricades and crates.
+Prevented lightweight props from wedging inside tight corridors or destabilizing player movement.
