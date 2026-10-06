@@ -23,20 +23,17 @@ material setup for the warehouse props, Route A/B keycards, and hero firearms.
 | `Combat_Shotgun` | Weapon | `Assets/Meshes/Weapons/Combat_Shotgun.fbx` | Room 4 guard weapon & pickup (`WeaponType.Combat_Shotgun`) |
 
 <!-- BLOCK:EXPORT_CHECKLIST -->
-### 1.2 Initial Blender Export Checklist (Draft v0.1)
+### 1.2 Calibrated Pivot & Real-World Scale Rules (v0.2)
 
-- [DRAFT-EXP-01] Verify Blender unit scale (`1.0 BU = 1.0 m`) prior to export.
-- [DRAFT-EXP-02] Keep legacy `.obj`/`.mtl` exports beside `.fbx` during early scene blockout.
-- [DRAFT-EXP-03] Test Unity `Scale Factor = 100` vs `apply_unit_scale=True` in FBX exporter.
-- [DRAFT-EXP-04] Compare `Use Embedded Materials` vs explicit URP `Lit` material assignment.
-- [DRAFT-EXP-05] Verify default mesh origin placement before NavMesh rebake.
-- [DRAFT-EXP-06] Log initial draw calls and triangle counts in `ModelOptimizationInventory.csv`.
-- [DRAFT-EXP-07] Confirm wall decorations remain excluded from runtime physics colliders.
-- [DRAFT-EXP-08] Audit initial weapon forward orientation (`+Z` vs `-Z`) in hand socket.
-- [DRAFT-EXP-09] Check `Apply Modifiers` vs live `BEVEL` / `WEIGHTED_NORMAL` stack on FBX export.
-- [DRAFT-EXP-10] Validate whether `Generate Colliders` creates stepped NavMesh gaps around racks.
-- [DRAFT-EXP-11] Check `Import Tangents = Calculate Mikktspace` on beveled steel panels.
-- [DRAFT-EXP-12] Verify `.blend` source backups remain excluded from runtime build bundles.
+- **Floor Props (`Crate`, `Rack`, `Barrier`):** Origin locked to bottom-center `(0, 0, 0)`
+  so `ExpandWarehouseLayout.InstantiateBlenderProp(..., new Vector3(x, 0f, z), ...)` sits
+  flush on concrete without manual `Y` offset corrections.
+- **Wall Props (`Industrial_ServicePanel`):** Origin shifted to rear wall backplane
+  `(0, 0, -0.095 m)` with Blender FBX axis `-Z` forward, `Y` up, `apply_unit_scale=True`.
+- **Pickups (`Access_Card`):** Origin locked at geometric center so `AccessCard.Update()`
+  spins cleanly around `Vector3.up` at `90 deg/s` (`2.5x` scene pickup scale).
+- **Weapons (`MP5_SMG`, `Combat_Shotgun`):** Origin placed at trigger-grip base with `+Z`
+  barrel forward and `-Y` downward grip extension.
 <!-- END:EXPORT_CHECKLIST -->
 
 <!-- BLOCK:DRAFT_TROUBLESHOOT -->
