@@ -35,3 +35,7 @@ Grouped wall, shelf, barrier, crate, floor and marking materials by orientation 
 ## 2026-10-05 · Draft URP baked lighting and reflection probe placement plan
 
 Added lighting-source references, a probe checklist and draft comparison cases. The proposed comparison takes use matching camera positions and render scale.
+
+## 2026-10-06 · Generate initial warehouse NavMesh waypoint dataset
+
+Added modeled start/target pairs, separate reachability flags and a neutral visibility baseline. Early alternatives intentionally include disconnected nodes and endpoints outside the patrol sector.
