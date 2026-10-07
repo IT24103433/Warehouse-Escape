@@ -65,3 +65,27 @@ different signal for materials such as metal. Test the guard crossing a
 probe region alongside a static reflective prop so the two signals can be
 diagnosed independently. The light and exposure settings change appearance,
 while the patrol visibility feature casts collider queries.
+
+## NavMesh clearance
+
+The warehouse scene's build settings specify 0.5 m agent radius, 2 m height,
+45° slope and 0.4 m climb. The scene serialization also records a 0.16666667 m
+cell size and tile size 256, with manual overrides disabled. Compare these
+with the active agent type. The baked radius erodes walkable routes, and
+the runtime movement component can have its own avoidance parameters.
+
+For a straight throat with ideal vertical boundaries, first estimate
+`centerline clearance = measured internal width − 2 × bake radius`.
+Allow margin for collider overshoot, voxelization and turning. Use the
+serialized collider faces at actual placement for any measured value.
+
+| Face-to-face test width | Ideal remaining center interval | Check to collect |
+| ---: | ---: | --- |
+| 3.0 m | 2.0 m | Nominal lintel-sized approach, both turning directions |
+| 1.5 m | 0.5 m | Offset-start path test at each shelf tip |
+| 1.0 m | 0 m | Edge condition, expect a fragile or absent route |
+| 0.9 m | −0.1 m | Negative nominal clearance, reject from planning graph |
+
+For doorway headroom compare the underside of the actual collision lintel
+against the walkable surface. Keep the height and radius checks separate.
+Actual gap measurements and scene-corner paths remain PlayMode checks.

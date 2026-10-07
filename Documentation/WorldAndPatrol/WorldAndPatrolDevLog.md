@@ -39,3 +39,7 @@ Added lighting-source references, a probe checklist and draft comparison cases. 
 ## 2026-10-06 · Generate initial warehouse NavMesh waypoint dataset
 
 Added modeled start/target pairs, separate reachability flags and a neutral visibility baseline. Early alternatives intentionally include disconnected nodes and endpoints outside the patrol sector.
+
+## 2026-10-07 · Verify NavMesh agent radius and doorway clearance margins
+
+Read the scene's bake values and compared the nominal doorway widths with agent diameter on paper. The actual approach turns and collider-face clearances are PlayMode checks.
