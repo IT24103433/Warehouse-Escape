@@ -35,3 +35,7 @@ Ensured NavMesh obstacles and physical colliders remain synchronized as doors tr
 ## 2026-10-06 — Log barricade and physics-based interactive prop constraints
 Documented rigidbody mass, drag, and push-interaction constraints for movable warehouse barricades and crates.
 Prevented lightweight props from wedging inside tight corridors or destabilizing player movement.
+
+## 2026-10-07 — Verify player-object collision behavior around room doorways
+Reviewed character controller step-offset and capsule clearance around warehouse doorway thresholds.
+Confirmed interactive props and door frames allow smooth strafing without snagging during combat retreats.
