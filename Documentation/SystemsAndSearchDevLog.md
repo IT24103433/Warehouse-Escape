@@ -39,3 +39,7 @@ Prevented lightweight props from wedging inside tight corridors or destabilizing
 ## 2026-10-07 — Verify player-object collision behavior around room doorways
 Reviewed character controller step-offset and capsule clearance around warehouse doorway thresholds.
 Confirmed interactive props and door frames allow smooth strafing without snagging during combat retreats.
+
+## 2026-10-08 — Document end-to-end card pickup to terminal escape sequence
+Mapped the full interaction flow from AccessCard collection through CardReader clearance to escape completion.
+Verified state handoffs between HUD prompts, inventory flags, and escape terminal triggers.
