@@ -107,33 +107,14 @@ flowchart TD
 - Room 5: keep the center spine and two side aisles usable for alternate approaches.
 - The northeast dead-end bay offers cover and a return path through its entrance.
 
-## Draft shortcuts to challenge
+## Retained route constraints
 
-| Draft | Entry | Proposed exit | Walkable assumption | Sightline question | Failure expected |
-| --- | --- | --- | --- | --- | --- |
-| NE behind partition | East bay | Route B approach | Partition leaves enough room at east end | Is the far side visible from the main aisle? | Collider face and wall squeeze the turn |
-| NE through center | East bay | Central junction | Remove middle strip of partition | Can the player see the branch from within the blind bay? | Defeats deliberate dead end |
-| Shelf throat splice | East center | West storage | Access through shelf upright gap | Does standing eye clear the rack frame? | Centerline width omits the upright collider |
-| West crate bypass | South crossing | West wall | Hug wall behind western crates | Can a low crate occlude torso without hiding the sign? | No reliable shoulder space on approach |
-| South threshold cut | Safe-side corridor | Room 2 west | Use southern floor as an AI return loop | Can patrol see through center lintel? | Guard predicate rejects the endpoint |
-| Early north connector | Main aisle | Other sector | Treat both branch doorways as an AI shortcut | Does the sign remain distinct? | Crosses the patrol boundary |
+Keep the signed split, both storage aisle approaches and the center connectors.
+The northeast partition remains an occluder and dead-end boundary. Drop shortcuts
+that assume an opening through it or that rely on the safe-side floor for
+the guard's return circuit. Record rejected fixture intent in the trace and
+retain only supported connections in the layout summary.
 
-Draft checks to collect before accepting any shortcut:
-
-1. Record a left-jamb start and a right-jamb start on the approach side.
-2. Measure the exit turn from both approaches.
-3. Inspect the baked polygon continuity around the collider corners.
-4. Compare stationary perception at the lip and at the proposed midpoint.
-5. Make one blockout change per trial to attribute the difference.
-6. Preserve at least one complete reverse route for every kept point.
-
-## Draft shelf throat variants
-
-| Placement | Nominal centerline | Likely collision concern | Decision |
-| --- | --- | --- | --- |
-| Move west rack outboard | Hug west wall | Rack and wall may overlap the return funnel | Keep a reversal test before moving cover |
-| Move east rack inboard | Head toward center crossing | Crate outcrop may intersect diagonal | Inspect at guard radius |
-| Rotate shelf 45° | Cut behind corner | Projected width increases at the throat | Inspect collision corners |
-| Put a barrel at jamb | Follow door axis | Curved silhouette still consumes turning radius | Place marker off-path instead |
-| Offset north cover inward | Approach across both branches | Competes with signs and branch route readability | Test separate branch approaches |
-| Keep an empty post near rack | End near the outboard shelf face | Sampling may snap to the far side | Label the sampled side if measured |
+A single closed crossing is an alternate-route test. A closed approach and
+return pair is a disconnected destination test. Compare these cases with the
+warehouse CSV rather than substituting straight-line distance for a route.

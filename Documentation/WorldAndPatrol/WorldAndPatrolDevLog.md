@@ -43,3 +43,7 @@ Added modeled start/target pairs, separate reachability flags and a neutral visi
 ## 2026-10-07 · Verify NavMesh agent radius and doorway clearance margins
 
 Read the scene's bake values and compared the nominal doorway widths with agent diameter on paper. The actual approach turns and collider-face clearances are PlayMode checks.
+
+## 2026-10-08 · Refactor warehouse layout spec to remove blocked corridor drafts
+
+Dropped speculative shortcuts that depended on gaps through a partition, cover bay or protected room. The retained spec gives each approach a required open return path.
