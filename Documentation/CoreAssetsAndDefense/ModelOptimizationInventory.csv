@@ -250,3 +250,11 @@ Combat_Shotgun_SmoothBarrel_Draft,Weapon_SubPart,PreOpt_HighDraft,Assets/Meshes/
 Combat_Shotgun_SmoothBarrel_OBJ,Weapon_SubPart,OBJ_Intermediate,Assets/Meshes/Weapons/Combat_Shotgun.fbx,696,5,"(0.00, 0.00, 0.00)",1.00,unbatched_obj,Intermediate OBJ split UV seam export
 Combat_Shotgun_SmoothBarrel_LOD1,Weapon_SubPart,LOD1_Draft,Assets/Meshes/Weapons/Combat_Shotgun.fbx,240,4,"(0.00, -0.04, 0.12)",1.00,lod1_candidate,Decimated LOD1 sub-part candidate
 Combat_Shotgun_SmoothBarrel,Weapon_SubPart,LOD0_Optimized,Assets/Meshes/Weapons/Combat_Shotgun.fbx,480,4,"(0.00, -0.04, 0.12)",1.00,dynamic_srp_ready,Smooth-shaded 16-seg +Z barrel cylinder
+MP5_SMG_MuzzleAnchor,Weapon_Socket,LOD0_Optimized,Assets/Meshes/Weapons/MP5_SMG.fbx,0,0,"(0.00, 0.03, 0.42)",1.00,socket_calibrated,Forward +Z muzzle flash & raycast origin
+MP5_SMG_SightLine,Weapon_Socket,LOD0_Optimized,Assets/Meshes/Weapons/MP5_SMG.fbx,0,0,"(0.00, 0.08, 0.14)",1.00,socket_calibrated,Rear diopter to front hood sight axis
+MP5_SMG_FirstPersonMount,Weapon_Socket,LOD0_Optimized,Assets/Meshes/Weapons/MP5_SMG.fbx,0,0,"(0.22, -0.18, 0.45)",1.00,socket_calibrated,PlayerGun first-person camera offset
+MP5_SMG_EjectionPort,Weapon_Socket,LOD0_Optimized,Assets/Meshes/Weapons/MP5_SMG.fbx,0,0,"(0.02, 0.04, 0.16)",1.00,socket_calibrated,Right-side brass ejection anchor
+Combat_Shotgun_MuzzleAnchor,Weapon_Socket,LOD0_Optimized,Assets/Meshes/Weapons/Combat_Shotgun.fbx,0,0,"(0.00, 0.04, 0.62)",1.00,socket_calibrated,6-pellet cone origin (+Z barrel forward)
+Combat_Shotgun_HandSocket,Weapon_Socket,LOD0_Optimized,Assets/Meshes/Weapons/Combat_Shotgun.fbx,0,0,"(0.02, -0.04, 0.12)",1.00,socket_calibrated,GuardShooting.ResetCombat hand attachment offset
+Combat_Shotgun_PumpTrack,Weapon_Socket,LOD0_Optimized,Assets/Meshes/Weapons/Combat_Shotgun.fbx,0,0,"(0.00, -0.02, 0.34)",1.00,socket_calibrated,Forend slide stroke midpoint
+Combat_Shotgun_PickupProxy,Weapon_Socket,LOD0_Optimized,Assets/Meshes/Weapons/Combat_Shotgun.fbx,0,0,"(0.00, 0.25, 0.00)",1.00,socket_calibrated,GuardShooting.HandleDeath drop offset

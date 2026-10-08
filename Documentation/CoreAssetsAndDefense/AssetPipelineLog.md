@@ -284,5 +284,43 @@ Room 4 concrete walls and floor slabs.
 | `AccessCard_Edge_Chip` | `0.02–0.98` | `0.01–0.04` | `10%` | Satin chamfer perimeter & contact pad |
 <!-- END:UV_CHECKS -->
 <!-- SECTION:WEAPONS -->
+## 6. Weapon Source Specs: `MP5_SMG` and `Combat_Shotgun`
+
+Both hero firearms are authored in Blender with merged static receiver/barrel sub-meshes
+aligned down `+Z`, eliminating upward muzzle skew in both `PlayerGun.cs` (first-person
+camera mount) and `GuardShooting.cs` (third-person guard right-hand mount).
+
+### 6.1 `MP5_SMG` (`Assets/Meshes/Weapons/MP5_SMG.fbx`)
+
+- **Gameplay Config (`WeaponConfig.CreateMP5()`):** `"MP5-A3 SMG"`, `damage = 18`,
+  `fireRate = 0.11 s` (~545 RPM), `magazineCapacity = 30`, `defaultReserve = 90`,
+  `reloadDuration = 1.5 s`, `spread = 1.5 deg`, `maxRange = 55 m`, prefab `Weapons/MP5_SMG`.
+- **Mesh Breakdown (`4,920 tris`, `38 UV islands`):**
+  - `UpperReceiver` (`920 tris`) + `LowerTriggerHousing` (`600 tris`).
+  - `CollapsibleStock` (`620 tris`) + `CurvedMagazine` (`540 tris`).
+  - `CockingTube` (`480 tris`) + `HandguardShroud` (`760 tris`).
+  - `FrontSightHood` (`420 tris`) + `BarrelSuppressorLug` (`580 tris`).
+- **Pivot & Muzzle Calibration:** Grip origin `(0.00, -0.04, 0.08)` frames iron sights
+  cleanly in `PlayerGun.cs` without clipping the `0.1 m` camera near-plane; muzzle anchor
+  sits at `(0.00, 0.03, 0.42)`.
+
+### 6.2 `Combat_Shotgun` (`Assets/Meshes/Weapons/Combat_Shotgun.fbx`)
+
+- **Gameplay Config (`WeaponConfig.CreateShotgun()` & `DefensiveGuardAI`):**
+  - Guard (`DefensiveGuardAI.Awake`): `12 dmg x 6 pellets`, `cooldown = 1.4 s`,
+    `maxFiringRange = 10 m`, `bursts = 1`, `spread = 3.8 deg`, `4 bursts/mag`, `1.4 s` reload.
+  - Player pickup (`WeaponPickup`): `12 dmg x 6 pellets = 72 max`, `fireRate = 0.80 s`,
+    `8` mag / `24` reserve, `pelletSpread = 4.5 deg`, `maxRange = 28 m`, prefab `Weapons/Combat_Shotgun`.
+- **Mesh Breakdown (`4,380 tris`, `34 UV islands`):**
+  - `SteelReceiver` (`960 tris`) + `BoltCarrier` (`460 tris`) + `PumpForend` (`980 tris`).
+  - `MagTube` (`660 tris`) + `PolymerStock` (`580 tris`) + `GhostRingSight` (`260 tris`) + `SmoothBarrel` (`480 tris`).
+- **Guard Hand Offset (`GuardShooting.cs`):** `localPosition = new Vector3(0.02f, -0.04f, 0.12f)`,
+  `localRotation = Quaternion.identity`; muzzle anchor at `(0.00, 0.04, 0.62)`.
+
+| Weapon Asset | Draft Tris | Final Tris | Sub-Meshes | Grip Pivot | Muzzle Anchor (`+Z`) |
+| --- | --- | --- | --- | --- | --- |
+| `MP5_SMG` | `9,840` | `4,920` (`-50.0%`) | `8` | `(0.00, -0.04, 0.08)` | `(0.00, 0.03, 0.42)` |
+| `Combat_Shotgun` | `8,420` | `4,380` (`-48.0%`) | `7` | `(0.00, -0.04, 0.12)` | `(0.00, 0.04, 0.62)` |
+<!-- END:WEAPONS -->
 <!-- SECTION:URP_MATERIALS -->
 <!-- SECTION:ACCESS_CARD_VERIFY -->
