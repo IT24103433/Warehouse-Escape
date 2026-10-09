@@ -43,3 +43,7 @@ Confirmed interactive props and door frames allow smooth strafing without snaggi
 ## 2026-10-08 — Document end-to-end card pickup to terminal escape sequence
 Mapped the full interaction flow from AccessCard collection through CardReader clearance to escape completion.
 Verified state handoffs between HUD prompts, inventory flags, and escape terminal triggers.
+
+## 2026-10-09 — Outline SearchGuardAI state machine for Route A sector
+Outlined core SearchGuardAI states covering Route A patrol, visual chase, belief-guided search, and combat.
+Separated high-level state transitions from the underlying movement goal selection policy.
