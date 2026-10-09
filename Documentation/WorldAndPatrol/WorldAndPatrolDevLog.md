@@ -47,3 +47,7 @@ Read the scene's bake values and compared the nominal doorway widths with agent 
 ## 2026-10-08 · Refactor warehouse layout spec to remove blocked corridor drafts
 
 Dropped speculative shortcuts that depended on gaps through a partition, cover bay or protected room. The retained spec gives each approach a required open return path.
+
+## 2026-10-09 · Outline PatrolGuardAI state machine for Room 2 patrol sector
+
+Traced Patrol, Pursue and Investigate in source order. Captured which observations change state and where the AI writes arrival and memory state.
