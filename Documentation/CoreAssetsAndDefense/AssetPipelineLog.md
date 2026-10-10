@@ -323,4 +323,43 @@ camera mount) and `GuardShooting.cs` (third-person guard right-hand mount).
 | `Combat_Shotgun` | `8,420` | `4,380` (`-48.0%`) | `7` | `(0.00, -0.04, 0.12)` | `(0.00, 0.04, 0.62)` |
 <!-- END:WEAPONS -->
 <!-- SECTION:URP_MATERIALS -->
+## 7. Unity URP Material Configuration & Normal-Map Bevel Pass
+
+All props and weapons render via `Universal Render Pipeline/Lit` materials stored in
+`Assets/Materials/` paired with tangent-space normal maps and packed metallic/AO/smoothness
+masks generated in `Assets/Textures/Cinematic/` by `ApplyCinematicWarehouse.cs`.
+
+### 7.1 URP Material & Texture Assignment Matrix
+
+| Asset ID | Material Asset(s) | Base Map (`_BaseMap`) | Normal Map (`_BumpMap`) | Packed Mask / Surface Response |
+| --- | --- | --- | --- | --- |
+| `Warehouse_Cargo_Crate` | `Mat_Crate_Wood`, `Mat_Crate_Dark` | `Tex_Wood_Crate.png` | `Tex_Wood_Crate_Normal.png` | `Wood_Mask.png` (`metal = 0.00`, `smooth = 0.08–0.24`) |
+| `Warehouse_Steel_Rack` | `Mat_Rack_Blue`, `Mat_Rack_Orange`, `Mat_Shelf_Level` | `Tex_Metal_Plate.png` | `Tex_Metal_Plate_Normal.png` | `Steel_Mask.png` (`metal = 0.55`, `smooth = 0.25–0.52`) |
+| `Warehouse_Security_Barrier` | `Mat_Wall`, `Mat_Steel_Dark` | `Tex_Concrete_Floor.png` | `Tex_Concrete_Floor_Normal.png` | `Concrete_Mask.png` (`metal = 0.04`, `smooth = 0.18–0.36`) |
+| `Industrial_ServicePanel` | `Mat_Steel_Dark`, `Mat_Placeholder_Accent` | `Tex_Wall_Panels.png` | `Tex_Wall_Panels_Normal.png` | Baked `WEIGHTED_NORMAL` bevel specular edges |
+| `Access_Card` | `Mat_AccessCard_A`, `Mat_AccessCard_B` | `Tex_Card_A.png`, `Tex_Card_B.png` | `Tex_Card_Normal.png` | Satin PVC card finish (`smooth = 0.65`) |
+| `MP5_SMG`, `Combat_Shotgun` | `Mat_Cinematic_Gunmetal`, `Mat_Cinematic_Polymer` | `Tex_Gunmetal.png` | `Tex_Gunmetal_Normal.png` | Gunmetal normal relief + matte polymer grip |
+
+### 7.2 URP Shader Parameter Calibration (`ApplyCinematicWarehouse.cs`)
+
+| Material Asset | Shader | `_Metallic` | `_Smoothness` | `_BumpScale` | Lighting / Specular Role |
+| --- | --- | --- | --- | --- | --- |
+| `Mat_Crate_Wood` | `URP/Lit` | `0.00` | `0.18` | `1.00` | Matte timber highlight break along rails |
+| `Mat_Rack_Blue` / `Orange` | `URP/Lit` | `0.55` | `0.44` | `0.85` | Cool overhead spotlight edge catch |
+| `Mat_Wall` (Concrete) | `URP/Lit` | `0.04` | `0.26` | `1.10` | Low-glare cover barrier readability |
+| `Mat_Cinematic_Gunmetal` | `URP/Lit` | `0.82` | `0.62` | `0.90` | Specular rim on receiver & barrel |
+| `Mat_Cinematic_Polymer` | `URP/Lit` | `0.05` | `0.28` | `0.65` | Non-slip forend & stock contrast |
+| `Mat_AccessCard_B` | `URP/Lit` | `0.15` | `0.65` | `0.50` | High-contrast pickup gleam on `Terminal_Desk` |
+
+### 7.3 Normal-Map & Bevel Pass Verification
+
+- **Weapon Surface Upgrade:** `ApplyCinematicWarehouse` / `FinishCinematicPresentation`
+  recalculates smooth barrel normals and replaces flat imported weapon materials with
+  `Mat_Cinematic_Gunmetal` and `Mat_Cinematic_Polymer` so Room 4 overhead spots (`12f` warm
+  / `11f` cool, `spotAngle = 115`) catch crisp edges along the shotgun receiver.
+- **Tangent-Space Import Check:** All `*_Normal.png` textures verified as `Texture Type = Normal map`
+  (`sRGB = Off`) to prevent gamma-shifted inverted bevel highlights under ACES tonemapping.
+- **Global Post-Process Alignment:** `ACES` tonemapping (`postExposure = 0.65`, `contrast = 10`,
+  `bloom = 0.28`, `vignette = 0.16`, `filmGrain = 0.025`) verified without motion blur.
+<!-- END:URP_MATERIALS -->
 <!-- SECTION:ACCESS_CARD_VERIFY -->
