@@ -47,3 +47,7 @@ Verified state handoffs between HUD prompts, inventory flags, and escape termina
 ## 2026-10-09 — Outline SearchGuardAI state machine for Route A sector
 Outlined core SearchGuardAI states covering Route A patrol, visual chase, belief-guided search, and combat.
 Separated high-level state transitions from the underlying movement goal selection policy.
+
+## 2026-10-10 — Define player perception FOV and distance detection thresholds
+Established detection cone angle and effective sighting range for SearchGuardAI in the Route A sector.
+Tuned close-range peripheral awareness while preserving stealth flanking opportunities behind shelving.
