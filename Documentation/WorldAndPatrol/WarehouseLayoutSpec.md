@@ -118,3 +118,26 @@ retain only supported connections in the layout summary.
 A single closed crossing is an alternate-route test. A closed approach and
 return pair is a disconnected destination test. Compare these cases with the
 warehouse CSV rather than substituting straight-line distance for a route.
+
+## Fallback inspection points
+
+`EnsureNaturalRoute` creates or reuses these transforms if the assigned array
+is missing or has four entries or fewer. Fallback Y is 1.08 m in the source,
+and the navigation query can project the target onto a walkable surface.
+The checked-in `Guard_Varun_Patrol` has four serialized waypoint references,
+so the fallback is the expected startup route for this scene.
+
+| CSV ID | Array index | X (m) | Z (m) | Inspection intent | Default pause |
+| --- | ---: | ---: | ---: | --- | --- |
+| R2_S | 0 | −3.0 | −15.5 | South crossing | 1 s |
+| R2_ES | 1 | 4.5 | −14.0 | East south storage | 2 s |
+| R2_E | 2 | 4.5 | −9.5 | East corridor | 1 s |
+| R2_NE | 3 | 4.0 | −5.5 | Northeast look toward Route B | 2 s |
+| R2_N | 4 | 0.0 | −6.5 | North crossing | 1 s |
+| R2_NW | 5 | −4.5 | −5.5 | Northwest look toward Route A | 2 s |
+| R2_W | 6 | −5.0 | −10.5 | West storage aisle | 1 s |
+| R2_SW | 7 | −4.5 | −14.5 | Southwestern corner | 2 s |
+
+The odd-index pause is hard-coded. The even-index pause uses the configured
+`waypointWaitTime` with a 1 s code default. Changing the array order can change
+which points receive a longer look and which tie candidate is visited first.

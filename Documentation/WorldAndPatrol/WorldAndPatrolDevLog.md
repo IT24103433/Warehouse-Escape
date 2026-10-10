@@ -51,3 +51,7 @@ Dropped speculative shortcuts that depended on gaps through a partition, cover b
 ## 2026-10-09 · Outline PatrolGuardAI state machine for Room 2 patrol sector
 
 Traced Patrol, Pursue and Investigate in source order. Captured which observations change state and where the AI writes arrival and memory state.
+
+## 2026-10-10 · Define Room 2 patrol inspection points and loop transitions
+
+Recorded the eight fallback transforms and the conditions under which they replace a short configured array. Added modeled origins and perturbations for variation in inspection order.
