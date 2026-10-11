@@ -47,16 +47,12 @@ equal footing with Route A (Search Sector), keeping both routes independently co
 | `Terminal_Desk` | `(16.0, 0.5, 10.0)` | `ExpandWarehouseLayout.cs` line 427 |
 | `AccessCard_Pickup_Defensive` | `(16.0, 1.15, 10.0)` | `ExpandWarehouseLayout.cs` line 432 |
 
-<!-- BLOCK:R4_DRAFT_PACING -->
-### 2.1 Early Simple-Chase Pacing Notes (Draft)
+### 2.1 Attack / Guard / Retreat Decision Flow in Room 4
 
-- Direct pursuit from `(16, 1.08, 8)` toward `(5, 1, 0)` caused Aqqil to sprint blindly
-  into open floor space instead of holding behind the `Z = 5.0` concrete barriers.
-- Fixed 3-point guard circuit could not respond dynamically to east-flank sound cues.
-- Leaving `(16, 1.08, 8)` unguarded let players loop around the east rack and steal Card B
-  while the guard was stuck chasing near the south doorway.
-- Direct chase gave zero shotgun spacing control: Aqqil walked inside `1 m` melee range.
-<!-- END:R4_DRAFT_PACING -->
+- Replacing direct player-chasing with the 17-candidate ring decision tree keeps
+  `Guard_Aqqil_Defensive` anchored near `Terminal_Desk` while choosing cover behind
+  `Defensive_Barrier_West/Center/East` during `PursueIntruder` (Attack) and cleanly
+  disengaging via `ReturnToPost` (Retreat) when the player exits the perimeter.
 <!-- END:R4_STATES_AND_LAYOUT -->
 <!-- SECTION:R4_LEASH_NOTES -->
 <!-- SECTION:R4_PRESSURE_NOTES -->
