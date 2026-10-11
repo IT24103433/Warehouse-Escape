@@ -53,3 +53,36 @@ The fixed-loop baseline uses distance and elapsed time only for annotation.
 The active implementation treats path and age as features used to choose the
 next inspection. The data recorded at selection should be kept separate from
 the time spent traveling to the selected point.
+
+## Utility formula
+
+For nonnegative age and path length and visibility already in [0, 1]:
+
+```text
+U = 0.65 * min(age / 30, 1) + 0.35 * visibility - 0.25 * min(pathLength / 30, 1)
+```
+
+`PatrolDecisionPolicy.Score` uses `Mathf.Clamp01` on all three inputs
+(`age / 30`, `visibility`, `pathLength / 30`). Age uses seconds, and complete
+path length uses metres. Neglect contributes 0 to 0.65, local visibility 0
+to 0.35, and travel subtracts 0 to 0.25. Utilities can be negative. The search
+starts with negative infinity and still considers the highest eligible score.
+
+The per-index timestamp array initializes to `Time.time - 30` when created
+or resized, so its initial age feature is saturated. Record the timestamp
+upon arrival, before dwelling. During the dwell itself the timestamp ages.
+
+## Controlled comparisons
+
+Inputs in this table are controlled mathematical cases. The visibility column shows clear rays divided by eight.
+The 10-ray case deliberately feeds the scorer an out-of-range value to show the function's clamp.
+Compare full precision before rounding. A tie uses the first eligible array entry encountered.
+
+### Neglect beats proximity
+
+| Candidate | Age (s) | Clear rays | Path (m) | Age term | Visibility term | Travel term | Utility |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| A | 30 | 4 | 20 | 0.650000 | 0.175000 | 0.166667 | 0.658333 |
+| B | 0 | 4 | 1 | 0.000000 | 0.175000 | 0.008333 | 0.166667 |
+
+Candidate A ranks higher.

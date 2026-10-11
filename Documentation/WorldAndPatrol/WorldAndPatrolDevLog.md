@@ -55,3 +55,7 @@ Traced Patrol, Pursue and Investigate in source order. Captured which observatio
 ## 2026-10-10 · Define Room 2 patrol inspection points and loop transitions
 
 Recorded the eight fallback transforms and the conditions under which they replace a short configured array. Added modeled origins and perturbations for variation in inspection order.
+
+## 2026-10-11 · Document PatrolDecisionPolicy neglect-age weighting term
+
+Worked through the neglect term with equal visibility so the effects of staleness and travel can be compared directly. Staleness is initialized to 30 seconds and updated on arrival.
