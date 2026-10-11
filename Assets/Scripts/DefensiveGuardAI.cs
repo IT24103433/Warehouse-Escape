@@ -130,10 +130,23 @@ public class DefensiveGuardAI : MonoBehaviour
 
     public void SetPlayer(Transform player) => playerTransform = player;
 
+    [Header("Room Boundaries")]
+    [Tooltip("Encounter room boundaries. Guard stays within this area and disengages if player leaves the room.")]
+    [SerializeField] private Bounds roomBounds;
+    public Bounds RoomBounds { get => roomBounds; set => roomBounds = value; }
+
+    public bool IsInsideRoom(Vector3 pos)
+    {
+        if (roomBounds.size == Vector3.zero) return true;
+        Vector3 min = roomBounds.min;
+        Vector3 max = roomBounds.max;
+        return pos.x >= min.x && pos.x <= max.x && pos.z >= min.z && pos.z <= max.z;
+    }
+
     private void UpdateGuardingPostState(float distPlayerToPost)
     {
-        // If intruder enters territory and is seen, engage pursuit
-        if (canSeePlayer && isPlayerInsideTerritory)
+        // If intruder enters territory, is seen, and is inside room, engage pursuit
+        if (canSeePlayer && isPlayerInsideTerritory && (playerTransform == null || IsInsideRoom(playerTransform.position)))
         {
             TransitionToPursueIntruder();
             return;
@@ -162,9 +175,12 @@ public class DefensiveGuardAI : MonoBehaviour
         // Disengage condition:
         // 1. Intruder has retreated beyond leash distance
         // 2. Line of sight broken while intruder is outside core defence radius
+        // 3. Either intruder or guard is outside assigned room boundary
         bool shouldDisengage = distPlayerToPost > leashDistance ||
                                distGuardToPost > leashDistance ||
-                               (!canSeePlayer && !isPlayerInsideTerritory);
+                               (!canSeePlayer && !isPlayerInsideTerritory) ||
+                               (playerTransform != null && !IsInsideRoom(playerTransform.position)) ||
+                               !IsInsideRoom(transform.position);
 
         if (shouldDisengage)
         {

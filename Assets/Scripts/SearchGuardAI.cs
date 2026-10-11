@@ -133,9 +133,22 @@ public class SearchGuardAI : MonoBehaviour
 
     public void SetPlayer(Transform player) => playerTransform = player;
 
+    [Header("Room Boundaries")]
+    [Tooltip("Encounter room boundaries. Guard stays within this area and disengages if player leaves the room.")]
+    [SerializeField] private Bounds roomBounds;
+    public Bounds RoomBounds { get => roomBounds; set => roomBounds = value; }
+
+    public bool IsInsideRoom(Vector3 pos)
+    {
+        if (roomBounds.size == Vector3.zero) return true;
+        Vector3 min = roomBounds.min;
+        Vector3 max = roomBounds.max;
+        return pos.x >= min.x && pos.x <= max.x && pos.z >= min.z && pos.z <= max.z;
+    }
+
     private void UpdatePatrolState()
     {
-        if (canSeePlayer)
+        if (canSeePlayer && (playerTransform == null || IsInsideRoom(playerTransform.position)))
         {
             lastSeenPosition = playerTransform.position;
             TransitionToPursue();
@@ -206,7 +219,7 @@ public class SearchGuardAI : MonoBehaviour
 
     private void UpdatePursueState()
     {
-        if (canSeePlayer)
+        if (canSeePlayer && (playerTransform == null || IsInsideRoom(playerTransform.position)) && IsInsideRoom(transform.position))
         {
             lastSeenPosition = playerTransform.position;
             repathTimer -= Time.deltaTime;
@@ -225,7 +238,13 @@ public class SearchGuardAI : MonoBehaviour
     private void DispatchPursuitDestination()
     {
         if (playerTransform == null) return;
-        enemyMovement.SetDestination(playerTransform.position);
+        Vector3 target = playerTransform.position;
+        if (roomBounds.size != Vector3.zero)
+        {
+            target.x = Mathf.Clamp(target.x, roomBounds.min.x + 0.5f, roomBounds.max.x - 0.5f);
+            target.z = Mathf.Clamp(target.z, roomBounds.min.z + 0.5f, roomBounds.max.z - 0.5f);
+        }
+        enemyMovement.SetDestination(target);
         enemyMovement.Resume();
     }
 
@@ -235,7 +254,14 @@ public class SearchGuardAI : MonoBehaviour
         searchTimer = searchTimeout;
         isInvestigating = true;
 
-        bool ok = enemyMovement.SetDestination(lastSeenPosition);
+        Vector3 searchTarget = lastSeenPosition;
+        if (roomBounds.size != Vector3.zero)
+        {
+            searchTarget.x = Mathf.Clamp(searchTarget.x, roomBounds.min.x + 0.5f, roomBounds.max.x - 0.5f);
+            searchTarget.z = Mathf.Clamp(searchTarget.z, roomBounds.min.z + 0.5f, roomBounds.max.z - 0.5f);
+        }
+
+        bool ok = enemyMovement.SetDestination(searchTarget);
         if (ok)
         {
             enemyMovement.Resume();

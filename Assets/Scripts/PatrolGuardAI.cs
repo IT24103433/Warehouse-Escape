@@ -112,9 +112,22 @@ public class PatrolGuardAI : MonoBehaviour
 
     public void SetPlayer(Transform player) => playerTransform = player;
 
+    [Header("Room Boundaries")]
+    [Tooltip("Encounter room boundaries. Guard stays within this area and disengages if player leaves the room.")]
+    [SerializeField] private Bounds roomBounds;
+    public Bounds RoomBounds { get => roomBounds; set => roomBounds = value; }
+
+    public bool IsInsideRoom(Vector3 pos)
+    {
+        if (roomBounds.size == Vector3.zero) return true;
+        Vector3 min = roomBounds.min;
+        Vector3 max = roomBounds.max;
+        return pos.x >= min.x && pos.x <= max.x && pos.z >= min.z && pos.z <= max.z;
+    }
+
     private void UpdatePatrolState()
     {
-        if (canSeePlayer)
+        if (canSeePlayer && (playerTransform == null || IsInsideRoom(playerTransform.position)))
         {
             TransitionToPursue();
             return;
@@ -181,8 +194,8 @@ public class PatrolGuardAI : MonoBehaviour
 
     private void UpdatePursueState()
     {
-        // When sight is lost, IMMEDIATELY resume patrol without extended search
-        if (!canSeePlayer)
+        // When sight is lost, or either intruder or guard is outside room boundaries, IMMEDIATELY resume patrol
+        if (!canSeePlayer || (playerTransform != null && !IsInsideRoom(playerTransform.position)) || !IsInsideRoom(transform.position))
         {
             TransitionToPatrol();
             return;

@@ -91,8 +91,22 @@ public class AccessCard : MonoBehaviour
         foreach (var c in colliders) c.enabled = true;
     }
 
+    private static AccessCard activeHudInstance = null;
+
+    void OnEnable()
+    {
+        if (activeHudInstance == null) activeHudInstance = this;
+    }
+
+    void OnDisable()
+    {
+        if (activeHudInstance == this) activeHudInstance = null;
+    }
+
     void OnGUI()
     {
+        if (activeHudInstance != this) return;
+
         // On-screen HUD status badge in top-left
         GUIStyle cardStyle = new GUIStyle(GUI.skin.box);
         cardStyle.fontSize = 13;
