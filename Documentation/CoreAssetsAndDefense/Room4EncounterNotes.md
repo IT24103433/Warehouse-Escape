@@ -36,6 +36,28 @@ equal footing with Route A (Search Sector), keeping both routes independently co
 <!-- END:R4_EARLY_BLOCKOUT -->
 
 <!-- SECTION:R4_STATES_AND_LAYOUT -->
+## 2. Room 4 Coordinate Layout & Guard Anchor
+
+| Scene Element | World Coordinates / Bounds | Source Reference |
+| --- | --- | --- |
+| `Room_4_Defensive` Floor | `X [4, 28]`, `Z [-2, 20]` (`24 m x 22 m`) | `ExpandWarehouseLayout.ExpandRoom4()` |
+| South Route B Doorway | `X [3.5, 6.5]`, `Z = -2.0` | `ExpandWarehouseLayout.ExpandRoom4()` |
+| `Guard_Aqqil_Defensive` Spawn | `(16.0, 1.08, 8.0)` | `ExpandWarehouseLayout.cs` line 642 |
+| `DefensiveGuardAI` Code Default | `(-5.0, 1.0, 6.5)` (overridden by scene setup) | `DefensiveGuardAI.cs` line 37 |
+| `Terminal_Desk` | `(16.0, 0.5, 10.0)` | `ExpandWarehouseLayout.cs` line 427 |
+| `AccessCard_Pickup_Defensive` | `(16.0, 1.15, 10.0)` | `ExpandWarehouseLayout.cs` line 432 |
+
+<!-- BLOCK:R4_DRAFT_PACING -->
+### 2.1 Early Simple-Chase Pacing Notes (Draft)
+
+- Direct pursuit from `(16, 1.08, 8)` toward `(5, 1, 0)` caused Aqqil to sprint blindly
+  into open floor space instead of holding behind the `Z = 5.0` concrete barriers.
+- Fixed 3-point guard circuit could not respond dynamically to east-flank sound cues.
+- Leaving `(16, 1.08, 8)` unguarded let players loop around the east rack and steal Card B
+  while the guard was stuck chasing near the south doorway.
+- Direct chase gave zero shotgun spacing control: Aqqil walked inside `1 m` melee range.
+<!-- END:R4_DRAFT_PACING -->
+<!-- END:R4_STATES_AND_LAYOUT -->
 <!-- SECTION:R4_LEASH_NOTES -->
 <!-- SECTION:R4_PRESSURE_NOTES -->
 <!-- SECTION:R4_SHOTGUN_BALANCE -->
