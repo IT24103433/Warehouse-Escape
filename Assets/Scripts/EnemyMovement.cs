@@ -20,6 +20,9 @@ public class EnemyMovement : MonoBehaviour
     public bool IsOnNavMesh => agent != null && agent.isOnNavMesh;
     public float RemainingDistance => agent != null && agent.isOnNavMesh ? agent.remainingDistance : Mathf.Infinity;
     public bool PathPending => agent != null && agent.isOnNavMesh && agent.pathPending;
+    public bool HasPath => agent != null && agent.isOnNavMesh && agent.hasPath;
+    public NavMeshPathStatus PathStatus => agent != null && agent.isOnNavMesh ? agent.pathStatus : NavMeshPathStatus.PathInvalid;
+    public bool HasCompletePath => agent != null && agent.isOnNavMesh && !agent.pathPending && agent.hasPath && agent.pathStatus == NavMeshPathStatus.PathComplete;
 
     void Awake()
     {
@@ -57,6 +60,7 @@ public class EnemyMovement : MonoBehaviour
 
     /// <summary>
     /// Sets a new destination for the NavMeshAgent.
+    /// Returns true if destination was accepted; false if unable to set destination.
     /// </summary>
     public bool SetDestination(Vector3 destination)
     {
@@ -66,7 +70,22 @@ public class EnemyMovement : MonoBehaviour
             return false;
         }
 
-        return agent.SetDestination(destination);
+        bool success = agent.SetDestination(destination);
+        if (!success)
+        {
+            Debug.LogWarning($"[EnemyMovement] SetDestination returned false on '{gameObject.name}' for destination {destination}.", this);
+        }
+
+        return success;
+    }
+
+    /// <summary>
+    /// Calculates a path to the target position using the agent's query parameters without moving.
+    /// </summary>
+    public bool CalculatePath(Vector3 targetPosition, NavMeshPath path)
+    {
+        if (!agent.isOnNavMesh) return false;
+        return agent.CalculatePath(targetPosition, path);
     }
 
     /// <summary>
@@ -94,11 +113,14 @@ public class EnemyMovement : MonoBehaviour
 
     /// <summary>
     /// Checks whether the agent has reached its current destination within threshold.
+    /// Reports arrival ONLY for a valid, complete path.
     /// </summary>
     public bool HasReachedDestination(float arrivalThreshold = 0.5f)
     {
         if (!agent.isOnNavMesh) return false;
         if (agent.pathPending) return false;
+        if (!agent.hasPath) return false;
+        if (agent.pathStatus != NavMeshPathStatus.PathComplete) return false;
 
         return agent.remainingDistance <= Mathf.Max(agent.stoppingDistance, arrivalThreshold);
     }
