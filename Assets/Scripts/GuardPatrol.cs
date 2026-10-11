@@ -38,7 +38,8 @@ public class GuardPatrol : MonoBehaviour
     public int CurrentWaypointIndex => currentWaypointIndex;
     public bool IsWaiting => isWaiting;
     public bool IsRetrying => isRetrying;
-    public Transform[] Waypoints => waypoints;
+    public Transform[] Waypoints { get => waypoints; set => waypoints = value; }
+    public void SetWaypoints(Transform[] newWaypoints) { waypoints = newWaypoints; }
     public int CompletedLoops { get; private set; } = 0;
 
     void Awake()
@@ -259,6 +260,28 @@ public class GuardPatrol : MonoBehaviour
     {
         int searchStartIndex = isRetrying ? currentWaypointIndex : 0;
         if (TryFindAndSetNextReachableWaypoint(searchStartIndex))
+        {
+            isRetrying = false;
+            hasLoggedUnreachableWarning = false;
+        }
+        else
+        {
+            HandleNoReachableWaypoints();
+        }
+    }
+
+    /// <summary>
+    /// Resumes waypoint patrol from the current waypoint or the next reachable one.
+    /// Resets wait state to ensure immediate resumption.
+    /// </summary>
+    public void ResumePatrol()
+    {
+        isWaiting = false;
+        waitTimer = 0f;
+
+        if (waypoints == null || waypoints.Length == 0) return;
+
+        if (TryFindAndSetNextReachableWaypoint(currentWaypointIndex))
         {
             isRetrying = false;
             hasLoggedUnreachableWarning = false;

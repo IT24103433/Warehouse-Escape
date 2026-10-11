@@ -21,17 +21,26 @@ public class DoorController : MonoBehaviour
     [Tooltip("Tolerance distance to open position before the doorway is considered physically clear for passage.")]
     [SerializeField] private float clearThreshold = 0.05f;
 
+    [Header("Security Settings")]
+    [Tooltip("Whether opening the exit door requires the security access card.")]
+    [SerializeField] private bool requiresKeycard = true;
+
     private Transform player;
     private Vector3 closedPosition;
     private Vector3 openPosition;
 
     private bool isOpen = false;
+    private string statusFeedback = "";
+    private float feedbackTimer = 0f;
 
     public bool IsOpen => isOpen;
     public bool IsFullyOpen => isOpen && Vector3.Distance(transform.position, openPosition) <= clearThreshold;
     public NavMeshObstacle StationaryObstacle => stationaryObstacle;
     public Vector3 ClosedPosition => closedPosition;
     public Vector3 OpenPosition => openPosition;
+    public bool RequiresKeycard { get => requiresKeycard; set => requiresKeycard = value; }
+    public bool IsLocked => requiresKeycard && !AccessCard.HasKeycard;
+    public string StatusFeedback => statusFeedback;
 
     void Start()
     {
@@ -48,6 +57,12 @@ public class DoorController : MonoBehaviour
 
     void Update()
     {
+        if (feedbackTimer > 0f)
+        {
+            feedbackTimer -= Time.deltaTime;
+            if (feedbackTimer <= 0f) statusFeedback = "";
+        }
+
         // Calculate distance between player and stationary doorway position
         // Using closedPosition prevents the raised door from becoming unreachable from ground level
         if (player != null)
@@ -76,12 +91,52 @@ public class DoorController : MonoBehaviour
     }
 
     /// <summary>
-    /// Toggles the open/closed state of the door.
+    /// Toggles the open/closed state of the door if unlocked.
+    /// Returns true if toggled; false if locked.
     /// </summary>
-    public void ToggleDoor()
+    public bool ToggleDoor()
     {
+        if (IsLocked)
+        {
+            statusFeedback = "Access Denied: Security Keycard Required!";
+            feedbackTimer = 2.5f;
+            Debug.LogWarning("[DoorController] Exit is locked! Player needs the Access Card.", this);
+            return false;
+        }
+
         isOpen = !isOpen;
+        statusFeedback = isOpen ? "Door Opening..." : "Door Closing...";
+        feedbackTimer = 2.0f;
         UpdateNavObstacle();
+        return true;
+    }
+
+    void OnGUI()
+    {
+        if (player == null) return;
+
+        float distance = Vector3.Distance(player.position, closedPosition);
+        if (distance <= interactionDistance)
+        {
+            string prompt = IsLocked
+                ? "<color=#E74C3C>[E] EXIT LOCKED - KEYCARD REQUIRED</color>"
+                : (isOpen ? "<color=#2ECC71>[E] CLOSE EXIT DOOR</color>" : "<color=#2ECC71>[E] OPEN EXIT DOOR</color>");
+
+            GUIStyle promptStyle = new GUIStyle(GUI.skin.box);
+            promptStyle.fontSize = 15;
+            promptStyle.alignment = TextAnchor.MiddleCenter;
+
+            GUI.Box(new Rect(Screen.width * 0.5f - 180, Screen.height * 0.72f, 360, 36), prompt, promptStyle);
+        }
+
+        if (!string.IsNullOrEmpty(statusFeedback))
+        {
+            GUIStyle fbStyle = new GUIStyle(GUI.skin.box);
+            fbStyle.fontSize = 13;
+            fbStyle.normal.textColor = Color.yellow;
+            fbStyle.alignment = TextAnchor.MiddleCenter;
+            GUI.Box(new Rect(Screen.width * 0.5f - 200, Screen.height * 0.78f, 400, 30), statusFeedback, fbStyle);
+        }
     }
 
     /// <summary>
