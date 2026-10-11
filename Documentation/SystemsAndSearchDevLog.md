@@ -51,3 +51,7 @@ Separated high-level state transitions from the underlying movement goal selecti
 ## 2026-10-10 — Define player perception FOV and distance detection thresholds
 Established detection cone angle and effective sighting range for SearchGuardAI in the Route A sector.
 Tuned close-range peripheral awareness while preserving stealth flanking opportunities behind shelving.
+
+## 2026-10-11 — Document physical line-of-sight checks against solid cover
+Specified raycast occlusion checks from guard eye height to player torso and head targets against solid cover.
+Blocked visual acquisition through warehouse racks, walls, and closed doors so sight matches geometry.
