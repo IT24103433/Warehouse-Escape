@@ -603,3 +603,170 @@
 - `[RADIO-148]` Squad observation broadcast check #148: `0.5 s` throttle active, `ReportsReceived` incremented on confirmed visual only, and receiver `GuardShooting.HasVisualTarget` remains `false` until direct LOS is acquired.
 - `[RADIO-149]` Squad observation broadcast check #149: `0.5 s` throttle active, `ReportsReceived` incremented on confirmed visual only, and receiver `GuardShooting.HasVisualTarget` remains `false` until direct LOS is acquired.
 - `[RADIO-150]` Squad observation broadcast check #150: `0.5 s` throttle active, `ReportsReceived` incremented on confirmed visual only, and receiver `GuardShooting.HasVisualTarget` remains `false` until direct LOS is acquired.
+
+## 5. Alternating Suppression Window Scheduling (`1.3 s` Cadence)
+
+`BossSquadMember.OwnsSuppressionTurn(float clock, int slot)` evaluates `Mathf.FloorToInt(clock / 1.3f) % 2 == slot % 2`:
+- When both guards are alive and both have confirmed visual contact (`partner.ai.HasConfirmedVisualContact()`), they alternate `1.3 s` firing windows.
+- `CanFireNow` immediately yields `true` to the active guard if `partner == null`, `partner.shooting.IsReloading`, or `!partner.ai.HasConfirmedVisualContact()`.
+
+| Window Index | Clock Interval (s) | `Slot 0` (`Left`) | `Slot 1` (`Right`) | Reload Cover Exception |
+| --- | --- | --- | --- | --- |
+| `WIN-000` | `[  0.0,   1.3)` | FIRING | HOLD / REPOSITION | Immediate override if partner reloads or loses LOS |
+| `WIN-001` | `[  1.3,   2.6)` | HOLD / REPOSITION | FIRING | Immediate override if partner reloads or loses LOS |
+| `WIN-002` | `[  2.6,   3.9)` | FIRING | HOLD / REPOSITION | Immediate override if partner reloads or loses LOS |
+| `WIN-003` | `[  3.9,   5.2)` | HOLD / REPOSITION | FIRING | Immediate override if partner reloads or loses LOS |
+| `WIN-004` | `[  5.2,   6.5)` | FIRING | HOLD / REPOSITION | Immediate override if partner reloads or loses LOS |
+| `WIN-005` | `[  6.5,   7.8)` | HOLD / REPOSITION | FIRING | Immediate override if partner reloads or loses LOS |
+| `WIN-006` | `[  7.8,   9.1)` | FIRING | HOLD / REPOSITION | Immediate override if partner reloads or loses LOS |
+| `WIN-007` | `[  9.1,  10.4)` | HOLD / REPOSITION | FIRING | Immediate override if partner reloads or loses LOS |
+| `WIN-008` | `[ 10.4,  11.7)` | FIRING | HOLD / REPOSITION | Immediate override if partner reloads or loses LOS |
+| `WIN-009` | `[ 11.7,  13.0)` | HOLD / REPOSITION | FIRING | Immediate override if partner reloads or loses LOS |
+| `WIN-010` | `[ 13.0,  14.3)` | FIRING | HOLD / REPOSITION | Immediate override if partner reloads or loses LOS |
+| `WIN-011` | `[ 14.3,  15.6)` | HOLD / REPOSITION | FIRING | Immediate override if partner reloads or loses LOS |
+| `WIN-012` | `[ 15.6,  16.9)` | FIRING | HOLD / REPOSITION | Immediate override if partner reloads or loses LOS |
+| `WIN-013` | `[ 16.9,  18.2)` | HOLD / REPOSITION | FIRING | Immediate override if partner reloads or loses LOS |
+| `WIN-014` | `[ 18.2,  19.5)` | FIRING | HOLD / REPOSITION | Immediate override if partner reloads or loses LOS |
+| `WIN-015` | `[ 19.5,  20.8)` | HOLD / REPOSITION | FIRING | Immediate override if partner reloads or loses LOS |
+| `WIN-016` | `[ 20.8,  22.1)` | FIRING | HOLD / REPOSITION | Immediate override if partner reloads or loses LOS |
+| `WIN-017` | `[ 22.1,  23.4)` | HOLD / REPOSITION | FIRING | Immediate override if partner reloads or loses LOS |
+| `WIN-018` | `[ 23.4,  24.7)` | FIRING | HOLD / REPOSITION | Immediate override if partner reloads or loses LOS |
+| `WIN-019` | `[ 24.7,  26.0)` | HOLD / REPOSITION | FIRING | Immediate override if partner reloads or loses LOS |
+| `WIN-020` | `[ 26.0,  27.3)` | FIRING | HOLD / REPOSITION | Immediate override if partner reloads or loses LOS |
+| `WIN-021` | `[ 27.3,  28.6)` | HOLD / REPOSITION | FIRING | Immediate override if partner reloads or loses LOS |
+| `WIN-022` | `[ 28.6,  29.9)` | FIRING | HOLD / REPOSITION | Immediate override if partner reloads or loses LOS |
+| `WIN-023` | `[ 29.9,  31.2)` | HOLD / REPOSITION | FIRING | Immediate override if partner reloads or loses LOS |
+| `WIN-024` | `[ 31.2,  32.5)` | FIRING | HOLD / REPOSITION | Immediate override if partner reloads or loses LOS |
+| `WIN-025` | `[ 32.5,  33.8)` | HOLD / REPOSITION | FIRING | Immediate override if partner reloads or loses LOS |
+| `WIN-026` | `[ 33.8,  35.1)` | FIRING | HOLD / REPOSITION | Immediate override if partner reloads or loses LOS |
+| `WIN-027` | `[ 35.1,  36.4)` | HOLD / REPOSITION | FIRING | Immediate override if partner reloads or loses LOS |
+| `WIN-028` | `[ 36.4,  37.7)` | FIRING | HOLD / REPOSITION | Immediate override if partner reloads or loses LOS |
+| `WIN-029` | `[ 37.7,  39.0)` | HOLD / REPOSITION | FIRING | Immediate override if partner reloads or loses LOS |
+| `WIN-030` | `[ 39.0,  40.3)` | FIRING | HOLD / REPOSITION | Immediate override if partner reloads or loses LOS |
+| `WIN-031` | `[ 40.3,  41.6)` | HOLD / REPOSITION | FIRING | Immediate override if partner reloads or loses LOS |
+| `WIN-032` | `[ 41.6,  42.9)` | FIRING | HOLD / REPOSITION | Immediate override if partner reloads or loses LOS |
+| `WIN-033` | `[ 42.9,  44.2)` | HOLD / REPOSITION | FIRING | Immediate override if partner reloads or loses LOS |
+| `WIN-034` | `[ 44.2,  45.5)` | FIRING | HOLD / REPOSITION | Immediate override if partner reloads or loses LOS |
+| `WIN-035` | `[ 45.5,  46.8)` | HOLD / REPOSITION | FIRING | Immediate override if partner reloads or loses LOS |
+| `WIN-036` | `[ 46.8,  48.1)` | FIRING | HOLD / REPOSITION | Immediate override if partner reloads or loses LOS |
+| `WIN-037` | `[ 48.1,  49.4)` | HOLD / REPOSITION | FIRING | Immediate override if partner reloads or loses LOS |
+| `WIN-038` | `[ 49.4,  50.7)` | FIRING | HOLD / REPOSITION | Immediate override if partner reloads or loses LOS |
+| `WIN-039` | `[ 50.7,  52.0)` | HOLD / REPOSITION | FIRING | Immediate override if partner reloads or loses LOS |
+| `WIN-040` | `[ 52.0,  53.3)` | FIRING | HOLD / REPOSITION | Immediate override if partner reloads or loses LOS |
+| `WIN-041` | `[ 53.3,  54.6)` | HOLD / REPOSITION | FIRING | Immediate override if partner reloads or loses LOS |
+| `WIN-042` | `[ 54.6,  55.9)` | FIRING | HOLD / REPOSITION | Immediate override if partner reloads or loses LOS |
+| `WIN-043` | `[ 55.9,  57.2)` | HOLD / REPOSITION | FIRING | Immediate override if partner reloads or loses LOS |
+| `WIN-044` | `[ 57.2,  58.5)` | FIRING | HOLD / REPOSITION | Immediate override if partner reloads or loses LOS |
+| `WIN-045` | `[ 58.5,  59.8)` | HOLD / REPOSITION | FIRING | Immediate override if partner reloads or loses LOS |
+| `WIN-046` | `[ 59.8,  61.1)` | FIRING | HOLD / REPOSITION | Immediate override if partner reloads or loses LOS |
+| `WIN-047` | `[ 61.1,  62.4)` | HOLD / REPOSITION | FIRING | Immediate override if partner reloads or loses LOS |
+| `WIN-048` | `[ 62.4,  63.7)` | FIRING | HOLD / REPOSITION | Immediate override if partner reloads or loses LOS |
+| `WIN-049` | `[ 63.7,  65.0)` | HOLD / REPOSITION | FIRING | Immediate override if partner reloads or loses LOS |
+| `WIN-050` | `[ 65.0,  66.3)` | FIRING | HOLD / REPOSITION | Immediate override if partner reloads or loses LOS |
+| `WIN-051` | `[ 66.3,  67.6)` | HOLD / REPOSITION | FIRING | Immediate override if partner reloads or loses LOS |
+| `WIN-052` | `[ 67.6,  68.9)` | FIRING | HOLD / REPOSITION | Immediate override if partner reloads or loses LOS |
+| `WIN-053` | `[ 68.9,  70.2)` | HOLD / REPOSITION | FIRING | Immediate override if partner reloads or loses LOS |
+| `WIN-054` | `[ 70.2,  71.5)` | FIRING | HOLD / REPOSITION | Immediate override if partner reloads or loses LOS |
+| `WIN-055` | `[ 71.5,  72.8)` | HOLD / REPOSITION | FIRING | Immediate override if partner reloads or loses LOS |
+| `WIN-056` | `[ 72.8,  74.1)` | FIRING | HOLD / REPOSITION | Immediate override if partner reloads or loses LOS |
+| `WIN-057` | `[ 74.1,  75.4)` | HOLD / REPOSITION | FIRING | Immediate override if partner reloads or loses LOS |
+| `WIN-058` | `[ 75.4,  76.7)` | FIRING | HOLD / REPOSITION | Immediate override if partner reloads or loses LOS |
+| `WIN-059` | `[ 76.7,  78.0)` | HOLD / REPOSITION | FIRING | Immediate override if partner reloads or loses LOS |
+| `WIN-060` | `[ 78.0,  79.3)` | FIRING | HOLD / REPOSITION | Immediate override if partner reloads or loses LOS |
+| `WIN-061` | `[ 79.3,  80.6)` | HOLD / REPOSITION | FIRING | Immediate override if partner reloads or loses LOS |
+| `WIN-062` | `[ 80.6,  81.9)` | FIRING | HOLD / REPOSITION | Immediate override if partner reloads or loses LOS |
+| `WIN-063` | `[ 81.9,  83.2)` | HOLD / REPOSITION | FIRING | Immediate override if partner reloads or loses LOS |
+| `WIN-064` | `[ 83.2,  84.5)` | FIRING | HOLD / REPOSITION | Immediate override if partner reloads or loses LOS |
+| `WIN-065` | `[ 84.5,  85.8)` | HOLD / REPOSITION | FIRING | Immediate override if partner reloads or loses LOS |
+| `WIN-066` | `[ 85.8,  87.1)` | FIRING | HOLD / REPOSITION | Immediate override if partner reloads or loses LOS |
+| `WIN-067` | `[ 87.1,  88.4)` | HOLD / REPOSITION | FIRING | Immediate override if partner reloads or loses LOS |
+| `WIN-068` | `[ 88.4,  89.7)` | FIRING | HOLD / REPOSITION | Immediate override if partner reloads or loses LOS |
+| `WIN-069` | `[ 89.7,  91.0)` | HOLD / REPOSITION | FIRING | Immediate override if partner reloads or loses LOS |
+| `WIN-070` | `[ 91.0,  92.3)` | FIRING | HOLD / REPOSITION | Immediate override if partner reloads or loses LOS |
+| `WIN-071` | `[ 92.3,  93.6)` | HOLD / REPOSITION | FIRING | Immediate override if partner reloads or loses LOS |
+| `WIN-072` | `[ 93.6,  94.9)` | FIRING | HOLD / REPOSITION | Immediate override if partner reloads or loses LOS |
+| `WIN-073` | `[ 94.9,  96.2)` | HOLD / REPOSITION | FIRING | Immediate override if partner reloads or loses LOS |
+| `WIN-074` | `[ 96.2,  97.5)` | FIRING | HOLD / REPOSITION | Immediate override if partner reloads or loses LOS |
+| `WIN-075` | `[ 97.5,  98.8)` | HOLD / REPOSITION | FIRING | Immediate override if partner reloads or loses LOS |
+| `WIN-076` | `[ 98.8, 100.1)` | FIRING | HOLD / REPOSITION | Immediate override if partner reloads or loses LOS |
+| `WIN-077` | `[100.1, 101.4)` | HOLD / REPOSITION | FIRING | Immediate override if partner reloads or loses LOS |
+| `WIN-078` | `[101.4, 102.7)` | FIRING | HOLD / REPOSITION | Immediate override if partner reloads or loses LOS |
+| `WIN-079` | `[102.7, 104.0)` | HOLD / REPOSITION | FIRING | Immediate override if partner reloads or loses LOS |
+| `WIN-080` | `[104.0, 105.3)` | FIRING | HOLD / REPOSITION | Immediate override if partner reloads or loses LOS |
+| `WIN-081` | `[105.3, 106.6)` | HOLD / REPOSITION | FIRING | Immediate override if partner reloads or loses LOS |
+| `WIN-082` | `[106.6, 107.9)` | FIRING | HOLD / REPOSITION | Immediate override if partner reloads or loses LOS |
+| `WIN-083` | `[107.9, 109.2)` | HOLD / REPOSITION | FIRING | Immediate override if partner reloads or loses LOS |
+| `WIN-084` | `[109.2, 110.5)` | FIRING | HOLD / REPOSITION | Immediate override if partner reloads or loses LOS |
+| `WIN-085` | `[110.5, 111.8)` | HOLD / REPOSITION | FIRING | Immediate override if partner reloads or loses LOS |
+| `WIN-086` | `[111.8, 113.1)` | FIRING | HOLD / REPOSITION | Immediate override if partner reloads or loses LOS |
+| `WIN-087` | `[113.1, 114.4)` | HOLD / REPOSITION | FIRING | Immediate override if partner reloads or loses LOS |
+| `WIN-088` | `[114.4, 115.7)` | FIRING | HOLD / REPOSITION | Immediate override if partner reloads or loses LOS |
+| `WIN-089` | `[115.7, 117.0)` | HOLD / REPOSITION | FIRING | Immediate override if partner reloads or loses LOS |
+| `WIN-090` | `[117.0, 118.3)` | FIRING | HOLD / REPOSITION | Immediate override if partner reloads or loses LOS |
+| `WIN-091` | `[118.3, 119.6)` | HOLD / REPOSITION | FIRING | Immediate override if partner reloads or loses LOS |
+| `WIN-092` | `[119.6, 120.9)` | FIRING | HOLD / REPOSITION | Immediate override if partner reloads or loses LOS |
+| `WIN-093` | `[120.9, 122.2)` | HOLD / REPOSITION | FIRING | Immediate override if partner reloads or loses LOS |
+| `WIN-094` | `[122.2, 123.5)` | FIRING | HOLD / REPOSITION | Immediate override if partner reloads or loses LOS |
+| `WIN-095` | `[123.5, 124.8)` | HOLD / REPOSITION | FIRING | Immediate override if partner reloads or loses LOS |
+| `WIN-096` | `[124.8, 126.1)` | FIRING | HOLD / REPOSITION | Immediate override if partner reloads or loses LOS |
+| `WIN-097` | `[126.1, 127.4)` | HOLD / REPOSITION | FIRING | Immediate override if partner reloads or loses LOS |
+| `WIN-098` | `[127.4, 128.7)` | FIRING | HOLD / REPOSITION | Immediate override if partner reloads or loses LOS |
+| `WIN-099` | `[128.7, 130.0)` | HOLD / REPOSITION | FIRING | Immediate override if partner reloads or loses LOS |
+| `WIN-100` | `[130.0, 131.3)` | FIRING | HOLD / REPOSITION | Immediate override if partner reloads or loses LOS |
+| `WIN-101` | `[131.3, 132.6)` | HOLD / REPOSITION | FIRING | Immediate override if partner reloads or loses LOS |
+| `WIN-102` | `[132.6, 133.9)` | FIRING | HOLD / REPOSITION | Immediate override if partner reloads or loses LOS |
+| `WIN-103` | `[133.9, 135.2)` | HOLD / REPOSITION | FIRING | Immediate override if partner reloads or loses LOS |
+| `WIN-104` | `[135.2, 136.5)` | FIRING | HOLD / REPOSITION | Immediate override if partner reloads or loses LOS |
+| `WIN-105` | `[136.5, 137.8)` | HOLD / REPOSITION | FIRING | Immediate override if partner reloads or loses LOS |
+| `WIN-106` | `[137.8, 139.1)` | FIRING | HOLD / REPOSITION | Immediate override if partner reloads or loses LOS |
+| `WIN-107` | `[139.1, 140.4)` | HOLD / REPOSITION | FIRING | Immediate override if partner reloads or loses LOS |
+| `WIN-108` | `[140.4, 141.7)` | FIRING | HOLD / REPOSITION | Immediate override if partner reloads or loses LOS |
+| `WIN-109` | `[141.7, 143.0)` | HOLD / REPOSITION | FIRING | Immediate override if partner reloads or loses LOS |
+| `WIN-110` | `[143.0, 144.3)` | FIRING | HOLD / REPOSITION | Immediate override if partner reloads or loses LOS |
+| `WIN-111` | `[144.3, 145.6)` | HOLD / REPOSITION | FIRING | Immediate override if partner reloads or loses LOS |
+| `WIN-112` | `[145.6, 146.9)` | FIRING | HOLD / REPOSITION | Immediate override if partner reloads or loses LOS |
+| `WIN-113` | `[146.9, 148.2)` | HOLD / REPOSITION | FIRING | Immediate override if partner reloads or loses LOS |
+| `WIN-114` | `[148.2, 149.5)` | FIRING | HOLD / REPOSITION | Immediate override if partner reloads or loses LOS |
+| `WIN-115` | `[149.5, 150.8)` | HOLD / REPOSITION | FIRING | Immediate override if partner reloads or loses LOS |
+| `WIN-116` | `[150.8, 152.1)` | FIRING | HOLD / REPOSITION | Immediate override if partner reloads or loses LOS |
+| `WIN-117` | `[152.1, 153.4)` | HOLD / REPOSITION | FIRING | Immediate override if partner reloads or loses LOS |
+| `WIN-118` | `[153.4, 154.7)` | FIRING | HOLD / REPOSITION | Immediate override if partner reloads or loses LOS |
+| `WIN-119` | `[154.7, 156.0)` | HOLD / REPOSITION | FIRING | Immediate override if partner reloads or loses LOS |
+| `WIN-120` | `[156.0, 157.3)` | FIRING | HOLD / REPOSITION | Immediate override if partner reloads or loses LOS |
+| `WIN-121` | `[157.3, 158.6)` | HOLD / REPOSITION | FIRING | Immediate override if partner reloads or loses LOS |
+| `WIN-122` | `[158.6, 159.9)` | FIRING | HOLD / REPOSITION | Immediate override if partner reloads or loses LOS |
+| `WIN-123` | `[159.9, 161.2)` | HOLD / REPOSITION | FIRING | Immediate override if partner reloads or loses LOS |
+| `WIN-124` | `[161.2, 162.5)` | FIRING | HOLD / REPOSITION | Immediate override if partner reloads or loses LOS |
+| `WIN-125` | `[162.5, 163.8)` | HOLD / REPOSITION | FIRING | Immediate override if partner reloads or loses LOS |
+| `WIN-126` | `[163.8, 165.1)` | FIRING | HOLD / REPOSITION | Immediate override if partner reloads or loses LOS |
+| `WIN-127` | `[165.1, 166.4)` | HOLD / REPOSITION | FIRING | Immediate override if partner reloads or loses LOS |
+| `WIN-128` | `[166.4, 167.7)` | FIRING | HOLD / REPOSITION | Immediate override if partner reloads or loses LOS |
+| `WIN-129` | `[167.7, 169.0)` | HOLD / REPOSITION | FIRING | Immediate override if partner reloads or loses LOS |
+| `WIN-130` | `[169.0, 170.3)` | FIRING | HOLD / REPOSITION | Immediate override if partner reloads or loses LOS |
+| `WIN-131` | `[170.3, 171.6)` | HOLD / REPOSITION | FIRING | Immediate override if partner reloads or loses LOS |
+| `WIN-132` | `[171.6, 172.9)` | FIRING | HOLD / REPOSITION | Immediate override if partner reloads or loses LOS |
+| `WIN-133` | `[172.9, 174.2)` | HOLD / REPOSITION | FIRING | Immediate override if partner reloads or loses LOS |
+| `WIN-134` | `[174.2, 175.5)` | FIRING | HOLD / REPOSITION | Immediate override if partner reloads or loses LOS |
+| `WIN-135` | `[175.5, 176.8)` | HOLD / REPOSITION | FIRING | Immediate override if partner reloads or loses LOS |
+| `WIN-136` | `[176.8, 178.1)` | FIRING | HOLD / REPOSITION | Immediate override if partner reloads or loses LOS |
+| `WIN-137` | `[178.1, 179.4)` | HOLD / REPOSITION | FIRING | Immediate override if partner reloads or loses LOS |
+| `WIN-138` | `[179.4, 180.7)` | FIRING | HOLD / REPOSITION | Immediate override if partner reloads or loses LOS |
+| `WIN-139` | `[180.7, 182.0)` | HOLD / REPOSITION | FIRING | Immediate override if partner reloads or loses LOS |
+| `WIN-140` | `[182.0, 183.3)` | FIRING | HOLD / REPOSITION | Immediate override if partner reloads or loses LOS |
+| `WIN-141` | `[183.3, 184.6)` | HOLD / REPOSITION | FIRING | Immediate override if partner reloads or loses LOS |
+| `WIN-142` | `[184.6, 185.9)` | FIRING | HOLD / REPOSITION | Immediate override if partner reloads or loses LOS |
+| `WIN-143` | `[185.9, 187.2)` | HOLD / REPOSITION | FIRING | Immediate override if partner reloads or loses LOS |
+| `WIN-144` | `[187.2, 188.5)` | FIRING | HOLD / REPOSITION | Immediate override if partner reloads or loses LOS |
+| `WIN-145` | `[188.5, 189.8)` | HOLD / REPOSITION | FIRING | Immediate override if partner reloads or loses LOS |
+| `WIN-146` | `[189.8, 191.1)` | FIRING | HOLD / REPOSITION | Immediate override if partner reloads or loses LOS |
+| `WIN-147` | `[191.1, 192.4)` | HOLD / REPOSITION | FIRING | Immediate override if partner reloads or loses LOS |
+| `WIN-148` | `[192.4, 193.7)` | FIRING | HOLD / REPOSITION | Immediate override if partner reloads or loses LOS |
+| `WIN-149` | `[193.7, 195.0)` | HOLD / REPOSITION | FIRING | Immediate override if partner reloads or loses LOS |
+| `WIN-150` | `[195.0, 196.3)` | FIRING | HOLD / REPOSITION | Immediate override if partner reloads or loses LOS |
+| `WIN-151` | `[196.3, 197.6)` | HOLD / REPOSITION | FIRING | Immediate override if partner reloads or loses LOS |
+| `WIN-152` | `[197.6, 198.9)` | FIRING | HOLD / REPOSITION | Immediate override if partner reloads or loses LOS |
+| `WIN-153` | `[198.9, 200.2)` | HOLD / REPOSITION | FIRING | Immediate override if partner reloads or loses LOS |
+| `WIN-154` | `[200.2, 201.5)` | FIRING | HOLD / REPOSITION | Immediate override if partner reloads or loses LOS |
+| `WIN-155` | `[201.5, 202.8)` | HOLD / REPOSITION | FIRING | Immediate override if partner reloads or loses LOS |
+| `WIN-156` | `[202.8, 204.1)` | FIRING | HOLD / REPOSITION | Immediate override if partner reloads or loses LOS |
+| `WIN-157` | `[204.1, 205.4)` | HOLD / REPOSITION | FIRING | Immediate override if partner reloads or loses LOS |
