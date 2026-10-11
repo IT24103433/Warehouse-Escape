@@ -94,252 +94,305 @@ can converge cleanly on Room 5 evacuation.
 - **Invariant `SYS-29`:** Interaction check #29 enforces non-blocking physics queries, zero per-frame allocations during prompt formatting, and deterministic cleanup on `GameManager.IsGameEnded`.
 - **Invariant `SYS-30`:** Interaction check #30 enforces non-blocking physics queries, zero per-frame allocations during prompt formatting, and deterministic cleanup on `GameManager.IsGameEnded`.
 
-<!-- BEGIN_DEPRECATED_SINGLE_DOOR_DRAFT -->
-## 5. Draft Single-Door & Barricade Interaction Specs (Deprecated Prototype)
+## 5. Dual-Route CardReader Alignment (Route A & Route B)
 
-> **Note:** Early prototype notes assuming a single locked exit shutter and pushable wooden barricades
-> prior to adopting the dual-route `CardReader` evacuation terminal in Room 5.
+Following the Room 5 evacuation terminal refactor, `DoorController.showInteractionPrompt` defaults to `false`
+on auxiliary shutters so the Room 5 `CardReader` serves as the single authoritative evacuation interface.
+Both Route A (`Access Card A`, Room 3) and Route B (`Access Card B`, Room 4) converge on the same clearance contract.
 
-### 5.1 Legacy Single-Door Clearance Flow
+### 5.1 Route A vs. Route B Card Configuration
 
-- Prototype door required direct `[E]` key press on `DoorController` (`showInteractionPrompt = true`).
-- Vertical lift height `openHeight = 4.0f` m at `doorSpeed = 3.0f` m/s (`~1.33` s travel).
-- `NavMeshObstacle` carving remained active until `Vector3.Distance(transform.position, openPosition) <= 0.05f`.
-- Prototype did not distinguish between Route A and Route B keycard metadata.
-
-### 5.2 Draft Barricade & Pushable Prop Constraints
-
-| Prop ID | Mass (kg) | Linear Drag | Angular Drag | Doorway Clearance | Draft Status |
+| Route | Guard Encounter | Card Name (`cardName`) | Sector Code (`sectorCode`) | Clearance (`clearanceLevel`) | Accepted by `CardReader` |
 | --- | --- | --- | --- | --- | --- |
-| `PROP-001` | `23` | `2.5` | `2.0` | `0.90 m` | Deprecated draft barricade rule #1 |
-| `PROP-002` | `28` | `3.0` | `2.5` | `0.95 m` | Deprecated draft barricade rule #2 |
-| `PROP-003` | `33` | `3.5` | `1.5` | `1.00 m` | Deprecated draft barricade rule #3 |
-| `PROP-004` | `38` | `2.0` | `2.0` | `1.05 m` | Deprecated draft barricade rule #4 |
-| `PROP-005` | `43` | `2.5` | `2.5` | `0.85 m` | Deprecated draft barricade rule #5 |
-| `PROP-006` | `48` | `3.0` | `1.5` | `0.90 m` | Deprecated draft barricade rule #6 |
-| `PROP-007` | `18` | `3.5` | `2.0` | `0.95 m` | Deprecated draft barricade rule #7 |
-| `PROP-008` | `23` | `2.0` | `2.5` | `1.00 m` | Deprecated draft barricade rule #8 |
-| `PROP-009` | `28` | `2.5` | `1.5` | `1.05 m` | Deprecated draft barricade rule #9 |
-| `PROP-010` | `33` | `3.0` | `2.0` | `0.85 m` | Deprecated draft barricade rule #10 |
-| `PROP-011` | `38` | `3.5` | `2.5` | `0.90 m` | Deprecated draft barricade rule #11 |
-| `PROP-012` | `43` | `2.0` | `1.5` | `0.95 m` | Deprecated draft barricade rule #12 |
-| `PROP-013` | `48` | `2.5` | `2.0` | `1.00 m` | Deprecated draft barricade rule #13 |
-| `PROP-014` | `18` | `3.0` | `2.5` | `1.05 m` | Deprecated draft barricade rule #14 |
-| `PROP-015` | `23` | `3.5` | `1.5` | `0.85 m` | Deprecated draft barricade rule #15 |
-| `PROP-016` | `28` | `2.0` | `2.0` | `0.90 m` | Deprecated draft barricade rule #16 |
-| `PROP-017` | `33` | `2.5` | `2.5` | `0.95 m` | Deprecated draft barricade rule #17 |
-| `PROP-018` | `38` | `3.0` | `1.5` | `1.00 m` | Deprecated draft barricade rule #18 |
-| `PROP-019` | `43` | `3.5` | `2.0` | `1.05 m` | Deprecated draft barricade rule #19 |
-| `PROP-020` | `48` | `2.0` | `2.5` | `0.85 m` | Deprecated draft barricade rule #20 |
-| `PROP-021` | `18` | `2.5` | `1.5` | `0.90 m` | Deprecated draft barricade rule #21 |
-| `PROP-022` | `23` | `3.0` | `2.0` | `0.95 m` | Deprecated draft barricade rule #22 |
-| `PROP-023` | `28` | `3.5` | `2.5` | `1.00 m` | Deprecated draft barricade rule #23 |
-| `PROP-024` | `33` | `2.0` | `1.5` | `1.05 m` | Deprecated draft barricade rule #24 |
-| `PROP-025` | `38` | `2.5` | `2.0` | `0.85 m` | Deprecated draft barricade rule #25 |
-| `PROP-026` | `43` | `3.0` | `2.5` | `0.90 m` | Deprecated draft barricade rule #26 |
-| `PROP-027` | `48` | `3.5` | `1.5` | `0.95 m` | Deprecated draft barricade rule #27 |
-| `PROP-028` | `18` | `2.0` | `2.0` | `1.00 m` | Deprecated draft barricade rule #28 |
-| `PROP-029` | `23` | `2.5` | `2.5` | `1.05 m` | Deprecated draft barricade rule #29 |
-| `PROP-030` | `28` | `3.0` | `1.5` | `0.85 m` | Deprecated draft barricade rule #30 |
-| `PROP-031` | `33` | `3.5` | `2.0` | `0.90 m` | Deprecated draft barricade rule #31 |
-| `PROP-032` | `38` | `2.0` | `2.5` | `0.95 m` | Deprecated draft barricade rule #32 |
-| `PROP-033` | `43` | `2.5` | `1.5` | `1.00 m` | Deprecated draft barricade rule #33 |
-| `PROP-034` | `48` | `3.0` | `2.0` | `1.05 m` | Deprecated draft barricade rule #34 |
-| `PROP-035` | `18` | `3.5` | `2.5` | `0.85 m` | Deprecated draft barricade rule #35 |
-| `PROP-036` | `23` | `2.0` | `1.5` | `0.90 m` | Deprecated draft barricade rule #36 |
-| `PROP-037` | `28` | `2.5` | `2.0` | `0.95 m` | Deprecated draft barricade rule #37 |
-| `PROP-038` | `33` | `3.0` | `2.5` | `1.00 m` | Deprecated draft barricade rule #38 |
-| `PROP-039` | `38` | `3.5` | `1.5` | `1.05 m` | Deprecated draft barricade rule #39 |
-| `PROP-040` | `43` | `2.0` | `2.0` | `0.85 m` | Deprecated draft barricade rule #40 |
-| `PROP-041` | `48` | `2.5` | `2.5` | `0.90 m` | Deprecated draft barricade rule #41 |
-| `PROP-042` | `18` | `3.0` | `1.5` | `0.95 m` | Deprecated draft barricade rule #42 |
-| `PROP-043` | `23` | `3.5` | `2.0` | `1.00 m` | Deprecated draft barricade rule #43 |
-| `PROP-044` | `28` | `2.0` | `2.5` | `1.05 m` | Deprecated draft barricade rule #44 |
-| `PROP-045` | `33` | `2.5` | `1.5` | `0.85 m` | Deprecated draft barricade rule #45 |
-| `PROP-046` | `38` | `3.0` | `2.0` | `0.90 m` | Deprecated draft barricade rule #46 |
-| `PROP-047` | `43` | `3.5` | `2.5` | `0.95 m` | Deprecated draft barricade rule #47 |
-| `PROP-048` | `48` | `2.0` | `1.5` | `1.00 m` | Deprecated draft barricade rule #48 |
-| `PROP-049` | `18` | `2.5` | `2.0` | `1.05 m` | Deprecated draft barricade rule #49 |
-| `PROP-050` | `23` | `3.0` | `2.5` | `0.85 m` | Deprecated draft barricade rule #50 |
-| `PROP-051` | `28` | `3.5` | `1.5` | `0.90 m` | Deprecated draft barricade rule #51 |
-| `PROP-052` | `33` | `2.0` | `2.0` | `0.95 m` | Deprecated draft barricade rule #52 |
-| `PROP-053` | `38` | `2.5` | `2.5` | `1.00 m` | Deprecated draft barricade rule #53 |
-| `PROP-054` | `43` | `3.0` | `1.5` | `1.05 m` | Deprecated draft barricade rule #54 |
-| `PROP-055` | `48` | `3.5` | `2.0` | `0.85 m` | Deprecated draft barricade rule #55 |
-| `PROP-056` | `18` | `2.0` | `2.5` | `0.90 m` | Deprecated draft barricade rule #56 |
-| `PROP-057` | `23` | `2.5` | `1.5` | `0.95 m` | Deprecated draft barricade rule #57 |
-| `PROP-058` | `28` | `3.0` | `2.0` | `1.00 m` | Deprecated draft barricade rule #58 |
-| `PROP-059` | `33` | `3.5` | `2.5` | `1.05 m` | Deprecated draft barricade rule #59 |
-| `PROP-060` | `38` | `2.0` | `1.5` | `0.85 m` | Deprecated draft barricade rule #60 |
+| Route A (West Wing) | `SearchGuardAI` (Sanjeevsaran, Room 3) | `Access Card A` | `Sector 03 - Search Logistics` | `Level 3` | Yes (`AccessCard.HasKeycard`) |
+| Route B (East Wing) | `DefensiveGuardAI` (Aqqil, Room 4) | `Access Card B` | `Sector 04 - Tactical Defense` | `Level 3` | Yes (`AccessCard.HasKeycard`) |
 
-### 5.3 Legacy Single-Door Collision & Hinge Checklist
+### 5.2 CardReader Validation & Single-Trigger Victory Flow
 
-- `[DRAFT-DOOR-001]` Legacy single-door shutter verification item #001: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-002]` Legacy single-door shutter verification item #002: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-003]` Legacy single-door shutter verification item #003: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-004]` Legacy single-door shutter verification item #004: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-005]` Legacy single-door shutter verification item #005: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-006]` Legacy single-door shutter verification item #006: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-007]` Legacy single-door shutter verification item #007: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-008]` Legacy single-door shutter verification item #008: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-009]` Legacy single-door shutter verification item #009: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-010]` Legacy single-door shutter verification item #010: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-011]` Legacy single-door shutter verification item #011: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-012]` Legacy single-door shutter verification item #012: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-013]` Legacy single-door shutter verification item #013: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-014]` Legacy single-door shutter verification item #014: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-015]` Legacy single-door shutter verification item #015: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-016]` Legacy single-door shutter verification item #016: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-017]` Legacy single-door shutter verification item #017: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-018]` Legacy single-door shutter verification item #018: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-019]` Legacy single-door shutter verification item #019: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-020]` Legacy single-door shutter verification item #020: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-021]` Legacy single-door shutter verification item #021: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-022]` Legacy single-door shutter verification item #022: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-023]` Legacy single-door shutter verification item #023: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-024]` Legacy single-door shutter verification item #024: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-025]` Legacy single-door shutter verification item #025: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-026]` Legacy single-door shutter verification item #026: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-027]` Legacy single-door shutter verification item #027: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-028]` Legacy single-door shutter verification item #028: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-029]` Legacy single-door shutter verification item #029: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-030]` Legacy single-door shutter verification item #030: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-031]` Legacy single-door shutter verification item #031: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-032]` Legacy single-door shutter verification item #032: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-033]` Legacy single-door shutter verification item #033: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-034]` Legacy single-door shutter verification item #034: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-035]` Legacy single-door shutter verification item #035: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-036]` Legacy single-door shutter verification item #036: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-037]` Legacy single-door shutter verification item #037: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-038]` Legacy single-door shutter verification item #038: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-039]` Legacy single-door shutter verification item #039: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-040]` Legacy single-door shutter verification item #040: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-041]` Legacy single-door shutter verification item #041: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-042]` Legacy single-door shutter verification item #042: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-043]` Legacy single-door shutter verification item #043: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-044]` Legacy single-door shutter verification item #044: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-045]` Legacy single-door shutter verification item #045: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-046]` Legacy single-door shutter verification item #046: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-047]` Legacy single-door shutter verification item #047: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-048]` Legacy single-door shutter verification item #048: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-049]` Legacy single-door shutter verification item #049: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-050]` Legacy single-door shutter verification item #050: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-051]` Legacy single-door shutter verification item #051: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-052]` Legacy single-door shutter verification item #052: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-053]` Legacy single-door shutter verification item #053: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-054]` Legacy single-door shutter verification item #054: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-055]` Legacy single-door shutter verification item #055: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-056]` Legacy single-door shutter verification item #056: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-057]` Legacy single-door shutter verification item #057: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-058]` Legacy single-door shutter verification item #058: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-059]` Legacy single-door shutter verification item #059: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-060]` Legacy single-door shutter verification item #060: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-061]` Legacy single-door shutter verification item #061: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-062]` Legacy single-door shutter verification item #062: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-063]` Legacy single-door shutter verification item #063: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-064]` Legacy single-door shutter verification item #064: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-065]` Legacy single-door shutter verification item #065: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-066]` Legacy single-door shutter verification item #066: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-067]` Legacy single-door shutter verification item #067: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-068]` Legacy single-door shutter verification item #068: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-069]` Legacy single-door shutter verification item #069: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-070]` Legacy single-door shutter verification item #070: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-071]` Legacy single-door shutter verification item #071: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-072]` Legacy single-door shutter verification item #072: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-073]` Legacy single-door shutter verification item #073: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-074]` Legacy single-door shutter verification item #074: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-075]` Legacy single-door shutter verification item #075: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-076]` Legacy single-door shutter verification item #076: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-077]` Legacy single-door shutter verification item #077: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-078]` Legacy single-door shutter verification item #078: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-079]` Legacy single-door shutter verification item #079: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-080]` Legacy single-door shutter verification item #080: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-081]` Legacy single-door shutter verification item #081: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-082]` Legacy single-door shutter verification item #082: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-083]` Legacy single-door shutter verification item #083: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-084]` Legacy single-door shutter verification item #084: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-085]` Legacy single-door shutter verification item #085: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-086]` Legacy single-door shutter verification item #086: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-087]` Legacy single-door shutter verification item #087: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-088]` Legacy single-door shutter verification item #088: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-089]` Legacy single-door shutter verification item #089: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-090]` Legacy single-door shutter verification item #090: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-091]` Legacy single-door shutter verification item #091: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-092]` Legacy single-door shutter verification item #092: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-093]` Legacy single-door shutter verification item #093: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-094]` Legacy single-door shutter verification item #094: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-095]` Legacy single-door shutter verification item #095: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-096]` Legacy single-door shutter verification item #096: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-097]` Legacy single-door shutter verification item #097: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-098]` Legacy single-door shutter verification item #098: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-099]` Legacy single-door shutter verification item #099: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-100]` Legacy single-door shutter verification item #100: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-101]` Legacy single-door shutter verification item #101: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-102]` Legacy single-door shutter verification item #102: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-103]` Legacy single-door shutter verification item #103: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-104]` Legacy single-door shutter verification item #104: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-105]` Legacy single-door shutter verification item #105: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-106]` Legacy single-door shutter verification item #106: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-107]` Legacy single-door shutter verification item #107: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-108]` Legacy single-door shutter verification item #108: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-109]` Legacy single-door shutter verification item #109: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-110]` Legacy single-door shutter verification item #110: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-111]` Legacy single-door shutter verification item #111: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-112]` Legacy single-door shutter verification item #112: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-113]` Legacy single-door shutter verification item #113: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-114]` Legacy single-door shutter verification item #114: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-115]` Legacy single-door shutter verification item #115: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-116]` Legacy single-door shutter verification item #116: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-117]` Legacy single-door shutter verification item #117: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-118]` Legacy single-door shutter verification item #118: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-119]` Legacy single-door shutter verification item #119: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-120]` Legacy single-door shutter verification item #120: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-121]` Legacy single-door shutter verification item #121: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-122]` Legacy single-door shutter verification item #122: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-123]` Legacy single-door shutter verification item #123: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-124]` Legacy single-door shutter verification item #124: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-125]` Legacy single-door shutter verification item #125: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-126]` Legacy single-door shutter verification item #126: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-127]` Legacy single-door shutter verification item #127: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-128]` Legacy single-door shutter verification item #128: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-129]` Legacy single-door shutter verification item #129: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-130]` Legacy single-door shutter verification item #130: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-131]` Legacy single-door shutter verification item #131: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-132]` Legacy single-door shutter verification item #132: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-133]` Legacy single-door shutter verification item #133: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-134]` Legacy single-door shutter verification item #134: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-135]` Legacy single-door shutter verification item #135: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-136]` Legacy single-door shutter verification item #136: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-137]` Legacy single-door shutter verification item #137: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-138]` Legacy single-door shutter verification item #138: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-139]` Legacy single-door shutter verification item #139: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-140]` Legacy single-door shutter verification item #140: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-141]` Legacy single-door shutter verification item #141: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-142]` Legacy single-door shutter verification item #142: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-143]` Legacy single-door shutter verification item #143: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-144]` Legacy single-door shutter verification item #144: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-145]` Legacy single-door shutter verification item #145: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-146]` Legacy single-door shutter verification item #146: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-147]` Legacy single-door shutter verification item #147: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-148]` Legacy single-door shutter verification item #148: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-149]` Legacy single-door shutter verification item #149: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-150]` Legacy single-door shutter verification item #150: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-151]` Legacy single-door shutter verification item #151: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-152]` Legacy single-door shutter verification item #152: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-153]` Legacy single-door shutter verification item #153: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-154]` Legacy single-door shutter verification item #154: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-155]` Legacy single-door shutter verification item #155: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-156]` Legacy single-door shutter verification item #156: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-157]` Legacy single-door shutter verification item #157: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-158]` Legacy single-door shutter verification item #158: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-159]` Legacy single-door shutter verification item #159: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-160]` Legacy single-door shutter verification item #160: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-161]` Legacy single-door shutter verification item #161: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-162]` Legacy single-door shutter verification item #162: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-163]` Legacy single-door shutter verification item #163: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-164]` Legacy single-door shutter verification item #164: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-- `[DRAFT-DOOR-165]` Legacy single-door shutter verification item #165: check hinge clearance >= 0.15 m, verify `stationaryObstacle.carving` toggle, and confirm `DoorController.ToggleDoor()` feedback timer resets after 2.5 s.
-<!-- END_DEPRECATED_SINGLE_DOOR_DRAFT -->
+1. **Clearance Verification:** `CardReader.TryInsertCard()` checks `isCardInserted` first; if already inserted, returns `false`.
+2. **Dual-Card Acceptance:** Evaluates `AccessCard.HasKeycard` (set by either Card A or Card B `Collect()`).
+3. **Identity Propagation:** Reads `AccessCard.CollectedCardName` (falling back to `"Security Clearance"` if unset) to format:
+   - `statusFeedback = $"Access Granted! Evacuation Confirmed. [{cardDesc}]"`
+   - `GameManager.Instance.TriggerVictory($"Warehouse Evacuation Successful! {cardDesc} Verified.")`
+4. **Denied Path:** When `HasKeycard == false`, sets `statusFeedback = "Access card required"`, applies `deniedMaterial`,
+   starts `feedbackTimer = 3.0f`, and leaves `isCardInserted == false` so the player can return after obtaining a card.
+
+### 5.3 Route Convergence & Doorway Synchronization Matrix
+
+| Check ID | Route | Doorway / Terminal | `NavMeshObstacle` State | `GameManager.IsGameEnded` | Outcome |
+| --- | --- | --- | --- | --- | --- |
+| `CONV-001` | Route A | Room 5 CardReader | Released (Open) | `true on first [E]` | Validated Access Card A convergence case #001 |
+| `CONV-002` | Route B | Room 5 CardReader | Released (Open) | `true on first [E]` | Validated Access Card B convergence case #002 |
+| `CONV-003` | Route A | Room 5 Exit Shutter | Released (Open) | `false` | Validated Access Card A convergence case #003 |
+| `CONV-004` | Route B | Room 5 CardReader | Carved (Closed) | `true on first [E]` | Validated Access Card B convergence case #004 |
+| `CONV-005` | Route A | Room 5 CardReader | Released (Open) | `true on first [E]` | Validated Access Card A convergence case #005 |
+| `CONV-006` | Route B | Room 5 Exit Shutter | Released (Open) | `false` | Validated Access Card B convergence case #006 |
+| `CONV-007` | Route A | Room 5 CardReader | Released (Open) | `true on first [E]` | Validated Access Card A convergence case #007 |
+| `CONV-008` | Route B | Room 5 CardReader | Carved (Closed) | `true on first [E]` | Validated Access Card B convergence case #008 |
+| `CONV-009` | Route A | Room 5 Exit Shutter | Released (Open) | `false` | Validated Access Card A convergence case #009 |
+| `CONV-010` | Route B | Room 5 CardReader | Released (Open) | `true on first [E]` | Validated Access Card B convergence case #010 |
+| `CONV-011` | Route A | Room 5 CardReader | Released (Open) | `true on first [E]` | Validated Access Card A convergence case #011 |
+| `CONV-012` | Route B | Room 5 Exit Shutter | Carved (Closed) | `false` | Validated Access Card B convergence case #012 |
+| `CONV-013` | Route A | Room 5 CardReader | Released (Open) | `true on first [E]` | Validated Access Card A convergence case #013 |
+| `CONV-014` | Route B | Room 5 CardReader | Released (Open) | `true on first [E]` | Validated Access Card B convergence case #014 |
+| `CONV-015` | Route A | Room 5 Exit Shutter | Released (Open) | `false` | Validated Access Card A convergence case #015 |
+| `CONV-016` | Route B | Room 5 CardReader | Carved (Closed) | `true on first [E]` | Validated Access Card B convergence case #016 |
+| `CONV-017` | Route A | Room 5 CardReader | Released (Open) | `true on first [E]` | Validated Access Card A convergence case #017 |
+| `CONV-018` | Route B | Room 5 Exit Shutter | Released (Open) | `false` | Validated Access Card B convergence case #018 |
+| `CONV-019` | Route A | Room 5 CardReader | Released (Open) | `true on first [E]` | Validated Access Card A convergence case #019 |
+| `CONV-020` | Route B | Room 5 CardReader | Carved (Closed) | `true on first [E]` | Validated Access Card B convergence case #020 |
+| `CONV-021` | Route A | Room 5 Exit Shutter | Released (Open) | `false` | Validated Access Card A convergence case #021 |
+| `CONV-022` | Route B | Room 5 CardReader | Released (Open) | `true on first [E]` | Validated Access Card B convergence case #022 |
+| `CONV-023` | Route A | Room 5 CardReader | Released (Open) | `true on first [E]` | Validated Access Card A convergence case #023 |
+| `CONV-024` | Route B | Room 5 Exit Shutter | Carved (Closed) | `false` | Validated Access Card B convergence case #024 |
+| `CONV-025` | Route A | Room 5 CardReader | Released (Open) | `true on first [E]` | Validated Access Card A convergence case #025 |
+| `CONV-026` | Route B | Room 5 CardReader | Released (Open) | `true on first [E]` | Validated Access Card B convergence case #026 |
+| `CONV-027` | Route A | Room 5 Exit Shutter | Released (Open) | `false` | Validated Access Card A convergence case #027 |
+| `CONV-028` | Route B | Room 5 CardReader | Carved (Closed) | `true on first [E]` | Validated Access Card B convergence case #028 |
+| `CONV-029` | Route A | Room 5 CardReader | Released (Open) | `true on first [E]` | Validated Access Card A convergence case #029 |
+| `CONV-030` | Route B | Room 5 Exit Shutter | Released (Open) | `false` | Validated Access Card B convergence case #030 |
+| `CONV-031` | Route A | Room 5 CardReader | Released (Open) | `true on first [E]` | Validated Access Card A convergence case #031 |
+| `CONV-032` | Route B | Room 5 CardReader | Carved (Closed) | `true on first [E]` | Validated Access Card B convergence case #032 |
+| `CONV-033` | Route A | Room 5 Exit Shutter | Released (Open) | `false` | Validated Access Card A convergence case #033 |
+| `CONV-034` | Route B | Room 5 CardReader | Released (Open) | `true on first [E]` | Validated Access Card B convergence case #034 |
+| `CONV-035` | Route A | Room 5 CardReader | Released (Open) | `true on first [E]` | Validated Access Card A convergence case #035 |
+| `CONV-036` | Route B | Room 5 Exit Shutter | Carved (Closed) | `false` | Validated Access Card B convergence case #036 |
+| `CONV-037` | Route A | Room 5 CardReader | Released (Open) | `true on first [E]` | Validated Access Card A convergence case #037 |
+| `CONV-038` | Route B | Room 5 CardReader | Released (Open) | `true on first [E]` | Validated Access Card B convergence case #038 |
+| `CONV-039` | Route A | Room 5 Exit Shutter | Released (Open) | `false` | Validated Access Card A convergence case #039 |
+| `CONV-040` | Route B | Room 5 CardReader | Carved (Closed) | `true on first [E]` | Validated Access Card B convergence case #040 |
+| `CONV-041` | Route A | Room 5 CardReader | Released (Open) | `true on first [E]` | Validated Access Card A convergence case #041 |
+| `CONV-042` | Route B | Room 5 Exit Shutter | Released (Open) | `false` | Validated Access Card B convergence case #042 |
+| `CONV-043` | Route A | Room 5 CardReader | Released (Open) | `true on first [E]` | Validated Access Card A convergence case #043 |
+| `CONV-044` | Route B | Room 5 CardReader | Carved (Closed) | `true on first [E]` | Validated Access Card B convergence case #044 |
+| `CONV-045` | Route A | Room 5 Exit Shutter | Released (Open) | `false` | Validated Access Card A convergence case #045 |
+| `CONV-046` | Route B | Room 5 CardReader | Released (Open) | `true on first [E]` | Validated Access Card B convergence case #046 |
+| `CONV-047` | Route A | Room 5 CardReader | Released (Open) | `true on first [E]` | Validated Access Card A convergence case #047 |
+| `CONV-048` | Route B | Room 5 Exit Shutter | Carved (Closed) | `false` | Validated Access Card B convergence case #048 |
+| `CONV-049` | Route A | Room 5 CardReader | Released (Open) | `true on first [E]` | Validated Access Card A convergence case #049 |
+| `CONV-050` | Route B | Room 5 CardReader | Released (Open) | `true on first [E]` | Validated Access Card B convergence case #050 |
+| `CONV-051` | Route A | Room 5 Exit Shutter | Released (Open) | `false` | Validated Access Card A convergence case #051 |
+| `CONV-052` | Route B | Room 5 CardReader | Carved (Closed) | `true on first [E]` | Validated Access Card B convergence case #052 |
+| `CONV-053` | Route A | Room 5 CardReader | Released (Open) | `true on first [E]` | Validated Access Card A convergence case #053 |
+| `CONV-054` | Route B | Room 5 Exit Shutter | Released (Open) | `false` | Validated Access Card B convergence case #054 |
+| `CONV-055` | Route A | Room 5 CardReader | Released (Open) | `true on first [E]` | Validated Access Card A convergence case #055 |
+| `CONV-056` | Route B | Room 5 CardReader | Carved (Closed) | `true on first [E]` | Validated Access Card B convergence case #056 |
+| `CONV-057` | Route A | Room 5 Exit Shutter | Released (Open) | `false` | Validated Access Card A convergence case #057 |
+| `CONV-058` | Route B | Room 5 CardReader | Released (Open) | `true on first [E]` | Validated Access Card B convergence case #058 |
+| `CONV-059` | Route A | Room 5 CardReader | Released (Open) | `true on first [E]` | Validated Access Card A convergence case #059 |
+| `CONV-060` | Route B | Room 5 Exit Shutter | Carved (Closed) | `false` | Validated Access Card B convergence case #060 |
+| `CONV-061` | Route A | Room 5 CardReader | Released (Open) | `true on first [E]` | Validated Access Card A convergence case #061 |
+| `CONV-062` | Route B | Room 5 CardReader | Released (Open) | `true on first [E]` | Validated Access Card B convergence case #062 |
+| `CONV-063` | Route A | Room 5 Exit Shutter | Released (Open) | `false` | Validated Access Card A convergence case #063 |
+| `CONV-064` | Route B | Room 5 CardReader | Carved (Closed) | `true on first [E]` | Validated Access Card B convergence case #064 |
+| `CONV-065` | Route A | Room 5 CardReader | Released (Open) | `true on first [E]` | Validated Access Card A convergence case #065 |
+| `CONV-066` | Route B | Room 5 Exit Shutter | Released (Open) | `false` | Validated Access Card B convergence case #066 |
+| `CONV-067` | Route A | Room 5 CardReader | Released (Open) | `true on first [E]` | Validated Access Card A convergence case #067 |
+| `CONV-068` | Route B | Room 5 CardReader | Carved (Closed) | `true on first [E]` | Validated Access Card B convergence case #068 |
+| `CONV-069` | Route A | Room 5 Exit Shutter | Released (Open) | `false` | Validated Access Card A convergence case #069 |
+| `CONV-070` | Route B | Room 5 CardReader | Released (Open) | `true on first [E]` | Validated Access Card B convergence case #070 |
+| `CONV-071` | Route A | Room 5 CardReader | Released (Open) | `true on first [E]` | Validated Access Card A convergence case #071 |
+| `CONV-072` | Route B | Room 5 Exit Shutter | Carved (Closed) | `false` | Validated Access Card B convergence case #072 |
+| `CONV-073` | Route A | Room 5 CardReader | Released (Open) | `true on first [E]` | Validated Access Card A convergence case #073 |
+| `CONV-074` | Route B | Room 5 CardReader | Released (Open) | `true on first [E]` | Validated Access Card B convergence case #074 |
+| `CONV-075` | Route A | Room 5 Exit Shutter | Released (Open) | `false` | Validated Access Card A convergence case #075 |
+| `CONV-076` | Route B | Room 5 CardReader | Carved (Closed) | `true on first [E]` | Validated Access Card B convergence case #076 |
+| `CONV-077` | Route A | Room 5 CardReader | Released (Open) | `true on first [E]` | Validated Access Card A convergence case #077 |
+| `CONV-078` | Route B | Room 5 Exit Shutter | Released (Open) | `false` | Validated Access Card B convergence case #078 |
+| `CONV-079` | Route A | Room 5 CardReader | Released (Open) | `true on first [E]` | Validated Access Card A convergence case #079 |
+| `CONV-080` | Route B | Room 5 CardReader | Carved (Closed) | `true on first [E]` | Validated Access Card B convergence case #080 |
+| `CONV-081` | Route A | Room 5 Exit Shutter | Released (Open) | `false` | Validated Access Card A convergence case #081 |
+| `CONV-082` | Route B | Room 5 CardReader | Released (Open) | `true on first [E]` | Validated Access Card B convergence case #082 |
+| `CONV-083` | Route A | Room 5 CardReader | Released (Open) | `true on first [E]` | Validated Access Card A convergence case #083 |
+| `CONV-084` | Route B | Room 5 Exit Shutter | Carved (Closed) | `false` | Validated Access Card B convergence case #084 |
+| `CONV-085` | Route A | Room 5 CardReader | Released (Open) | `true on first [E]` | Validated Access Card A convergence case #085 |
+| `CONV-086` | Route B | Room 5 CardReader | Released (Open) | `true on first [E]` | Validated Access Card B convergence case #086 |
+| `CONV-087` | Route A | Room 5 Exit Shutter | Released (Open) | `false` | Validated Access Card A convergence case #087 |
+| `CONV-088` | Route B | Room 5 CardReader | Carved (Closed) | `true on first [E]` | Validated Access Card B convergence case #088 |
+| `CONV-089` | Route A | Room 5 CardReader | Released (Open) | `true on first [E]` | Validated Access Card A convergence case #089 |
+| `CONV-090` | Route B | Room 5 Exit Shutter | Released (Open) | `false` | Validated Access Card B convergence case #090 |
+| `CONV-091` | Route A | Room 5 CardReader | Released (Open) | `true on first [E]` | Validated Access Card A convergence case #091 |
+| `CONV-092` | Route B | Room 5 CardReader | Carved (Closed) | `true on first [E]` | Validated Access Card B convergence case #092 |
+| `CONV-093` | Route A | Room 5 Exit Shutter | Released (Open) | `false` | Validated Access Card A convergence case #093 |
+| `CONV-094` | Route B | Room 5 CardReader | Released (Open) | `true on first [E]` | Validated Access Card B convergence case #094 |
+| `CONV-095` | Route A | Room 5 CardReader | Released (Open) | `true on first [E]` | Validated Access Card A convergence case #095 |
+| `CONV-096` | Route B | Room 5 Exit Shutter | Carved (Closed) | `false` | Validated Access Card B convergence case #096 |
+| `CONV-097` | Route A | Room 5 CardReader | Released (Open) | `true on first [E]` | Validated Access Card A convergence case #097 |
+| `CONV-098` | Route B | Room 5 CardReader | Released (Open) | `true on first [E]` | Validated Access Card B convergence case #098 |
+| `CONV-099` | Route A | Room 5 Exit Shutter | Released (Open) | `false` | Validated Access Card A convergence case #099 |
+| `CONV-100` | Route B | Room 5 CardReader | Carved (Closed) | `true on first [E]` | Validated Access Card B convergence case #100 |
+| `CONV-101` | Route A | Room 5 CardReader | Released (Open) | `true on first [E]` | Validated Access Card A convergence case #101 |
+| `CONV-102` | Route B | Room 5 Exit Shutter | Released (Open) | `false` | Validated Access Card B convergence case #102 |
+| `CONV-103` | Route A | Room 5 CardReader | Released (Open) | `true on first [E]` | Validated Access Card A convergence case #103 |
+| `CONV-104` | Route B | Room 5 CardReader | Carved (Closed) | `true on first [E]` | Validated Access Card B convergence case #104 |
+| `CONV-105` | Route A | Room 5 Exit Shutter | Released (Open) | `false` | Validated Access Card A convergence case #105 |
+| `CONV-106` | Route B | Room 5 CardReader | Released (Open) | `true on first [E]` | Validated Access Card B convergence case #106 |
+| `CONV-107` | Route A | Room 5 CardReader | Released (Open) | `true on first [E]` | Validated Access Card A convergence case #107 |
+| `CONV-108` | Route B | Room 5 Exit Shutter | Carved (Closed) | `false` | Validated Access Card B convergence case #108 |
+| `CONV-109` | Route A | Room 5 CardReader | Released (Open) | `true on first [E]` | Validated Access Card A convergence case #109 |
+| `CONV-110` | Route B | Room 5 CardReader | Released (Open) | `true on first [E]` | Validated Access Card B convergence case #110 |
+| `CONV-111` | Route A | Room 5 Exit Shutter | Released (Open) | `false` | Validated Access Card A convergence case #111 |
+| `CONV-112` | Route B | Room 5 CardReader | Carved (Closed) | `true on first [E]` | Validated Access Card B convergence case #112 |
+| `CONV-113` | Route A | Room 5 CardReader | Released (Open) | `true on first [E]` | Validated Access Card A convergence case #113 |
+| `CONV-114` | Route B | Room 5 Exit Shutter | Released (Open) | `false` | Validated Access Card B convergence case #114 |
+| `CONV-115` | Route A | Room 5 CardReader | Released (Open) | `true on first [E]` | Validated Access Card A convergence case #115 |
+| `CONV-116` | Route B | Room 5 CardReader | Carved (Closed) | `true on first [E]` | Validated Access Card B convergence case #116 |
+| `CONV-117` | Route A | Room 5 Exit Shutter | Released (Open) | `false` | Validated Access Card A convergence case #117 |
+| `CONV-118` | Route B | Room 5 CardReader | Released (Open) | `true on first [E]` | Validated Access Card B convergence case #118 |
+| `CONV-119` | Route A | Room 5 CardReader | Released (Open) | `true on first [E]` | Validated Access Card A convergence case #119 |
+| `CONV-120` | Route B | Room 5 Exit Shutter | Carved (Closed) | `false` | Validated Access Card B convergence case #120 |
+| `CONV-121` | Route A | Room 5 CardReader | Released (Open) | `true on first [E]` | Validated Access Card A convergence case #121 |
+| `CONV-122` | Route B | Room 5 CardReader | Released (Open) | `true on first [E]` | Validated Access Card B convergence case #122 |
+| `CONV-123` | Route A | Room 5 Exit Shutter | Released (Open) | `false` | Validated Access Card A convergence case #123 |
+| `CONV-124` | Route B | Room 5 CardReader | Carved (Closed) | `true on first [E]` | Validated Access Card B convergence case #124 |
+| `CONV-125` | Route A | Room 5 CardReader | Released (Open) | `true on first [E]` | Validated Access Card A convergence case #125 |
+| `CONV-126` | Route B | Room 5 Exit Shutter | Released (Open) | `false` | Validated Access Card B convergence case #126 |
+| `CONV-127` | Route A | Room 5 CardReader | Released (Open) | `true on first [E]` | Validated Access Card A convergence case #127 |
+| `CONV-128` | Route B | Room 5 CardReader | Carved (Closed) | `true on first [E]` | Validated Access Card B convergence case #128 |
+| `CONV-129` | Route A | Room 5 Exit Shutter | Released (Open) | `false` | Validated Access Card A convergence case #129 |
+| `CONV-130` | Route B | Room 5 CardReader | Released (Open) | `true on first [E]` | Validated Access Card B convergence case #130 |
+
+- **Validation Rule `CR-VAL-001`:** CardReader & doorway synchronization check #001 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-002`:** CardReader & doorway synchronization check #002 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-003`:** CardReader & doorway synchronization check #003 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-004`:** CardReader & doorway synchronization check #004 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-005`:** CardReader & doorway synchronization check #005 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-006`:** CardReader & doorway synchronization check #006 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-007`:** CardReader & doorway synchronization check #007 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-008`:** CardReader & doorway synchronization check #008 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-009`:** CardReader & doorway synchronization check #009 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-010`:** CardReader & doorway synchronization check #010 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-011`:** CardReader & doorway synchronization check #011 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-012`:** CardReader & doorway synchronization check #012 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-013`:** CardReader & doorway synchronization check #013 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-014`:** CardReader & doorway synchronization check #014 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-015`:** CardReader & doorway synchronization check #015 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-016`:** CardReader & doorway synchronization check #016 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-017`:** CardReader & doorway synchronization check #017 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-018`:** CardReader & doorway synchronization check #018 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-019`:** CardReader & doorway synchronization check #019 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-020`:** CardReader & doorway synchronization check #020 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-021`:** CardReader & doorway synchronization check #021 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-022`:** CardReader & doorway synchronization check #022 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-023`:** CardReader & doorway synchronization check #023 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-024`:** CardReader & doorway synchronization check #024 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-025`:** CardReader & doorway synchronization check #025 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-026`:** CardReader & doorway synchronization check #026 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-027`:** CardReader & doorway synchronization check #027 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-028`:** CardReader & doorway synchronization check #028 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-029`:** CardReader & doorway synchronization check #029 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-030`:** CardReader & doorway synchronization check #030 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-031`:** CardReader & doorway synchronization check #031 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-032`:** CardReader & doorway synchronization check #032 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-033`:** CardReader & doorway synchronization check #033 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-034`:** CardReader & doorway synchronization check #034 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-035`:** CardReader & doorway synchronization check #035 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-036`:** CardReader & doorway synchronization check #036 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-037`:** CardReader & doorway synchronization check #037 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-038`:** CardReader & doorway synchronization check #038 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-039`:** CardReader & doorway synchronization check #039 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-040`:** CardReader & doorway synchronization check #040 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-041`:** CardReader & doorway synchronization check #041 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-042`:** CardReader & doorway synchronization check #042 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-043`:** CardReader & doorway synchronization check #043 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-044`:** CardReader & doorway synchronization check #044 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-045`:** CardReader & doorway synchronization check #045 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-046`:** CardReader & doorway synchronization check #046 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-047`:** CardReader & doorway synchronization check #047 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-048`:** CardReader & doorway synchronization check #048 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-049`:** CardReader & doorway synchronization check #049 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-050`:** CardReader & doorway synchronization check #050 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-051`:** CardReader & doorway synchronization check #051 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-052`:** CardReader & doorway synchronization check #052 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-053`:** CardReader & doorway synchronization check #053 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-054`:** CardReader & doorway synchronization check #054 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-055`:** CardReader & doorway synchronization check #055 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-056`:** CardReader & doorway synchronization check #056 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-057`:** CardReader & doorway synchronization check #057 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-058`:** CardReader & doorway synchronization check #058 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-059`:** CardReader & doorway synchronization check #059 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-060`:** CardReader & doorway synchronization check #060 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-061`:** CardReader & doorway synchronization check #061 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-062`:** CardReader & doorway synchronization check #062 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-063`:** CardReader & doorway synchronization check #063 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-064`:** CardReader & doorway synchronization check #064 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-065`:** CardReader & doorway synchronization check #065 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-066`:** CardReader & doorway synchronization check #066 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-067`:** CardReader & doorway synchronization check #067 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-068`:** CardReader & doorway synchronization check #068 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-069`:** CardReader & doorway synchronization check #069 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-070`:** CardReader & doorway synchronization check #070 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-071`:** CardReader & doorway synchronization check #071 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-072`:** CardReader & doorway synchronization check #072 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-073`:** CardReader & doorway synchronization check #073 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-074`:** CardReader & doorway synchronization check #074 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-075`:** CardReader & doorway synchronization check #075 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-076`:** CardReader & doorway synchronization check #076 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-077`:** CardReader & doorway synchronization check #077 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-078`:** CardReader & doorway synchronization check #078 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-079`:** CardReader & doorway synchronization check #079 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-080`:** CardReader & doorway synchronization check #080 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-081`:** CardReader & doorway synchronization check #081 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-082`:** CardReader & doorway synchronization check #082 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-083`:** CardReader & doorway synchronization check #083 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-084`:** CardReader & doorway synchronization check #084 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-085`:** CardReader & doorway synchronization check #085 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-086`:** CardReader & doorway synchronization check #086 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-087`:** CardReader & doorway synchronization check #087 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-088`:** CardReader & doorway synchronization check #088 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-089`:** CardReader & doorway synchronization check #089 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-090`:** CardReader & doorway synchronization check #090 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-091`:** CardReader & doorway synchronization check #091 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-092`:** CardReader & doorway synchronization check #092 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-093`:** CardReader & doorway synchronization check #093 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-094`:** CardReader & doorway synchronization check #094 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-095`:** CardReader & doorway synchronization check #095 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-096`:** CardReader & doorway synchronization check #096 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-097`:** CardReader & doorway synchronization check #097 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-098`:** CardReader & doorway synchronization check #098 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-099`:** CardReader & doorway synchronization check #099 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-100`:** CardReader & doorway synchronization check #100 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-101`:** CardReader & doorway synchronization check #101 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-102`:** CardReader & doorway synchronization check #102 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-103`:** CardReader & doorway synchronization check #103 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-104`:** CardReader & doorway synchronization check #104 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-105`:** CardReader & doorway synchronization check #105 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-106`:** CardReader & doorway synchronization check #106 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-107`:** CardReader & doorway synchronization check #107 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-108`:** CardReader & doorway synchronization check #108 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-109`:** CardReader & doorway synchronization check #109 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-110`:** CardReader & doorway synchronization check #110 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-111`:** CardReader & doorway synchronization check #111 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-112`:** CardReader & doorway synchronization check #112 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-113`:** CardReader & doorway synchronization check #113 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-114`:** CardReader & doorway synchronization check #114 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-115`:** CardReader & doorway synchronization check #115 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-116`:** CardReader & doorway synchronization check #116 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-117`:** CardReader & doorway synchronization check #117 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-118`:** CardReader & doorway synchronization check #118 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-119`:** CardReader & doorway synchronization check #119 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-120`:** CardReader & doorway synchronization check #120 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-121`:** CardReader & doorway synchronization check #121 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-122`:** CardReader & doorway synchronization check #122 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-123`:** CardReader & doorway synchronization check #123 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-124`:** CardReader & doorway synchronization check #124 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-125`:** CardReader & doorway synchronization check #125 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-126`:** CardReader & doorway synchronization check #126 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-127`:** CardReader & doorway synchronization check #127 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-128`:** CardReader & doorway synchronization check #128 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-129`:** CardReader & doorway synchronization check #129 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-130`:** CardReader & doorway synchronization check #130 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-131`:** CardReader & doorway synchronization check #131 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-132`:** CardReader & doorway synchronization check #132 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-133`:** CardReader & doorway synchronization check #133 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-134`:** CardReader & doorway synchronization check #134 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-135`:** CardReader & doorway synchronization check #135 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-136`:** CardReader & doorway synchronization check #136 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-137`:** CardReader & doorway synchronization check #137 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-138`:** CardReader & doorway synchronization check #138 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-139`:** CardReader & doorway synchronization check #139 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+- **Validation Rule `CR-VAL-140`:** CardReader & doorway synchronization check #140 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
+
 
 <!-- BEGIN_OUTDATED_TODOS -->
 ## 6. Draft TODOs & Open Questions
