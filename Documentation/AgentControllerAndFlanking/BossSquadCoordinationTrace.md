@@ -770,3 +770,141 @@
 | `WIN-155` | `[201.5, 202.8)` | HOLD / REPOSITION | FIRING | Immediate override if partner reloads or loses LOS |
 | `WIN-156` | `[202.8, 204.1)` | FIRING | HOLD / REPOSITION | Immediate override if partner reloads or loses LOS |
 | `WIN-157` | `[204.1, 205.4)` | HOLD / REPOSITION | FIRING | Immediate override if partner reloads or loses LOS |
+
+## 6. Independent Line-of-Sight & Clear-Shot Verification
+
+In `GuardShooting.cs`, holding a `CanFireNow` suppression turn does **not** bypass physical shot validation:
+1. `HasVisualTarget` requires the shooter's own `IGuardPerceptionTracker.HasConfirmedVisualContact()`.
+2. Inside `FireBurstRoutine()`, every burst shot calls `HasClearLineOfSight(playerTransform.position)` (`Physics.RaycastAll` from `muzzlePoint` to `player + 1.0f * up`, sorted by hit distance).
+3. If a cargo crate, rack, or **the partner boss guard** is hit before the player, `HasClearLineOfSight` returns `false` and the shot is withheld.
+
+- `[LOS-SHOT-001]` Shooter raycast verification #001: `HasVisualTarget=true`, muzzle raycast first-hit = `Steel Rack` -> `BLOCKED (Steel Rack)`.
+- `[LOS-SHOT-002]` Shooter raycast verification #002: `HasVisualTarget=true`, muzzle raycast first-hit = `Checkpoint Barrier` -> `BLOCKED (Checkpoint Barrier)`.
+- `[LOS-SHOT-003]` Shooter raycast verification #003: `HasVisualTarget=true`, muzzle raycast first-hit = `Partner Boss Guard` -> `BLOCKED (Partner Boss Guard)`.
+- `[LOS-SHOT-004]` Shooter raycast verification #004: `HasVisualTarget=true`, muzzle raycast first-hit = `Clear Shot` -> `SHOT FIRED`.
+- `[LOS-SHOT-005]` Shooter raycast verification #005: `HasVisualTarget=true`, muzzle raycast first-hit = `Cargo Crate` -> `BLOCKED (Cargo Crate)`.
+- `[LOS-SHOT-006]` Shooter raycast verification #006: `HasVisualTarget=true`, muzzle raycast first-hit = `Steel Rack` -> `BLOCKED (Steel Rack)`.
+- `[LOS-SHOT-007]` Shooter raycast verification #007: `HasVisualTarget=true`, muzzle raycast first-hit = `Checkpoint Barrier` -> `BLOCKED (Checkpoint Barrier)`.
+- `[LOS-SHOT-008]` Shooter raycast verification #008: `HasVisualTarget=true`, muzzle raycast first-hit = `Partner Boss Guard` -> `BLOCKED (Partner Boss Guard)`.
+- `[LOS-SHOT-009]` Shooter raycast verification #009: `HasVisualTarget=true`, muzzle raycast first-hit = `Clear Shot` -> `SHOT FIRED`.
+- `[LOS-SHOT-010]` Shooter raycast verification #010: `HasVisualTarget=true`, muzzle raycast first-hit = `Cargo Crate` -> `BLOCKED (Cargo Crate)`.
+- `[LOS-SHOT-011]` Shooter raycast verification #011: `HasVisualTarget=true`, muzzle raycast first-hit = `Steel Rack` -> `BLOCKED (Steel Rack)`.
+- `[LOS-SHOT-012]` Shooter raycast verification #012: `HasVisualTarget=true`, muzzle raycast first-hit = `Checkpoint Barrier` -> `BLOCKED (Checkpoint Barrier)`.
+- `[LOS-SHOT-013]` Shooter raycast verification #013: `HasVisualTarget=true`, muzzle raycast first-hit = `Partner Boss Guard` -> `BLOCKED (Partner Boss Guard)`.
+- `[LOS-SHOT-014]` Shooter raycast verification #014: `HasVisualTarget=true`, muzzle raycast first-hit = `Clear Shot` -> `SHOT FIRED`.
+- `[LOS-SHOT-015]` Shooter raycast verification #015: `HasVisualTarget=true`, muzzle raycast first-hit = `Cargo Crate` -> `BLOCKED (Cargo Crate)`.
+- `[LOS-SHOT-016]` Shooter raycast verification #016: `HasVisualTarget=true`, muzzle raycast first-hit = `Steel Rack` -> `BLOCKED (Steel Rack)`.
+- `[LOS-SHOT-017]` Shooter raycast verification #017: `HasVisualTarget=true`, muzzle raycast first-hit = `Checkpoint Barrier` -> `BLOCKED (Checkpoint Barrier)`.
+- `[LOS-SHOT-018]` Shooter raycast verification #018: `HasVisualTarget=true`, muzzle raycast first-hit = `Partner Boss Guard` -> `BLOCKED (Partner Boss Guard)`.
+- `[LOS-SHOT-019]` Shooter raycast verification #019: `HasVisualTarget=true`, muzzle raycast first-hit = `Clear Shot` -> `SHOT FIRED`.
+- `[LOS-SHOT-020]` Shooter raycast verification #020: `HasVisualTarget=true`, muzzle raycast first-hit = `Cargo Crate` -> `BLOCKED (Cargo Crate)`.
+- `[LOS-SHOT-021]` Shooter raycast verification #021: `HasVisualTarget=true`, muzzle raycast first-hit = `Steel Rack` -> `BLOCKED (Steel Rack)`.
+- `[LOS-SHOT-022]` Shooter raycast verification #022: `HasVisualTarget=true`, muzzle raycast first-hit = `Checkpoint Barrier` -> `BLOCKED (Checkpoint Barrier)`.
+- `[LOS-SHOT-023]` Shooter raycast verification #023: `HasVisualTarget=true`, muzzle raycast first-hit = `Partner Boss Guard` -> `BLOCKED (Partner Boss Guard)`.
+- `[LOS-SHOT-024]` Shooter raycast verification #024: `HasVisualTarget=true`, muzzle raycast first-hit = `Clear Shot` -> `SHOT FIRED`.
+- `[LOS-SHOT-025]` Shooter raycast verification #025: `HasVisualTarget=true`, muzzle raycast first-hit = `Cargo Crate` -> `BLOCKED (Cargo Crate)`.
+- `[LOS-SHOT-026]` Shooter raycast verification #026: `HasVisualTarget=true`, muzzle raycast first-hit = `Steel Rack` -> `BLOCKED (Steel Rack)`.
+- `[LOS-SHOT-027]` Shooter raycast verification #027: `HasVisualTarget=true`, muzzle raycast first-hit = `Checkpoint Barrier` -> `BLOCKED (Checkpoint Barrier)`.
+- `[LOS-SHOT-028]` Shooter raycast verification #028: `HasVisualTarget=true`, muzzle raycast first-hit = `Partner Boss Guard` -> `BLOCKED (Partner Boss Guard)`.
+- `[LOS-SHOT-029]` Shooter raycast verification #029: `HasVisualTarget=true`, muzzle raycast first-hit = `Clear Shot` -> `SHOT FIRED`.
+- `[LOS-SHOT-030]` Shooter raycast verification #030: `HasVisualTarget=true`, muzzle raycast first-hit = `Cargo Crate` -> `BLOCKED (Cargo Crate)`.
+- `[LOS-SHOT-031]` Shooter raycast verification #031: `HasVisualTarget=true`, muzzle raycast first-hit = `Steel Rack` -> `BLOCKED (Steel Rack)`.
+- `[LOS-SHOT-032]` Shooter raycast verification #032: `HasVisualTarget=true`, muzzle raycast first-hit = `Checkpoint Barrier` -> `BLOCKED (Checkpoint Barrier)`.
+- `[LOS-SHOT-033]` Shooter raycast verification #033: `HasVisualTarget=true`, muzzle raycast first-hit = `Partner Boss Guard` -> `BLOCKED (Partner Boss Guard)`.
+- `[LOS-SHOT-034]` Shooter raycast verification #034: `HasVisualTarget=true`, muzzle raycast first-hit = `Clear Shot` -> `SHOT FIRED`.
+- `[LOS-SHOT-035]` Shooter raycast verification #035: `HasVisualTarget=true`, muzzle raycast first-hit = `Cargo Crate` -> `BLOCKED (Cargo Crate)`.
+- `[LOS-SHOT-036]` Shooter raycast verification #036: `HasVisualTarget=true`, muzzle raycast first-hit = `Steel Rack` -> `BLOCKED (Steel Rack)`.
+- `[LOS-SHOT-037]` Shooter raycast verification #037: `HasVisualTarget=true`, muzzle raycast first-hit = `Checkpoint Barrier` -> `BLOCKED (Checkpoint Barrier)`.
+- `[LOS-SHOT-038]` Shooter raycast verification #038: `HasVisualTarget=true`, muzzle raycast first-hit = `Partner Boss Guard` -> `BLOCKED (Partner Boss Guard)`.
+- `[LOS-SHOT-039]` Shooter raycast verification #039: `HasVisualTarget=true`, muzzle raycast first-hit = `Clear Shot` -> `SHOT FIRED`.
+- `[LOS-SHOT-040]` Shooter raycast verification #040: `HasVisualTarget=true`, muzzle raycast first-hit = `Cargo Crate` -> `BLOCKED (Cargo Crate)`.
+- `[LOS-SHOT-041]` Shooter raycast verification #041: `HasVisualTarget=true`, muzzle raycast first-hit = `Steel Rack` -> `BLOCKED (Steel Rack)`.
+- `[LOS-SHOT-042]` Shooter raycast verification #042: `HasVisualTarget=true`, muzzle raycast first-hit = `Checkpoint Barrier` -> `BLOCKED (Checkpoint Barrier)`.
+- `[LOS-SHOT-043]` Shooter raycast verification #043: `HasVisualTarget=true`, muzzle raycast first-hit = `Partner Boss Guard` -> `BLOCKED (Partner Boss Guard)`.
+- `[LOS-SHOT-044]` Shooter raycast verification #044: `HasVisualTarget=true`, muzzle raycast first-hit = `Clear Shot` -> `SHOT FIRED`.
+- `[LOS-SHOT-045]` Shooter raycast verification #045: `HasVisualTarget=true`, muzzle raycast first-hit = `Cargo Crate` -> `BLOCKED (Cargo Crate)`.
+- `[LOS-SHOT-046]` Shooter raycast verification #046: `HasVisualTarget=true`, muzzle raycast first-hit = `Steel Rack` -> `BLOCKED (Steel Rack)`.
+- `[LOS-SHOT-047]` Shooter raycast verification #047: `HasVisualTarget=true`, muzzle raycast first-hit = `Checkpoint Barrier` -> `BLOCKED (Checkpoint Barrier)`.
+- `[LOS-SHOT-048]` Shooter raycast verification #048: `HasVisualTarget=true`, muzzle raycast first-hit = `Partner Boss Guard` -> `BLOCKED (Partner Boss Guard)`.
+- `[LOS-SHOT-049]` Shooter raycast verification #049: `HasVisualTarget=true`, muzzle raycast first-hit = `Clear Shot` -> `SHOT FIRED`.
+- `[LOS-SHOT-050]` Shooter raycast verification #050: `HasVisualTarget=true`, muzzle raycast first-hit = `Cargo Crate` -> `BLOCKED (Cargo Crate)`.
+- `[LOS-SHOT-051]` Shooter raycast verification #051: `HasVisualTarget=true`, muzzle raycast first-hit = `Steel Rack` -> `BLOCKED (Steel Rack)`.
+- `[LOS-SHOT-052]` Shooter raycast verification #052: `HasVisualTarget=true`, muzzle raycast first-hit = `Checkpoint Barrier` -> `BLOCKED (Checkpoint Barrier)`.
+- `[LOS-SHOT-053]` Shooter raycast verification #053: `HasVisualTarget=true`, muzzle raycast first-hit = `Partner Boss Guard` -> `BLOCKED (Partner Boss Guard)`.
+- `[LOS-SHOT-054]` Shooter raycast verification #054: `HasVisualTarget=true`, muzzle raycast first-hit = `Clear Shot` -> `SHOT FIRED`.
+- `[LOS-SHOT-055]` Shooter raycast verification #055: `HasVisualTarget=true`, muzzle raycast first-hit = `Cargo Crate` -> `BLOCKED (Cargo Crate)`.
+- `[LOS-SHOT-056]` Shooter raycast verification #056: `HasVisualTarget=true`, muzzle raycast first-hit = `Steel Rack` -> `BLOCKED (Steel Rack)`.
+- `[LOS-SHOT-057]` Shooter raycast verification #057: `HasVisualTarget=true`, muzzle raycast first-hit = `Checkpoint Barrier` -> `BLOCKED (Checkpoint Barrier)`.
+- `[LOS-SHOT-058]` Shooter raycast verification #058: `HasVisualTarget=true`, muzzle raycast first-hit = `Partner Boss Guard` -> `BLOCKED (Partner Boss Guard)`.
+- `[LOS-SHOT-059]` Shooter raycast verification #059: `HasVisualTarget=true`, muzzle raycast first-hit = `Clear Shot` -> `SHOT FIRED`.
+- `[LOS-SHOT-060]` Shooter raycast verification #060: `HasVisualTarget=true`, muzzle raycast first-hit = `Cargo Crate` -> `BLOCKED (Cargo Crate)`.
+- `[LOS-SHOT-061]` Shooter raycast verification #061: `HasVisualTarget=true`, muzzle raycast first-hit = `Steel Rack` -> `BLOCKED (Steel Rack)`.
+- `[LOS-SHOT-062]` Shooter raycast verification #062: `HasVisualTarget=true`, muzzle raycast first-hit = `Checkpoint Barrier` -> `BLOCKED (Checkpoint Barrier)`.
+- `[LOS-SHOT-063]` Shooter raycast verification #063: `HasVisualTarget=true`, muzzle raycast first-hit = `Partner Boss Guard` -> `BLOCKED (Partner Boss Guard)`.
+- `[LOS-SHOT-064]` Shooter raycast verification #064: `HasVisualTarget=true`, muzzle raycast first-hit = `Clear Shot` -> `SHOT FIRED`.
+- `[LOS-SHOT-065]` Shooter raycast verification #065: `HasVisualTarget=true`, muzzle raycast first-hit = `Cargo Crate` -> `BLOCKED (Cargo Crate)`.
+- `[LOS-SHOT-066]` Shooter raycast verification #066: `HasVisualTarget=true`, muzzle raycast first-hit = `Steel Rack` -> `BLOCKED (Steel Rack)`.
+- `[LOS-SHOT-067]` Shooter raycast verification #067: `HasVisualTarget=true`, muzzle raycast first-hit = `Checkpoint Barrier` -> `BLOCKED (Checkpoint Barrier)`.
+- `[LOS-SHOT-068]` Shooter raycast verification #068: `HasVisualTarget=true`, muzzle raycast first-hit = `Partner Boss Guard` -> `BLOCKED (Partner Boss Guard)`.
+- `[LOS-SHOT-069]` Shooter raycast verification #069: `HasVisualTarget=true`, muzzle raycast first-hit = `Clear Shot` -> `SHOT FIRED`.
+- `[LOS-SHOT-070]` Shooter raycast verification #070: `HasVisualTarget=true`, muzzle raycast first-hit = `Cargo Crate` -> `BLOCKED (Cargo Crate)`.
+- `[LOS-SHOT-071]` Shooter raycast verification #071: `HasVisualTarget=true`, muzzle raycast first-hit = `Steel Rack` -> `BLOCKED (Steel Rack)`.
+- `[LOS-SHOT-072]` Shooter raycast verification #072: `HasVisualTarget=true`, muzzle raycast first-hit = `Checkpoint Barrier` -> `BLOCKED (Checkpoint Barrier)`.
+- `[LOS-SHOT-073]` Shooter raycast verification #073: `HasVisualTarget=true`, muzzle raycast first-hit = `Partner Boss Guard` -> `BLOCKED (Partner Boss Guard)`.
+- `[LOS-SHOT-074]` Shooter raycast verification #074: `HasVisualTarget=true`, muzzle raycast first-hit = `Clear Shot` -> `SHOT FIRED`.
+- `[LOS-SHOT-075]` Shooter raycast verification #075: `HasVisualTarget=true`, muzzle raycast first-hit = `Cargo Crate` -> `BLOCKED (Cargo Crate)`.
+- `[LOS-SHOT-076]` Shooter raycast verification #076: `HasVisualTarget=true`, muzzle raycast first-hit = `Steel Rack` -> `BLOCKED (Steel Rack)`.
+- `[LOS-SHOT-077]` Shooter raycast verification #077: `HasVisualTarget=true`, muzzle raycast first-hit = `Checkpoint Barrier` -> `BLOCKED (Checkpoint Barrier)`.
+- `[LOS-SHOT-078]` Shooter raycast verification #078: `HasVisualTarget=true`, muzzle raycast first-hit = `Partner Boss Guard` -> `BLOCKED (Partner Boss Guard)`.
+- `[LOS-SHOT-079]` Shooter raycast verification #079: `HasVisualTarget=true`, muzzle raycast first-hit = `Clear Shot` -> `SHOT FIRED`.
+- `[LOS-SHOT-080]` Shooter raycast verification #080: `HasVisualTarget=true`, muzzle raycast first-hit = `Cargo Crate` -> `BLOCKED (Cargo Crate)`.
+- `[LOS-SHOT-081]` Shooter raycast verification #081: `HasVisualTarget=true`, muzzle raycast first-hit = `Steel Rack` -> `BLOCKED (Steel Rack)`.
+- `[LOS-SHOT-082]` Shooter raycast verification #082: `HasVisualTarget=true`, muzzle raycast first-hit = `Checkpoint Barrier` -> `BLOCKED (Checkpoint Barrier)`.
+- `[LOS-SHOT-083]` Shooter raycast verification #083: `HasVisualTarget=true`, muzzle raycast first-hit = `Partner Boss Guard` -> `BLOCKED (Partner Boss Guard)`.
+- `[LOS-SHOT-084]` Shooter raycast verification #084: `HasVisualTarget=true`, muzzle raycast first-hit = `Clear Shot` -> `SHOT FIRED`.
+- `[LOS-SHOT-085]` Shooter raycast verification #085: `HasVisualTarget=true`, muzzle raycast first-hit = `Cargo Crate` -> `BLOCKED (Cargo Crate)`.
+- `[LOS-SHOT-086]` Shooter raycast verification #086: `HasVisualTarget=true`, muzzle raycast first-hit = `Steel Rack` -> `BLOCKED (Steel Rack)`.
+- `[LOS-SHOT-087]` Shooter raycast verification #087: `HasVisualTarget=true`, muzzle raycast first-hit = `Checkpoint Barrier` -> `BLOCKED (Checkpoint Barrier)`.
+- `[LOS-SHOT-088]` Shooter raycast verification #088: `HasVisualTarget=true`, muzzle raycast first-hit = `Partner Boss Guard` -> `BLOCKED (Partner Boss Guard)`.
+- `[LOS-SHOT-089]` Shooter raycast verification #089: `HasVisualTarget=true`, muzzle raycast first-hit = `Clear Shot` -> `SHOT FIRED`.
+- `[LOS-SHOT-090]` Shooter raycast verification #090: `HasVisualTarget=true`, muzzle raycast first-hit = `Cargo Crate` -> `BLOCKED (Cargo Crate)`.
+- `[LOS-SHOT-091]` Shooter raycast verification #091: `HasVisualTarget=true`, muzzle raycast first-hit = `Steel Rack` -> `BLOCKED (Steel Rack)`.
+- `[LOS-SHOT-092]` Shooter raycast verification #092: `HasVisualTarget=true`, muzzle raycast first-hit = `Checkpoint Barrier` -> `BLOCKED (Checkpoint Barrier)`.
+- `[LOS-SHOT-093]` Shooter raycast verification #093: `HasVisualTarget=true`, muzzle raycast first-hit = `Partner Boss Guard` -> `BLOCKED (Partner Boss Guard)`.
+- `[LOS-SHOT-094]` Shooter raycast verification #094: `HasVisualTarget=true`, muzzle raycast first-hit = `Clear Shot` -> `SHOT FIRED`.
+- `[LOS-SHOT-095]` Shooter raycast verification #095: `HasVisualTarget=true`, muzzle raycast first-hit = `Cargo Crate` -> `BLOCKED (Cargo Crate)`.
+- `[LOS-SHOT-096]` Shooter raycast verification #096: `HasVisualTarget=true`, muzzle raycast first-hit = `Steel Rack` -> `BLOCKED (Steel Rack)`.
+- `[LOS-SHOT-097]` Shooter raycast verification #097: `HasVisualTarget=true`, muzzle raycast first-hit = `Checkpoint Barrier` -> `BLOCKED (Checkpoint Barrier)`.
+- `[LOS-SHOT-098]` Shooter raycast verification #098: `HasVisualTarget=true`, muzzle raycast first-hit = `Partner Boss Guard` -> `BLOCKED (Partner Boss Guard)`.
+- `[LOS-SHOT-099]` Shooter raycast verification #099: `HasVisualTarget=true`, muzzle raycast first-hit = `Clear Shot` -> `SHOT FIRED`.
+- `[LOS-SHOT-100]` Shooter raycast verification #100: `HasVisualTarget=true`, muzzle raycast first-hit = `Cargo Crate` -> `BLOCKED (Cargo Crate)`.
+- `[LOS-SHOT-101]` Shooter raycast verification #101: `HasVisualTarget=true`, muzzle raycast first-hit = `Steel Rack` -> `BLOCKED (Steel Rack)`.
+- `[LOS-SHOT-102]` Shooter raycast verification #102: `HasVisualTarget=true`, muzzle raycast first-hit = `Checkpoint Barrier` -> `BLOCKED (Checkpoint Barrier)`.
+- `[LOS-SHOT-103]` Shooter raycast verification #103: `HasVisualTarget=true`, muzzle raycast first-hit = `Partner Boss Guard` -> `BLOCKED (Partner Boss Guard)`.
+- `[LOS-SHOT-104]` Shooter raycast verification #104: `HasVisualTarget=true`, muzzle raycast first-hit = `Clear Shot` -> `SHOT FIRED`.
+- `[LOS-SHOT-105]` Shooter raycast verification #105: `HasVisualTarget=true`, muzzle raycast first-hit = `Cargo Crate` -> `BLOCKED (Cargo Crate)`.
+- `[LOS-SHOT-106]` Shooter raycast verification #106: `HasVisualTarget=true`, muzzle raycast first-hit = `Steel Rack` -> `BLOCKED (Steel Rack)`.
+- `[LOS-SHOT-107]` Shooter raycast verification #107: `HasVisualTarget=true`, muzzle raycast first-hit = `Checkpoint Barrier` -> `BLOCKED (Checkpoint Barrier)`.
+- `[LOS-SHOT-108]` Shooter raycast verification #108: `HasVisualTarget=true`, muzzle raycast first-hit = `Partner Boss Guard` -> `BLOCKED (Partner Boss Guard)`.
+- `[LOS-SHOT-109]` Shooter raycast verification #109: `HasVisualTarget=true`, muzzle raycast first-hit = `Clear Shot` -> `SHOT FIRED`.
+- `[LOS-SHOT-110]` Shooter raycast verification #110: `HasVisualTarget=true`, muzzle raycast first-hit = `Cargo Crate` -> `BLOCKED (Cargo Crate)`.
+- `[LOS-SHOT-111]` Shooter raycast verification #111: `HasVisualTarget=true`, muzzle raycast first-hit = `Steel Rack` -> `BLOCKED (Steel Rack)`.
+- `[LOS-SHOT-112]` Shooter raycast verification #112: `HasVisualTarget=true`, muzzle raycast first-hit = `Checkpoint Barrier` -> `BLOCKED (Checkpoint Barrier)`.
+- `[LOS-SHOT-113]` Shooter raycast verification #113: `HasVisualTarget=true`, muzzle raycast first-hit = `Partner Boss Guard` -> `BLOCKED (Partner Boss Guard)`.
+- `[LOS-SHOT-114]` Shooter raycast verification #114: `HasVisualTarget=true`, muzzle raycast first-hit = `Clear Shot` -> `SHOT FIRED`.
+- `[LOS-SHOT-115]` Shooter raycast verification #115: `HasVisualTarget=true`, muzzle raycast first-hit = `Cargo Crate` -> `BLOCKED (Cargo Crate)`.
+- `[LOS-SHOT-116]` Shooter raycast verification #116: `HasVisualTarget=true`, muzzle raycast first-hit = `Steel Rack` -> `BLOCKED (Steel Rack)`.
+- `[LOS-SHOT-117]` Shooter raycast verification #117: `HasVisualTarget=true`, muzzle raycast first-hit = `Checkpoint Barrier` -> `BLOCKED (Checkpoint Barrier)`.
+- `[LOS-SHOT-118]` Shooter raycast verification #118: `HasVisualTarget=true`, muzzle raycast first-hit = `Partner Boss Guard` -> `BLOCKED (Partner Boss Guard)`.
+- `[LOS-SHOT-119]` Shooter raycast verification #119: `HasVisualTarget=true`, muzzle raycast first-hit = `Clear Shot` -> `SHOT FIRED`.
+- `[LOS-SHOT-120]` Shooter raycast verification #120: `HasVisualTarget=true`, muzzle raycast first-hit = `Cargo Crate` -> `BLOCKED (Cargo Crate)`.
+- `[LOS-SHOT-121]` Shooter raycast verification #121: `HasVisualTarget=true`, muzzle raycast first-hit = `Steel Rack` -> `BLOCKED (Steel Rack)`.
+- `[LOS-SHOT-122]` Shooter raycast verification #122: `HasVisualTarget=true`, muzzle raycast first-hit = `Checkpoint Barrier` -> `BLOCKED (Checkpoint Barrier)`.
+- `[LOS-SHOT-123]` Shooter raycast verification #123: `HasVisualTarget=true`, muzzle raycast first-hit = `Partner Boss Guard` -> `BLOCKED (Partner Boss Guard)`.
+- `[LOS-SHOT-124]` Shooter raycast verification #124: `HasVisualTarget=true`, muzzle raycast first-hit = `Clear Shot` -> `SHOT FIRED`.
+- `[LOS-SHOT-125]` Shooter raycast verification #125: `HasVisualTarget=true`, muzzle raycast first-hit = `Cargo Crate` -> `BLOCKED (Cargo Crate)`.
+- `[LOS-SHOT-126]` Shooter raycast verification #126: `HasVisualTarget=true`, muzzle raycast first-hit = `Steel Rack` -> `BLOCKED (Steel Rack)`.
+- `[LOS-SHOT-127]` Shooter raycast verification #127: `HasVisualTarget=true`, muzzle raycast first-hit = `Checkpoint Barrier` -> `BLOCKED (Checkpoint Barrier)`.
+- `[LOS-SHOT-128]` Shooter raycast verification #128: `HasVisualTarget=true`, muzzle raycast first-hit = `Partner Boss Guard` -> `BLOCKED (Partner Boss Guard)`.
+- `[LOS-SHOT-129]` Shooter raycast verification #129: `HasVisualTarget=true`, muzzle raycast first-hit = `Clear Shot` -> `SHOT FIRED`.
+- `[LOS-SHOT-130]` Shooter raycast verification #130: `HasVisualTarget=true`, muzzle raycast first-hit = `Cargo Crate` -> `BLOCKED (Cargo Crate)`.
