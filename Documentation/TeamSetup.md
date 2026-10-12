@@ -157,48 +157,71 @@ The victory mechanism has been replaced to match the confirmed game ending:
 
 3. **Disabling of Old Escape Mechanisms:**
    - `EscapeTrigger.isEscapeTriggerActive` set to `false`. Walking onto the platform or into the old exit area cannot trigger victory.
-   - `DoorController.showInteractionPrompt` set to `false` and prompt cleared, eliminating conflicting door prompts. The closed exit door is preserved as background scenery.
+   - `DoorController.showInterac---
 
----
-
-## 5. Physical Reachability & Active Lighting
+## 5. Physical Reachability, Industrial Detailing & Active Lighting
 
 1. **Card A Reachability (`AccessCard_Pickup_Search`):**
-   - `Search_Pallet_CardTable` sits at `(-21, 0.4, 14)`. The south approach aisle stops the player at $Z \approx 12.36\text{m}$.
-   - Trigger collider was expanded to `col.size = (8.0, 10.0, 8.0)` centered at `Vector3.zero`.
-   - Resulting world bounds span $X \in [-23.0, -19.0]$, $Z \in [10.80, 17.20]$. Players walking up to the table at $X = -19.5, Z = 12.0$ achieve physical trigger contact without obstructions.
+   - `Search_Pallet_CardTable` sits at `(-21, 0.4, 14)`.
+   - Trigger collider spans $X \in [-23.0, -19.0]$, $Z \in [10.80, 17.20]$.
+   - A dedicated industrial task spotlight (`CardA_TaskSpotlight`) overhead provides high-contrast illumination directly on Card A.
+   - Stepping into the card table alcove achieves physical trigger contact without obstructions.
 
 2. **Card B Reachability (`AccessCard_Pickup_Defensive`):**
-   - `Terminal_Desk` sits at `(16, 0.5, 10)`.
-   - Trigger collider was expanded to `(1.8, 1.2, 2.2)` at `(16.0, 1.15, 10.2)`, protruding $0.6\text{m}$ north and $0.4\text{m}$ south of the desk solid collider.
-   - Players approaching the desk from the north aisle at $Z = 10.6\text{m}$ achieve physical trigger contact without obstructions.
+   - `Terminal_Desk` sits at `(16, 0.5, 10)` in the Defensive Sector checkpoint.
+   - Trigger collider spans `(1.8, 1.2, 2.2)` at `(16.0, 1.15, 10.2)`, protruding north and south of the desk solid collider.
+   - A dedicated task spotlight (`CardB_TaskSpotlight`) illuminates Card B on the console desk.
+   - Approaching from the north aisle achieves physical trigger contact without obstructions.
 
-3. **Active Lighting System (`Lighting_Active`):**
-   - Deactivating the obsolete `Environment` root removed residual lamps.
-   - A dedicated `Lighting_Active` group was created containing 6 tuned industrial point lights:
-     - `PointLight_Room1`: `(0.0, 4.0, -26.0)`, Range 16m, Intensity 1.4.
-     - `PointLight_Room2`: `(0.0, 4.2, -11.0)`, Range 22m, Intensity 1.5.
-     - `PointLight_Room3`: `(-16.0, 4.2, 7.0)`, Range 22m, Intensity 1.5.
-     - `PointLight_Room4`: `(16.0, 4.2, 7.0)`, Range 22m, Intensity 1.5.
-     - `PointLight_Boss_South`: `(0.0, 4.2, 26.0)`, Range 20m, Intensity 1.6.
-     - `PointLight_Boss_North`: `(0.0, 4.2, 39.0)`, Range 20m, Intensity 1.6 (illuminating reader).
-     - `DirectionalLight_Active`: Directional fill light ensuring balanced visibility across all aisles.
-
-4. **NavMesh Baking:**
-   - NavMesh was completely rebaked on the active `Warehouse_Environment` geometry, covering all five rooms and four corridors. Obsolete residual geometry is excluded.
+3. **Industrial Warehouse Architectural Overhaul:**
+   - **Enclosed Ceilings & Structural Steel:** All five rooms and connecting corridors have solid industrial ceilings (`Mat_Ceiling`), completely blocking the skybox and creating an authentic warehouse interior. Transverse dark steel I-beams (`Mat_Steel_Dark`) span the ceilings at $Y = 4.75\text{m}$ with steel corner columns and doorway portals.
+   - **Overhead HVAC Ventilation & Utility Piping:** Galvanized sheet-metal ventilation ducts (`Mat_Duct_Metal`) run along the ceilings with branch ducts into Rooms 3 and 4. Parallel utility pipes (conduit and safety yellow gas pipes) line the upper walls.
+   - **Detailed Multi-Tier Pallet Racking:** Monolithic solid color blocks have been replaced with realistic pallet racks:
+     - Blue vertical upright frames (`Mat_Rack_Blue`).
+     - Orange load beams (`Mat_Rack_Orange`).
+     - Wire decking levels (`Mat_Shelf_Level`).
+     - Wooden pallets (`Mat_Pallet`).
+     - Varied cargo: corrugated cardboard cartons (`Mat_Crate_Dark`), wooden crates (`Mat_Crate_Wood`), blue/hazard steel drums (`Mat_Barrel_Blue`, `Mat_Barrel_Hazard`), and plastic shrink-wrapped cargo (`Mat_Cargo_Wrapped`).
+     - Solid colliders strictly normalized with `localScale = Vector3.one`, ensuring central thoroughfares $\ge 2.25\text{m}$ and side aisles $\ge 3.0\text{m}$.
+   - **Floor Safety Markings & Demarcations:** Thin decals at $Y = 0.005\text{m}$ with disabled colliders:
+     - Yellow traffic guide lines along Room 2 central aisle and branch entrances.
+     - White pedestrian walkway lines spanning Room 5 loading hall.
+     - Yellow/black hazard boundary boxes surrounding the Card Reader Terminal and the forklift staging zone.
+     - Airlock staging line in Room 1.
+   - **Props & Loading Bay Features:**
+     - Room 4: Detailed industrial forklift with chassis (`Mat_Forklift_Yellow`), counterweight, safety cage, mast, forks, and cargo pallet.
+     - Room 5: Industrial roll-up shutter door (`Mat_Shutter_Metal`) with horizontal slats and roll barrel on the north wall, flanked by safety bollards.
+   - **Lighting System & Focal Points:**
+     - Suspended high-bay fixtures (`Mat_Lamp_Metal`, `Mat_Bulb_Warm`) with soft shadows across all five rooms and corridors.
+     - Directional ambient fill light (`Warehouse_DirectionalFill`) providing cold moonlight bounce.
+     - Card Reader Terminal focal spotlight: High-intensity angled spotlight creating a dramatic visual highlight at the far end of Room 5.
 
 ---
 
-## 6. Actual Unity Play Mode Verification Results
+## 6. Player Viewpoint Verification Screenshots
 
-The five-room structure and all 7 verification criteria were validated in **actual Unity Play Mode** (Unity 6000.3.25f1 LTS, WindowsEditor) using `CharacterController.Move()` and frame-by-frame physics traversal without teleportation or mathematical substitution:
+High-resolution 1280x720 player camera captures from all five room viewpoints were rendered and inspected before and after the aesthetic overhaul:
+
+| Room / Perspective | Viewpoint Position & Rotation | Before Screenshot Path | After Screenshot Path | Key Visual Upgrades |
+| :--- | :--- | :--- | :--- | :--- |
+| **Room 1: Safe Start** | Pos: `(0.0, 1.6, -26.0)`<br>Rot: `(0, 0, 0)` | `scratch/screenshots/before_room1_start.png` | `scratch/screenshots/after_room1_start.png` | Ceiling blocks cartoon sky; floor safety airlock line; overhead ducting; visible steel doorway portal and organized Room 2 racks down corridor. |
+| **Room 2: Patrol Room** | Pos: `(0.0, 1.6, -15.0)`<br>Rot: `(0, 0, 0)` | `scratch/screenshots/before_room2_patrol.png` | `scratch/screenshots/after_room2_patrol.png` | Monolithic blue/orange blocks replaced by multi-tier racks with crates and barrels; central yellow lane lines; suspended warm high-bay lamp; dual branch signs with hazard borders. |
+| **Room 3: Search Sector** | Pos: `(-12.0, 1.6, 2.0)`<br>Rot: `(5, -40, 0)` | `scratch/screenshots/before_room3_search.png` | `scratch/screenshots/after_room3_search.png` | Cross-duct HVAC ceiling; hiding corner crate stack for stealth; Access Card A pallet table with dedicated task lamp making card glowing and unmistakable. |
+| **Room 4: Defensive Sector** | Pos: `(12.0, 1.6, 2.0)`<br>Rot: `(5, 40, 0)` | `scratch/screenshots/before_room4_defensive.png` | `scratch/screenshots/after_room4_defensive.png` | Security console desk with lit Card B; detailed industrial forklift in hazard staging bay; wrapped electronic cargo; Aqqil's defensive guard station. |
+| **Room 5: Boss Loading Hall** | Pos: `(0.0, 1.6, 23.0)`<br>Rot: `(2, 0, 0)` | `scratch/screenshots/before_room5_boss.png` | `scratch/screenshots/after_room5_boss.png` | Full warehouse roof with double I-beams; multi-tier flank racks on both sides; white floor lane lines; grand roll-up shutter; safety bollards and glowing Card Reader Terminal focal point. |
+
+---
+
+## 7. Actual Unity Play Mode Verification Results
+
+The five-room structure, physical reachability, and all 7 verification criteria were validated in **actual Unity Play Mode** (Unity 6000.3.25f1 LTS, WindowsEditor) using `CharacterController.Move()` and frame-by-frame physics traversal without teleportation or mathematical substitution:
 
 ### PlayMode Test Suite Execution (`PhysicalWalkthroughTests.cs`)
 
 ```
 ================================================================================
 UNITY PLAY MODE PHYSICAL CONTROLLER TRAVERSAL VERIFICATION REPORT
-Timestamp: 2026-10-12 10:48:16
+Timestamp: 2026-10-12 13:43:15
 Unity Version: 6000.3.25f1, Platform: WindowsEditor
 ================================================================================
 
@@ -212,32 +235,32 @@ Unity Version: 6000.3.25f1, Platform: WindowsEditor
 --- TEST 2: ROUTE A CONTROLLER TRAVERSAL -> CARD A -> BOSS ROOM -> READER -> VICTORY ---
   [Room 1 -> Room 2 Center Aisle Traversed] Total Distance: 15.7m, Duration: 3.1s, End Pos: (0.00, 1.08, -10.35)
   [STEALTH] Tactical pause (2.5s) behind Rack_Center_1 while Varun patrols north crossing...
-  [Route A -> Search Room Card A Table Traversed] Total Distance: 36.4m, Duration: 7.3s, End Pos: (-19.56, 1.08, 10.24)
+  [Route A -> Search Room Card A Table Traversed] Total Distance: 36.3m, Duration: 7.3s, End Pos: (-19.49, 1.08, 10.33)
 [PASS] Access Card A Collected physically. HasKeycard = True
-  [Room 3 -> Corridor -> Room 5 Boss Room -> Card Reader Traversed] Total Distance: 47.1m, Duration: 9.5s, End Pos: (-0.33, 1.08, 39.87)
+  [Room 3 -> Corridor -> Room 5 Boss Room -> Card Reader Traversed] Total Distance: 46.6m, Duration: 9.3s, End Pos: (-0.33, 1.08, 39.87)
 [PASS] Player in Range of Card Reader. Prompt: '[E] Insert Access Card'
 [PASS] Card Reader Accepted Card: isCardInserted = True, Feedback = 'Access Granted! Evacuation Confirmed.'
 [PASS] Route A Full Walkthrough Verified: Victory State = Victory
 
 --- TEST 3: ROUTE B CONTROLLER TRAVERSAL -> CARD B -> BOSS ROOM -> READER -> VICTORY ---
-  [Room 1 -> Room 2 Center Aisle Traversed] Total Distance: 15.7m, Duration: 3.1s, End Pos: (0.06, 1.08, -10.35)
+  [Room 1 -> Room 2 Center Aisle Traversed] Total Distance: 15.7m, Duration: 3.1s, End Pos: (0.00, 1.08, -10.35)
   [STEALTH] Tactical pause (2.5s) behind Rack_Center_1 while Varun patrols north crossing...
-  [Route B -> Defensive Room Card B Desk Traversed] Total Distance: 33.5m, Duration: 7.1s, End Pos: (15.75, 1.08, 11.17)
+  [Route B -> Defensive Room Card B Desk Traversed] Total Distance: 33.2m, Duration: 7.1s, End Pos: (15.75, 1.08, 11.17)
 [PASS] Access Card B Collected physically. HasKeycard = True
-  [Room 4 -> Corridor -> Room 5 Boss Room -> Card Reader Traversed] Total Distance: 42.8m, Duration: 8.6s, End Pos: (0.33, 1.08, 39.87)
+  [Room 4 -> Corridor -> Room 5 Boss Room -> Card Reader Traversed] Total Distance: 42.8m, Duration: 8.6s, End Pos: (0.32, 1.08, 39.87)
 [PASS] Player in Range of Card Reader. Prompt: '[E] Insert Access Card'
 [PASS] Card Reader Accepted Card B: isCardInserted = True, Feedback = 'Access Granted! Evacuation Confirmed.'
 [PASS] Route B Full Walkthrough Verified: Victory State = Victory
 
 --- TEST 4: CARD READER REJECTION WITHOUT ACCESS CARD ---
   [Room 1 -> Room 2 Center Aisle Traversed] Total Distance: 15.7m, Duration: 3.1s, End Pos: (0.00, 1.08, -10.35)
-  [Room 4 West Aisle (Card B Bypassed) Traversed] Total Distance: 26.9m, Duration: 5.7s, End Pos: (9.50, 1.08, 11.05)
-  [Corridor -> Room 5 Reader (No Card) Traversed] Total Distance: 37.0m, Duration: 7.5s, End Pos: (0.33, 1.08, 39.87)
+  [Room 4 West Aisle (Card B Bypassed) Traversed] Total Distance: 26.8m, Duration: 5.6s, End Pos: (9.50, 1.08, 11.05)
+  [Corridor -> Room 5 Reader (No Card) Traversed] Total Distance: 37.0m, Duration: 7.5s, End Pos: (0.32, 1.08, 39.87)
 [PASS] Reader Correctly Rejected Interaction: Feedback = 'Access card required', IsGameWon = False
 
 --- TEST 5: ENTERING BOSS ROOM & OLD EXIT AREA DOES NOT TRIGGER VICTORY ---
-  [Room 1 -> Room 2 Traversed] Total Distance: 15.7m, Duration: 3.1s, End Pos: (0.06, 1.08, -10.34)
-  [Room 4 West Aisle Traversed] Total Distance: 26.9m, Duration: 5.7s, End Pos: (9.50, 1.08, 11.05)
+  [Room 1 -> Room 2 Traversed] Total Distance: 15.7m, Duration: 3.1s, End Pos: (0.00, 1.08, -10.35)
+  [Room 4 West Aisle Traversed] Total Distance: 26.8m, Duration: 5.6s, End Pos: (9.50, 1.08, 11.05)
   [Room 5 Boss Room -> Old Exit Area Traversed] Total Distance: 37.0m, Duration: 7.5s, End Pos: (0.32, 1.08, 39.87)
 [PASS] Confirmed Old Exit Area & Boss Room Cannot Trigger Victory: IsGameWon = False
 
@@ -254,27 +277,27 @@ OVERALL PHYSICAL CONTROLLER VERIFICATION: ALL 7 CRITERIA VERIFIED [SUCCESS]
 
 1. **Empty start -> first agent room:** Confirmed. Room 1 has 0 enemy agents; player walks physically from spawn `(0, 1.08, -26)` through doorway into Room 2 (`Test_1`).
 2. **Two distinct branch entrances from Room 2:** Confirmed. `Sign_Route_A` and `Sign_Route_B` mark separate, simultaneously accessible branch doorways (`Test_1`).
-3. **Route A physical walkthrough -> Card A -> Boss Room -> [E] at Reader -> Victory:** Confirmed. Player physically collects Card A, navigates corridor into Room 5, approaches reader, interacts, and triggers victory (`Test_2`).
-4. **Route B physical walkthrough -> Card B -> Boss Room -> [E] at Reader -> Victory:** Confirmed. Fresh restart, player physically collects Card B, navigates corridor into Room 5, interacts with reader, and triggers victory (`Test_3`).
+3. **Route A physical walkthrough -> Card A -> Boss Room -> [E] at Reader -> Victory:** Confirmed. Player physically collects Card A via CharacterController trigger contact, traverses corridor into Room 5, approaches reader, interacts, and triggers victory (`Test_2`).
+4. **Route B physical walkthrough -> Card B -> Boss Room -> [E] at Reader -> Victory:** Confirmed. Fresh restart, player physically collects Card B, traverses corridor into Room 5, interacts with reader, and triggers victory (`Test_3`).
 5. **Reader rejects interaction without card:** Confirmed. Player reaches reader without card, attempts interaction, receives `"Access card required"`, and gameplay continues (`Test_4`).
 6. **Entering boss room or old exit area alone cannot trigger victory:** Confirmed. Player traversing Room 5 up to the closed exit door without card insertion does not trigger victory; old `EscapeTrigger` is disabled (`Test_5`).
 7. **Restart resets cards, agents, reader, and game state:** Confirmed. `RestartGame()` resets inventory (`HasKeycard = false`), re-activates both card pickups, resets all 4 guards, restores reader state, resets player to spawn, and restores UI (`Test_6`).
 
 ---
 
-## 7. Test Distinction & Methodology Disclosure
+## 8. Test Distinction & Methodology Disclosure
 
 To ensure complete scientific rigor in testing:
 
 1. **Controller-Driven Traversal:** All player movement across all five rooms and corridors is executed via `CharacterController.Move()` and `PlayerMovement` step-by-step with real-time collision detection. Teleportation, direct `transform.position` overrides, and mathematical kinematic simulations were strictly avoided.
 2. **Physical Trigger Collision:** Both access cards (`AccessCard_Pickup_Search` and `AccessCard_Pickup_Defensive`) are collected purely by the `CharacterController` physically entering the trigger collider volume during gameplay traversal. Direct programmatic calls to `AccessCard.Collect()` were not used for walkthrough testing.
-3. **Card Reader Interaction:** The Card Reader component evaluates physical proximity (`IsPlayerInRange`) and checks `Input.GetKeyDown(KeyCode.E)`. In PlayMode test runners, interaction execution calls `cardReader.TryInsertCard()` to evaluate the terminal logic while the controller is physically positioned in the interaction zone.
+3. **Card Reader Interaction:** The Card Reader component evaluates physical proximity (`IsPlayerInRange`) and checks `Input.GetKeyDown(KeyCode.E)`. In PlayMode test runners, interaction execution calls `cardReader.TryInsertCard()` while the controller is physically positioned in the interaction zone. In interactive player mode, pressing the physical `[E]` key on the keyboard invokes `TryInsertCard()` identically.
 4. **Programmatic UI Events:** Button clicks on UI modals (Restart and Play Again) dispatch via `Button.onClick.Invoke()`, testing listener wiring and scene reload mechanics without simulating OS hardware mouse pointers.
 
 ---
 
-## 8. Remaining Limitations
+## 9. Remaining Limitations
 
-1. **Batch Mode Input Queue:** In automated headless Unity batch mode, hardware OS keyboard events (`Input.GetKeyDown(KeyCode.E)`) do not dispatch from an OS window message pump. Walkthrough tests verify proximity and call the interaction method directly (`TryInsertCard()`), which is the exact logic executed on `KeyCode.E`.
-2. **Scenery Doorway Collisions:** The old exit door (`Exit_Door`) remains closed as scenery. The solid door and blocker prevent players from walking onto the outer platform while the game is running, which reinforces that the escape terminal inside Room 5 is the sole route to victory.
+1. **Batch Mode Input Queue:** In automated headless Unity batch mode, hardware OS keyboard events (`Input.GetKeyDown(KeyCode.E)`) do not dispatch from an OS window message pump. Walkthrough tests verify physical proximity and call the interaction method directly (`TryInsertCard()`), which is the exact logic executed on `KeyCode.E`.
+2. **Scenery Doorway Collisions:** The old exit door (`Exit_Door`) remains closed as scenery. The solid door and blocker prevent players from walking onto the outer platform while the game is running, reinforcing that the escape terminal inside Room 5 is the sole route to victory.
 3. **Lighting Bake:** Active point lights provide full real-time lighting across all rooms. Precomputed lightmaps have not been rebaked for the new layout, so dynamic real-time lights and ambient skybox lighting are used.
