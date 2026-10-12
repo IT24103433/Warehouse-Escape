@@ -81,6 +81,66 @@ public class DefensiveGuardAI : MonoBehaviour
     void Awake()
     {
         enemyMovement = GetComponent<EnemyMovement>();
+        CleanupRoom4PlaceholdersAndCapsule();
+        EnsureHumanVisualAttached();
+    }
+
+    private void CleanupRoom4PlaceholdersAndCapsule()
+    {
+        // 1. Remove duplicate placeholder guard renderers in Room 4
+        var room4 = GameObject.Find("Room_4_Defensive");
+        if (room4 != null)
+        {
+            var placeholders = room4.transform.Find("[Aqqil_Placeholders]");
+            if (placeholders != null)
+            {
+                var placeholderGuard = placeholders.Find("[Placeholder]_Guard_CharacterMesh");
+                if (placeholderGuard != null)
+                {
+                    placeholderGuard.gameObject.SetActive(false);
+                    if (Application.isPlaying) Destroy(placeholderGuard.gameObject);
+                    else DestroyImmediate(placeholderGuard.gameObject);
+                }
+            }
+        }
+
+        var globalPlaceholder = GameObject.Find("[Placeholder]_Guard_CharacterMesh");
+        if (globalPlaceholder != null)
+        {
+            globalPlaceholder.SetActive(false);
+            if (Application.isPlaying) Destroy(globalPlaceholder);
+            else DestroyImmediate(globalPlaceholder);
+        }
+
+        var mannequin = GameObject.Find("Mannequin_Body");
+        if (mannequin != null)
+        {
+            mannequin.SetActive(false);
+            if (Application.isPlaying) Destroy(mannequin);
+            else DestroyImmediate(mannequin);
+        }
+
+        // 2. Hide / destroy original capsule MeshRenderer and MeshFilter on AI root while preserving
+        // CapsuleCollider, NavMeshAgent, GuardCapture, EnemyMovement, and DefensiveGuardAI components
+        var rootMr = GetComponent<MeshRenderer>();
+        if (rootMr != null)
+        {
+            rootMr.enabled = false;
+            if (Application.isPlaying) Destroy(rootMr);
+            else DestroyImmediate(rootMr);
+        }
+
+        var rootMf = GetComponent<MeshFilter>();
+        if (rootMf != null)
+        {
+            if (Application.isPlaying) Destroy(rootMf);
+            else DestroyImmediate(rootMf);
+        }
+    }
+
+    private void EnsureHumanVisualAttached()
+    {
+        HumanoidMeshBuilder.EnsureRuntimeVisuals(transform, CharacterRole.Defensive_Aqqil);
     }
 
     void Start()

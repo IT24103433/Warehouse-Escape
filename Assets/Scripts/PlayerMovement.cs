@@ -17,6 +17,8 @@ public class PlayerMovement : MonoBehaviour
         controller = GetComponent<CharacterController>();
         playerCamera = GetComponentInChildren<Camera>();
 
+        HumanoidMeshBuilder.EnsureRuntimeVisuals(transform, CharacterRole.Player);
+
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }

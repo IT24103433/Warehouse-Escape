@@ -198,6 +198,11 @@ public class FlankingGuardAI : MonoBehaviour
     {
         enemyMovement = GetComponent<EnemyMovement>();
         guardPatrol = GetComponent<GuardPatrol>();
+        var rootMr = GetComponent<MeshRenderer>();
+        if (rootMr != null) { rootMr.enabled = false; if (Application.isPlaying) Destroy(rootMr); else DestroyImmediate(rootMr); }
+        var rootMf = GetComponent<MeshFilter>();
+        if (rootMf != null) { if (Application.isPlaying) Destroy(rootMf); else DestroyImmediate(rootMf); }
+        HumanoidMeshBuilder.EnsureRuntimeVisuals(transform, CharacterRole.Boss_Jadavan);
     }
 
     void Start()
