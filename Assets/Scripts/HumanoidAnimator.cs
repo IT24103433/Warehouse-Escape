@@ -6,8 +6,15 @@ using Unity.AI.Navigation;
 /// <summary>
 /// Kinematic procedural humanoid animator.
 /// Drives articulated hips, knees, shoulders, elbows, feet, spine, and head
-/// based on real velocity and locomotion states with smooth idle breathing and velocity-driven gait.
+/// based on real horizontal locomotion states with smooth idle breathing and velocity-driven gait.
 /// Operates strictly as a visual presentation controller without root motion or gameplay interference.
+/// 
+/// Key Capabilities:
+/// - Robust speed derivation from actual horizontal ground displacement and CharacterController velocity,
+///   explicitly filtering vertical gravity / Move() jitter and enforcing an idle deadzone to eliminate foot sliding.
+/// - Distance-coupled stride phase progression matching ground displacement to prevent foot slippage.
+/// - Camera pitch tracking (-80 to +80 deg) with smooth first-person arms retraction when looking down,
+///   guaranteeing a completely clear, natural view of thighs, knees, and grounded combat boots.
 /// </summary>
 public class HumanoidAnimator : MonoBehaviour
 {
@@ -41,6 +48,7 @@ public class HumanoidAnimator : MonoBehaviour
     // References to physics/navigation components
     private NavMeshAgent agent;
     private CharacterController controller;
+    private Camera playerCam;
 
     // Rest pose caches
     private Vector3 pelvisBasePos;
@@ -65,6 +73,7 @@ public class HumanoidAnimator : MonoBehaviour
     private float smoothSpeed = 0f;
     private float moveWeight = 0f;
     private Vector3 lastWorldPos;
+    private float lastPitch = 0f;
 
     void Awake()
     {
@@ -139,11 +148,18 @@ public class HumanoidAnimator : MonoBehaviour
     {
         agent = GetComponentInParent<NavMeshAgent>();
         controller = GetComponentInParent<CharacterController>();
+
+        if (isFirstPersonPlayer)
+        {
+            if (controller != null)
+                playerCam = controller.GetComponentInChildren<Camera>();
+            if (playerCam == null)
+                playerCam = Camera.main;
+        }
     }
 
     void Update()
     {
-        // Support pause & victory/defeat game over cleanly
         if (Time.timeScale <= 0f) return;
         if (GameManager.Instance != null && GameManager.Instance.IsGameEnded)
         {
@@ -154,42 +170,53 @@ public class HumanoidAnimator : MonoBehaviour
         float dt = Time.deltaTime;
         if (dt <= 0.0001f) return;
 
-        // Calculate actual movement velocity
+        // 1. Calculate actual horizontal ground displacement
         Vector3 currentWorldPos = transform.position;
-        float actualSpeed = 0f;
-
-        if (agent != null && agent.enabled)
-        {
-            actualSpeed = agent.velocity.magnitude;
-        }
-        else if (controller != null && controller.enabled)
-        {
-            Vector3 vel = controller.velocity;
-            vel.y = 0f;
-            actualSpeed = vel.magnitude;
-        }
-        else
-        {
-            Vector3 delta = currentWorldPos - lastWorldPos;
-            delta.y = 0f;
-            actualSpeed = delta.magnitude / dt;
-        }
+        Vector3 horizDelta = currentWorldPos - lastWorldPos;
+        horizDelta.y = 0f;
+        float displacementSpeed = horizDelta.magnitude / dt;
         lastWorldPos = currentWorldPos;
 
-        // Smooth speed and blend weight
-        smoothSpeed = Mathf.MoveTowards(smoothSpeed, actualSpeed, dt * 5.0f);
-        float targetWeight = Mathf.Clamp01(smoothSpeed / 3.0f);
-        moveWeight = Mathf.MoveTowards(moveWeight, targetWeight, dt * 4.0f);
-
-        // Advance gait phase based on actual locomotion
-        if (moveWeight > 0.02f)
+        // 2. Query physics/controller velocity, explicitly filtering vertical velocity
+        float reportedSpeed = 0f;
+        if (controller != null && controller.enabled)
         {
-            gaitPhase += walkFrequency * (0.8f + moveWeight * 0.4f) * dt;
-            if (gaitPhase > Mathf.PI * 2f) gaitPhase -= Mathf.PI * 2f;
+            Vector3 cv = controller.velocity;
+            cv.y = 0f;
+            reportedSpeed = cv.magnitude;
+        }
+        else if (agent != null && agent.enabled)
+        {
+            reportedSpeed = agent.velocity.magnitude;
         }
 
-        // Apply articulated poses
-        ApplyArticulatedPose();
+        // 3. Robust speed combination with an idle deadzone to prevent foot sliding / gravity noise
+        float rawSpeed = Mathf.Max(displacementSpeed, reportedSpeed);
+        if (rawSpeed < 0.08f) rawSpeed = 0f;
+
+        // Smooth speed and blend weight
+        smoothSpeed = Mathf.MoveTowards(smoothSpeed, rawSpeed, dt * 6.0f);
+        float targetWeight = Mathf.Clamp01(smoothSpeed / 3.0f);
+        moveWeight = Mathf.MoveTowards(moveWeight, targetWeight, dt * 5.0f);
+
+        // 4. Stride phase progression tied directly to distance traveled to avoid foot sliding
+        if (moveWeight > 0.01f)
+        {
+            float strideCycleDist = 1.4f;
+            float movedDist = horizDelta.magnitude;
+            if (movedDist > 0.0001f)
+            {
+                gaitPhase += (movedDist / strideCycleDist) * (Mathf.PI * 2f);
+            }
+            else
+            {
+                gaitPhase += (smoothSpeed / strideCycleDist) * (Mathf.PI * 2f) * dt;
+            }
+            if (gaitPhase > Mathf.PI * 2f) gaitPhase %= (Mathf.PI * 2f);
+        }
+
+        // 5. Apply articulated procedural pose
+        ApplyArticulatedPose(dt);
     }
 
     private void ApplyIdleBreathingOnly()
@@ -198,29 +225,29 @@ public class HumanoidAnimator : MonoBehaviour
         if (spine != null)
             spine.localRotation = spineBaseRot * Quaternion.Euler(breath * idleBreathingAngle, 0f, 0f);
         if (pelvis != null)
-            pelvis.localPosition = pelvisBasePos + Vector3.up * (breath * 0.006f);
+            pelvis.localPosition = pelvisBasePos + Vector3.up * (breath * 0.005f);
     }
 
-    private void ApplyArticulatedPose()
+    private void ApplyArticulatedPose(float dt)
     {
         float breath = Mathf.Sin(Time.time * idleBreathingSpeed);
 
-        // 1. Pelvis & Hips
+        // 1. Pelvis & Hips (natural subtle sway and vertical dip during stride)
         if (pelvis != null)
         {
-            float verticalDip = -Mathf.Abs(Mathf.Sin(gaitPhase)) * 0.025f * moveWeight;
-            float hipSwayY = Mathf.Sin(gaitPhase) * 2.5f * moveWeight;
-            float hipRollZ = Mathf.Sin(gaitPhase) * 1.5f * moveWeight;
+            float verticalDip = -Mathf.Abs(Mathf.Sin(gaitPhase)) * 0.022f * moveWeight;
+            float hipSwayY = Mathf.Sin(gaitPhase) * 2.2f * moveWeight;
+            float hipRollZ = Mathf.Sin(gaitPhase) * 1.2f * moveWeight;
 
-            pelvis.localPosition = pelvisBasePos + Vector3.up * (verticalDip + breath * 0.006f * (1f - moveWeight));
+            pelvis.localPosition = pelvisBasePos + Vector3.up * (verticalDip + breath * 0.005f * (1f - moveWeight));
             pelvis.localRotation = pelvisBaseRot * Quaternion.Euler(0f, hipSwayY, hipRollZ);
         }
 
         // 2. Spine & Chest (counter-rotation to hips)
         if (spine != null)
         {
-            float spineCounterY = -Mathf.Sin(gaitPhase) * 3.5f * moveWeight;
-            float spinePitch = (breath * idleBreathingAngle * (1f - moveWeight * 0.5f)) + (moveWeight * 3.5f);
+            float spineCounterY = -Mathf.Sin(gaitPhase) * 3.0f * moveWeight;
+            float spinePitch = (breath * idleBreathingAngle * (1f - moveWeight * 0.5f)) + (moveWeight * 3.0f);
             spine.localRotation = spineBaseRot * Quaternion.Euler(spinePitch, spineCounterY, 0f);
         }
 
@@ -231,14 +258,13 @@ public class HumanoidAnimator : MonoBehaviour
             head.localRotation = headBaseRot * Quaternion.Euler(-moveWeight * 2.0f, headScan, 0f);
         }
 
-        // 4. Legs (coordinated stride, knee flex, grounded foot plant)
+        // 4. Legs (Grounded foot plant, knee flex on swing phase)
         float sinPhase = Mathf.Sin(gaitPhase);
 
         // Left Leg
         float strideL = sinPhase * maxStrideAngle * moveWeight;
-        // Knee flexes on upswing (negative sin)
         float kneeFlexL = Mathf.Clamp(-sinPhase, 0f, 1f) * kneeBendAngle * moveWeight;
-        float ankleL = -strideL * 0.45f;
+        float ankleL = -strideL * 0.42f;
 
         if (thighL != null)
             thighL.localRotation = thighLBaseRot * Quaternion.Euler(strideL, 0f, 0f);
@@ -249,9 +275,8 @@ public class HumanoidAnimator : MonoBehaviour
 
         // Right Leg (opposite phase)
         float strideR = -sinPhase * maxStrideAngle * moveWeight;
-        // Knee flexes on upswing (positive sin)
         float kneeFlexR = Mathf.Clamp(sinPhase, 0f, 1f) * kneeBendAngle * moveWeight;
-        float ankleR = -strideR * 0.45f;
+        float ankleR = -strideR * 0.42f;
 
         if (thighR != null)
             thighR.localRotation = thighRBaseRot * Quaternion.Euler(strideR, 0f, 0f);
@@ -260,8 +285,7 @@ public class HumanoidAnimator : MonoBehaviour
         if (footR != null)
             footR.localRotation = footRBaseRot * Quaternion.Euler(ankleR, 0f, 0f);
 
-        // 5. Arms (oppositional swing to legs with natural elbow bend)
-        // Left arm opposes left leg -> swings with right leg
+        // 5. Arms (Oppositional swing for guards)
         float armSwingL = -sinPhase * maxArmSwingAngle * moveWeight;
         float elbowFlexL = (14f + Mathf.Abs(sinPhase) * 18f * moveWeight);
 
@@ -270,7 +294,6 @@ public class HumanoidAnimator : MonoBehaviour
         if (forearmL != null)
             forearmL.localRotation = forearmLBaseRot * Quaternion.Euler(elbowFlexL, 0f, 0f);
 
-        // Right arm opposes right leg -> swings with left leg
         float armSwingR = sinPhase * maxArmSwingAngle * moveWeight;
         float elbowFlexR = (14f + Mathf.Abs(sinPhase) * 18f * moveWeight);
 
@@ -279,15 +302,30 @@ public class HumanoidAnimator : MonoBehaviour
         if (forearmR != null)
             forearmR.localRotation = forearmRBaseRot * Quaternion.Euler(elbowFlexR, 0f, 0f);
 
-        // 6. First-Person Arms Sway (if attached)
+        // 6. First-Person Camera Pitch Adaptation & Arms Presentation
         if (isFirstPersonPlayer && fpArmsRoot != null)
         {
-            float armBobY = Mathf.Sin(gaitPhase * 2f) * 0.012f * moveWeight + (breath * 0.003f);
-            float armSwayX = Mathf.Sin(gaitPhase) * 0.015f * moveWeight;
-            float armRollZ = Mathf.Sin(gaitPhase) * 1.5f * moveWeight;
+            float targetPitch = 0f;
+            if (playerCam != null)
+            {
+                targetPitch = playerCam.transform.localEulerAngles.x;
+                if (targetPitch > 180f) targetPitch -= 360f;
+            }
+            lastPitch = Mathf.MoveTowards(lastPitch, targetPitch, dt * 200f);
 
-            fpArmsRoot.localPosition = fpArmsBasePos + new Vector3(armSwayX, armBobY, 0f);
-            fpArmsRoot.localRotation = fpArmsBaseRot * Quaternion.Euler(armBobY * 80f, armSwayX * 60f, armRollZ);
+            // Pitch tucking: when looking down (>10 deg), smoothly retract arms down & back
+            float downTuck = Mathf.Clamp01((lastPitch - 10f) / 55f);
+            float upTuck = Mathf.Clamp01((-lastPitch - 10f) / 50f);
+
+            Vector3 pitchPosOffset = new Vector3(0f, -0.36f * downTuck - 0.12f * upTuck, -0.26f * downTuck);
+            Quaternion pitchRotOffset = Quaternion.Euler(-32f * downTuck, 0f, 0f);
+
+            float armBobY = Mathf.Sin(gaitPhase * 2f) * 0.010f * moveWeight + (breath * 0.003f * (1f - downTuck));
+            float armSwayX = Mathf.Sin(gaitPhase) * 0.012f * moveWeight * (1f - downTuck);
+            float armRollZ = Mathf.Sin(gaitPhase) * 1.2f * moveWeight * (1f - downTuck);
+
+            fpArmsRoot.localPosition = fpArmsBasePos + pitchPosOffset + new Vector3(armSwayX, armBobY, 0f);
+            fpArmsRoot.localRotation = fpArmsBaseRot * pitchRotOffset * Quaternion.Euler(armBobY * 70f, armSwayX * 50f, armRollZ);
         }
     }
 }

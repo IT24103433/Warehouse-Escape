@@ -12,6 +12,17 @@ public class PlayerMovement : MonoBehaviour
     private Camera playerCamera;
     private float xRotation = 0f;
 
+    public float CameraPitch
+    {
+        get => xRotation;
+        set
+        {
+            xRotation = Mathf.Clamp(value, -80f, 80f);
+            if (playerCamera != null)
+                playerCamera.transform.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
+        }
+    }
+
     void Start()
     {
         controller = GetComponent<CharacterController>();

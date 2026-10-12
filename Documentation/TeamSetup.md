@@ -390,4 +390,47 @@ All six comprehensive walkthrough tests in `PhysicalWalkthroughTests.cs` re-exec
 - `Test_5_Entering_BossRoom_And_OldExit_Does_Not_Trigger_Victory` -> **[PASS]**
 - `Test_6_Restart_Resets_Cards_Agents_Reader_And_GameState` -> **[PASS]**
 
+---
+
+## 12. Character Visual Polish Pass & First-Person Body Framing
+
+### 12.1 First-Person Body Framing Correction
+* **Defect Identified:** In prior captures (`player_fp_looking_down_legs.png`), looking down produced a large torso slab dominating the lower screen and oversized forearms at the top, completely obscuring the thighs, knees, and boots.
+* **Root Cause Diagnosis:**
+  - Duplicate arm hierarchies: `HumanoidMeshBuilder` was generating full third-person upper arms and forearms attached to `Spine` on the player root *in addition* to `Player_FP_Arms` attached to the camera!
+  - Player pelvis/spine was positioned directly beneath the camera at $Z = 0.00\text{m}$, causing the chest box to intersect the camera near-plane and fill the sightline when pitched downward.
+  - Camera pitch was rigidly moving first-person arms directly down into the ground without pitch-compensation.
+* **Architectural Corrections:**
+  1. **Duplicate Arms Removed:** For `CharacterRole.Player`, third-person arms on the spine are completely omitted (`upperArmL = null`, `upperArmR = null`). Arms are exclusively rendered via `Player_FP_Arms` on the camera.
+  2. **Rearward Pelvic Offset & Contoured Torso:** Player pelvis offset to $(0, 0.94, -0.12\text{m})$ relative to visual root to match real eye-forward human anatomy. Torso slimmed to $(0.26, 0.20, 0.15\text{m})$ and angled backward ($-8^\circ$), preventing near-clip intersection and opening up full sightlines.
+  3. **Natural Lower-Body Proportions:** Thighs angle forward ($+10^\circ$) from hips to knees at $Y = 0.48\text{m}, Z \approx +0.06\text{m}$, with shins extending down to heavy combat boots planted flat on the floor at $Y = 0.00\text{m}, Z \approx +0.12\text{m}$.
+  4. **Dynamic Camera Pitch Tucking (`HumanoidAnimator.cs`):**
+     - Forward view ($0^\circ$): First-person arms held in clean low-ready tactical stance.
+     - Moderate-down ($40^\circ$): Arms smoothly retract down and back by ~20cm; thighs and duty belt come into view.
+     - Maximum-down ($75^\circ$): Arms retract completely down by 36cm and back by 26cm, leaving a 100% unobstructed view of the duty belt, thighs, contoured knee caps, shins, and grounded combat boots resting on the warehouse floor.
+
+### 12.2 Guard Anatomical Upgrades Beyond Blocky Mannequins
+All four guard models were elevated with procedural multi-ring lofts and stylized anatomical meshes:
+1. **Contoured Head & Face Silhouette (`CreateContouredHeadMesh`):** Rounded cranial dome, flared zygomatic cheekbones, tapered jawline, defined chin, brow ridge, and stylized wedge nose.
+2. **Trapezius Neck Transitions (`CreateTrapeziusNeckMesh`):** Contoured neck flaring smoothly into the clavicle and shoulder line.
+3. **Anatomically Tapered Limbs (`CreateTaperedLimbMesh`):** 3-ring elliptical lofts with deltoid/quad/calf muscle bellies and joint tapers.
+4. **Articulated Joint Caps:** Sculpted patella knee caps (`CreateSculptedKneeMesh`) and elbow olecranon caps (`CreateSculptedElbowMesh`).
+5. **Lugged Combat Boots (`CreateSculptedBootMesh`):** Ankle collar, curved instep, rounded toe box, and heavy lugged soles resting flat at $Y = 0.00\text{m}$.
+6. **Sculpted Hands (`CreateSculptedHandMesh`):** Arched palm, opposable angled thumb, and naturally curled fingers.
+7. **Role-Specific Uniforms & Boss Identity:**
+   - **Varun (Patrol Guard):** Navy security uniform, peaked officer cap with visor and gold crest, gold shield badge, shoulder epaulettes, leather duty belt with radio and holster.
+   - **Sanjeevsaran (Search Guard):** Tactical utility search vest with front compartments, left-ear communications headset with boom mic.
+   - **Aqqil (Defensive Guard):** Protective ballistic armor vest, Kevlar throat guard, tactical security helmet with chin harness.
+   - **Jadavan (Boss Guard):** Imposing 1.15 scale compensation, heavy modular tactical carapace with angular plates, crimson shoulder pauldrons, crimson chevron chest crest, and ballistic face visor helmet.
+
+### 12.3 Locomotion & Gait Refinement
+* **Robust Speed Derivation:** Evaluates horizontal ground displacement delta per frame combined with `CharacterController.velocity` (with $v_y = 0\text{m/s}$ stripped), backed by a $0.08\text{m/s}$ idle deadzone. This completely eliminates false gait triggers from `PlayerMovement`'s separate horizontal and gravity `controller.Move()` calls.
+* **Anti-Foot-Sliding Stride Progression:** Stride phase progression is tied directly to horizontal distance traveled over the ground ($d / \text{strideCycleDist} \times 2\pi$), ensuring grounded feet remain anchored without sliding.
+* **Grounded Foot Plant:** Idle settle returns feet flat to $Y = 0.00\text{m}$ with zero floating feet.
+
+### 12.4 Verification & Clean Scene Discipline
+* **Asset Persistence:** Every newly generated mesh is permanently serialized to `Assets/Meshes/Humanoid/*.asset`.
+* **Clean Shipping Scene:** All transient capture helpers (`PlayModeCaptureRunner`, `__CaptureRunner`, `PlayMode_CaptureCamera`) are destroyed before saving `Warehouse.unity`. Visuals remain strictly collider-free and nav-excluded.
+* **Test Execution:** All six `PhysicalWalkthroughTests` re-verified in Play Mode with 100% pass rate (`OVERALL PHYSICAL CONTROLLER VERIFICATION: ALL 7 CRITERIA VERIFIED [SUCCESS]`).
+
 
