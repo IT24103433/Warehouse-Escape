@@ -55,3 +55,7 @@ Tuned close-range peripheral awareness while preserving stealth flanking opportu
 ## 2026-10-11 — Document physical line-of-sight checks against solid cover
 Specified raycast occlusion checks from guard eye height to player torso and head targets against solid cover.
 Blocked visual acquisition through warehouse racks, walls, and closed doors so sight matches geometry.
+
+## 2026-10-12 — Add sound event investigation and barrier attenuation notes
+Added acoustic event propagation rules for gunfire and trap alerts with attenuation across structural barriers.
+Bounded sound-triggered hypothesis rebuilds to a 0.75-second cooldown to coalesce automatic weapon bursts.
