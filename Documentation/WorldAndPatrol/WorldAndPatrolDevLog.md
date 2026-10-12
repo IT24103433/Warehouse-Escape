@@ -59,3 +59,7 @@ Recorded the eight fallback transforms and the conditions under which they repla
 ## 2026-10-11 · Document PatrolDecisionPolicy neglect-age weighting term
 
 Worked through the neglect term with equal visibility so the effects of staleness and travel can be compared directly. Staleness is initialized to 30 seconds and updated on arrival.
+
+## 2026-10-12 · Prune unreachable and out-of-room candidates from waypoint dataset
+
+Removed raw boundary and disconnected proposals from the patrol-candidate matrix. Kept the distinct rejection mechanisms as small trace cases so they can be exercised deliberately.

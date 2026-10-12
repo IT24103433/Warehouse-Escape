@@ -72,6 +72,22 @@ The per-index timestamp array initializes to `Time.time - 30` when created
 or resized, so its initial age feature is saturated. Record the timestamp
 upon arrival, before dwelling. During the dwell itself the timestamp ages.
 
+## Rejected and special cases
+
+| Controlled case | Path query | Sampled X/Z | Result |
+| --- | --- | --- | --- |
+| Safe-side goal | Complete | (0, −20) | Rejected by Room 2 endpoint check |
+| Raw endpoint outside but projected inside | Complete | (−10.9, −10) | Passes boundary check on sampled endpoint |
+| Point on isolated polygon | Partial | (8.2, −4.5) | Rejected before scoring |
+| Agent absent from NavMesh | Unavailable | Any | Query returns false before sampling |
+| Current index with multiple configured entries | Complete | In bounds | Recorded as current inspection point, skipped for scoring |
+| Current index with exactly one configured entry | Complete | In bounds | Can be scored |
+| All valid points fail dispatch | No destination accepted | Any | Stop and allow the next eligible attempt after the delay |
+
+The diagnostics may call an outside endpoint `No complete path` because
+reachability and the room predicate feed the same boolean. Inspect the
+sampled coordinates and actual path status to distinguish causes.
+
 ## Controlled comparisons
 
 Inputs in this table are controlled mathematical cases. The visibility column shows clear rays divided by eight.
