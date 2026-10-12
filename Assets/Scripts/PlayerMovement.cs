@@ -23,6 +23,10 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
+        // Stop gameplay controls when result screen is active
+        if (GameManager.Instance != null && GameManager.Instance.IsGameEnded)
+            return;
+
         // Movement
         float x = Input.GetAxis("Horizontal");
         float z = Input.GetAxis("Vertical");

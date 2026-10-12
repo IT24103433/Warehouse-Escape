@@ -78,6 +78,18 @@ public class FlankingGuardAI : MonoBehaviour
     [Tooltip("Total horizontal field of view angle in degrees.")]
     [SerializeField] private float fieldOfView = 90f;
 
+    [Header("Speed Settings (Tuned for Boss Room)")]
+    [Tooltip("Patrol movement speed.")]
+    [SerializeField] private float patrolSpeed = 3.8f;
+
+    [Tooltip("Tactical flanking / pursuit movement speed.")]
+    [SerializeField] private float chaseSpeed = 5.2f;
+
+    public float SightDistance { get => sightDistance; set => sightDistance = value; }
+    public float FieldOfView { get => fieldOfView; set => fieldOfView = value; }
+    public float PatrolSpeed { get => patrolSpeed; set => patrolSpeed = value; }
+    public float ChaseSpeed { get => chaseSpeed; set => chaseSpeed = value; }
+
     [Tooltip("Height offset above guard position for eye/raycast origin.")]
     [SerializeField] private float eyeHeight = 0.6f;
 
@@ -158,8 +170,6 @@ public class FlankingGuardAI : MonoBehaviour
     public Vector3 SelectedFlankPosition => selectedFlankPosition;
     public bool CanSeePlayer => canSeePlayer;
     public Vector3 LastSeenPosition => lastSeenPosition;
-    public float SightDistance { get => sightDistance; set => sightDistance = value; }
-    public float FieldOfView { get => fieldOfView; set => fieldOfView = value; }
     public float SearchTimeout { get => searchTimeout; set => searchTimeout = value; }
     public void SetSearchTimeout(float timeout)
     {
@@ -205,6 +215,12 @@ public class FlankingGuardAI : MonoBehaviour
 
         // 1. Evaluate perception every frame using shared GuardPerception utility
         canSeePlayer = EvaluateLineOfSight();
+
+        if (enemyMovement != null && enemyMovement.Agent != null)
+        {
+            float targetSpeed = (currentState == GuardState.Patrol || currentState == GuardState.Search) ? patrolSpeed : chaseSpeed;
+            enemyMovement.Agent.speed = targetSpeed;
+        }
 
         // 2. Execute active state logic
         switch (currentState)

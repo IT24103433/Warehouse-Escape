@@ -57,6 +57,9 @@ public class DoorController : MonoBehaviour
 
     void Update()
     {
+        if (GameManager.Instance != null && GameManager.Instance.IsGameEnded)
+            return;
+
         if (feedbackTimer > 0f)
         {
             feedbackTimer -= Time.deltaTime;
@@ -69,8 +72,8 @@ public class DoorController : MonoBehaviour
         {
             float distance = Vector3.Distance(player.position, closedPosition);
 
-            // Press E when close to the doorway
-            if (distance <= interactionDistance && Input.GetKeyDown(KeyCode.E))
+            // Press E when close to the doorway (only if active interaction is enabled)
+            if (showInteractionPrompt && distance <= interactionDistance && Input.GetKeyDown(KeyCode.E))
             {
                 ToggleDoor();
             }
@@ -111,32 +114,29 @@ public class DoorController : MonoBehaviour
         return true;
     }
 
-    void OnGUI()
+    public bool IsPlayerInInteractionRange
     {
-        if (player == null) return;
-
-        float distance = Vector3.Distance(player.position, closedPosition);
-        if (distance <= interactionDistance)
+        get
         {
-            string prompt = IsLocked
-                ? "<color=#E74C3C>[E] EXIT LOCKED - KEYCARD REQUIRED</color>"
-                : (isOpen ? "<color=#2ECC71>[E] CLOSE EXIT DOOR</color>" : "<color=#2ECC71>[E] OPEN EXIT DOOR</color>");
-
-            GUIStyle promptStyle = new GUIStyle(GUI.skin.box);
-            promptStyle.fontSize = 15;
-            promptStyle.alignment = TextAnchor.MiddleCenter;
-
-            GUI.Box(new Rect(Screen.width * 0.5f - 180, Screen.height * 0.72f, 360, 36), prompt, promptStyle);
+            if (player == null)
+            {
+                player = GameObject.FindGameObjectWithTag("Player")?.transform;
+                if (player == null) return false;
+            }
+            return Vector3.Distance(player.position, closedPosition) <= interactionDistance;
         }
+    }
 
-        if (!string.IsNullOrEmpty(statusFeedback))
-        {
-            GUIStyle fbStyle = new GUIStyle(GUI.skin.box);
-            fbStyle.fontSize = 13;
-            fbStyle.normal.textColor = Color.yellow;
-            fbStyle.alignment = TextAnchor.MiddleCenter;
-            GUI.Box(new Rect(Screen.width * 0.5f - 200, Screen.height * 0.78f, 400, 30), statusFeedback, fbStyle);
-        }
+    [Tooltip("Whether to display interaction prompt on HUD and listen for E key. Set false to reuse door as visual scenery without conflicting prompts.")]
+    [SerializeField] private bool showInteractionPrompt = false;
+
+    public bool ShowInteractionPrompt { get => showInteractionPrompt; set => showInteractionPrompt = value; }
+
+    public string GetInteractionPrompt()
+    {
+        if (!showInteractionPrompt || !IsPlayerInInteractionRange) return "";
+        if (IsLocked) return "[E] EXIT LOCKED - KEYCARD REQUIRED";
+        return isOpen ? "[E] CLOSE EXIT DOOR" : "[E] OPEN EXIT DOOR";
     }
 
     /// <summary>

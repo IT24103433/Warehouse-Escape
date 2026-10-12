@@ -90,36 +90,4 @@ public class AccessCard : MonoBehaviour
         var colliders = GetComponentsInChildren<Collider>();
         foreach (var c in colliders) c.enabled = true;
     }
-
-    private static AccessCard activeHudInstance = null;
-
-    void OnEnable()
-    {
-        if (activeHudInstance == null) activeHudInstance = this;
-    }
-
-    void OnDisable()
-    {
-        if (activeHudInstance == this) activeHudInstance = null;
-    }
-
-    void OnGUI()
-    {
-        if (activeHudInstance != this) return;
-
-        // On-screen HUD status badge in top-left
-        GUIStyle cardStyle = new GUIStyle(GUI.skin.box);
-        cardStyle.fontSize = 13;
-        cardStyle.alignment = TextAnchor.MiddleLeft;
-
-        string keycardStatus = hasKeycard
-            ? "<color=#2ECC71>[V] SECURITY ACCESS CARD: ACQUIRED</color>"
-            : "<color=#E74C3C>[X] SECURITY ACCESS CARD: MISSING (Defended)</color>";
-
-        string exitStatus = hasKeycard
-            ? "<color=#2ECC71>[V] EXIT DOOR: UNLOCKED [Press E]</color>"
-            : "<color=#E74C3C>[X] EXIT DOOR: LOCKED</color>";
-
-        GUI.Box(new Rect(15, 15, 340, 55), $"<b>SYSTEM OBJECTIVES</b>\n{keycardStatus}\n{exitStatus}", cardStyle);
-    }
 }
