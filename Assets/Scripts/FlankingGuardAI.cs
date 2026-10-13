@@ -202,6 +202,27 @@ public class FlankingGuardAI : MonoBehaviour
         if (rootMr != null) { rootMr.enabled = false; if (Application.isPlaying) Destroy(rootMr); else DestroyImmediate(rootMr); }
         var rootMf = GetComponent<MeshFilter>();
         if (rootMf != null) { if (Application.isPlaying) Destroy(rootMf); else DestroyImmediate(rootMf); }
+
+        var health = GetComponent<Health>();
+        if (health == null)
+        {
+            health = gameObject.AddComponent<Health>();
+            health.CharacterName = "CHIEF ENFORCER JADAVAN [BOSS]";
+            health.SetMaxHealth(160);
+        }
+
+        var shooting = GetComponent<GuardShooting>();
+        if (shooting == null)
+        {
+            shooting = gameObject.AddComponent<GuardShooting>();
+            shooting.ConfigureRole(GuardShooting.WeaponType.BossRifle, 14, 1.2f, 16f, 3, 2.0f);
+        }
+
+        if (GetComponent<EnemyHealthBar>() == null)
+        {
+            gameObject.AddComponent<EnemyHealthBar>();
+        }
+
         HumanoidMeshBuilder.EnsureRuntimeVisuals(transform, CharacterRole.Boss_Jadavan);
     }
 

@@ -47,8 +47,49 @@ public class GuardPatrol : MonoBehaviour
         enemyMovement = GetComponent<EnemyMovement>();
     }
 
+    private static readonly Vector3[] BossLoadingHallRoute = new Vector3[]
+    {
+        new Vector3( 0.0f, 1.08f, 23.5f), // South junction (monitors both corridor entrances)
+        new Vector3( 6.0f, 1.08f, 28.0f), // East flank aisle
+        new Vector3( 5.5f, 1.08f, 34.0f), // East cargo inspection (pause 2.0s with scanning)
+        new Vector3( 0.0f, 1.08f, 37.0f), // North terminal perimeter (pause 2.0s with scanning)
+        new Vector3(-5.5f, 1.08f, 34.0f), // West cargo inspection (pause 2.0s with scanning)
+        new Vector3(-6.0f, 1.08f, 28.0f), // West flank aisle
+        new Vector3( 0.0f, 1.08f, 26.0f)  // South loading bay center
+    };
+
+    private void EnsureBossRoute()
+    {
+        var wpParent = GameObject.Find("Waypoints_Jadavan");
+        if (wpParent == null) wpParent = new GameObject("Waypoints_Jadavan");
+        var list = new System.Collections.Generic.List<Transform>();
+
+        for (int i = 0; i < BossLoadingHallRoute.Length; i++)
+        {
+            string wpName = $"WP_Jadavan_Natural_{i + 1}";
+            Transform existing = wpParent.transform.Find(wpName);
+            if (existing == null)
+            {
+                GameObject go = new GameObject(wpName);
+                go.transform.SetParent(wpParent.transform);
+                go.transform.position = BossLoadingHallRoute[i];
+                existing = go.transform;
+            }
+            else
+            {
+                existing.position = BossLoadingHallRoute[i];
+            }
+            list.Add(existing);
+        }
+        waypoints = list.ToArray();
+    }
+
     void Start()
     {
+        if (gameObject.name.Contains("Jadavan") && (waypoints == null || waypoints.Length <= 4))
+        {
+            EnsureBossRoute();
+        }
         ValidateAndStartPatrol();
     }
 
@@ -107,7 +148,8 @@ public class GuardPatrol : MonoBehaviour
         if (enemyMovement.HasReachedDestination(arrivalThreshold))
         {
             isWaiting = true;
-            waitTimer = waypointWaitTime;
+            // Inspection points pause 2.0s with scanning
+            waitTimer = (currentWaypointIndex >= 2 && currentWaypointIndex <= 4) ? 2.0f : waypointWaitTime;
             enemyMovement.Stop();
 
             // Track loop completion when reaching the final waypoint of the circuit

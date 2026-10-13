@@ -106,6 +106,29 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public enum ObjectiveStep
+    {
+        LeaveSafeRoom = 0,
+        PassPatrolRoom = 1,
+        FindAccessCard = 2,
+        ReachSecurityTerminal = 3,
+        EscapeTerminal = 4
+    }
+
+    private ObjectiveStep currentObjectiveStep = ObjectiveStep.LeaveSafeRoom;
+    private Transform playerTransformCached;
+
+    public ObjectiveStep CurrentObjectiveStep => currentObjectiveStep;
+
+    private static readonly string[] ObjectiveDescriptions = new string[]
+    {
+        "Leave the safe room.",
+        "Pass the patrol room and choose either route.",
+        "Find an access card in either sector.",
+        "Reach the final security terminal.",
+        "Press E at the terminal to insert your card and escape."
+    };
+
     void Start()
     {
         if (doorController == null)
@@ -113,8 +136,55 @@ public class GameManager : MonoBehaviour
             doorController = FindFirstObjectByType<DoorController>();
         }
 
+        ConfigureHUDPanelStyling();
         LockCursor();
         UpdateUI();
+    }
+
+    /// <summary>
+    /// Configures the objective HUD panel styling, anchors, and contrast background
+    /// to ensure optimal readability and zero obstruction of the crosshair or interaction prompt.
+    /// </summary>
+    private void ConfigureHUDPanelStyling()
+    {
+        if (objectiveText != null)
+        {
+            objectiveText.supportRichText = true;
+            objectiveText.fontSize = 13;
+            objectiveText.lineSpacing = 1.15f;
+            objectiveText.alignment = TextAnchor.UpperLeft;
+            objectiveText.horizontalOverflow = HorizontalWrapMode.Wrap;
+            objectiveText.verticalOverflow = VerticalWrapMode.Overflow;
+
+            Transform panelTransform = objectiveText.transform.parent;
+            if (panelTransform != null)
+            {
+                RectTransform panelRt = panelTransform.GetComponent<RectTransform>();
+                if (panelRt != null)
+                {
+                    // Anchor to Top-Left
+                    panelRt.anchorMin = new Vector2(0f, 1f);
+                    panelRt.anchorMax = new Vector2(0f, 1f);
+                    panelRt.pivot = new Vector2(0f, 1f);
+                    panelRt.anchoredPosition = new Vector2(24f, -24f);
+                    panelRt.sizeDelta = new Vector2(430f, 215f);
+
+                    // Translucent high-contrast dark panel
+                    var img = panelTransform.GetComponent<Image>();
+                    if (img == null) img = panelTransform.gameObject.AddComponent<Image>();
+                    img.color = new Color(0.06f, 0.08f, 0.12f, 0.88f);
+                }
+
+                RectTransform textRt = objectiveText.GetComponent<RectTransform>();
+                if (textRt != null)
+                {
+                    textRt.anchorMin = Vector2.zero;
+                    textRt.anchorMax = Vector2.one;
+                    textRt.offsetMin = new Vector2(16f, 12f);
+                    textRt.offsetMax = new Vector2(-16f, -12f);
+                }
+            }
+        }
     }
 
     void Update()
@@ -126,25 +196,100 @@ public class GameManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Updates the dynamic Canvas HUD objectives and door interaction prompt.
+    /// Evaluates objective progression monotonically based on real player traversal and state.
+    /// Either card satisfies the objective; both routes are never required.
+    /// </summary>
+    private void EvaluateObjectiveProgression()
+    {
+        if (playerTransformCached == null)
+        {
+            var pObj = GameObject.FindGameObjectWithTag("Player");
+            if (pObj != null) playerTransformCached = pObj.transform;
+        }
+
+        Vector3 pPos = playerTransformCached != null ? playerTransformCached.position : Vector3.zero;
+
+        // Step 0 -> Step 1: Left safe room (Room 1 Z is < -18.0)
+        bool hasLeftSafeRoom = pPos.z >= -17.5f;
+
+        // Step 1 -> Step 2: Passed patrol room and entered either branch sector
+        // Sector A (Search Sector): X <= -4.5f and Z >= -3.5f
+        // Sector B (Defensive Sector): X >= 4.5f and Z >= -3.5f
+        // Or reached Corridor/Boss Room (Z >= 13.0f)
+        bool hasChosenRoute = (pPos.x <= -4.5f && pPos.z >= -3.5f) ||
+                              (pPos.x >= 4.5f && pPos.z >= -3.5f) ||
+                              (pPos.z >= 13.0f);
+
+        // Step 2 -> Step 3: Collected either access card (Card A or Card B)
+        bool hasCard = AccessCard.HasKeycard;
+
+        // Step 3 -> Step 4: Reached final security terminal in Room 5
+        bool isAtTerminal = cardReader != null && cardReader.IsPlayerInRange;
+
+        if (!hasLeftSafeRoom)
+        {
+            currentObjectiveStep = ObjectiveStep.LeaveSafeRoom;
+        }
+        else if (!hasChosenRoute && !hasCard)
+        {
+            currentObjectiveStep = ObjectiveStep.PassPatrolRoom;
+        }
+        else if (!hasCard)
+        {
+            currentObjectiveStep = ObjectiveStep.FindAccessCard;
+        }
+        else if (!isAtTerminal)
+        {
+            currentObjectiveStep = ObjectiveStep.ReachSecurityTerminal;
+        }
+        else
+        {
+            currentObjectiveStep = ObjectiveStep.EscapeTerminal;
+        }
+    }
+
+    /// <summary>
+    /// Updates the dynamic Canvas HUD objectives and terminal interaction prompt.
+    /// Displays a prominent "Current Objective" plus single instruction, followed by
+    /// a clear progression breakdown distinguishing completed [✓], current [►], and upcoming [○].
     /// </summary>
     private void UpdateHUD()
     {
-        if (objectiveText != null)
-        {
-            bool hasCard = AccessCard.HasKeycard;
-            string cardBadge = hasCard ? "<color=#2ECC71>[ACQUIRED]</color>" : "<color=#E74C3C>[REQUIRED]</color>";
-
-            objectiveText.text = "<b>MISSION OBJECTIVES</b>\n" +
-                                 "- Room 1: Safe Start Zone\n" +
-                                 "- Room 2: Infiltrate Patrol Sector\n" +
-                                 $"- Room 3 or 4: Retrieve Access Card {cardBadge}\n" +
-                                 "- Room 5: Infiltrate Boss Room & Insert Card at Reader";
-        }
-
         if (cardReader == null)
         {
             cardReader = Object.FindFirstObjectByType<CardReader>();
+        }
+
+        EvaluateObjectiveProgression();
+
+        if (objectiveText != null)
+        {
+            int currentStepIdx = (int)currentObjectiveStep;
+            string shortInstruction = ObjectiveDescriptions[currentStepIdx];
+
+            System.Text.StringBuilder sb = new System.Text.StringBuilder();
+            sb.AppendLine("<b><color=#F39C12>CURRENT OBJECTIVE</color></b>");
+            sb.AppendLine($"<b><size=16><color=#FFFFFF>{shortInstruction}</color></size></b>");
+            sb.AppendLine("<color=#34495E>──────────────────────────────────────</color>");
+            sb.AppendLine("<b><size=11><color=#BDC3C7>MISSION CHECKLIST</color></size></b>");
+
+            for (int i = 0; i < ObjectiveDescriptions.Length; i++)
+            {
+                if (i < currentStepIdx)
+                {
+                    sb.AppendLine($"<color=#2ECC71>[✓] {ObjectiveDescriptions[i]}</color>");
+                }
+                else if (i == currentStepIdx)
+                {
+                    sb.AppendLine($"<color=#F1C40F><b>[►] {ObjectiveDescriptions[i]}</b></color>");
+                }
+                else
+                {
+                    sb.AppendLine($"<color=#7F8C8D>[○] {ObjectiveDescriptions[i]}</color>");
+                }
+            }
+
+            objectiveText.text = sb.ToString();
         }
 
         if (interactionPromptPanel != null)
@@ -266,6 +411,7 @@ public class GameManager : MonoBehaviour
         AccessCard.HasKeycard = false;
         currentState = GameState.Playing;
         resultReason = "";
+        currentObjectiveStep = ObjectiveStep.LeaveSafeRoom;
         LockCursor();
 
         int buildIndex = SceneManager.GetActiveScene().buildIndex;

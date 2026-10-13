@@ -25,6 +25,9 @@ public class DoorController : MonoBehaviour
     [Tooltip("Whether opening the exit door requires the security access card.")]
     [SerializeField] private bool requiresKeycard = true;
 
+    [Tooltip("Whether the door starts in an open state.")]
+    [SerializeField] private bool startOpen = false;
+
     private Transform player;
     private Vector3 closedPosition;
     private Vector3 openPosition;
@@ -39,6 +42,7 @@ public class DoorController : MonoBehaviour
     public Vector3 ClosedPosition => closedPosition;
     public Vector3 OpenPosition => openPosition;
     public bool RequiresKeycard { get => requiresKeycard; set => requiresKeycard = value; }
+    public bool StartOpen { get => startOpen; set => startOpen = value; }
     public bool IsLocked => requiresKeycard && !AccessCard.HasKeycard;
     public string StatusFeedback => statusFeedback;
 
@@ -49,9 +53,15 @@ public class DoorController : MonoBehaviour
         closedPosition = transform.position;
         openPosition = closedPosition + Vector3.up * openHeight;
 
+        if (startOpen)
+        {
+            isOpen = true;
+            transform.position = openPosition;
+        }
+
         EnsureStationaryObstacle();
 
-        // Initially closed: ensure navigation blocker is active and stationary at doorway
+        // Ensure navigation blocker reflects current door state
         UpdateNavObstacle();
     }
 

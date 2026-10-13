@@ -95,12 +95,74 @@ public class SearchGuardAI : MonoBehaviour
         if (rootMr != null) { rootMr.enabled = false; if (Application.isPlaying) Destroy(rootMr); else DestroyImmediate(rootMr); }
         var rootMf = GetComponent<MeshFilter>();
         if (rootMf != null) { if (Application.isPlaying) Destroy(rootMf); else DestroyImmediate(rootMf); }
+
+        var health = GetComponent<Health>();
+        if (health == null)
+        {
+            health = gameObject.AddComponent<Health>();
+            health.CharacterName = "Sanjeevsaran [Search]";
+            health.SetMaxHealth(60);
+        }
+
+        var shooting = GetComponent<GuardShooting>();
+        if (shooting == null)
+        {
+            shooting = gameObject.AddComponent<GuardShooting>();
+            shooting.ConfigureRole(GuardShooting.WeaponType.Rifle, 10, 1.4f, 14f, 2, 3.0f);
+        }
+
+        if (GetComponent<EnemyHealthBar>() == null)
+        {
+            gameObject.AddComponent<EnemyHealthBar>();
+        }
+
         HumanoidMeshBuilder.EnsureRuntimeVisuals(transform, CharacterRole.Search_Sanjeevsaran);
+    }
+
+    private static readonly Vector3[] SearchSectorInspectionRoute = new Vector3[]
+    {
+        new Vector3(-10.0f, 1.08f,  2.0f), // South entrance arrival
+        new Vector3( -8.5f, 1.08f,  6.5f), // East aisle inspection (checks corridor)
+        new Vector3( -8.5f, 1.08f, 11.5f), // Northeast corridor junction
+        new Vector3(-13.5f, 1.08f, 12.0f), // North aisle inspection (scans storage rows)
+        new Vector3(-15.5f, 1.08f,  7.0f), // West center crossing
+        new Vector3(-18.5f, 1.08f,  2.5f), // Southwest inspection nook
+        new Vector3(-18.5f, 1.08f,  7.5f)  // West aisle
+    };
+
+    private void EnsureNaturalRoute()
+    {
+        if (patrolWaypoints == null || patrolWaypoints.Length <= 4)
+        {
+            var wpParent = GameObject.Find("Waypoints_Sanjeevsaran");
+            if (wpParent == null) wpParent = new GameObject("Waypoints_Sanjeevsaran");
+            var list = new System.Collections.Generic.List<Transform>();
+
+            for (int i = 0; i < SearchSectorInspectionRoute.Length; i++)
+            {
+                string wpName = $"WP_Sanjeev_Natural_{i + 1}";
+                Transform existing = wpParent.transform.Find(wpName);
+                if (existing == null)
+                {
+                    GameObject go = new GameObject(wpName);
+                    go.transform.SetParent(wpParent.transform);
+                    go.transform.position = SearchSectorInspectionRoute[i];
+                    existing = go.transform;
+                }
+                else
+                {
+                    existing.position = SearchSectorInspectionRoute[i];
+                }
+                list.Add(existing);
+            }
+            patrolWaypoints = list.ToArray();
+        }
     }
 
     void Start()
     {
         FindPlayerReference();
+        EnsureNaturalRoute();
         TransitionToPatrol();
     }
 
@@ -177,7 +239,8 @@ public class SearchGuardAI : MonoBehaviour
         if (enemyMovement.HasReachedDestination(waypointArrivalThreshold))
         {
             isWaitingAtWaypoint = true;
-            waitTimer = waypointWaitTime;
+            // Inspection points pause 2.0s with scanning
+            waitTimer = (currentWaypointIndex % 2 == 1) ? 2.0f : waypointWaitTime;
             enemyMovement.Stop();
             return;
         }
@@ -201,7 +264,21 @@ public class SearchGuardAI : MonoBehaviour
         Transform wp = patrolWaypoints[currentWaypointIndex];
         if (wp != null)
         {
-            enemyMovement.SetDestination(wp.position);
+            Vector3 targetPos = wp.position;
+            NavMeshHit hit;
+            if (NavMesh.SamplePosition(targetPos, out hit, 1.5f, NavMesh.AllAreas))
+            {
+                NavMeshPath path = new NavMeshPath();
+                if (NavMesh.CalculatePath(transform.position, hit.position, NavMesh.AllAreas, path) &&
+                    path.status == NavMeshPathStatus.PathComplete)
+                {
+                    enemyMovement.SetDestination(hit.position);
+                    enemyMovement.Resume();
+                    return;
+                }
+            }
+
+            enemyMovement.SetDestination(targetPos);
             enemyMovement.Resume();
         }
     }

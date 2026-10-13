@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using Unity.AI.Navigation;
@@ -14,22 +15,27 @@ public enum CharacterRole
 /// <summary>
 /// High-fidelity procedural humanoid character builder and mesh generator.
 /// Constructs proportioned human anatomy:
-/// - Contoured head with cranial dome, cheekbones, tapered jaw, chin, sculpted nose, ears.
+/// - Contoured head with cranial dome, cheekbones, tapered jaw, chin, sculpted 3D nose, ears, mouth, and two-tone eyes.
 /// - Trapezius neck transition smoothly flaring into shoulders.
 /// - Anatomically tapered limb lofts (biceps/deltoids, forearms, quads, calves).
-/// - Sculpted knee caps and elbow olecranon caps.
-/// - Detailed combat boots with instep, toe box, and lugged sole resting flat at floor Y = 0.00m.
+/// - Sculpted knee caps and elbow olecranon caps bridging joints seamlessly.
+/// - Detailed combat boots with instep, toe box, heel, and lugged sole resting flat at floor Y = 0.00m (grounded feet).
 /// - Sculpted hands with palm arches, opposable angled thumb, and naturally curled fingers.
-/// - Role-specific fitted security equipment and tactical carapace for Boss Jadavan (1.15 scale).
-/// - First-person body framing: natural lower-body proportions, clear thighs/knees/boots,
-///   zero torso slab or duplicate arm obstruction, and pitch-compensated first-person arms.
+/// - Role-specific fitted security equipment, uniforms, badges, headgear, and tactical carapace for Boss Jadavan (1.15 scale).
+/// - First-person body framing: natural lower-body proportions, connected waist, thighs, knee caps, shins, grounded combat boots,
+///   zero torso slab or duplicate arm obstruction, and pitch-compensated first-person arms visible in lower corners when looking forward.
 /// Serializes every procedural mesh asset permanently to Assets/Meshes/Humanoid/.
 /// </summary>
 public static class HumanoidMeshBuilder
 {
     // Reusable Materials Cache
     public static Material MatSkin;
+    public static Material MatSkinShade;
+    public static Material MatEyeWhite;
+    public static Material MatEyeIris;
+    public static Material MatLips;
     public static Material MatUniformNavy;
+    public static Material MatUniformSlate;
     public static Material MatUniformVestSearch;
     public static Material MatUniformVestDefensive;
     public static Material MatUniformBossTactical;
@@ -40,24 +46,33 @@ public static class HumanoidMeshBuilder
     public static Material MatHairDark;
     public static Material MatPlayerUniform;
     public static Material MatCrimsonAccent;
+    public static Material MatVisorReflective;
 
     public static void InitializeMaterials()
     {
         Shader litShader = Shader.Find("Universal Render Pipeline/Lit");
         if (litShader == null) litShader = Shader.Find("Standard");
 
-        MatSkin = CreateOrGetMat("Mat_Human_Skin", litShader, new Color(0.88f, 0.70f, 0.58f), 0.0f, 0.25f);
+        MatSkin = CreateOrGetMat("Mat_Human_Skin", litShader, new Color(0.86f, 0.68f, 0.56f), 0.0f, 0.22f);
+        MatSkinShade = CreateOrGetMat("Mat_Human_Skin_Shade", litShader, new Color(0.74f, 0.55f, 0.44f), 0.0f, 0.20f);
+        MatEyeWhite = CreateOrGetMat("Mat_Eye_White", litShader, new Color(0.96f, 0.96f, 0.96f), 0.0f, 0.85f);
+        MatEyeIris = CreateOrGetMat("Mat_Eye_Iris", litShader, new Color(0.12f, 0.10f, 0.08f), 0.0f, 0.95f);
+        MatLips = CreateOrGetMat("Mat_Lips", litShader, new Color(0.72f, 0.46f, 0.42f), 0.0f, 0.30f);
+
         MatUniformNavy = CreateOrGetMat("Mat_Uniform_Navy", litShader, new Color(0.10f, 0.15f, 0.25f), 0.05f, 0.22f);
+        MatUniformSlate = CreateOrGetMat("Mat_Uniform_Slate", litShader, new Color(0.22f, 0.25f, 0.26f), 0.08f, 0.25f);
         MatUniformVestSearch = CreateOrGetMat("Mat_Uniform_Vest_Search", litShader, new Color(0.24f, 0.28f, 0.24f), 0.10f, 0.25f);
         MatUniformVestDefensive = CreateOrGetMat("Mat_Uniform_Vest_Defensive", litShader, new Color(0.15f, 0.17f, 0.20f), 0.15f, 0.30f);
         MatUniformBossTactical = CreateOrGetMat("Mat_Uniform_Boss_Tactical", litShader, new Color(0.08f, 0.09f, 0.11f), 0.30f, 0.40f);
         MatUniformTrousers = CreateOrGetMat("Mat_Uniform_Trousers", litShader, new Color(0.11f, 0.13f, 0.16f), 0.05f, 0.20f);
+
         MatLeatherBlack = CreateOrGetMat("Mat_Leather_Black", litShader, new Color(0.07f, 0.08f, 0.09f), 0.05f, 0.45f);
-        MatMetalGoldBadge = CreateOrGetMat("Mat_Metal_Gold_Badge", litShader, new Color(0.92f, 0.76f, 0.26f), 0.85f, 0.75f);
-        MatMetalSilverEquipment = CreateOrGetMat("Mat_Metal_Silver_Equipment", litShader, new Color(0.70f, 0.73f, 0.78f), 0.80f, 0.65f);
+        MatMetalGoldBadge = CreateOrGetMat("Mat_Metal_Gold_Badge", litShader, new Color(0.92f, 0.76f, 0.26f), 0.85f, 0.80f);
+        MatMetalSilverEquipment = CreateOrGetMat("Mat_Metal_Silver_Equipment", litShader, new Color(0.70f, 0.73f, 0.78f), 0.80f, 0.70f);
         MatHairDark = CreateOrGetMat("Mat_Hair_Dark", litShader, new Color(0.12f, 0.10f, 0.09f), 0.0f, 0.15f);
-        MatPlayerUniform = CreateOrGetMat("Mat_Player_Uniform", litShader, new Color(0.22f, 0.28f, 0.36f), 0.05f, 0.25f);
-        MatCrimsonAccent = CreateOrGetMat("Mat_Crimson_Accent", litShader, new Color(0.68f, 0.12f, 0.15f), 0.25f, 0.45f);
+        MatPlayerUniform = CreateOrGetMat("Mat_Player_Uniform", litShader, new Color(0.18f, 0.24f, 0.32f), 0.05f, 0.25f);
+        MatCrimsonAccent = CreateOrGetMat("Mat_Crimson_Accent", litShader, new Color(0.70f, 0.12f, 0.15f), 0.25f, 0.45f);
+        MatVisorReflective = CreateOrGetMat("Mat_Visor_Reflective", litShader, new Color(0.06f, 0.08f, 0.10f), 0.85f, 0.95f);
     }
 
     private static Material CreateOrGetMat(string name, Shader shader, Color color, float metallic, float smoothness)
@@ -94,13 +109,13 @@ public static class HumanoidMeshBuilder
         // Remove old visual child if exists
         Transform oldVisual = parentRoot.Find("Character_Visuals");
         if (oldVisual != null)
-            Object.DestroyImmediate(oldVisual.gameObject);
+            UnityEngine.Object.DestroyImmediate(oldVisual.gameObject);
 
         // Remove old capsule renderers on root
         var rootMr = parentRoot.GetComponent<MeshRenderer>();
-        if (rootMr != null) Object.DestroyImmediate(rootMr);
+        if (rootMr != null) UnityEngine.Object.DestroyImmediate(rootMr);
         var rootMf = parentRoot.GetComponent<MeshFilter>();
-        if (rootMf != null) Object.DestroyImmediate(rootMf);
+        if (rootMf != null) UnityEngine.Object.DestroyImmediate(rootMf);
 
         GameObject visualRoot = new GameObject("Character_Visuals");
         visualRoot.transform.SetParent(parentRoot, false);
@@ -115,7 +130,6 @@ public static class HumanoidMeshBuilder
         if (role == CharacterRole.Boss_Jadavan)
         {
             // Boss root scale is 1.15.
-            // Local Y offset: -1.08 / 1.15 = -0.93913 aligns visual ground (0,0,0) with floor Y = 0.00!
             float invScale = 1.0f / 1.15f;
             visualRoot.transform.localPosition = new Vector3(0f, -1.08f * invScale, 0f);
             visualRoot.transform.localRotation = Quaternion.identity;
@@ -142,7 +156,7 @@ public static class HumanoidMeshBuilder
         }
         else if (role == CharacterRole.Defensive_Aqqil)
         {
-            primaryUniformMat = MatUniformTrousers;
+            primaryUniformMat = MatUniformNavy;
             vestMat = MatUniformVestDefensive;
         }
         else if (role == CharacterRole.Boss_Jadavan)
@@ -157,13 +171,13 @@ public static class HumanoidMeshBuilder
         }
 
         // 1. Pelvis / Hips Node
-        // For Player: offset slightly rearward (-0.12m) to reflect eye-forward human posture,
-        // preventing the torso from obscuring thighs and boots when looking down.
+        // Pelvis height: 0.96m above floor.
         GameObject pelvisObj = new GameObject("Pelvis");
         pelvisObj.transform.SetParent(visualRoot.transform, false);
         if (role == CharacterRole.Player)
         {
-            pelvisObj.transform.localPosition = new Vector3(0f, 0.94f, -0.12f);
+            // Player standing posture: pelvis at -0.04m Z, aligned with natural eye-down gaze
+            pelvisObj.transform.localPosition = new Vector3(0f, 0.94f, -0.04f);
         }
         else
         {
@@ -178,7 +192,7 @@ public static class HumanoidMeshBuilder
         spineObj.transform.SetParent(pelvisObj.transform, false);
         if (role == CharacterRole.Player)
         {
-            spineObj.transform.localPosition = new Vector3(0f, 0.14f, -0.02f);
+            spineObj.transform.localPosition = new Vector3(0f, 0.14f, 0f);
         }
         else
         {
@@ -203,7 +217,7 @@ public static class HumanoidMeshBuilder
             BuildHeadGeometry(headObj, role);
         }
 
-        // 4. Arms (For guards only; for player, arms are exclusively rendered via Player_FP_Arms on the camera)
+        // 4. Arms (For guards only; for player, arms are rendered via Player_FP_Arms on the camera)
         GameObject upperArmL = null;
         GameObject forearmL = null;
         GameObject upperArmR = null;
@@ -215,6 +229,9 @@ public static class HumanoidMeshBuilder
             GameObject shoulderL = new GameObject("Shoulder_L");
             shoulderL.transform.SetParent(spineObj.transform, false);
             shoulderL.transform.localPosition = new Vector3(-0.24f, 0.28f, 0f);
+
+            // Shoulder deltoid cap
+            AttachMesh(shoulderL, CreateShoulderPauldronMesh(0.10f, 0.10f, 0.12f), primaryUniformMat);
 
             upperArmL = new GameObject("UpperArm_L");
             upperArmL.transform.SetParent(shoulderL.transform, false);
@@ -235,6 +252,9 @@ public static class HumanoidMeshBuilder
             shoulderR.transform.SetParent(spineObj.transform, false);
             shoulderR.transform.localPosition = new Vector3(0.24f, 0.28f, 0f);
 
+            // Shoulder deltoid cap
+            AttachMesh(shoulderR, CreateShoulderPauldronMesh(0.10f, 0.10f, 0.12f), primaryUniformMat);
+
             upperArmR = new GameObject("UpperArm_R");
             upperArmR.transform.SetParent(shoulderR.transform, false);
             BuildLimbSegment(upperArmR, 0.080f, 0.078f, 0.075f, 0.073f, 0.058f, 0.056f, 0.28f, primaryUniformMat);
@@ -250,63 +270,67 @@ public static class HumanoidMeshBuilder
             BuildForearmAndHand(forearmR, primaryUniformMat, MatSkin, isLeft: false);
         }
 
-        // 5. Legs (Grounded, anatomically contoured with knee caps and lugged boots)
+        // 5. Legs (Grounded, anatomically contoured with knee caps and lugged boots resting flat on floor Y = 0.00m)
+        // Leg Dimensions:
+        // Pelvis at Y = 0.94m.
+        // Thigh top at Y = 0.90m, length = 0.44m down to knee at Y = 0.46m.
+        // Shin top at Y = 0.46m, length = 0.46m down to ankle / boot sole at Y = 0.00m.
         // Left Leg
         GameObject thighL = new GameObject("Thigh_L");
         thighL.transform.SetParent(pelvisObj.transform, false);
-        thighL.transform.localPosition = new Vector3(-0.11f, -0.04f, role == CharacterRole.Player ? 0.02f : 0f);
+        thighL.transform.localPosition = new Vector3(-0.11f, -0.04f, role == CharacterRole.Player ? 0.04f : 0f);
         if (role == CharacterRole.Player)
         {
-            thighL.transform.localRotation = Quaternion.Euler(10f, 0f, 0f);
+            thighL.transform.localRotation = Quaternion.Euler(12f, 0f, 0f);
         }
-        BuildLimbSegment(thighL, 0.096f, 0.092f, 0.104f, 0.100f, 0.076f, 0.076f, 0.42f, MatUniformTrousers);
+        BuildLimbSegment(thighL, 0.096f, 0.092f, 0.104f, 0.100f, 0.076f, 0.076f, 0.44f, MatUniformTrousers);
 
         GameObject kneeL = new GameObject("KneeCap_L");
         kneeL.transform.SetParent(thighL.transform, false);
-        kneeL.transform.localPosition = new Vector3(0f, -0.42f, 0.015f);
+        kneeL.transform.localPosition = new Vector3(0f, -0.44f, 0.015f);
         AttachMesh(kneeL, CreateSculptedKneeMesh(0.082f, 0.090f, 0.038f), MatUniformTrousers);
 
         GameObject shinL = new GameObject("Shin_L");
         shinL.transform.SetParent(thighL.transform, false);
-        shinL.transform.localPosition = new Vector3(0f, -0.42f, 0f);
+        shinL.transform.localPosition = new Vector3(0f, -0.44f, 0f);
         if (role == CharacterRole.Player)
         {
-            shinL.transform.localRotation = Quaternion.Euler(-10f, 0f, 0f);
+            shinL.transform.localRotation = Quaternion.Euler(-12f, 0f, 0f);
         }
-        BuildLimbSegment(shinL, 0.078f, 0.078f, 0.088f, 0.094f, 0.066f, 0.066f, 0.38f, MatUniformTrousers);
+        BuildLimbSegment(shinL, 0.078f, 0.078f, 0.088f, 0.094f, 0.066f, 0.066f, 0.46f, MatUniformTrousers);
 
         GameObject footL = new GameObject("Foot_L");
         footL.transform.SetParent(shinL.transform, false);
-        footL.transform.localPosition = new Vector3(0f, -0.38f, 0f);
+        footL.transform.localPosition = new Vector3(0f, -0.46f, 0f);
         BuildBootGeometry(footL);
 
         // Right Leg
         GameObject thighR = new GameObject("Thigh_R");
         thighR.transform.SetParent(pelvisObj.transform, false);
-        thighR.transform.localPosition = new Vector3(0.11f, -0.04f, role == CharacterRole.Player ? 0.02f : 0f);
+        thighR.transform.localPosition = new Vector3(0.11f, -0.04f, role == CharacterRole.Player ? 0.04f : 0f);
         if (role == CharacterRole.Player)
         {
-            thighR.transform.localRotation = Quaternion.Euler(10f, 0f, 0f);
+            thighR.transform.localRotation = Quaternion.Euler(12f, 0f, 0f);
         }
-        BuildLimbSegment(thighR, 0.096f, 0.092f, 0.104f, 0.100f, 0.076f, 0.076f, 0.42f, MatUniformTrousers);
+        BuildLimbSegment(thighR, 0.096f, 0.092f, 0.104f, 0.100f, 0.076f, 0.076f, 0.44f, MatUniformTrousers);
 
         GameObject kneeR = new GameObject("KneeCap_R");
         kneeR.transform.SetParent(thighR.transform, false);
-        kneeR.transform.localPosition = new Vector3(0f, -0.42f, 0.015f);
+        kneeR.transform.localPosition = new Vector3(0f, -0.44f, 0.015f);
         AttachMesh(kneeR, CreateSculptedKneeMesh(0.082f, 0.090f, 0.038f), MatUniformTrousers);
 
         GameObject shinR = new GameObject("Shin_R");
         shinR.transform.SetParent(thighR.transform, false);
-        shinR.transform.localPosition = new Vector3(0f, -0.42f, 0f);
+        shinR.transform.localPosition = new Vector3(0f, -0.44f, 0f);
         if (role == CharacterRole.Player)
         {
-            shinR.transform.localRotation = Quaternion.Euler(-10f, 0f, 0f);
+            shinR.transform.localRotation = Quaternion.Euler(-12f, 0f, 0f);
         }
-        BuildLimbSegment(shinR, 0.078f, 0.078f, 0.088f, 0.094f, 0.066f, 0.066f, 0.38f, MatUniformTrousers);
+        BuildLimbSegment(shinR, 0.078f, 0.078f, 0.088f, 0.094f, 0.066f, 0.066f, 0.46f, MatUniformTrousers);
 
         GameObject footR = new GameObject("Foot_R");
         footR.transform.SetParent(shinR.transform, false);
-        footR.transform.localPosition = new Vector3(0f, -0.38f, 0f);
+        footR.transform.localPosition = new Vector3(0f, -0.46f, 0f);
         BuildBootGeometry(footR);
 
         // 6. First-Person Forearms (If Player)
@@ -320,12 +344,13 @@ public static class HumanoidMeshBuilder
 
                 Transform oldFpArms = cam.transform.Find("Player_FP_Arms");
                 if (oldFpArms != null)
-                    Object.DestroyImmediate(oldFpArms.gameObject);
+                    UnityEngine.Object.DestroyImmediate(oldFpArms.gameObject);
 
                 fpArmsRoot = new GameObject("Player_FP_Arms");
                 fpArmsRoot.transform.SetParent(cam.transform, false);
-                fpArmsRoot.transform.localPosition = new Vector3(0f, -0.30f, 0.40f);
-                fpArmsRoot.transform.localRotation = Quaternion.Euler(16f, 0f, 0f);
+                // Positioned naturally in front/lower camera view:
+                fpArmsRoot.transform.localPosition = new Vector3(0f, -0.20f, 0.38f);
+                fpArmsRoot.transform.localRotation = Quaternion.Euler(8f, 0f, 0f);
 
                 BuildFirstPersonArms(fpArmsRoot, MatPlayerUniform, MatSkin);
             }
@@ -364,19 +389,15 @@ public static class HumanoidMeshBuilder
     {
         foreach (var col in root.GetComponentsInChildren<Collider>(true))
         {
-            Object.DestroyImmediate(col);
+            UnityEngine.Object.DestroyImmediate(col);
         }
     }
-
-    // ==========================================
-    // ANATOMY GEOMETRY BUILDERS
-    // ==========================================
 
     private static void BuildPelvisGeometry(GameObject pelvisObj, Material uniformMat, CharacterRole role)
     {
         if (role == CharacterRole.Player)
         {
-            // Slimmer pelvic profile positioned slightly back so hips don't slab over legs when pitched down
+            // Proportioned pelvic profile connecting cleanly into thighs
             AttachMesh(pelvisObj, CreateBoxMesh(new Vector3(0.28f, 0.14f, 0.18f), Vector3.zero), MatUniformTrousers);
 
             GameObject beltObj = new GameObject("DutyBelt");
@@ -404,7 +425,7 @@ public static class HumanoidMeshBuilder
         GameObject buckle = new GameObject("Buckle");
         buckle.transform.SetParent(belt.transform, false);
         buckle.transform.localPosition = new Vector3(0f, 0f, 0.125f);
-        AttachMesh(buckle, CreateBoxMesh(new Vector3(0.07f, 0.055f, 0.015f), Vector3.zero), MatMetalGoldBadge);
+        AttachMesh(buckle, CreateBoxMesh(new Vector3(0.07f, 0.055f, 0.015f), Vector3.zero), role == CharacterRole.Patrol_Varun ? MatMetalGoldBadge : MatMetalSilverEquipment);
 
         // Radio Holster & Radio (Left hip)
         GameObject radio = new GameObject("SecurityRadio");
@@ -416,7 +437,7 @@ public static class HumanoidMeshBuilder
         GameObject ant = new GameObject("Antenna");
         ant.transform.SetParent(radio.transform, false);
         ant.transform.localPosition = new Vector3(-0.015f, 0.10f, 0f);
-        AttachMesh(ant, CreateCylinderMesh(0.005f, 0.007f, 0.10f, 6, Vector3.zero), MatMetalSilverEquipment);
+        AttachMesh(ant, CreateCylinderMesh(0.005f, 0.007f, 0.12f, 6, Vector3.zero), MatMetalSilverEquipment);
 
         // Equipment Pouches (Right hip)
         GameObject pouch = new GameObject("Pouches");
@@ -424,16 +445,25 @@ public static class HumanoidMeshBuilder
         pouch.transform.localPosition = new Vector3(0.175f, 0f, 0.02f);
         pouch.transform.localRotation = Quaternion.Euler(0f, -20f, 0f);
         AttachMesh(pouch, CreateBoxMesh(new Vector3(0.06f, 0.09f, 0.05f), Vector3.zero), MatLeatherBlack);
+
+        if (role == CharacterRole.Defensive_Aqqil)
+        {
+            // Stun baton on defensive guard hip
+            GameObject baton = new GameObject("StunBaton");
+            baton.transform.SetParent(belt.transform, false);
+            baton.transform.localPosition = new Vector3(0.19f, -0.06f, -0.04f);
+            baton.transform.localRotation = Quaternion.Euler(25f, 0f, 0f);
+            AttachMesh(baton, CreateCylinderMesh(0.015f, 0.012f, 0.32f, 8, Vector3.zero), MatLeatherBlack);
+        }
     }
 
     private static void BuildTorsoGeometry(GameObject spineObj, Material uniformMat, Material vestMat, CharacterRole role)
     {
         if (role == CharacterRole.Player)
         {
-            // For Player: Slimmer, backward-sloped lower torso that avoids camera near-clip intersection
-            // and opens up complete visibility of the waist, thighs, and boots when looking down
-            spineObj.transform.localRotation = Quaternion.Euler(-8f, 0f, 0f);
-            AttachMesh(spineObj, CreateBoxMesh(new Vector3(0.26f, 0.20f, 0.15f), new Vector3(0f, 0.10f, -0.03f)), uniformMat);
+            // For Player: Slimmed lower torso connecting cleanly into pelvis and belt
+            spineObj.transform.localRotation = Quaternion.identity;
+            AttachMesh(spineObj, CreateBoxMesh(new Vector3(0.28f, 0.22f, 0.16f), new Vector3(0f, 0.11f, 0f)), uniformMat);
             return;
         }
 
@@ -449,194 +479,228 @@ public static class HumanoidMeshBuilder
         // Chest Pockets
         GameObject pocketL = new GameObject("Pocket_L");
         pocketL.transform.SetParent(spineObj.transform, false);
-        pocketL.transform.localPosition = new Vector3(-0.10f, 0.20f, 0.122f);
+        pocketL.transform.localPosition = new Vector3(-0.10f, 0.20f, 0.125f);
         AttachMesh(pocketL, CreateBoxMesh(new Vector3(0.08f, 0.09f, 0.015f), Vector3.zero), uniformMat);
 
         GameObject pocketR = new GameObject("Pocket_R");
         pocketR.transform.SetParent(spineObj.transform, false);
-        pocketR.transform.localPosition = new Vector3(0.10f, 0.20f, 0.122f);
+        pocketR.transform.localPosition = new Vector3(0.10f, 0.20f, 0.125f);
         AttachMesh(pocketR, CreateBoxMesh(new Vector3(0.08f, 0.09f, 0.015f), Vector3.zero), uniformMat);
 
-        // Security Badge (Left chest above pocket)
+        // Security Officer Star/Shield Badge
         GameObject badgeObj = new GameObject("SecurityBadge");
         badgeObj.transform.SetParent(spineObj.transform, false);
-        badgeObj.transform.localPosition = new Vector3(-0.10f, 0.27f, 0.126f);
+        badgeObj.transform.localPosition = new Vector3(-0.10f, 0.22f, 0.135f);
         AttachMesh(badgeObj, CreateBadgeMesh(), MatMetalGoldBadge);
 
-        // Shoulder Epaulettes
-        GameObject patchL = new GameObject("Patch_L");
+        // Shoulder Epaulets & Rank Bars
+        GameObject patchL = new GameObject("Rank_Epaulet_L");
         patchL.transform.SetParent(spineObj.transform, false);
-        patchL.transform.localPosition = new Vector3(-0.195f, 0.28f, 0f);
-        patchL.transform.localRotation = Quaternion.Euler(0f, 0f, 90f);
-        AttachMesh(patchL, CreateBoxMesh(new Vector3(0.05f, 0.01f, 0.07f), Vector3.zero), MatMetalGoldBadge);
+        patchL.transform.localPosition = new Vector3(-0.19f, 0.31f, 0f);
+        AttachMesh(patchL, CreateBoxMesh(new Vector3(0.06f, 0.015f, 0.09f), Vector3.zero), role == CharacterRole.Boss_Jadavan ? MatCrimsonAccent : MatMetalGoldBadge);
 
-        GameObject patchR = new GameObject("Patch_R");
+        GameObject patchR = new GameObject("Rank_Epaulet_R");
         patchR.transform.SetParent(spineObj.transform, false);
-        patchR.transform.localPosition = new Vector3(0.195f, 0.28f, 0f);
-        patchR.transform.localRotation = Quaternion.Euler(0f, 0f, -90f);
-        AttachMesh(patchR, CreateBoxMesh(new Vector3(0.05f, 0.01f, 0.07f), Vector3.zero), MatMetalGoldBadge);
+        patchR.transform.localPosition = new Vector3(0.19f, 0.31f, 0f);
+        AttachMesh(patchR, CreateBoxMesh(new Vector3(0.06f, 0.015f, 0.09f), Vector3.zero), role == CharacterRole.Boss_Jadavan ? MatCrimsonAccent : MatMetalGoldBadge);
 
-        // Role-Specific Vest & Tactical Armor Overlays
+        // Role-Specific Vests / Carapace
         if (role == CharacterRole.Search_Sanjeevsaran && vestMat != null)
         {
-            GameObject vest = new GameObject("UtilityVest");
+            // Tactical Search Vest with utility pouches
+            GameObject vest = new GameObject("TacticalSearchVest");
             vest.transform.SetParent(spineObj.transform, false);
             vest.transform.localPosition = new Vector3(0f, 0.16f, 0f);
-            AttachMesh(vest, CreateBoxMesh(new Vector3(0.40f, 0.31f, 0.26f), Vector3.zero), vestMat);
+            AttachMesh(vest, CreatePlateCarrierMesh(0.40f, 0.32f, 0.26f), vestMat);
 
-            GameObject mic = new GameObject("ShoulderMic");
+            GameObject mic = new GameObject("LapelMic");
             mic.transform.SetParent(vest.transform, false);
-            mic.transform.localPosition = new Vector3(-0.13f, 0.12f, 0.135f);
+            mic.transform.localPosition = new Vector3(-0.11f, 0.12f, 0.14f);
             AttachMesh(mic, CreateBoxMesh(new Vector3(0.045f, 0.06f, 0.035f), Vector3.zero), MatLeatherBlack);
         }
         else if (role == CharacterRole.Defensive_Aqqil && vestMat != null)
         {
-            GameObject armor = new GameObject("DefensiveArmor");
+            // Heavy Defensive Ballistic Armor with Trauma Plates & Throat Guard
+            GameObject armor = new GameObject("HeavyBallisticArmor");
             armor.transform.SetParent(spineObj.transform, false);
-            armor.transform.localPosition = new Vector3(0f, 0.17f, 0f);
-            AttachMesh(armor, CreateBoxMesh(new Vector3(0.42f, 0.33f, 0.27f), Vector3.zero), vestMat);
+            armor.transform.localPosition = new Vector3(0f, 0.16f, 0f);
+            AttachMesh(armor, CreatePlateCarrierMesh(0.42f, 0.34f, 0.27f), vestMat);
 
             GameObject throatGuard = new GameObject("ThroatGuard");
             throatGuard.transform.SetParent(armor.transform, false);
-            throatGuard.transform.localPosition = new Vector3(0f, 0.18f, 0.06f);
+            throatGuard.transform.localPosition = new Vector3(0f, 0.18f, 0.08f);
             AttachMesh(throatGuard, CreateBoxMesh(new Vector3(0.22f, 0.06f, 0.14f), Vector3.zero), vestMat);
         }
         else if (role == CharacterRole.Boss_Jadavan)
         {
-            GameObject bossArmor = new GameObject("TacticalCarapace");
+            // Tactical Commander Carapace with Crimson Pauldrons
+            GameObject bossArmor = new GameObject("BossCarapace");
             bossArmor.transform.SetParent(spineObj.transform, false);
             bossArmor.transform.localPosition = new Vector3(0f, 0.17f, 0f);
-            AttachMesh(bossArmor, CreateBoxMesh(new Vector3(0.44f, 0.34f, 0.28f), Vector3.zero), MatUniformBossTactical);
+            AttachMesh(bossArmor, CreatePlateCarrierMesh(0.44f, 0.35f, 0.28f), MatUniformBossTactical);
 
-            GameObject chevron = new GameObject("CrimsonChevron");
+            GameObject chevron = new GameObject("CommanderChevron");
             chevron.transform.SetParent(bossArmor.transform, false);
-            chevron.transform.localPosition = new Vector3(0f, 0.04f, 0.145f);
+            chevron.transform.localPosition = new Vector3(0f, 0.08f, 0.15f);
             AttachMesh(chevron, CreateBoxMesh(new Vector3(0.24f, 0.035f, 0.015f), Vector3.zero), MatCrimsonAccent);
 
-            GameObject pauldronL = new GameObject("Pauldron_L");
+            GameObject pauldronL = new GameObject("BossPauldron_L");
             pauldronL.transform.SetParent(bossArmor.transform, false);
             pauldronL.transform.localPosition = new Vector3(-0.25f, 0.15f, 0f);
-            AttachMesh(pauldronL, CreateBoxMesh(new Vector3(0.12f, 0.08f, 0.20f), Vector3.zero), MatCrimsonAccent);
+            AttachMesh(pauldronL, CreateShoulderPauldronMesh(0.14f, 0.10f, 0.22f), MatCrimsonAccent);
 
-            GameObject pauldronR = new GameObject("Pauldron_R");
+            GameObject pauldronR = new GameObject("BossPauldron_R");
             pauldronR.transform.SetParent(bossArmor.transform, false);
             pauldronR.transform.localPosition = new Vector3(0.25f, 0.15f, 0f);
-            AttachMesh(pauldronR, CreateBoxMesh(new Vector3(0.12f, 0.08f, 0.20f), Vector3.zero), MatCrimsonAccent);
+            AttachMesh(pauldronR, CreateShoulderPauldronMesh(0.14f, 0.10f, 0.22f), MatCrimsonAccent);
         }
     }
 
     private static void BuildHeadGeometry(GameObject headObj, CharacterRole role)
     {
-        // Proportioned head base (jaw, cheekbones, chin, cranium)
+        // Contoured anatomical head base
         AttachMesh(headObj, CreateContouredHeadMesh(), MatSkin);
 
-        // Facial Features
-        // Nose (pyramid profile)
+        // Sculpted 3D Nose with bridge, tip, and nostrils
         GameObject noseObj = new GameObject("Nose");
         noseObj.transform.SetParent(headObj.transform, false);
-        noseObj.transform.localPosition = new Vector3(0f, 0.04f, 0.105f);
-        AttachMesh(noseObj, CreateWedgeMesh(new Vector3(0.035f, 0.05f, 0.035f)), MatSkin);
+        noseObj.transform.localPosition = new Vector3(0f, 0.04f, 0.098f);
+        AttachMesh(noseObj, CreateSculptedNoseMesh(0.032f, 0.048f, 0.032f), MatSkin);
+
+        // Sculpted Upper and Lower Lips
+        GameObject mouthObj = new GameObject("Mouth");
+        mouthObj.transform.SetParent(headObj.transform, false);
+        mouthObj.transform.localPosition = new Vector3(0f, -0.018f, 0.085f);
+        AttachMesh(mouthObj, CreateSculptedMouthMesh(0.042f, 0.016f), MatLips);
 
         // Eyebrows
         GameObject browL = new GameObject("Brow_L");
         browL.transform.SetParent(headObj.transform, false);
-        browL.transform.localPosition = new Vector3(-0.045f, 0.08f, 0.095f);
+        browL.transform.localPosition = new Vector3(-0.044f, 0.076f, 0.092f);
         browL.transform.localRotation = Quaternion.Euler(0f, 0f, 5f);
-        AttachMesh(browL, CreateBoxMesh(new Vector3(0.045f, 0.012f, 0.015f), Vector3.zero), MatHairDark);
+        AttachMesh(browL, CreateBoxMesh(new Vector3(0.042f, 0.010f, 0.015f), Vector3.zero), MatHairDark);
 
         GameObject browR = new GameObject("Brow_R");
         browR.transform.SetParent(headObj.transform, false);
-        browR.transform.localPosition = new Vector3(0.045f, 0.08f, 0.095f);
+        browR.transform.localPosition = new Vector3(0.044f, 0.076f, 0.092f);
         browR.transform.localRotation = Quaternion.Euler(0f, 0f, -5f);
-        AttachMesh(browR, CreateBoxMesh(new Vector3(0.045f, 0.012f, 0.015f), Vector3.zero), MatHairDark);
+        AttachMesh(browR, CreateBoxMesh(new Vector3(0.042f, 0.010f, 0.015f), Vector3.zero), MatHairDark);
 
-        // Eyes
-        GameObject eyeL = new GameObject("Eye_L");
-        eyeL.transform.SetParent(headObj.transform, false);
-        eyeL.transform.localPosition = new Vector3(-0.045f, 0.055f, 0.094f);
-        AttachMesh(eyeL, CreateBoxMesh(new Vector3(0.024f, 0.015f, 0.01f), Vector3.zero), MatHairDark);
+        // Realistic Two-Part Eyes (Sclera white + dark centered iris/pupil)
+        BuildEye(headObj, isLeft: true);
+        BuildEye(headObj, isLeft: false);
 
-        GameObject eyeR = new GameObject("Eye_R");
-        eyeR.transform.SetParent(headObj.transform, false);
-        eyeR.transform.localPosition = new Vector3(0.045f, 0.055f, 0.094f);
-        AttachMesh(eyeR, CreateBoxMesh(new Vector3(0.024f, 0.015f, 0.01f), Vector3.zero), MatHairDark);
-
-        // Ears
+        // Contoured Anatomical Ears with outer helix rim and lobe
         GameObject earL = new GameObject("Ear_L");
         earL.transform.SetParent(headObj.transform, false);
-        earL.transform.localPosition = new Vector3(-0.095f, 0.04f, 0f);
-        AttachMesh(earL, CreateBoxMesh(new Vector3(0.025f, 0.055f, 0.035f), Vector3.zero), MatSkin);
+        earL.transform.localPosition = new Vector3(-0.094f, 0.038f, 0f);
+        AttachMesh(earL, CreateSculptedEarMesh(0.022f, 0.052f, 0.032f), MatSkin);
 
         GameObject earR = new GameObject("Ear_R");
         earR.transform.SetParent(headObj.transform, false);
-        earR.transform.localPosition = new Vector3(0.095f, 0.04f, 0f);
-        AttachMesh(earR, CreateBoxMesh(new Vector3(0.025f, 0.055f, 0.035f), Vector3.zero), MatSkin);
+        earR.transform.localPosition = new Vector3(0.094f, 0.038f, 0f);
+        AttachMesh(earR, CreateSculptedEarMesh(0.022f, 0.052f, 0.032f), MatSkin);
 
         // Headgear / Hair according to role
         if (role == CharacterRole.Patrol_Varun)
         {
+            // Peaked Officer Patrol Cap with black patent visor and gold crest
             GameObject capObj = new GameObject("PatrolCap");
             capObj.transform.SetParent(headObj.transform, false);
-            capObj.transform.localPosition = new Vector3(0f, 0.11f, 0.01f);
-            AttachMesh(capObj, CreateBoxMesh(new Vector3(0.22f, 0.08f, 0.23f), Vector3.zero), MatUniformNavy);
+            capObj.transform.localPosition = new Vector3(0f, 0.11f, 0.005f);
+            AttachMesh(capObj, CreatePeakedCapMesh(0.22f, 0.09f, 0.23f), MatUniformNavy);
 
             GameObject visor = new GameObject("CapVisor");
             visor.transform.SetParent(capObj.transform, false);
-            visor.transform.localPosition = new Vector3(0f, -0.02f, 0.13f);
-            visor.transform.localRotation = Quaternion.Euler(15f, 0f, 0f);
-            AttachMesh(visor, CreateBoxMesh(new Vector3(0.18f, 0.015f, 0.08f), Vector3.zero), MatLeatherBlack);
+            visor.transform.localPosition = new Vector3(0f, -0.025f, 0.125f);
+            visor.transform.localRotation = Quaternion.Euler(14f, 0f, 0f);
+            AttachMesh(visor, CreateBoxMesh(new Vector3(0.18f, 0.014f, 0.085f), Vector3.zero), MatLeatherBlack);
 
             GameObject crest = new GameObject("CapCrest");
             crest.transform.SetParent(capObj.transform, false);
-            crest.transform.localPosition = new Vector3(0f, 0.02f, 0.12f);
+            crest.transform.localPosition = new Vector3(0f, 0.025f, 0.12f);
             AttachMesh(crest, CreateBadgeMesh(), MatMetalGoldBadge);
+
+            // Trimmed hair under cap
+            GameObject hairTrim = new GameObject("HairTrim");
+            hairTrim.transform.SetParent(headObj.transform, false);
+            hairTrim.transform.localPosition = new Vector3(0f, 0.05f, -0.07f);
+            AttachMesh(hairTrim, CreateBoxMesh(new Vector3(0.18f, 0.06f, 0.08f), Vector3.zero), MatHairDark);
         }
         else if (role == CharacterRole.Search_Sanjeevsaran)
         {
+            // Crew-cut hair + Tactical Comms Headset with flexible boom mic
             GameObject hair = new GameObject("ShortHair");
             hair.transform.SetParent(headObj.transform, false);
             hair.transform.localPosition = new Vector3(0f, 0.10f, -0.01f);
-            AttachMesh(hair, CreateBoxMesh(new Vector3(0.21f, 0.07f, 0.22f), Vector3.zero), MatHairDark);
+            AttachMesh(hair, CreateBoxMesh(new Vector3(0.21f, 0.075f, 0.22f), Vector3.zero), MatHairDark);
 
-            GameObject headset = new GameObject("Headset");
+            GameObject headset = new GameObject("HeadsetBand");
             headset.transform.SetParent(headObj.transform, false);
-            headset.transform.localPosition = new Vector3(-0.105f, 0.04f, 0.02f);
-            AttachMesh(headset, CreateBoxMesh(new Vector3(0.025f, 0.045f, 0.045f), Vector3.zero), MatLeatherBlack);
+            headset.transform.localPosition = new Vector3(0f, 0.14f, 0f);
+            AttachMesh(headset, CreateBoxMesh(new Vector3(0.22f, 0.02f, 0.04f), Vector3.zero), MatLeatherBlack);
+
+            GameObject earCup = new GameObject("EarCup");
+            earCup.transform.SetParent(headObj.transform, false);
+            earCup.transform.localPosition = new Vector3(-0.105f, 0.04f, 0.01f);
+            AttachMesh(earCup, CreateBoxMesh(new Vector3(0.025f, 0.05f, 0.045f), Vector3.zero), MatLeatherBlack);
 
             GameObject micBoom = new GameObject("MicBoom");
-            micBoom.transform.SetParent(headset.transform, false);
+            micBoom.transform.SetParent(earCup.transform, false);
             micBoom.transform.localPosition = new Vector3(0.01f, -0.03f, 0.06f);
-            AttachMesh(micBoom, CreateCylinderMesh(0.004f, 0.004f, 0.08f, 6, Vector3.zero), MatMetalSilverEquipment);
+            micBoom.transform.localRotation = Quaternion.Euler(15f, -10f, 0f);
+            AttachMesh(micBoom, CreateCylinderMesh(0.003f, 0.003f, 0.09f, 6, Vector3.zero), MatMetalSilverEquipment);
         }
         else if (role == CharacterRole.Defensive_Aqqil)
         {
+            // MICH/FAST Ballistic Helmet with ARC Rails & Chin Strap
             GameObject helmet = new GameObject("DefensiveHelmet");
             helmet.transform.SetParent(headObj.transform, false);
             helmet.transform.localPosition = new Vector3(0f, 0.10f, 0f);
-            AttachMesh(helmet, CreateBoxMesh(new Vector3(0.23f, 0.10f, 0.24f), Vector3.zero), MatUniformVestDefensive);
+            AttachMesh(helmet, CreateTacticalHelmetMesh(0.23f, 0.11f, 0.25f), MatUniformVestDefensive);
 
             GameObject strap = new GameObject("ChinStrap");
             strap.transform.SetParent(headObj.transform, false);
-            strap.transform.localPosition = new Vector3(0f, -0.06f, 0.02f);
+            strap.transform.localPosition = new Vector3(0f, -0.065f, 0.02f);
             AttachMesh(strap, CreateBoxMesh(new Vector3(0.18f, 0.015f, 0.12f), Vector3.zero), MatLeatherBlack);
         }
         else if (role == CharacterRole.Boss_Jadavan)
         {
-            GameObject bossHelmet = new GameObject("TacticalCombatHelmet");
+            // Tactical Commander Combat Helmet with Reflective Visor and Crimson Crest
+            GameObject bossHelmet = new GameObject("CommanderHelmet");
             bossHelmet.transform.SetParent(headObj.transform, false);
             bossHelmet.transform.localPosition = new Vector3(0f, 0.11f, 0.01f);
-            AttachMesh(bossHelmet, CreateBoxMesh(new Vector3(0.25f, 0.12f, 0.26f), Vector3.zero), MatUniformBossTactical);
+            AttachMesh(bossHelmet, CreateTacticalHelmetMesh(0.25f, 0.12f, 0.27f), MatUniformBossTactical);
 
-            GameObject visor = new GameObject("BallisticVisor");
+            GameObject visor = new GameObject("ReflectiveVisor");
             visor.transform.SetParent(bossHelmet.transform, false);
-            visor.transform.localPosition = new Vector3(0f, -0.04f, 0.135f);
-            AttachMesh(visor, CreateBoxMesh(new Vector3(0.20f, 0.045f, 0.025f), Vector3.zero), MatLeatherBlack);
+            visor.transform.localPosition = new Vector3(0f, -0.035f, 0.138f);
+            AttachMesh(visor, CreateBoxMesh(new Vector3(0.20f, 0.050f, 0.025f), Vector3.zero), MatVisorReflective);
 
             GameObject browTrim = new GameObject("CrimsonTrim");
             browTrim.transform.SetParent(bossHelmet.transform, false);
-            browTrim.transform.localPosition = new Vector3(0f, 0.02f, 0.135f);
-            AttachMesh(browTrim, CreateBoxMesh(new Vector3(0.22f, 0.025f, 0.02f), Vector3.zero), MatCrimsonAccent);
+            browTrim.transform.localPosition = new Vector3(0f, 0.025f, 0.138f);
+            AttachMesh(browTrim, CreateBoxMesh(new Vector3(0.22f, 0.022f, 0.020f), Vector3.zero), MatCrimsonAccent);
         }
+    }
+
+    private static void BuildEye(GameObject headObj, bool isLeft)
+    {
+        float sign = isLeft ? -1f : 1f;
+        GameObject eyeRoot = new GameObject(isLeft ? "Eye_L" : "Eye_R");
+        eyeRoot.transform.SetParent(headObj.transform, false);
+        eyeRoot.transform.localPosition = new Vector3(sign * 0.044f, 0.054f, 0.092f);
+
+        // Sclera (White base)
+        GameObject sclera = new GameObject("Sclera");
+        sclera.transform.SetParent(eyeRoot.transform, false);
+        AttachMesh(sclera, CreateBoxMesh(new Vector3(0.026f, 0.016f, 0.010f), Vector3.zero), MatEyeWhite);
+
+        // Iris & Pupil (Dark centered inset)
+        GameObject iris = new GameObject("Iris");
+        iris.transform.SetParent(eyeRoot.transform, false);
+        iris.transform.localPosition = new Vector3(0f, 0f, 0.006f);
+        AttachMesh(iris, CreateBoxMesh(new Vector3(0.014f, 0.014f, 0.004f), Vector3.zero), MatEyeIris);
     }
 
     private static void BuildLimbSegment(
@@ -646,53 +710,55 @@ public static class HumanoidMeshBuilder
         float rBotX, float rBotZ,
         float length, Material mat)
     {
-        AttachMesh(parent, CreateTaperedLimbMesh(rTopX, rTopZ, rMidX, rMidZ, rBotX, rBotZ, length, 10, Vector3.zero), mat);
+        AttachMesh(parent, CreateTaperedLimbMesh(rTopX, rTopZ, rMidX, rMidZ, rBotX, rBotZ, length, 12, Vector3.zero), mat);
     }
 
     private static void BuildForearmAndHand(GameObject parent, Material uniformMat, Material skinMat, bool isLeft)
     {
         // Forearm sleeve with anatomical taper
-        AttachMesh(parent, CreateTaperedLimbMesh(0.066f, 0.060f, 0.058f, 0.054f, 0.048f, 0.044f, 0.22f, 8, Vector3.zero), uniformMat);
+        AttachMesh(parent, CreateTaperedLimbMesh(0.066f, 0.060f, 0.058f, 0.054f, 0.048f, 0.044f, 0.24f, 10, Vector3.zero), uniformMat);
 
         // Hand
         GameObject hand = new GameObject(isLeft ? "Hand_L" : "Hand_R");
         hand.transform.SetParent(parent.transform, false);
-        hand.transform.localPosition = new Vector3(0f, -0.22f, 0f);
+        hand.transform.localPosition = new Vector3(0f, -0.24f, 0f);
         AttachMesh(hand, CreateSculptedHandMesh(isLeft), skinMat);
     }
 
     private static void BuildBootGeometry(GameObject footObj)
     {
         // Sole rests precisely at local Y = 0.00m relative to ground
-        AttachMesh(footObj, CreateSculptedBootMesh(0.11f, 0.23f, 0.12f), MatLeatherBlack);
+        AttachMesh(footObj, CreateSculptedBootMesh(0.11f, 0.24f, 0.12f), MatLeatherBlack);
     }
 
     private static void BuildFirstPersonArms(GameObject fpRoot, Material uniformMat, Material skinMat)
     {
-        // Left FP Arm
+        // Left FP Arm (Forearm entering from bottom-left corner, angled inward toward center)
         GameObject armL = new GameObject("FP_Arm_L");
         armL.transform.SetParent(fpRoot.transform, false);
-        armL.transform.localPosition = new Vector3(-0.25f, -0.05f, 0.12f);
-        armL.transform.localRotation = Quaternion.Euler(22f, 16f, -10f);
+        armL.transform.localPosition = new Vector3(-0.18f, -0.02f, 0.02f);
+        armL.transform.localRotation = Quaternion.Euler(15f, 25f, -12f);
 
-        AttachMesh(armL, CreateTaperedLimbMesh(0.050f, 0.048f, 0.046f, 0.044f, 0.040f, 0.038f, 0.24f, 8, Vector3.zero), uniformMat);
+        AttachMesh(armL, CreateTaperedLimbMesh(0.052f, 0.048f, 0.046f, 0.042f, 0.038f, 0.036f, 0.22f, 10, Vector3.zero), uniformMat);
 
         GameObject handL = new GameObject("FP_Hand_L");
         handL.transform.SetParent(armL.transform, false);
-        handL.transform.localPosition = new Vector3(0f, -0.24f, 0f);
+        handL.transform.localPosition = new Vector3(0f, -0.22f, 0f);
+        handL.transform.localRotation = Quaternion.Euler(10f, 15f, -5f);
         AttachMesh(handL, CreateSculptedHandMesh(isLeft: true), skinMat);
 
-        // Right FP Arm
+        // Right FP Arm (Forearm entering from bottom-right corner, angled inward toward center)
         GameObject armR = new GameObject("FP_Arm_R");
         armR.transform.SetParent(fpRoot.transform, false);
-        armR.transform.localPosition = new Vector3(0.25f, -0.05f, 0.12f);
-        armR.transform.localRotation = Quaternion.Euler(22f, -16f, 10f);
+        armR.transform.localPosition = new Vector3(0.18f, -0.02f, 0.02f);
+        armR.transform.localRotation = Quaternion.Euler(15f, -25f, 12f);
 
-        AttachMesh(armR, CreateTaperedLimbMesh(0.050f, 0.048f, 0.046f, 0.044f, 0.040f, 0.038f, 0.24f, 8, Vector3.zero), uniformMat);
+        AttachMesh(armR, CreateTaperedLimbMesh(0.052f, 0.048f, 0.046f, 0.042f, 0.038f, 0.036f, 0.22f, 10, Vector3.zero), uniformMat);
 
         GameObject handR = new GameObject("FP_Hand_R");
         handR.transform.SetParent(armR.transform, false);
-        handR.transform.localPosition = new Vector3(0f, -0.24f, 0f);
+        handR.transform.localPosition = new Vector3(0f, -0.22f, 0f);
+        handR.transform.localRotation = Quaternion.Euler(10f, -15f, 5f);
         AttachMesh(handR, CreateSculptedHandMesh(isLeft: false), skinMat);
     }
 
@@ -729,24 +795,16 @@ public static class HumanoidMeshBuilder
 
     private static void AttachMesh(GameObject go, Mesh mesh, Material mat)
     {
-        var mf = go.AddComponent<MeshFilter>();
+        var mf = go.GetComponent<MeshFilter>();
+        if (mf == null) mf = go.AddComponent<MeshFilter>();
         mf.sharedMesh = mesh;
-        var mr = go.AddComponent<MeshRenderer>();
+
+        var mr = go.GetComponent<MeshRenderer>();
+        if (mr == null) mr = go.AddComponent<MeshRenderer>();
         mr.sharedMaterial = mat;
     }
 
-    // ==========================================
-    // PROCEDURAL MESH GENERATORS & PERSISTENCE
-    // ==========================================
-
-    private static string SanitizeFloat(float v)
-    {
-        return v.ToString("F3", System.Globalization.CultureInfo.InvariantCulture)
-            .Replace('.', '_')
-            .Replace('-', 'm');
-    }
-
-    private static Mesh GetOrSaveMeshAsset(string assetName, System.Func<Mesh> generate)
+    private static Mesh GetOrSaveMeshAsset(string assetName, Func<Mesh> generate)
     {
 #if UNITY_EDITOR
         if (!Application.isPlaying)
@@ -770,6 +828,15 @@ public static class HumanoidMeshBuilder
         runMesh.name = assetName;
         return runMesh;
     }
+
+    private static string SanitizeFloat(float v)
+    {
+        return v.ToString("F3", System.Globalization.CultureInfo.InvariantCulture).Replace('.', '_').Replace('-', 'm');
+    }
+
+    // =========================================================================
+    // PROCEDURAL MESH GENERATORS
+    // =========================================================================
 
     public static Mesh CreateTaperedLimbMesh(
         float rTopX, float rTopZ,
@@ -797,7 +864,6 @@ public static class HumanoidMeshBuilder
         float yMid = -length * 0.45f;
         float yBot = -length;
 
-        // Rings: 0 = Top, 1 = Mid, 2 = Bot
         for (int r = 0; r <= 2; r++)
         {
             float y = (r == 0) ? yTop : (r == 1) ? yMid : yBot;
@@ -821,7 +887,6 @@ public static class HumanoidMeshBuilder
         }
 
         int ringVerts = segments + 1;
-        // Quads between Ring 0 and Ring 1
         for (int i = 0; i < segments; i++)
         {
             int t0 = i;
@@ -833,7 +898,6 @@ public static class HumanoidMeshBuilder
             tris.Add(t1); tris.Add(b0); tris.Add(b1);
         }
 
-        // Quads between Ring 1 and Ring 2
         for (int i = 0; i < segments; i++)
         {
             int t0 = ringVerts + i;
@@ -879,18 +943,10 @@ public static class HumanoidMeshBuilder
 
         int[] tri = new int[]
         {
-            0, 1, 2,
-            0, 2, 3,
-            0, 3, 4,
-            0, 4, 5,
-            0, 5, 6,
-            0, 6, 1,
-            7, 2, 1,
-            7, 3, 2,
-            7, 4, 3,
-            7, 5, 4,
-            7, 6, 5,
-            7, 1, 6
+            0, 1, 2,  0, 2, 3,  0, 3, 4,
+            0, 4, 5,  0, 5, 6,  0, 6, 1,
+            7, 2, 1,  7, 3, 2,  7, 4, 3,
+            7, 5, 4,  7, 6, 5,  7, 1, 6
         };
 
         m.vertices = v;
@@ -924,14 +980,9 @@ public static class HumanoidMeshBuilder
 
         int[] tri = new int[]
         {
-            0, 1, 2,
-            0, 2, 3,
-            0, 3, 4,
-            0, 4, 1,
-            5, 2, 1,
-            5, 3, 2,
-            5, 4, 3,
-            5, 1, 4
+            0, 1, 2,  0, 2, 3,  0, 3, 4,
+            0, 4, 1,  5, 2, 1,  5, 3, 2,
+            5, 4, 3,  5, 1, 4
         };
 
         m.vertices = v;
@@ -943,7 +994,7 @@ public static class HumanoidMeshBuilder
 
     public static Mesh CreateSculptedBootMesh(float width, float length, float height)
     {
-        string key = $"Boot_{SanitizeFloat(width)}_{SanitizeFloat(length)}_{SanitizeFloat(height)}";
+        string key = $"Boot_Grounded_{SanitizeFloat(width)}_{SanitizeFloat(length)}_{SanitizeFloat(height)}";
         return GetOrSaveMeshAsset(key, () => GenerateRawSculptedBootMesh(width, length, height));
     }
 
@@ -1015,7 +1066,7 @@ public static class HumanoidMeshBuilder
 
     public static Mesh CreateSculptedHandMesh(bool isLeft)
     {
-        string key = $"Hand_{(isLeft ? "L" : "R")}";
+        string key = $"Hand_Articulated_{(isLeft ? "L" : "R")}";
         return GetOrSaveMeshAsset(key, () => GenerateRawSculptedHandMesh(isLeft));
     }
 
@@ -1077,7 +1128,7 @@ public static class HumanoidMeshBuilder
 
     public static Mesh CreateContouredHeadMesh()
     {
-        return GetOrSaveMeshAsset("Head_ContouredSculpt", GenerateRawContouredHeadMesh);
+        return GetOrSaveMeshAsset("Head_ContouredSculpt_V2", GenerateRawContouredHeadMesh);
     }
 
     private static Mesh GenerateRawContouredHeadMesh()
@@ -1170,51 +1221,402 @@ public static class HumanoidMeshBuilder
         return m;
     }
 
+    public static Mesh CreateSculptedNoseMesh(float width, float height, float depth)
+    {
+        string key = $"Nose_Sculpted_{SanitizeFloat(width)}_{SanitizeFloat(height)}_{SanitizeFloat(depth)}";
+        return GetOrSaveMeshAsset(key, () => GenerateRawSculptedNoseMesh(width, height, depth));
+    }
+
+    private static Mesh GenerateRawSculptedNoseMesh(float width, float height, float depth)
+    {
+        Mesh m = new Mesh { name = "Proc_SculptedNose" };
+        float w2 = width * 0.5f;
+        float h2 = height * 0.5f;
+
+        Vector3[] v = new Vector3[]
+        {
+            // Bridge top (root)
+            new Vector3(-w2 * 0.5f, h2, 0f),
+            new Vector3(w2 * 0.5f, h2, 0f),
+
+            // Dorsal ridge (midway)
+            new Vector3(-w2 * 0.6f, 0f, depth * 0.7f),
+            new Vector3(w2 * 0.6f, 0f, depth * 0.7f),
+
+            // Tip
+            new Vector3(0f, -h2 * 0.6f, depth),
+
+            // Nostril wings (alar base)
+            new Vector3(-w2, -h2 * 0.8f, depth * 0.3f),
+            new Vector3(w2, -h2 * 0.8f, depth * 0.3f),
+
+            // Columella base
+            new Vector3(0f, -h2, 0.01f),
+
+            // Base back
+            new Vector3(-w2 * 0.8f, -h2, 0f),
+            new Vector3(w2 * 0.8f, -h2, 0f)
+        };
+
+        int[] tri = new int[]
+        {
+            // Dorsum
+            0, 2, 1,  1, 2, 3,
+            2, 4, 3,
+            // Left alar
+            0, 5, 2,  2, 5, 4,
+            // Right alar
+            1, 3, 6,  3, 4, 6,
+            // Underside / nostrils
+            4, 5, 7,  4, 7, 6,
+            5, 8, 7,  6, 7, 9
+        };
+
+        m.vertices = v;
+        m.triangles = tri;
+        m.RecalculateNormals();
+        m.RecalculateBounds();
+        return m;
+    }
+
+    public static Mesh CreateSculptedMouthMesh(float width, float height)
+    {
+        string key = $"Mouth_Sculpted_{SanitizeFloat(width)}_{SanitizeFloat(height)}";
+        return GetOrSaveMeshAsset(key, () => GenerateRawSculptedMouthMesh(width, height));
+    }
+
+    private static Mesh GenerateRawSculptedMouthMesh(float width, float height)
+    {
+        Mesh m = new Mesh { name = "Proc_SculptedMouth" };
+        float w2 = width * 0.5f;
+        float h2 = height * 0.5f;
+        float d = 0.015f;
+
+        Vector3[] v = new Vector3[]
+        {
+            // Upper lip vermilion (Cupid's bow)
+            new Vector3(-w2 * 0.3f, h2, d * 0.8f),
+            new Vector3(0f, h2 * 0.6f, d * 0.7f),
+            new Vector3(w2 * 0.3f, h2, d * 0.8f),
+
+            // Corners
+            new Vector3(-w2, 0f, 0.005f),
+            new Vector3(w2, 0f, 0.005f),
+
+            // Mouth seam
+            new Vector3(-w2 * 0.4f, 0f, d * 0.6f),
+            new Vector3(0f, 0f, d * 0.6f),
+            new Vector3(w2 * 0.4f, 0f, d * 0.6f),
+
+            // Lower lip center
+            new Vector3(0f, -h2, d * 0.9f),
+            new Vector3(-w2 * 0.5f, -h2 * 0.7f, d * 0.7f),
+            new Vector3(w2 * 0.5f, -h2 * 0.7f, d * 0.7f)
+        };
+
+        int[] tri = new int[]
+        {
+            // Upper lip
+            3, 0, 5,  0, 1, 6,  0, 6, 5,
+            1, 2, 7,  1, 7, 6,  2, 4, 7,
+            // Lower lip
+            3, 5, 9,  5, 6, 8,  5, 8, 9,
+            6, 7, 8,  7, 10, 8, 7, 4, 10
+        };
+
+        m.vertices = v;
+        m.triangles = tri;
+        m.RecalculateNormals();
+        m.RecalculateBounds();
+        return m;
+    }
+
+    public static Mesh CreateSculptedEarMesh(float width, float height, float depth)
+    {
+        string key = $"Ear_Sculpted_{SanitizeFloat(width)}_{SanitizeFloat(height)}_{SanitizeFloat(depth)}";
+        return GetOrSaveMeshAsset(key, () => GenerateRawSculptedEarMesh(width, height, depth));
+    }
+
+    private static Mesh GenerateRawSculptedEarMesh(float width, float height, float depth)
+    {
+        Mesh m = new Mesh { name = "Proc_SculptedEar" };
+        float w = width;
+        float h2 = height * 0.5f;
+        float d2 = depth * 0.5f;
+
+        Vector3[] v = new Vector3[]
+        {
+            // Base attached to skull (X = 0)
+            new Vector3(0f, h2 * 0.8f, -d2 * 0.5f),
+            new Vector3(0f, h2, d2 * 0.2f),
+            new Vector3(0f, 0f, d2),
+            new Vector3(0f, -h2, d2 * 0.4f),
+            new Vector3(0f, -h2 * 0.8f, -d2 * 0.6f),
+
+            // Outer helix rim (flaring out along -X)
+            new Vector3(-w, h2 * 0.8f, -d2 * 0.2f),
+            new Vector3(-w * 0.9f, h2, d2 * 0.4f),
+            new Vector3(-w * 0.8f, 0f, d2 * 0.8f),
+            new Vector3(-w * 0.6f, -h2 * 0.7f, d2 * 0.2f),
+
+            // Inner concha hollow
+            new Vector3(-w * 0.3f, 0f, 0f)
+        };
+
+        int[] tri = new int[]
+        {
+            // Outer helix surface
+            0, 1, 6,  0, 6, 5,
+            1, 2, 7,  1, 7, 6,
+            2, 3, 8,  2, 8, 7,
+            3, 4, 8,
+            // Inner hollow
+            0, 5, 9,  5, 6, 9,  6, 7, 9,
+            7, 8, 9,  8, 4, 9,  4, 0, 9
+        };
+
+        m.vertices = v;
+        m.triangles = tri;
+        m.RecalculateNormals();
+        m.RecalculateBounds();
+        return m;
+    }
+
+    public static Mesh CreatePeakedCapMesh(float width, float height, float length)
+    {
+        string key = $"Cap_Peaked_{SanitizeFloat(width)}_{SanitizeFloat(height)}_{SanitizeFloat(length)}";
+        return GetOrSaveMeshAsset(key, () => GenerateRawPeakedCapMesh(width, height, length));
+    }
+
+    private static Mesh GenerateRawPeakedCapMesh(float width, float height, float length)
+    {
+        Mesh m = new Mesh { name = "Proc_PeakedCap" };
+        float w2 = width * 0.5f;
+        float l2 = length * 0.5f;
+
+        Vector3[] v = new Vector3[]
+        {
+            // Crown top (flared outward)
+            new Vector3(0f, height, 0.02f),
+            new Vector3(-w2 * 1.15f, height * 0.95f, 0f),
+            new Vector3(w2 * 1.15f, height * 0.95f, 0f),
+            new Vector3(0f, height * 0.95f, -l2 * 1.15f),
+            new Vector3(0f, height * 1.05f, l2 * 1.20f), // Peaked front
+
+            // Crown band (base resting on head)
+            new Vector3(-w2, 0f, 0f),
+            new Vector3(w2, 0f, 0f),
+            new Vector3(0f, 0f, -l2),
+            new Vector3(0f, 0f, l2)
+        };
+
+        int[] tri = new int[]
+        {
+            // Top crown fan
+            0, 1, 4,  0, 4, 2,  0, 2, 3,  0, 3, 1,
+            // Sides
+            1, 5, 8,  1, 8, 4,
+            4, 8, 6,  4, 6, 2,
+            2, 6, 7,  2, 7, 3,
+            3, 7, 5,  3, 5, 1
+        };
+
+        m.vertices = v;
+        m.triangles = tri;
+        m.RecalculateNormals();
+        m.RecalculateBounds();
+        return m;
+    }
+
+    public static Mesh CreateTacticalHelmetMesh(float width, float height, float length)
+    {
+        string key = $"Helmet_Tactical_{SanitizeFloat(width)}_{SanitizeFloat(height)}_{SanitizeFloat(length)}";
+        return GetOrSaveMeshAsset(key, () => GenerateRawTacticalHelmetMesh(width, height, length));
+    }
+
+    private static Mesh GenerateRawTacticalHelmetMesh(float width, float height, float length)
+    {
+        Mesh m = new Mesh { name = "Proc_TacticalHelmet" };
+        float w2 = width * 0.5f;
+        float l2 = length * 0.5f;
+
+        Vector3[] v = new Vector3[]
+        {
+            // Dome apex
+            new Vector3(0f, height, 0f),
+
+            // Mid dome ring
+            new Vector3(-w2 * 0.9f, height * 0.7f, 0f),
+            new Vector3(w2 * 0.9f, height * 0.7f, 0f),
+            new Vector3(0f, height * 0.7f, -l2 * 0.9f),
+            new Vector3(0f, height * 0.7f, l2 * 0.9f),
+
+            // Brow / Rim edge
+            new Vector3(-w2, 0f, 0f),
+            new Vector3(w2, 0f, 0f),
+            new Vector3(0f, -height * 0.15f, -l2), // Nape drop
+            new Vector3(0f, 0f, l2 * 1.05f)        // Brow brim
+        };
+
+        int[] tri = new int[]
+        {
+            // Apex fan
+            0, 1, 4,  0, 4, 2,  0, 2, 3,  0, 3, 1,
+            // Side shell
+            1, 5, 8,  1, 8, 4,
+            4, 8, 6,  4, 6, 2,
+            2, 6, 7,  2, 7, 3,
+            3, 7, 5,  3, 5, 1
+        };
+
+        m.vertices = v;
+        m.triangles = tri;
+        m.RecalculateNormals();
+        m.RecalculateBounds();
+        return m;
+    }
+
+    public static Mesh CreatePlateCarrierMesh(float width, float height, float depth)
+    {
+        string key = $"Armor_Carrier_{SanitizeFloat(width)}_{SanitizeFloat(height)}_{SanitizeFloat(depth)}";
+        return GetOrSaveMeshAsset(key, () => GenerateRawPlateCarrierMesh(width, height, depth));
+    }
+
+    private static Mesh GenerateRawPlateCarrierMesh(float width, float height, float depth)
+    {
+        Mesh m = new Mesh { name = "Proc_PlateCarrier" };
+        float w2 = width * 0.5f;
+        float h2 = height * 0.5f;
+        float d2 = depth * 0.5f;
+
+        Vector3[] v = new Vector3[]
+        {
+            // Front chest plate (tapered top)
+            new Vector3(-w2 * 0.75f, h2, d2),
+            new Vector3(w2 * 0.75f, h2, d2),
+            new Vector3(w2, -h2, d2),
+            new Vector3(-w2, -h2, d2),
+
+            // Back plate
+            new Vector3(-w2 * 0.75f, h2, -d2),
+            new Vector3(w2 * 0.75f, h2, -d2),
+            new Vector3(w2, -h2, -d2),
+            new Vector3(-w2, -h2, -d2),
+
+            // Cummerbund sides
+            new Vector3(w2 * 1.02f, 0f, 0f),
+            new Vector3(-w2 * 1.02f, 0f, 0f)
+        };
+
+        int[] tri = new int[]
+        {
+            // Front plate
+            0, 1, 2,  0, 2, 3,
+            // Back plate
+            5, 4, 7,  5, 7, 6,
+            // Shoulder straps
+            4, 5, 1,  4, 1, 0,
+            // Right cummerbund
+            1, 8, 2,  5, 6, 8,  1, 5, 8,  2, 8, 6,
+            // Left cummerbund
+            0, 3, 9,  4, 9, 7,  4, 0, 9,  3, 7, 9
+        };
+
+        m.vertices = v;
+        m.triangles = tri;
+        m.RecalculateNormals();
+        m.RecalculateBounds();
+        return m;
+    }
+
+    public static Mesh CreateShoulderPauldronMesh(float width, float height, float length)
+    {
+        string key = $"Pauldron_{SanitizeFloat(width)}_{SanitizeFloat(height)}_{SanitizeFloat(length)}";
+        return GetOrSaveMeshAsset(key, () => GenerateRawShoulderPauldronMesh(width, height, length));
+    }
+
+    private static Mesh GenerateRawShoulderPauldronMesh(float width, float height, float length)
+    {
+        Mesh m = new Mesh { name = "Proc_Pauldron" };
+        float w2 = width * 0.5f;
+        float h2 = height * 0.5f;
+        float l2 = length * 0.5f;
+
+        Vector3[] v = new Vector3[]
+        {
+            // Curved top crest
+            new Vector3(0f, h2, -l2 * 0.8f),
+            new Vector3(0f, h2 * 1.1f, 0f),
+            new Vector3(0f, h2, l2 * 0.8f),
+
+            // Outer drop flange
+            new Vector3(-w2, -h2, -l2),
+            new Vector3(-w2 * 1.15f, -h2, 0f),
+            new Vector3(-w2, -h2, l2),
+
+            // Inner drop flange
+            new Vector3(w2, -h2, -l2),
+            new Vector3(w2 * 1.15f, -h2, 0f),
+            new Vector3(w2, -h2, l2)
+        };
+
+        int[] tri = new int[]
+        {
+            // Outer flank
+            0, 1, 4,  0, 4, 3,
+            1, 2, 5,  1, 5, 4,
+            // Inner flank
+            1, 0, 6,  1, 6, 7,
+            2, 1, 7,  2, 7, 8
+        };
+
+        m.vertices = v;
+        m.triangles = tri;
+        m.RecalculateNormals();
+        m.RecalculateBounds();
+        return m;
+    }
+
     public static Mesh CreateTrapeziusNeckMesh(float rTop, float rBotX, float rBotZ, float height)
     {
-        string key = $"NeckTrap_{SanitizeFloat(rTop)}_{SanitizeFloat(rBotX)}_{SanitizeFloat(rBotZ)}_{SanitizeFloat(height)}";
+        string key = $"Neck_{SanitizeFloat(rTop)}_{SanitizeFloat(rBotX)}_{SanitizeFloat(rBotZ)}_{SanitizeFloat(height)}";
         return GetOrSaveMeshAsset(key, () => GenerateRawTrapeziusNeckMesh(rTop, rBotX, rBotZ, height));
     }
 
     private static Mesh GenerateRawTrapeziusNeckMesh(float rTop, float rBotX, float rBotZ, float height)
     {
-        Mesh m = new Mesh { name = "Proc_TrapeziusNeck" };
-        int segs = 10;
+        Mesh m = new Mesh { name = "Proc_Neck" };
+        int seg = 10;
         List<Vector3> verts = new List<Vector3>();
-        List<Vector3> norms = new List<Vector3>();
-        List<Vector2> uvs = new List<Vector2>();
         List<int> tris = new List<int>();
 
-        for (int i = 0; i <= segs; i++)
+        for (int i = 0; i <= seg; i++)
         {
-            float a = (float)i / segs * Mathf.PI * 2f;
-            float cos = Mathf.Cos(a);
-            float sin = Mathf.Sin(a);
-
-            verts.Add(new Vector3(cos * rTop, height, sin * rTop));
-            norms.Add(new Vector3(cos, 0.2f, sin).normalized);
-            uvs.Add(new Vector2((float)i / segs, 1f));
-
-            verts.Add(new Vector3(cos * rBotX, 0f, sin * rBotZ));
-            norms.Add(new Vector3(cos, 0.4f, sin).normalized);
-            uvs.Add(new Vector2((float)i / segs, 0f));
+            float a = (float)i / seg * Mathf.PI * 2f;
+            verts.Add(new Vector3(Mathf.Cos(a) * rTop, height, Mathf.Sin(a) * rTop));
         }
 
-        for (int i = 0; i < segs; i++)
+        for (int i = 0; i <= seg; i++)
         {
-            int t0 = i * 2;
-            int b0 = t0 + 1;
-            int t1 = t0 + 2;
-            int b1 = t0 + 3;
+            float a = (float)i / seg * Mathf.PI * 2f;
+            verts.Add(new Vector3(Mathf.Cos(a) * rBotX, 0f, Mathf.Sin(a) * rBotZ));
+        }
+
+        int count = seg + 1;
+        for (int i = 0; i < seg; i++)
+        {
+            int t0 = i;
+            int t1 = i + 1;
+            int b0 = count + i;
+            int b1 = count + i + 1;
 
             tris.Add(t0); tris.Add(b0); tris.Add(t1);
             tris.Add(t1); tris.Add(b0); tris.Add(b1);
         }
 
         m.vertices = verts.ToArray();
-        m.normals = norms.ToArray();
-        m.uv = uvs.ToArray();
         m.triangles = tris.ToArray();
+        m.RecalculateNormals();
         m.RecalculateBounds();
         return m;
     }
@@ -1228,50 +1630,29 @@ public static class HumanoidMeshBuilder
     private static Mesh GenerateRawBoxMesh(Vector3 size, Vector3 center)
     {
         Mesh m = new Mesh { name = "Proc_Box" };
-        float x = size.x * 0.5f;
-        float y = size.y * 0.5f;
-        float z = size.z * 0.5f;
+        Vector3 h = size * 0.5f;
 
         Vector3[] v = new Vector3[]
         {
             // Front
-            new Vector3(-x, -y,  z) + center, new Vector3( x, -y,  z) + center,
-            new Vector3( x,  y,  z) + center, new Vector3(-x,  y,  z) + center,
+            center + new Vector3(-h.x, -h.y,  h.z), center + new Vector3( h.x, -h.y,  h.z),
+            center + new Vector3( h.x,  h.y,  h.z), center + new Vector3(-h.x,  h.y,  h.z),
             // Back
-            new Vector3( x, -y, -z) + center, new Vector3(-x, -y, -z) + center,
-            new Vector3(-x,  y, -z) + center, new Vector3( x,  y, -z) + center,
+            center + new Vector3( h.x, -h.y, -h.z), center + new Vector3(-h.x, -h.y, -h.z),
+            center + new Vector3(-h.x,  h.y, -h.z), center + new Vector3( h.x,  h.y, -h.z),
             // Top
-            new Vector3(-x,  y,  z) + center, new Vector3( x,  y,  z) + center,
-            new Vector3( x,  y, -z) + center, new Vector3(-x,  y, -z) + center,
+            center + new Vector3(-h.x,  h.y,  h.z), center + new Vector3( h.x,  h.y,  h.z),
+            center + new Vector3( h.x,  h.y, -h.z), center + new Vector3(-h.x,  h.y, -h.z),
             // Bottom
-            new Vector3(-x, -y, -z) + center, new Vector3( x, -y, -z) + center,
-            new Vector3( x, -y,  z) + center, new Vector3(-x, -y,  z) + center,
-            // Left
-            new Vector3(-x, -y, -z) + center, new Vector3(-x, -y,  z) + center,
-            new Vector3(-x,  y,  z) + center, new Vector3(-x,  y, -z) + center,
+            center + new Vector3(-h.x, -h.y, -h.z), center + new Vector3( h.x, -h.y, -h.z),
+            center + new Vector3( h.x, -h.y,  h.z), center + new Vector3(-h.x, -h.y,  h.z),
             // Right
-            new Vector3( x, -y,  z) + center, new Vector3( x, -y, -z) + center,
-            new Vector3( x,  y, -z) + center, new Vector3( x,  y,  z) + center,
+            center + new Vector3( h.x, -h.y,  h.z), center + new Vector3( h.x, -h.y, -h.z),
+            center + new Vector3( h.x,  h.y, -h.z), center + new Vector3( h.x,  h.y,  h.z),
+            // Left
+            center + new Vector3(-h.x, -h.y, -h.z), center + new Vector3(-h.x, -h.y,  h.z),
+            center + new Vector3(-h.x,  h.y,  h.z), center + new Vector3(-h.x,  h.y, -h.z)
         };
-
-        Vector3[] n = new Vector3[]
-        {
-            Vector3.forward, Vector3.forward, Vector3.forward, Vector3.forward,
-            Vector3.back, Vector3.back, Vector3.back, Vector3.back,
-            Vector3.up, Vector3.up, Vector3.up, Vector3.up,
-            Vector3.down, Vector3.down, Vector3.down, Vector3.down,
-            Vector3.left, Vector3.left, Vector3.left, Vector3.left,
-            Vector3.right, Vector3.right, Vector3.right, Vector3.right
-        };
-
-        Vector2[] uv = new Vector2[24];
-        for (int i = 0; i < 6; i++)
-        {
-            uv[i * 4 + 0] = new Vector2(0, 0);
-            uv[i * 4 + 1] = new Vector2(1, 0);
-            uv[i * 4 + 2] = new Vector2(1, 1);
-            uv[i * 4 + 3] = new Vector2(0, 1);
-        }
 
         int[] tri = new int[]
         {
@@ -1284,9 +1665,8 @@ public static class HumanoidMeshBuilder
         };
 
         m.vertices = v;
-        m.normals = n;
-        m.uv = uv;
         m.triangles = tri;
+        m.RecalculateNormals();
         m.RecalculateBounds();
         return m;
     }
@@ -1301,81 +1681,36 @@ public static class HumanoidMeshBuilder
     {
         Mesh m = new Mesh { name = "Proc_Cylinder" };
         List<Vector3> verts = new List<Vector3>();
-        List<Vector3> norms = new List<Vector3>();
-        List<Vector2> uvs = new List<Vector2>();
         List<int> tris = new List<int>();
 
-        float halfH = height * 0.5f;
+        float h2 = height * 0.5f;
 
         for (int i = 0; i <= segments; i++)
         {
-            float angle = (float)i / segments * Mathf.PI * 2f;
-            float cos = Mathf.Cos(angle);
-            float sin = Mathf.Sin(angle);
-
-            Vector3 topPos = new Vector3(cos * radiusTop, halfH, sin * radiusTop) + center;
-            Vector3 btmPos = new Vector3(cos * radiusBottom, -halfH, sin * radiusBottom) + center;
-            Vector3 normal = new Vector3(cos, 0f, sin).normalized;
-
-            verts.Add(topPos);
-            norms.Add(normal);
-            uvs.Add(new Vector2((float)i / segments, 1f));
-
-            verts.Add(btmPos);
-            norms.Add(normal);
-            uvs.Add(new Vector2((float)i / segments, 0f));
+            float a = (float)i / segments * Mathf.PI * 2f;
+            verts.Add(center + new Vector3(Mathf.Cos(a) * radiusTop, h2, Mathf.Sin(a) * radiusTop));
         }
 
+        for (int i = 0; i <= segments; i++)
+        {
+            float a = (float)i / segments * Mathf.PI * 2f;
+            verts.Add(center + new Vector3(Mathf.Cos(a) * radiusBottom, -h2, Mathf.Sin(a) * radiusBottom));
+        }
+
+        int count = segments + 1;
         for (int i = 0; i < segments; i++)
         {
-            int t0 = i * 2;
-            int b0 = t0 + 1;
-            int t1 = t0 + 2;
-            int b1 = t0 + 3;
+            int t0 = i;
+            int t1 = i + 1;
+            int b0 = count + i;
+            int b1 = count + i + 1;
 
             tris.Add(t0); tris.Add(b0); tris.Add(t1);
             tris.Add(t1); tris.Add(b0); tris.Add(b1);
         }
 
         m.vertices = verts.ToArray();
-        m.normals = norms.ToArray();
-        m.uv = uvs.ToArray();
         m.triangles = tris.ToArray();
-        m.RecalculateBounds();
-        return m;
-    }
-
-    public static Mesh CreateWedgeMesh(Vector3 size)
-    {
-        string key = $"Wedge_{SanitizeFloat(size.x)}_{SanitizeFloat(size.y)}_{SanitizeFloat(size.z)}";
-        return GetOrSaveMeshAsset(key, () => GenerateRawWedgeMesh(size));
-    }
-
-    private static Mesh GenerateRawWedgeMesh(Vector3 size)
-    {
-        Mesh m = new Mesh { name = "Proc_Wedge" };
-        float x = size.x * 0.5f;
-        float y = size.y * 0.5f;
-        float z = size.z;
-
-        Vector3[] v = new Vector3[]
-        {
-            new Vector3(-x, -y, 0), new Vector3( x, -y, 0),
-            new Vector3( x,  y, 0), new Vector3(-x,  y, 0),
-            new Vector3(0, 0, z)
-        };
-
-        int[] tri = new int[]
-        {
-            0, 1, 2, 0, 2, 3, // Base
-            0, 4, 1,          // Bottom
-            1, 4, 2,          // Right
-            2, 4, 3,          // Top
-            3, 4, 0           // Left
-        };
-
-        m.vertices = v;
-        m.triangles = tri;
         m.RecalculateNormals();
         m.RecalculateBounds();
         return m;
@@ -1383,7 +1718,7 @@ public static class HumanoidMeshBuilder
 
     public static Mesh CreateBadgeMesh()
     {
-        return GetOrSaveMeshAsset("Badge_GoldShield", GenerateRawBadgeMesh);
+        return GetOrSaveMeshAsset("Badge_GoldShield_V2", GenerateRawBadgeMesh);
     }
 
     private static Mesh GenerateRawBadgeMesh()
@@ -1396,12 +1731,12 @@ public static class HumanoidMeshBuilder
         Vector3[] v = new Vector3[]
         {
             new Vector3(-w,  h, d), new Vector3( w,  h, d),
-            new Vector3( w, -h*0.3f, d), new Vector3( 0, -h, d),
-            new Vector3(-w, -h*0.3f, d),
+            new Vector3( w, -h * 0.3f, d), new Vector3( 0, -h, d),
+            new Vector3(-w, -h * 0.3f, d),
             // Back
             new Vector3(-w,  h, 0), new Vector3( w,  h, 0),
-            new Vector3( w, -h*0.3f, 0), new Vector3( 0, -h, 0),
-            new Vector3(-w, -h*0.3f, 0)
+            new Vector3( w, -h * 0.3f, 0), new Vector3( 0, -h, 0),
+            new Vector3(-w, -h * 0.3f, 0)
         };
 
         int[] tri = new int[]

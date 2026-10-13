@@ -78,12 +78,75 @@ public class PatrolGuardAI : MonoBehaviour
         if (rootMr != null) { rootMr.enabled = false; if (Application.isPlaying) Destroy(rootMr); else DestroyImmediate(rootMr); }
         var rootMf = GetComponent<MeshFilter>();
         if (rootMf != null) { if (Application.isPlaying) Destroy(rootMf); else DestroyImmediate(rootMf); }
+
+        var health = GetComponent<Health>();
+        if (health == null)
+        {
+            health = gameObject.AddComponent<Health>();
+            health.CharacterName = "Varun [Patrol]";
+            health.SetMaxHealth(60);
+        }
+
+        var shooting = GetComponent<GuardShooting>();
+        if (shooting == null)
+        {
+            shooting = gameObject.AddComponent<GuardShooting>();
+            shooting.ConfigureRole(GuardShooting.WeaponType.Pistol, 12, 1.1f, 12f, 1, 3.5f);
+        }
+
+        if (GetComponent<EnemyHealthBar>() == null)
+        {
+            gameObject.AddComponent<EnemyHealthBar>();
+        }
+
         HumanoidMeshBuilder.EnsureRuntimeVisuals(transform, CharacterRole.Patrol_Varun);
+    }
+
+    private static readonly Vector3[] StorageInspectionRoute = new Vector3[]
+    {
+        new Vector3(-3.0f, 1.08f, -15.5f), // South crossing near Room 1 entrance
+        new Vector3( 4.5f, 1.08f, -14.0f), // East storage aisle (inspection point)
+        new Vector3( 4.5f, 1.08f,  -9.5f), // East central corridor
+        new Vector3( 4.0f, 1.08f,  -5.5f), // Northeast inspection (checks Route B doorway)
+        new Vector3( 0.0f, 1.08f,  -6.5f), // North central crossing
+        new Vector3(-4.5f, 1.08f,  -5.5f), // Northwest inspection (checks Route A doorway)
+        new Vector3(-5.0f, 1.08f, -10.5f), // West storage aisle
+        new Vector3(-4.5f, 1.08f, -14.5f)  // Southwest corner (inspection point)
+    };
+
+    private void EnsureNaturalRoute()
+    {
+        if (waypoints == null || waypoints.Length <= 4)
+        {
+            var wpParent = GameObject.Find("Waypoints_Varun");
+            if (wpParent == null) wpParent = new GameObject("Waypoints_Varun");
+            var list = new System.Collections.Generic.List<Transform>();
+
+            for (int i = 0; i < StorageInspectionRoute.Length; i++)
+            {
+                string wpName = $"WP_Varun_Natural_{i + 1}";
+                Transform existing = wpParent.transform.Find(wpName);
+                if (existing == null)
+                {
+                    GameObject go = new GameObject(wpName);
+                    go.transform.SetParent(wpParent.transform);
+                    go.transform.position = StorageInspectionRoute[i];
+                    existing = go.transform;
+                }
+                else
+                {
+                    existing.position = StorageInspectionRoute[i];
+                }
+                list.Add(existing);
+            }
+            waypoints = list.ToArray();
+        }
     }
 
     void Start()
     {
         FindPlayerReference();
+        EnsureNaturalRoute();
         TransitionToPatrol();
     }
 
@@ -154,7 +217,8 @@ public class PatrolGuardAI : MonoBehaviour
         if (enemyMovement.HasReachedDestination(arrivalThreshold))
         {
             isWaiting = true;
-            waitTimer = waypointWaitTime;
+            // Inspection points (odd indices) pause longer (2.0s) for head/body scanning
+            waitTimer = (currentWaypointIndex % 2 == 1) ? 2.0f : waypointWaitTime;
             enemyMovement.Stop();
             return;
         }
@@ -178,7 +242,21 @@ public class PatrolGuardAI : MonoBehaviour
         Transform wp = waypoints[currentWaypointIndex];
         if (wp != null)
         {
-            enemyMovement.SetDestination(wp.position);
+            Vector3 targetPos = wp.position;
+            NavMeshHit hit;
+            if (NavMesh.SamplePosition(targetPos, out hit, 1.5f, NavMesh.AllAreas))
+            {
+                NavMeshPath path = new NavMeshPath();
+                if (NavMesh.CalculatePath(transform.position, hit.position, NavMesh.AllAreas, path) &&
+                    path.status == NavMeshPathStatus.PathComplete)
+                {
+                    enemyMovement.SetDestination(hit.position);
+                    enemyMovement.Resume();
+                    return;
+                }
+            }
+
+            enemyMovement.SetDestination(targetPos);
             enemyMovement.Resume();
         }
     }

@@ -243,18 +243,19 @@ public class HumanoidAnimator : MonoBehaviour
             pelvis.localRotation = pelvisBaseRot * Quaternion.Euler(0f, hipSwayY, hipRollZ);
         }
 
-        // 2. Spine & Chest (counter-rotation to hips)
+        // 2. Spine & Chest (counter-rotation to hips when moving; subtle scanning when idle)
         if (spine != null)
         {
             float spineCounterY = -Mathf.Sin(gaitPhase) * 3.0f * moveWeight;
+            float idleSpineScan = (1f - moveWeight) * Mathf.Sin(Time.time * 0.75f) * 6.0f;
             float spinePitch = (breath * idleBreathingAngle * (1f - moveWeight * 0.5f)) + (moveWeight * 3.0f);
-            spine.localRotation = spineBaseRot * Quaternion.Euler(spinePitch, spineCounterY, 0f);
+            spine.localRotation = spineBaseRot * Quaternion.Euler(spinePitch, spineCounterY + idleSpineScan, 0f);
         }
 
-        // 3. Head (stays oriented forward with subtle scanning when idle)
+        // 3. Head (stays oriented forward with smooth scanning at inspection points when idle)
         if (head != null)
         {
-            float headScan = (1f - moveWeight) * Mathf.Sin(Time.time * 0.4f) * 3.0f;
+            float headScan = (1f - moveWeight) * Mathf.Sin(Time.time * 0.75f) * 32.0f;
             head.localRotation = headBaseRot * Quaternion.Euler(-moveWeight * 2.0f, headScan, 0f);
         }
 
@@ -285,7 +286,7 @@ public class HumanoidAnimator : MonoBehaviour
         if (footR != null)
             footR.localRotation = footRBaseRot * Quaternion.Euler(ankleR, 0f, 0f);
 
-        // 5. Arms (Oppositional swing for guards)
+        // 5. Arms (Left arm swings naturally; Right arm holds weapon tactically if guard has weapon)
         float armSwingL = -sinPhase * maxArmSwingAngle * moveWeight;
         float elbowFlexL = (14f + Mathf.Abs(sinPhase) * 18f * moveWeight);
 
@@ -294,13 +295,26 @@ public class HumanoidAnimator : MonoBehaviour
         if (forearmL != null)
             forearmL.localRotation = forearmLBaseRot * Quaternion.Euler(elbowFlexL, 0f, 0f);
 
-        float armSwingR = sinPhase * maxArmSwingAngle * moveWeight;
-        float elbowFlexR = (14f + Mathf.Abs(sinPhase) * 18f * moveWeight);
+        var guardShooting = GetComponentInParent<GuardShooting>();
+        if (guardShooting != null)
+        {
+            // Tactical ready weapon carry: Right arm raised forward and bent holding gun
+            float subtleAimSway = Mathf.Sin(Time.time * 2f) * 1.5f;
+            if (upperArmR != null)
+                upperArmR.localRotation = upperArmRBaseRot * Quaternion.Euler(-38f + subtleAimSway, 0f, 15f);
+            if (forearmR != null)
+                forearmR.localRotation = forearmRBaseRot * Quaternion.Euler(45f, 0f, 0f);
+        }
+        else
+        {
+            float armSwingR = sinPhase * maxArmSwingAngle * moveWeight;
+            float elbowFlexR = (14f + Mathf.Abs(sinPhase) * 18f * moveWeight);
 
-        if (upperArmR != null)
-            upperArmR.localRotation = upperArmRBaseRot * Quaternion.Euler(armSwingR, 0f, armSwingR * 0.15f);
-        if (forearmR != null)
-            forearmR.localRotation = forearmRBaseRot * Quaternion.Euler(elbowFlexR, 0f, 0f);
+            if (upperArmR != null)
+                upperArmR.localRotation = upperArmRBaseRot * Quaternion.Euler(armSwingR, 0f, armSwingR * 0.15f);
+            if (forearmR != null)
+                forearmR.localRotation = forearmRBaseRot * Quaternion.Euler(elbowFlexR, 0f, 0f);
+        }
 
         // 6. First-Person Camera Pitch Adaptation & Arms Presentation
         if (isFirstPersonPlayer && fpArmsRoot != null)
@@ -313,12 +327,12 @@ public class HumanoidAnimator : MonoBehaviour
             }
             lastPitch = Mathf.MoveTowards(lastPitch, targetPitch, dt * 200f);
 
-            // Pitch tucking: when looking down (>10 deg), smoothly retract arms down & back
-            float downTuck = Mathf.Clamp01((lastPitch - 10f) / 55f);
+            // Pitch tucking: when looking down (>12 deg), smoothly retract arms down & back
+            float downTuck = Mathf.Clamp01((lastPitch - 12f) / 45f);
             float upTuck = Mathf.Clamp01((-lastPitch - 10f) / 50f);
 
-            Vector3 pitchPosOffset = new Vector3(0f, -0.36f * downTuck - 0.12f * upTuck, -0.26f * downTuck);
-            Quaternion pitchRotOffset = Quaternion.Euler(-32f * downTuck, 0f, 0f);
+            Vector3 pitchPosOffset = new Vector3(0f, -0.40f * downTuck - 0.12f * upTuck, -0.32f * downTuck);
+            Quaternion pitchRotOffset = Quaternion.Euler(-35f * downTuck, 0f, 0f);
 
             float armBobY = Mathf.Sin(gaitPhase * 2f) * 0.010f * moveWeight + (breath * 0.003f * (1f - downTuck));
             float armSwayX = Mathf.Sin(gaitPhase) * 0.012f * moveWeight * (1f - downTuck);

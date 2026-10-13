@@ -81,6 +81,27 @@ public class DefensiveGuardAI : MonoBehaviour
     void Awake()
     {
         enemyMovement = GetComponent<EnemyMovement>();
+
+        var health = GetComponent<Health>();
+        if (health == null)
+        {
+            health = gameObject.AddComponent<Health>();
+            health.CharacterName = "Aqqil [Defensive]";
+            health.SetMaxHealth(80);
+        }
+
+        var shooting = GetComponent<GuardShooting>();
+        if (shooting == null)
+        {
+            shooting = gameObject.AddComponent<GuardShooting>();
+            shooting.ConfigureRole(GuardShooting.WeaponType.Rifle, 16, 1.2f, 9f, 1, 2.5f);
+        }
+
+        if (GetComponent<EnemyHealthBar>() == null)
+        {
+            gameObject.AddComponent<EnemyHealthBar>();
+        }
+
         CleanupRoom4PlaceholdersAndCapsule();
         EnsureHumanVisualAttached();
     }
@@ -203,6 +224,19 @@ public class DefensiveGuardAI : MonoBehaviour
         return pos.x >= min.x && pos.x <= max.x && pos.z >= min.z && pos.z <= max.z;
     }
 
+    private static readonly Vector3[] DefensiveLocalInspections = new Vector3[]
+    {
+        new Vector3(16.0f, 1.08f,  8.0f), // Anchor post facing south entrance
+        new Vector3(18.5f, 1.08f,  8.5f), // East perimeter check
+        new Vector3(16.0f, 1.08f,  8.0f), // Return to anchor post
+        new Vector3(14.5f, 1.08f,  9.5f), // Terminal desk inspection
+        new Vector3(16.0f, 1.08f,  8.0f)  // Return to anchor post
+    };
+
+    private int localInspectionIndex = 0;
+    private float inspectionWaitTimer = 2.5f;
+    private bool isWaitingAtInspection = true;
+
     private void UpdateGuardingPostState(float distPlayerToPost)
     {
         // If intruder enters territory, is seen, and is inside room, engage pursuit
@@ -212,18 +246,57 @@ public class DefensiveGuardAI : MonoBehaviour
             return;
         }
 
-        // If displaced from post, return
-        float distToPost = Vector3.Distance(transform.position, postPosition);
-        if (distToPost > postArrivalThreshold && !enemyMovement.HasPath)
+        if (isWaitingAtInspection)
         {
-            enemyMovement.SetDestination(postPosition);
-            enemyMovement.Resume();
+            inspectionWaitTimer -= Time.deltaTime;
+            if (inspectionWaitTimer <= 0f)
+            {
+                isWaitingAtInspection = false;
+                localInspectionIndex = (localInspectionIndex + 1) % DefensiveLocalInspections.Length;
+                DispatchInspectionPoint();
+            }
+            return;
         }
+
+        if (enemyMovement.HasReachedDestination(postArrivalThreshold))
+        {
+            isWaitingAtInspection = true;
+            inspectionWaitTimer = 2.0f;
+            enemyMovement.Stop();
+            return;
+        }
+
+        if (!enemyMovement.PathPending && (!enemyMovement.HasPath || enemyMovement.PathStatus == NavMeshPathStatus.PathInvalid))
+        {
+            isWaitingAtInspection = true;
+            inspectionWaitTimer = 1.0f;
+        }
+    }
+
+    private void DispatchInspectionPoint()
+    {
+        Vector3 targetPos = DefensiveLocalInspections[localInspectionIndex];
+        NavMeshHit hit;
+        if (NavMesh.SamplePosition(targetPos, out hit, 1.5f, NavMesh.AllAreas))
+        {
+            NavMeshPath path = new NavMeshPath();
+            if (NavMesh.CalculatePath(transform.position, hit.position, NavMesh.AllAreas, path) &&
+                path.status == NavMeshPathStatus.PathComplete)
+            {
+                enemyMovement.SetDestination(hit.position);
+                enemyMovement.Resume();
+                return;
+            }
+        }
+
+        enemyMovement.SetDestination(targetPos);
+        enemyMovement.Resume();
     }
 
     public void TransitionToPursueIntruder()
     {
         currentState = DefensiveGuardState.PursueIntruder;
+        isWaitingAtInspection = false;
         repathTimer = 0f;
         DispatchPursuitDestination();
     }

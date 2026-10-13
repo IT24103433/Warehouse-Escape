@@ -28,6 +28,29 @@ public class PlayerMovement : MonoBehaviour
         controller = GetComponent<CharacterController>();
         playerCamera = GetComponentInChildren<Camera>();
 
+        // Ensure Player Health
+        var health = GetComponent<Health>();
+        if (health == null)
+        {
+            health = gameObject.AddComponent<Health>();
+        }
+        health.SetIsPlayer(true);
+        health.CharacterName = "Operative";
+        health.SetMaxHealth(100);
+
+        // Ensure First-Person Player Gun
+        if (playerCamera != null && playerCamera.GetComponent<PlayerGun>() == null)
+        {
+            playerCamera.gameObject.AddComponent<PlayerGun>();
+        }
+
+        // Ensure Player HUD
+        var canvas = Object.FindFirstObjectByType<Canvas>();
+        if (canvas != null && canvas.GetComponentInChildren<PlayerHUD>() == null)
+        {
+            canvas.gameObject.AddComponent<PlayerHUD>();
+        }
+
         HumanoidMeshBuilder.EnsureRuntimeVisuals(transform, CharacterRole.Player);
 
         Cursor.lockState = CursorLockMode.Locked;

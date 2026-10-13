@@ -61,23 +61,48 @@ public class GuardCapture : MonoBehaviour
         CheckCapture();
     }
 
+    [Header("Combat Attack Settings")]
+    [Tooltip("Damage dealt per close-quarters melee strike.")]
+    [SerializeField] private int meleeDamage = 20;
+
+    [Tooltip("Cooldown in seconds between melee attacks.")]
+    [SerializeField] private float attackCooldown = 1.2f;
+
+    private float lastAttackTime = -99f;
+
     /// <summary>
     /// Evaluates proximity and physical line of sight.
-    /// Captures the player only if in range and no intervening wall blocks line of sight.
+    /// Replaces instant proximity capture with a balanced damage attack system.
+    /// Deals balanced melee damage to the player if in close range and line of sight is clear.
     /// </summary>
     public bool CheckCapture()
     {
         if (playerTransform == null) return false;
 
+        // Do not attack if guard is dead or game is ended
+        var health = GetComponent<Health>();
+        if (health != null && health.IsDead) return false;
+        if (GameManager.Instance != null && GameManager.Instance.IsGameEnded) return false;
+
+        // Safe Room Protection: Room 1 (Z < -18.0) is safe
+        if (transform.position.z < -18.0f || playerTransform.position.z < -18.0f)
+            return false;
+
         float dist = Vector3.Distance(transform.position, playerTransform.position);
         if (dist > captureRange) return false;
+
+        // Attack cooldown check
+        if (Time.time - lastAttackTime < attackCooldown) return false;
 
         // Proximity satisfied; now verify unobstructed physical line of sight
         if (HasUnobstructedLineOfSight())
         {
-            if (GameManager.Instance != null)
+            var playerHealth = playerTransform.GetComponent<Health>();
+            if (playerHealth != null && !playerHealth.IsDead)
             {
-                return GameManager.Instance.TriggerGameOver($"Captured by {guardDisplayName}!");
+                lastAttackTime = Time.time;
+                Debug.Log($"[GuardCapture] {guardDisplayName} struck player for {meleeDamage} melee damage!");
+                return playerHealth.TakeDamage(meleeDamage, gameObject);
             }
         }
 
