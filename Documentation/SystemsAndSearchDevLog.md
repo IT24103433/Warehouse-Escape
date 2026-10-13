@@ -59,3 +59,7 @@ Blocked visual acquisition through warehouse racks, walls, and closed doors so s
 ## 2026-10-12 — Add sound event investigation and barrier attenuation notes
 Added acoustic event propagation rules for gunfire and trap alerts with attenuation across structural barriers.
 Bounded sound-triggered hypothesis rebuilds to a 0.75-second cooldown to coalesce automatic weapon bursts.
+
+## 2026-10-13 — Implement lastKnownPlayerPosition memory storage on sight loss
+Recorded lastKnownPlayerPosition and estimated heading exclusively from confirmed visual or sound observations.
+Prevented hidden live player coordinates from leaking into search origin initialization after line-of-sight breaks.
