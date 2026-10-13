@@ -63,3 +63,7 @@ Worked through the neglect term with equal visibility so the effects of stalenes
 ## 2026-10-12 · Prune unreachable and out-of-room candidates from waypoint dataset
 
 Removed raw boundary and disconnected proposals from the patrol-candidate matrix. Kept the distinct rejection mechanisms as small trace cases so they can be exercised deliberately.
+
+## 2026-10-13 · Add local visibility scoring and path-length penalty trace
+
+Replaced the neutral visibility baseline with eight-direction modeled occlusion, added more detours, and expanded the arithmetic examples with capped and competing terms.

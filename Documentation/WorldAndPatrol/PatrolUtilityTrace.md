@@ -88,6 +88,36 @@ The diagnostics may call an outside endpoint `No complete path` because
 reachability and the room predicate feed the same boolean. Inspect the
 sampled coordinates and actual path status to distinguish causes.
 
+## Visibility and travel features
+
+`GuardDecisionQueries.Visibility` offsets the sampled position upward by
+1.5 m and sends eight horizontal rays of 6 m, spaced by 45° starting at
+world forward. Each clear ray contributes 0.125. The query ignores triggers,
+ignores hits on the owning transform or its children and considers a filled
+32-hit buffer occluded. This signal estimates local openness around a
+candidate. It is independent of the live player sight test.
+
+| Clear rays | Visibility | Weighted term |
+| ---: | ---: | ---: |
+| 0 | 0.000 | 0.00000 |
+| 2 | 0.250 | 0.08750 |
+| 4 | 0.500 | 0.17500 |
+| 6 | 0.750 | 0.26250 |
+| 8 | 1.000 | 0.35000 |
+
+| Complete path (m) | Normalized length | Penalty |
+| ---: | ---: | ---: |
+| 3 | 0.1 | 0.025 |
+| 9 | 0.3 | 0.075 |
+| 18 | 0.6 | 0.150 |
+| 30 | 1 | 0.250 |
+| 45 | 1 | 0.250 |
+
+For a complete path with legs 4 m north, 3 m east and 2 m north, sum
+the corners to get 9 m. The straight-line displacement is approximately
+6.708 m. Feeding that displacement into utility would incorrectly reduce
+the travel penalty from 0.075 to approximately 0.056.
+
 ## Controlled comparisons
 
 Inputs in this table are controlled mathematical cases. The visibility column shows clear rays divided by eight.
@@ -102,3 +132,39 @@ Compare full precision before rounding. A tie uses the first eligible array entr
 | B | 0 | 4 | 1 | 0.000000 | 0.175000 | 0.008333 | 0.166667 |
 
 Candidate A ranks higher.
+
+### Local openness breaks an age tie
+
+| Candidate | Age (s) | Clear rays | Path (m) | Age term | Visibility term | Travel term | Utility |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| A | 15 | 6 | 9 | 0.325000 | 0.262500 | 0.075000 | 0.512500 |
+| B | 15 | 2 | 9 | 0.325000 | 0.087500 | 0.075000 | 0.337500 |
+
+Candidate A ranks higher.
+
+### Travel breaks an openness tie
+
+| Candidate | Age (s) | Clear rays | Path (m) | Age term | Visibility term | Travel term | Utility |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| A | 15 | 4 | 3 | 0.325000 | 0.175000 | 0.025000 | 0.475000 |
+| B | 15 | 4 | 18 | 0.325000 | 0.175000 | 0.150000 | 0.350000 |
+
+Candidate A ranks higher.
+
+### Age above the cap changes nothing
+
+| Candidate | Age (s) | Clear rays | Path (m) | Age term | Visibility term | Travel term | Utility |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| A | 30 | 5 | 12 | 0.650000 | 0.218750 | 0.100000 | 0.768750 |
+| B | 49 | 5 | 12 | 0.650000 | 0.218750 | 0.100000 | 0.768750 |
+
+Equal utility. The earlier eligible entry wins.
+
+### Path lengths above the cap tie on cost
+
+| Candidate | Age (s) | Clear rays | Path (m) | Age term | Visibility term | Travel term | Utility |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| A | 21 | 6 | 30 | 0.455000 | 0.262500 | 0.250000 | 0.467500 |
+| B | 21 | 6 | 45 | 0.455000 | 0.262500 | 0.250000 | 0.467500 |
+
+Equal utility. The earlier eligible entry wins.
