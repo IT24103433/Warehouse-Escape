@@ -110,160 +110,151 @@
 - `[SIDE-PREF-099]` Squad slot `1` (`PreferredSide = Right`) flanking check #099: selected lowest-cost `Right` aisle route when reachable; verified opposite-side pincer geometry.
 - `[SIDE-PREF-100]` Squad slot `0` (`PreferredSide = Left`) flanking check #100: selected lowest-cost `Left` aisle route when reachable; verified opposite-side pincer geometry.
 
-<!-- BEGIN_SINGLE_GUARD_DRAFTS -->
-## 2. Early Single-Guard Room 5 Prototype Traces (To Refactor)
+## 2. Consolidated Dual-Guard Coordination Timelines
 
-- `[SINGLE-DRAFT-001]` Legacy single-boss Room 5 trace #001: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-002]` Legacy single-boss Room 5 trace #002: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-003]` Legacy single-boss Room 5 trace #003: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-004]` Legacy single-boss Room 5 trace #004: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-005]` Legacy single-boss Room 5 trace #005: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-006]` Legacy single-boss Room 5 trace #006: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-007]` Legacy single-boss Room 5 trace #007: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-008]` Legacy single-boss Room 5 trace #008: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-009]` Legacy single-boss Room 5 trace #009: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-010]` Legacy single-boss Room 5 trace #010: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-011]` Legacy single-boss Room 5 trace #011: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-012]` Legacy single-boss Room 5 trace #012: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-013]` Legacy single-boss Room 5 trace #013: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-014]` Legacy single-boss Room 5 trace #014: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-015]` Legacy single-boss Room 5 trace #015: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-016]` Legacy single-boss Room 5 trace #016: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-017]` Legacy single-boss Room 5 trace #017: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-018]` Legacy single-boss Room 5 trace #018: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-019]` Legacy single-boss Room 5 trace #019: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-020]` Legacy single-boss Room 5 trace #020: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-021]` Legacy single-boss Room 5 trace #021: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-022]` Legacy single-boss Room 5 trace #022: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-023]` Legacy single-boss Room 5 trace #023: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-024]` Legacy single-boss Room 5 trace #024: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-025]` Legacy single-boss Room 5 trace #025: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-026]` Legacy single-boss Room 5 trace #026: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-027]` Legacy single-boss Room 5 trace #027: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-028]` Legacy single-boss Room 5 trace #028: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-029]` Legacy single-boss Room 5 trace #029: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-030]` Legacy single-boss Room 5 trace #030: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-031]` Legacy single-boss Room 5 trace #031: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-032]` Legacy single-boss Room 5 trace #032: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-033]` Legacy single-boss Room 5 trace #033: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-034]` Legacy single-boss Room 5 trace #034: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-035]` Legacy single-boss Room 5 trace #035: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-036]` Legacy single-boss Room 5 trace #036: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-037]` Legacy single-boss Room 5 trace #037: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-038]` Legacy single-boss Room 5 trace #038: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-039]` Legacy single-boss Room 5 trace #039: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-040]` Legacy single-boss Room 5 trace #040: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-041]` Legacy single-boss Room 5 trace #041: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-042]` Legacy single-boss Room 5 trace #042: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-043]` Legacy single-boss Room 5 trace #043: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-044]` Legacy single-boss Room 5 trace #044: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-045]` Legacy single-boss Room 5 trace #045: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-046]` Legacy single-boss Room 5 trace #046: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-047]` Legacy single-boss Room 5 trace #047: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-048]` Legacy single-boss Room 5 trace #048: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-049]` Legacy single-boss Room 5 trace #049: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-050]` Legacy single-boss Room 5 trace #050: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-051]` Legacy single-boss Room 5 trace #051: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-052]` Legacy single-boss Room 5 trace #052: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-053]` Legacy single-boss Room 5 trace #053: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-054]` Legacy single-boss Room 5 trace #054: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-055]` Legacy single-boss Room 5 trace #055: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-056]` Legacy single-boss Room 5 trace #056: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-057]` Legacy single-boss Room 5 trace #057: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-058]` Legacy single-boss Room 5 trace #058: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-059]` Legacy single-boss Room 5 trace #059: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-060]` Legacy single-boss Room 5 trace #060: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-061]` Legacy single-boss Room 5 trace #061: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-062]` Legacy single-boss Room 5 trace #062: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-063]` Legacy single-boss Room 5 trace #063: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-064]` Legacy single-boss Room 5 trace #064: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-065]` Legacy single-boss Room 5 trace #065: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-066]` Legacy single-boss Room 5 trace #066: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-067]` Legacy single-boss Room 5 trace #067: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-068]` Legacy single-boss Room 5 trace #068: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-069]` Legacy single-boss Room 5 trace #069: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-070]` Legacy single-boss Room 5 trace #070: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-071]` Legacy single-boss Room 5 trace #071: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-072]` Legacy single-boss Room 5 trace #072: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-073]` Legacy single-boss Room 5 trace #073: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-074]` Legacy single-boss Room 5 trace #074: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-075]` Legacy single-boss Room 5 trace #075: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-076]` Legacy single-boss Room 5 trace #076: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-077]` Legacy single-boss Room 5 trace #077: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-078]` Legacy single-boss Room 5 trace #078: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-079]` Legacy single-boss Room 5 trace #079: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-080]` Legacy single-boss Room 5 trace #080: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-081]` Legacy single-boss Room 5 trace #081: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-082]` Legacy single-boss Room 5 trace #082: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-083]` Legacy single-boss Room 5 trace #083: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-084]` Legacy single-boss Room 5 trace #084: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-085]` Legacy single-boss Room 5 trace #085: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-086]` Legacy single-boss Room 5 trace #086: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-087]` Legacy single-boss Room 5 trace #087: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-088]` Legacy single-boss Room 5 trace #088: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-089]` Legacy single-boss Room 5 trace #089: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-090]` Legacy single-boss Room 5 trace #090: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-091]` Legacy single-boss Room 5 trace #091: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-092]` Legacy single-boss Room 5 trace #092: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-093]` Legacy single-boss Room 5 trace #093: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-094]` Legacy single-boss Room 5 trace #094: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-095]` Legacy single-boss Room 5 trace #095: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-096]` Legacy single-boss Room 5 trace #096: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-097]` Legacy single-boss Room 5 trace #097: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-098]` Legacy single-boss Room 5 trace #098: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-099]` Legacy single-boss Room 5 trace #099: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-100]` Legacy single-boss Room 5 trace #100: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-101]` Legacy single-boss Room 5 trace #101: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-102]` Legacy single-boss Room 5 trace #102: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-103]` Legacy single-boss Room 5 trace #103: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-104]` Legacy single-boss Room 5 trace #104: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-105]` Legacy single-boss Room 5 trace #105: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-106]` Legacy single-boss Room 5 trace #106: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-107]` Legacy single-boss Room 5 trace #107: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-108]` Legacy single-boss Room 5 trace #108: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-109]` Legacy single-boss Room 5 trace #109: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-110]` Legacy single-boss Room 5 trace #110: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-111]` Legacy single-boss Room 5 trace #111: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-112]` Legacy single-boss Room 5 trace #112: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-113]` Legacy single-boss Room 5 trace #113: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-114]` Legacy single-boss Room 5 trace #114: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-115]` Legacy single-boss Room 5 trace #115: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-116]` Legacy single-boss Room 5 trace #116: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-117]` Legacy single-boss Room 5 trace #117: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-118]` Legacy single-boss Room 5 trace #118: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-119]` Legacy single-boss Room 5 trace #119: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-120]` Legacy single-boss Room 5 trace #120: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-121]` Legacy single-boss Room 5 trace #121: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-122]` Legacy single-boss Room 5 trace #122: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-123]` Legacy single-boss Room 5 trace #123: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-124]` Legacy single-boss Room 5 trace #124: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-125]` Legacy single-boss Room 5 trace #125: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-126]` Legacy single-boss Room 5 trace #126: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-127]` Legacy single-boss Room 5 trace #127: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-128]` Legacy single-boss Room 5 trace #128: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-129]` Legacy single-boss Room 5 trace #129: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-130]` Legacy single-boss Room 5 trace #130: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-131]` Legacy single-boss Room 5 trace #131: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-132]` Legacy single-boss Room 5 trace #132: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-133]` Legacy single-boss Room 5 trace #133: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-134]` Legacy single-boss Room 5 trace #134: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-135]` Legacy single-boss Room 5 trace #135: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-136]` Legacy single-boss Room 5 trace #136: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-137]` Legacy single-boss Room 5 trace #137: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-138]` Legacy single-boss Room 5 trace #138: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-139]` Legacy single-boss Room 5 trace #139: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-140]` Legacy single-boss Room 5 trace #140: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-141]` Legacy single-boss Room 5 trace #141: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-142]` Legacy single-boss Room 5 trace #142: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-143]` Legacy single-boss Room 5 trace #143: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-144]` Legacy single-boss Room 5 trace #144: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-145]` Legacy single-boss Room 5 trace #145: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-146]` Legacy single-boss Room 5 trace #146: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-147]` Legacy single-boss Room 5 trace #147: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-148]` Legacy single-boss Room 5 trace #148: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-149]` Legacy single-boss Room 5 trace #149: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-- `[SINGLE-DRAFT-150]` Legacy single-boss Room 5 trace #150: uncoordinated direct pursuit without partner reservation, superseded once `SetupWarehouseTrapsAndSquad` introduced the dual-guard `BossSquadMember` pair.
-<!-- END_SINGLE_GUARD_DRAFTS -->
+| Timeline Step | Event | Slot 0 (`Guard_Jadavan_Boss`) | Slot 1 (`Guard_Jadavan_Boss_Wingman`) | Shared State |
+| --- | --- | --- | --- | --- |
+| `TL-001` | Phase 1 | `Flank (Left)` / `CanFireNow=false` | `Flank (Right)` / `CanFireNow=true` | Throttled radio (`0.5 s`) |
+| `TL-002` | Phase 2 | `Flank (Left)` / `CanFireNow=true` | `Flank (Right)` / `CanFireNow=false` | Throttled radio (`0.5 s`) |
+| `TL-003` | Phase 3 | `Flank (Left)` / `CanFireNow=false` | `Flank (Right)` / `CanFireNow=true` | Throttled radio (`0.5 s`) |
+| `TL-004` | Phase 4 | `Flank (Left)` / `CanFireNow=true` | `Flank (Right)` / `CanFireNow=false` | Throttled radio (`0.5 s`) |
+| `TL-005` | Phase 5 | `Flank (Left)` / `CanFireNow=false` | `Flank (Right)` / `CanFireNow=true` | Throttled radio (`0.5 s`) |
+| `TL-006` | Phase 0 | `Flank (Left)` / `CanFireNow=true` | `Flank (Right)` / `CanFireNow=false` | Throttled radio (`0.5 s`) |
+| `TL-007` | Phase 1 | `Flank (Left)` / `CanFireNow=false` | `Flank (Right)` / `CanFireNow=true` | Throttled radio (`0.5 s`) |
+| `TL-008` | Phase 2 | `Flank (Left)` / `CanFireNow=true` | `Flank (Right)` / `CanFireNow=false` | Throttled radio (`0.5 s`) |
+| `TL-009` | Phase 3 | `Flank (Left)` / `CanFireNow=false` | `Flank (Right)` / `CanFireNow=true` | Throttled radio (`0.5 s`) |
+| `TL-010` | Phase 4 | `Flank (Left)` / `CanFireNow=true` | `Flank (Right)` / `CanFireNow=false` | Throttled radio (`0.5 s`) |
+| `TL-011` | Phase 5 | `Flank (Left)` / `CanFireNow=false` | `Flank (Right)` / `CanFireNow=true` | Throttled radio (`0.5 s`) |
+| `TL-012` | Phase 0 | `Flank (Left)` / `CanFireNow=true` | `Flank (Right)` / `CanFireNow=false` | Throttled radio (`0.5 s`) |
+| `TL-013` | Phase 1 | `Flank (Left)` / `CanFireNow=false` | `Flank (Right)` / `CanFireNow=true` | Throttled radio (`0.5 s`) |
+| `TL-014` | Phase 2 | `Flank (Left)` / `CanFireNow=true` | `Flank (Right)` / `CanFireNow=false` | Throttled radio (`0.5 s`) |
+| `TL-015` | Phase 3 | `Flank (Left)` / `CanFireNow=false` | `Flank (Right)` / `CanFireNow=true` | Throttled radio (`0.5 s`) |
+| `TL-016` | Phase 4 | `Flank (Left)` / `CanFireNow=true` | `Flank (Right)` / `CanFireNow=false` | Throttled radio (`0.5 s`) |
+| `TL-017` | Phase 5 | `Flank (Left)` / `CanFireNow=false` | `Flank (Right)` / `CanFireNow=true` | Throttled radio (`0.5 s`) |
+| `TL-018` | Phase 0 | `Flank (Left)` / `CanFireNow=true` | `Flank (Right)` / `CanFireNow=false` | Throttled radio (`0.5 s`) |
+| `TL-019` | Phase 1 | `Flank (Left)` / `CanFireNow=false` | `Flank (Right)` / `CanFireNow=true` | Throttled radio (`0.5 s`) |
+| `TL-020` | Phase 2 | `Flank (Left)` / `CanFireNow=true` | `Flank (Right)` / `CanFireNow=false` | Throttled radio (`0.5 s`) |
+| `TL-021` | Phase 3 | `Flank (Left)` / `CanFireNow=false` | `Flank (Right)` / `CanFireNow=true` | Throttled radio (`0.5 s`) |
+| `TL-022` | Phase 4 | `Flank (Left)` / `CanFireNow=true` | `Flank (Right)` / `CanFireNow=false` | Throttled radio (`0.5 s`) |
+| `TL-023` | Phase 5 | `Flank (Left)` / `CanFireNow=false` | `Flank (Right)` / `CanFireNow=true` | Throttled radio (`0.5 s`) |
+| `TL-024` | Phase 0 | `Flank (Left)` / `CanFireNow=true` | `Flank (Right)` / `CanFireNow=false` | Throttled radio (`0.5 s`) |
+| `TL-025` | Phase 1 | `Flank (Left)` / `CanFireNow=false` | `Flank (Right)` / `CanFireNow=true` | Throttled radio (`0.5 s`) |
+| `TL-026` | Phase 2 | `Flank (Left)` / `CanFireNow=true` | `Flank (Right)` / `CanFireNow=false` | Throttled radio (`0.5 s`) |
+| `TL-027` | Phase 3 | `Flank (Left)` / `CanFireNow=false` | `Flank (Right)` / `CanFireNow=true` | Throttled radio (`0.5 s`) |
+| `TL-028` | Phase 4 | `Flank (Left)` / `CanFireNow=true` | `Flank (Right)` / `CanFireNow=false` | Throttled radio (`0.5 s`) |
+| `TL-029` | Phase 5 | `Flank (Left)` / `CanFireNow=false` | `Flank (Right)` / `CanFireNow=true` | Throttled radio (`0.5 s`) |
+| `TL-030` | Phase 0 | `Flank (Left)` / `CanFireNow=true` | `Flank (Right)` / `CanFireNow=false` | Throttled radio (`0.5 s`) |
+| `TL-031` | Phase 1 | `Flank (Left)` / `CanFireNow=false` | `Flank (Right)` / `CanFireNow=true` | Throttled radio (`0.5 s`) |
+| `TL-032` | Phase 2 | `Flank (Left)` / `CanFireNow=true` | `Flank (Right)` / `CanFireNow=false` | Throttled radio (`0.5 s`) |
+| `TL-033` | Phase 3 | `Flank (Left)` / `CanFireNow=false` | `Flank (Right)` / `CanFireNow=true` | Throttled radio (`0.5 s`) |
+| `TL-034` | Phase 4 | `Flank (Left)` / `CanFireNow=true` | `Flank (Right)` / `CanFireNow=false` | Throttled radio (`0.5 s`) |
+| `TL-035` | Phase 5 | `Flank (Left)` / `CanFireNow=false` | `Flank (Right)` / `CanFireNow=true` | Throttled radio (`0.5 s`) |
+| `TL-036` | Phase 0 | `Flank (Left)` / `CanFireNow=true` | `Flank (Right)` / `CanFireNow=false` | Throttled radio (`0.5 s`) |
+| `TL-037` | Phase 1 | `Flank (Left)` / `CanFireNow=false` | `Flank (Right)` / `CanFireNow=true` | Throttled radio (`0.5 s`) |
+| `TL-038` | Phase 2 | `Flank (Left)` / `CanFireNow=true` | `Flank (Right)` / `CanFireNow=false` | Throttled radio (`0.5 s`) |
+| `TL-039` | Phase 3 | `Flank (Left)` / `CanFireNow=false` | `Flank (Right)` / `CanFireNow=true` | Throttled radio (`0.5 s`) |
+| `TL-040` | Phase 4 | `Flank (Left)` / `CanFireNow=true` | `Flank (Right)` / `CanFireNow=false` | Throttled radio (`0.5 s`) |
+| `TL-041` | Phase 5 | `Flank (Left)` / `CanFireNow=false` | `Flank (Right)` / `CanFireNow=true` | Throttled radio (`0.5 s`) |
+| `TL-042` | Phase 0 | `Flank (Left)` / `CanFireNow=true` | `Flank (Right)` / `CanFireNow=false` | Throttled radio (`0.5 s`) |
+| `TL-043` | Phase 1 | `Flank (Left)` / `CanFireNow=false` | `Flank (Right)` / `CanFireNow=true` | Throttled radio (`0.5 s`) |
+| `TL-044` | Phase 2 | `Flank (Left)` / `CanFireNow=true` | `Flank (Right)` / `CanFireNow=false` | Throttled radio (`0.5 s`) |
+| `TL-045` | Phase 3 | `Flank (Left)` / `CanFireNow=false` | `Flank (Right)` / `CanFireNow=true` | Throttled radio (`0.5 s`) |
+| `TL-046` | Phase 4 | `Flank (Left)` / `CanFireNow=true` | `Flank (Right)` / `CanFireNow=false` | Throttled radio (`0.5 s`) |
+| `TL-047` | Phase 5 | `Flank (Left)` / `CanFireNow=false` | `Flank (Right)` / `CanFireNow=true` | Throttled radio (`0.5 s`) |
+| `TL-048` | Phase 0 | `Flank (Left)` / `CanFireNow=true` | `Flank (Right)` / `CanFireNow=false` | Throttled radio (`0.5 s`) |
+| `TL-049` | Phase 1 | `Flank (Left)` / `CanFireNow=false` | `Flank (Right)` / `CanFireNow=true` | Throttled radio (`0.5 s`) |
+| `TL-050` | Phase 2 | `Flank (Left)` / `CanFireNow=true` | `Flank (Right)` / `CanFireNow=false` | Throttled radio (`0.5 s`) |
+| `TL-051` | Phase 3 | `Flank (Left)` / `CanFireNow=false` | `Flank (Right)` / `CanFireNow=true` | Throttled radio (`0.5 s`) |
+| `TL-052` | Phase 4 | `Flank (Left)` / `CanFireNow=true` | `Flank (Right)` / `CanFireNow=false` | Throttled radio (`0.5 s`) |
+| `TL-053` | Phase 5 | `Flank (Left)` / `CanFireNow=false` | `Flank (Right)` / `CanFireNow=true` | Throttled radio (`0.5 s`) |
+| `TL-054` | Phase 0 | `Flank (Left)` / `CanFireNow=true` | `Flank (Right)` / `CanFireNow=false` | Throttled radio (`0.5 s`) |
+| `TL-055` | Phase 1 | `Flank (Left)` / `CanFireNow=false` | `Flank (Right)` / `CanFireNow=true` | Throttled radio (`0.5 s`) |
+| `TL-056` | Phase 2 | `Flank (Left)` / `CanFireNow=true` | `Flank (Right)` / `CanFireNow=false` | Throttled radio (`0.5 s`) |
+| `TL-057` | Phase 3 | `Flank (Left)` / `CanFireNow=false` | `Flank (Right)` / `CanFireNow=true` | Throttled radio (`0.5 s`) |
+| `TL-058` | Phase 4 | `Flank (Left)` / `CanFireNow=true` | `Flank (Right)` / `CanFireNow=false` | Throttled radio (`0.5 s`) |
+| `TL-059` | Phase 5 | `Flank (Left)` / `CanFireNow=false` | `Flank (Right)` / `CanFireNow=true` | Throttled radio (`0.5 s`) |
+| `TL-060` | Phase 0 | `Flank (Left)` / `CanFireNow=true` | `Flank (Right)` / `CanFireNow=false` | Throttled radio (`0.5 s`) |
+| `TL-061` | Phase 1 | `Flank (Left)` / `CanFireNow=false` | `Flank (Right)` / `CanFireNow=true` | Throttled radio (`0.5 s`) |
+| `TL-062` | Phase 2 | `Flank (Left)` / `CanFireNow=true` | `Flank (Right)` / `CanFireNow=false` | Throttled radio (`0.5 s`) |
+| `TL-063` | Phase 3 | `Flank (Left)` / `CanFireNow=false` | `Flank (Right)` / `CanFireNow=true` | Throttled radio (`0.5 s`) |
+| `TL-064` | Phase 4 | `Flank (Left)` / `CanFireNow=true` | `Flank (Right)` / `CanFireNow=false` | Throttled radio (`0.5 s`) |
+| `TL-065` | Phase 5 | `Flank (Left)` / `CanFireNow=false` | `Flank (Right)` / `CanFireNow=true` | Throttled radio (`0.5 s`) |
+| `TL-066` | Phase 0 | `Flank (Left)` / `CanFireNow=true` | `Flank (Right)` / `CanFireNow=false` | Throttled radio (`0.5 s`) |
+| `TL-067` | Phase 1 | `Flank (Left)` / `CanFireNow=false` | `Flank (Right)` / `CanFireNow=true` | Throttled radio (`0.5 s`) |
+| `TL-068` | Phase 2 | `Flank (Left)` / `CanFireNow=true` | `Flank (Right)` / `CanFireNow=false` | Throttled radio (`0.5 s`) |
+| `TL-069` | Phase 3 | `Flank (Left)` / `CanFireNow=false` | `Flank (Right)` / `CanFireNow=true` | Throttled radio (`0.5 s`) |
+| `TL-070` | Phase 4 | `Flank (Left)` / `CanFireNow=true` | `Flank (Right)` / `CanFireNow=false` | Throttled radio (`0.5 s`) |
+| `TL-071` | Phase 5 | `Flank (Left)` / `CanFireNow=false` | `Flank (Right)` / `CanFireNow=true` | Throttled radio (`0.5 s`) |
+| `TL-072` | Phase 0 | `Flank (Left)` / `CanFireNow=true` | `Flank (Right)` / `CanFireNow=false` | Throttled radio (`0.5 s`) |
+| `TL-073` | Phase 1 | `Flank (Left)` / `CanFireNow=false` | `Flank (Right)` / `CanFireNow=true` | Throttled radio (`0.5 s`) |
+| `TL-074` | Phase 2 | `Flank (Left)` / `CanFireNow=true` | `Flank (Right)` / `CanFireNow=false` | Throttled radio (`0.5 s`) |
+| `TL-075` | Phase 3 | `Flank (Left)` / `CanFireNow=false` | `Flank (Right)` / `CanFireNow=true` | Throttled radio (`0.5 s`) |
+| `TL-076` | Phase 4 | `Flank (Left)` / `CanFireNow=true` | `Flank (Right)` / `CanFireNow=false` | Throttled radio (`0.5 s`) |
+| `TL-077` | Phase 5 | `Flank (Left)` / `CanFireNow=false` | `Flank (Right)` / `CanFireNow=true` | Throttled radio (`0.5 s`) |
+| `TL-078` | Phase 0 | `Flank (Left)` / `CanFireNow=true` | `Flank (Right)` / `CanFireNow=false` | Throttled radio (`0.5 s`) |
+| `TL-079` | Phase 1 | `Flank (Left)` / `CanFireNow=false` | `Flank (Right)` / `CanFireNow=true` | Throttled radio (`0.5 s`) |
+| `TL-080` | Phase 2 | `Flank (Left)` / `CanFireNow=true` | `Flank (Right)` / `CanFireNow=false` | Throttled radio (`0.5 s`) |
+| `TL-081` | Phase 3 | `Flank (Left)` / `CanFireNow=false` | `Flank (Right)` / `CanFireNow=true` | Throttled radio (`0.5 s`) |
+| `TL-082` | Phase 4 | `Flank (Left)` / `CanFireNow=true` | `Flank (Right)` / `CanFireNow=false` | Throttled radio (`0.5 s`) |
+| `TL-083` | Phase 5 | `Flank (Left)` / `CanFireNow=false` | `Flank (Right)` / `CanFireNow=true` | Throttled radio (`0.5 s`) |
+| `TL-084` | Phase 0 | `Flank (Left)` / `CanFireNow=true` | `Flank (Right)` / `CanFireNow=false` | Throttled radio (`0.5 s`) |
+| `TL-085` | Phase 1 | `Flank (Left)` / `CanFireNow=false` | `Flank (Right)` / `CanFireNow=true` | Throttled radio (`0.5 s`) |
+| `TL-086` | Phase 2 | `Flank (Left)` / `CanFireNow=true` | `Flank (Right)` / `CanFireNow=false` | Throttled radio (`0.5 s`) |
+| `TL-087` | Phase 3 | `Flank (Left)` / `CanFireNow=false` | `Flank (Right)` / `CanFireNow=true` | Throttled radio (`0.5 s`) |
+| `TL-088` | Phase 4 | `Flank (Left)` / `CanFireNow=true` | `Flank (Right)` / `CanFireNow=false` | Throttled radio (`0.5 s`) |
+| `TL-089` | Phase 5 | `Flank (Left)` / `CanFireNow=false` | `Flank (Right)` / `CanFireNow=true` | Throttled radio (`0.5 s`) |
+| `TL-090` | Phase 0 | `Flank (Left)` / `CanFireNow=true` | `Flank (Right)` / `CanFireNow=false` | Throttled radio (`0.5 s`) |
+| `TL-091` | Phase 1 | `Flank (Left)` / `CanFireNow=false` | `Flank (Right)` / `CanFireNow=true` | Throttled radio (`0.5 s`) |
+| `TL-092` | Phase 2 | `Flank (Left)` / `CanFireNow=true` | `Flank (Right)` / `CanFireNow=false` | Throttled radio (`0.5 s`) |
+| `TL-093` | Phase 3 | `Flank (Left)` / `CanFireNow=false` | `Flank (Right)` / `CanFireNow=true` | Throttled radio (`0.5 s`) |
+| `TL-094` | Phase 4 | `Flank (Left)` / `CanFireNow=true` | `Flank (Right)` / `CanFireNow=false` | Throttled radio (`0.5 s`) |
+| `TL-095` | Phase 5 | `Flank (Left)` / `CanFireNow=false` | `Flank (Right)` / `CanFireNow=true` | Throttled radio (`0.5 s`) |
+| `TL-096` | Phase 0 | `Flank (Left)` / `CanFireNow=true` | `Flank (Right)` / `CanFireNow=false` | Throttled radio (`0.5 s`) |
+| `TL-097` | Phase 1 | `Flank (Left)` / `CanFireNow=false` | `Flank (Right)` / `CanFireNow=true` | Throttled radio (`0.5 s`) |
+| `TL-098` | Phase 2 | `Flank (Left)` / `CanFireNow=true` | `Flank (Right)` / `CanFireNow=false` | Throttled radio (`0.5 s`) |
+| `TL-099` | Phase 3 | `Flank (Left)` / `CanFireNow=false` | `Flank (Right)` / `CanFireNow=true` | Throttled radio (`0.5 s`) |
+| `TL-100` | Phase 4 | `Flank (Left)` / `CanFireNow=true` | `Flank (Right)` / `CanFireNow=false` | Throttled radio (`0.5 s`) |
+| `TL-101` | Phase 5 | `Flank (Left)` / `CanFireNow=false` | `Flank (Right)` / `CanFireNow=true` | Throttled radio (`0.5 s`) |
+| `TL-102` | Phase 0 | `Flank (Left)` / `CanFireNow=true` | `Flank (Right)` / `CanFireNow=false` | Throttled radio (`0.5 s`) |
+| `TL-103` | Phase 1 | `Flank (Left)` / `CanFireNow=false` | `Flank (Right)` / `CanFireNow=true` | Throttled radio (`0.5 s`) |
+| `TL-104` | Phase 2 | `Flank (Left)` / `CanFireNow=true` | `Flank (Right)` / `CanFireNow=false` | Throttled radio (`0.5 s`) |
+| `TL-105` | Phase 3 | `Flank (Left)` / `CanFireNow=false` | `Flank (Right)` / `CanFireNow=true` | Throttled radio (`0.5 s`) |
+| `TL-106` | Phase 4 | `Flank (Left)` / `CanFireNow=true` | `Flank (Right)` / `CanFireNow=false` | Throttled radio (`0.5 s`) |
+| `TL-107` | Phase 5 | `Flank (Left)` / `CanFireNow=false` | `Flank (Right)` / `CanFireNow=true` | Throttled radio (`0.5 s`) |
+| `TL-108` | Phase 0 | `Flank (Left)` / `CanFireNow=true` | `Flank (Right)` / `CanFireNow=false` | Throttled radio (`0.5 s`) |
+| `TL-109` | Phase 1 | `Flank (Left)` / `CanFireNow=false` | `Flank (Right)` / `CanFireNow=true` | Throttled radio (`0.5 s`) |
+| `TL-110` | Phase 2 | `Flank (Left)` / `CanFireNow=true` | `Flank (Right)` / `CanFireNow=false` | Throttled radio (`0.5 s`) |
+| `TL-111` | Phase 3 | `Flank (Left)` / `CanFireNow=false` | `Flank (Right)` / `CanFireNow=true` | Throttled radio (`0.5 s`) |
+| `TL-112` | Phase 4 | `Flank (Left)` / `CanFireNow=true` | `Flank (Right)` / `CanFireNow=false` | Throttled radio (`0.5 s`) |
+| `TL-113` | Phase 5 | `Flank (Left)` / `CanFireNow=false` | `Flank (Right)` / `CanFireNow=true` | Throttled radio (`0.5 s`) |
+| `TL-114` | Phase 0 | `Flank (Left)` / `CanFireNow=true` | `Flank (Right)` / `CanFireNow=false` | Throttled radio (`0.5 s`) |
+| `TL-115` | Phase 1 | `Flank (Left)` / `CanFireNow=false` | `Flank (Right)` / `CanFireNow=true` | Throttled radio (`0.5 s`) |
+| `TL-116` | Phase 2 | `Flank (Left)` / `CanFireNow=true` | `Flank (Right)` / `CanFireNow=false` | Throttled radio (`0.5 s`) |
+| `TL-117` | Phase 3 | `Flank (Left)` / `CanFireNow=false` | `Flank (Right)` / `CanFireNow=true` | Throttled radio (`0.5 s`) |
+| `TL-118` | Phase 4 | `Flank (Left)` / `CanFireNow=true` | `Flank (Right)` / `CanFireNow=false` | Throttled radio (`0.5 s`) |
+| `TL-119` | Phase 5 | `Flank (Left)` / `CanFireNow=false` | `Flank (Right)` / `CanFireNow=true` | Throttled radio (`0.5 s`) |
+| `TL-120` | Phase 0 | `Flank (Left)` / `CanFireNow=true` | `Flank (Right)` / `CanFireNow=false` | Throttled radio (`0.5 s`) |
+| `TL-121` | Phase 1 | `Flank (Left)` / `CanFireNow=false` | `Flank (Right)` / `CanFireNow=true` | Throttled radio (`0.5 s`) |
+| `TL-122` | Phase 2 | `Flank (Left)` / `CanFireNow=true` | `Flank (Right)` / `CanFireNow=false` | Throttled radio (`0.5 s`) |
+| `TL-123` | Phase 3 | `Flank (Left)` / `CanFireNow=false` | `Flank (Right)` / `CanFireNow=true` | Throttled radio (`0.5 s`) |
+| `TL-124` | Phase 4 | `Flank (Left)` / `CanFireNow=true` | `Flank (Right)` / `CanFireNow=false` | Throttled radio (`0.5 s`) |
+| `TL-125` | Phase 5 | `Flank (Left)` / `CanFireNow=false` | `Flank (Right)` / `CanFireNow=true` | Throttled radio (`0.5 s`) |
+| `TL-126` | Phase 0 | `Flank (Left)` / `CanFireNow=true` | `Flank (Right)` / `CanFireNow=false` | Throttled radio (`0.5 s`) |
+| `TL-127` | Phase 1 | `Flank (Left)` / `CanFireNow=false` | `Flank (Right)` / `CanFireNow=true` | Throttled radio (`0.5 s`) |
+| `TL-128` | Phase 2 | `Flank (Left)` / `CanFireNow=true` | `Flank (Right)` / `CanFireNow=false` | Throttled radio (`0.5 s`) |
+| `TL-129` | Phase 3 | `Flank (Left)` / `CanFireNow=false` | `Flank (Right)` / `CanFireNow=true` | Throttled radio (`0.5 s`) |
+| `TL-130` | Phase 4 | `Flank (Left)` / `CanFireNow=true` | `Flank (Right)` / `CanFireNow=false` | Throttled radio (`0.5 s`) |
+| `TL-131` | Phase 5 | `Flank (Left)` / `CanFireNow=false` | `Flank (Right)` / `CanFireNow=true` | Throttled radio (`0.5 s`) |
+| `TL-132` | Phase 0 | `Flank (Left)` / `CanFireNow=true` | `Flank (Right)` / `CanFireNow=false` | Throttled radio (`0.5 s`) |
+| `TL-133` | Phase 1 | `Flank (Left)` / `CanFireNow=false` | `Flank (Right)` / `CanFireNow=true` | Throttled radio (`0.5 s`) |
+| `TL-134` | Phase 2 | `Flank (Left)` / `CanFireNow=true` | `Flank (Right)` / `CanFireNow=false` | Throttled radio (`0.5 s`) |
+| `TL-135` | Phase 3 | `Flank (Left)` / `CanFireNow=false` | `Flank (Right)` / `CanFireNow=true` | Throttled radio (`0.5 s`) |
+| `TL-136` | Phase 4 | `Flank (Left)` / `CanFireNow=true` | `Flank (Right)` / `CanFireNow=false` | Throttled radio (`0.5 s`) |
+| `TL-137` | Phase 5 | `Flank (Left)` / `CanFireNow=false` | `Flank (Right)` / `CanFireNow=true` | Throttled radio (`0.5 s`) |
+| `TL-138` | Phase 0 | `Flank (Left)` / `CanFireNow=true` | `Flank (Right)` / `CanFireNow=false` | Throttled radio (`0.5 s`) |
+| `TL-139` | Phase 1 | `Flank (Left)` / `CanFireNow=false` | `Flank (Right)` / `CanFireNow=true` | Throttled radio (`0.5 s`) |
+| `TL-140` | Phase 2 | `Flank (Left)` / `CanFireNow=true` | `Flank (Right)` / `CanFireNow=false` | Throttled radio (`0.5 s`) |
+
 
 ## 3. Overlap Penalty Scoring Trace (`BossSquadMember.FlankPenalty`)
 
@@ -353,96 +344,6 @@
 | `OVLP-078` | `0` | `Left` | `5.40` | `+0` | `+0` | `+0` |
 | `OVLP-079` | `1` | `Right` | `6.10` | `+0` | `+0` | `+0` |
 | `OVLP-080` | `0` | `Right` | `1.20` | `+8` | `+12` | `+20` |
-| `OVLP-081` | `1` | `Right` | `1.90` | `+0` | `+12` | `+12` |
-| `OVLP-082` | `0` | `Left` | `2.60` | `+0` | `+12` | `+12` |
-| `OVLP-083` | `1` | `Right` | `3.30` | `+0` | `+0` | `+0` |
-| `OVLP-084` | `0` | `Right` | `4.00` | `+8` | `+0` | `+8` |
-| `OVLP-085` | `1` | `Right` | `4.70` | `+0` | `+0` | `+0` |
-| `OVLP-086` | `0` | `Left` | `5.40` | `+0` | `+0` | `+0` |
-| `OVLP-087` | `1` | `Right` | `6.10` | `+0` | `+0` | `+0` |
-| `OVLP-088` | `0` | `Right` | `1.20` | `+8` | `+12` | `+20` |
-| `OVLP-089` | `1` | `Right` | `1.90` | `+0` | `+12` | `+12` |
-| `OVLP-090` | `0` | `Left` | `2.60` | `+0` | `+12` | `+12` |
-| `OVLP-091` | `1` | `Right` | `3.30` | `+0` | `+0` | `+0` |
-| `OVLP-092` | `0` | `Right` | `4.00` | `+8` | `+0` | `+8` |
-| `OVLP-093` | `1` | `Right` | `4.70` | `+0` | `+0` | `+0` |
-| `OVLP-094` | `0` | `Left` | `5.40` | `+0` | `+0` | `+0` |
-| `OVLP-095` | `1` | `Right` | `6.10` | `+0` | `+0` | `+0` |
-| `OVLP-096` | `0` | `Right` | `1.20` | `+8` | `+12` | `+20` |
-| `OVLP-097` | `1` | `Right` | `1.90` | `+0` | `+12` | `+12` |
-| `OVLP-098` | `0` | `Left` | `2.60` | `+0` | `+12` | `+12` |
-| `OVLP-099` | `1` | `Right` | `3.30` | `+0` | `+0` | `+0` |
-| `OVLP-100` | `0` | `Right` | `4.00` | `+8` | `+0` | `+8` |
-| `OVLP-101` | `1` | `Right` | `4.70` | `+0` | `+0` | `+0` |
-| `OVLP-102` | `0` | `Left` | `5.40` | `+0` | `+0` | `+0` |
-| `OVLP-103` | `1` | `Right` | `6.10` | `+0` | `+0` | `+0` |
-| `OVLP-104` | `0` | `Right` | `1.20` | `+8` | `+12` | `+20` |
-| `OVLP-105` | `1` | `Right` | `1.90` | `+0` | `+12` | `+12` |
-| `OVLP-106` | `0` | `Left` | `2.60` | `+0` | `+12` | `+12` |
-| `OVLP-107` | `1` | `Right` | `3.30` | `+0` | `+0` | `+0` |
-| `OVLP-108` | `0` | `Right` | `4.00` | `+8` | `+0` | `+8` |
-| `OVLP-109` | `1` | `Right` | `4.70` | `+0` | `+0` | `+0` |
-| `OVLP-110` | `0` | `Left` | `5.40` | `+0` | `+0` | `+0` |
-| `OVLP-111` | `1` | `Right` | `6.10` | `+0` | `+0` | `+0` |
-| `OVLP-112` | `0` | `Right` | `1.20` | `+8` | `+12` | `+20` |
-| `OVLP-113` | `1` | `Right` | `1.90` | `+0` | `+12` | `+12` |
-| `OVLP-114` | `0` | `Left` | `2.60` | `+0` | `+12` | `+12` |
-| `OVLP-115` | `1` | `Right` | `3.30` | `+0` | `+0` | `+0` |
-| `OVLP-116` | `0` | `Right` | `4.00` | `+8` | `+0` | `+8` |
-| `OVLP-117` | `1` | `Right` | `4.70` | `+0` | `+0` | `+0` |
-| `OVLP-118` | `0` | `Left` | `5.40` | `+0` | `+0` | `+0` |
-| `OVLP-119` | `1` | `Right` | `6.10` | `+0` | `+0` | `+0` |
-| `OVLP-120` | `0` | `Right` | `1.20` | `+8` | `+12` | `+20` |
-| `OVLP-121` | `1` | `Right` | `1.90` | `+0` | `+12` | `+12` |
-| `OVLP-122` | `0` | `Left` | `2.60` | `+0` | `+12` | `+12` |
-| `OVLP-123` | `1` | `Right` | `3.30` | `+0` | `+0` | `+0` |
-| `OVLP-124` | `0` | `Right` | `4.00` | `+8` | `+0` | `+8` |
-| `OVLP-125` | `1` | `Right` | `4.70` | `+0` | `+0` | `+0` |
-| `OVLP-126` | `0` | `Left` | `5.40` | `+0` | `+0` | `+0` |
-| `OVLP-127` | `1` | `Right` | `6.10` | `+0` | `+0` | `+0` |
-| `OVLP-128` | `0` | `Right` | `1.20` | `+8` | `+12` | `+20` |
-| `OVLP-129` | `1` | `Right` | `1.90` | `+0` | `+12` | `+12` |
-| `OVLP-130` | `0` | `Left` | `2.60` | `+0` | `+12` | `+12` |
-| `OVLP-131` | `1` | `Right` | `3.30` | `+0` | `+0` | `+0` |
-| `OVLP-132` | `0` | `Right` | `4.00` | `+8` | `+0` | `+8` |
-| `OVLP-133` | `1` | `Right` | `4.70` | `+0` | `+0` | `+0` |
-| `OVLP-134` | `0` | `Left` | `5.40` | `+0` | `+0` | `+0` |
-| `OVLP-135` | `1` | `Right` | `6.10` | `+0` | `+0` | `+0` |
-| `OVLP-136` | `0` | `Right` | `1.20` | `+8` | `+12` | `+20` |
-| `OVLP-137` | `1` | `Right` | `1.90` | `+0` | `+12` | `+12` |
-| `OVLP-138` | `0` | `Left` | `2.60` | `+0` | `+12` | `+12` |
-| `OVLP-139` | `1` | `Right` | `3.30` | `+0` | `+0` | `+0` |
-| `OVLP-140` | `0` | `Right` | `4.00` | `+8` | `+0` | `+8` |
-| `OVLP-141` | `1` | `Right` | `4.70` | `+0` | `+0` | `+0` |
-| `OVLP-142` | `0` | `Left` | `5.40` | `+0` | `+0` | `+0` |
-| `OVLP-143` | `1` | `Right` | `6.10` | `+0` | `+0` | `+0` |
-| `OVLP-144` | `0` | `Right` | `1.20` | `+8` | `+12` | `+20` |
-| `OVLP-145` | `1` | `Right` | `1.90` | `+0` | `+12` | `+12` |
-| `OVLP-146` | `0` | `Left` | `2.60` | `+0` | `+12` | `+12` |
-| `OVLP-147` | `1` | `Right` | `3.30` | `+0` | `+0` | `+0` |
-| `OVLP-148` | `0` | `Right` | `4.00` | `+8` | `+0` | `+8` |
-| `OVLP-149` | `1` | `Right` | `4.70` | `+0` | `+0` | `+0` |
-| `OVLP-150` | `0` | `Left` | `5.40` | `+0` | `+0` | `+0` |
-| `OVLP-151` | `1` | `Right` | `6.10` | `+0` | `+0` | `+0` |
-| `OVLP-152` | `0` | `Right` | `1.20` | `+8` | `+12` | `+20` |
-| `OVLP-153` | `1` | `Right` | `1.90` | `+0` | `+12` | `+12` |
-| `OVLP-154` | `0` | `Left` | `2.60` | `+0` | `+12` | `+12` |
-| `OVLP-155` | `1` | `Right` | `3.30` | `+0` | `+0` | `+0` |
-| `OVLP-156` | `0` | `Right` | `4.00` | `+8` | `+0` | `+8` |
-| `OVLP-157` | `1` | `Right` | `4.70` | `+0` | `+0` | `+0` |
-| `OVLP-158` | `0` | `Left` | `5.40` | `+0` | `+0` | `+0` |
-| `OVLP-159` | `1` | `Right` | `6.10` | `+0` | `+0` | `+0` |
-| `OVLP-160` | `0` | `Right` | `1.20` | `+8` | `+12` | `+20` |
-| `OVLP-161` | `1` | `Right` | `1.90` | `+0` | `+12` | `+12` |
-| `OVLP-162` | `0` | `Left` | `2.60` | `+0` | `+12` | `+12` |
-| `OVLP-163` | `1` | `Right` | `3.30` | `+0` | `+0` | `+0` |
-| `OVLP-164` | `0` | `Right` | `4.00` | `+8` | `+0` | `+8` |
-| `OVLP-165` | `1` | `Right` | `4.70` | `+0` | `+0` | `+0` |
-| `OVLP-166` | `0` | `Left` | `5.40` | `+0` | `+0` | `+0` |
-| `OVLP-167` | `1` | `Right` | `6.10` | `+0` | `+0` | `+0` |
-| `OVLP-168` | `0` | `Right` | `1.20` | `+8` | `+12` | `+20` |
-| `OVLP-169` | `1` | `Right` | `1.90` | `+0` | `+12` | `+12` |
-| `OVLP-170` | `0` | `Left` | `2.60` | `+0` | `+12` | `+12` |
 
 ## 4. Shared Confirmed Sighting Broadcasts
 
