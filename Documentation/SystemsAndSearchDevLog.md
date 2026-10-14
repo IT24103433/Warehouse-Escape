@@ -63,3 +63,7 @@ Bounded sound-triggered hypothesis rebuilds to a 0.75-second cooldown to coalesc
 ## 2026-10-13 — Implement lastKnownPlayerPosition memory storage on sight loss
 Recorded lastKnownPlayerPosition and estimated heading exclusively from confirmed visual or sound observations.
 Prevented hidden live player coordinates from leaking into search origin initialization after line-of-sight breaks.
+
+## 2026-10-14 — Design SearchDecisionPolicy reachable hypothesis generation
+Designed SearchDecisionPolicy to sample concentric candidate rings at 2.5 m and 5.0 m around the last sighting.
+Filtered raw samples through NavMesh path completeness checks before entering belief scoring.
