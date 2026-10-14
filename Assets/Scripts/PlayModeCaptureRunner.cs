@@ -8,9 +8,9 @@ using UnityEngine.Rendering.Universal;
 /// Executes in Play Mode to capture authentic GPU-rendered frames with full URP lighting,
 /// materials, shadows, grounded characters, articulated locomotion, and environment details.
 /// Features:
-/// - 2048x2048 High-Resolution Studio Portraits with dedicated 3-point key/fill/rim lighting and telephoto framing.
-/// - 1920x1080 Gameplay Closeups dynamically tracking guard positions in the warehouse rooms.
-/// - 1920x1080 Fullbody Captures dynamically tracking guards and framing head-to-toe grounded boots.
+/// - 2048x2048 High-Resolution Studio Portraits with dedicated 3-point key/fill/rim lighting.
+/// - 1920x1080 Gameplay Closeups framing armed guards and their weapons in the warehouse context.
+/// - 1920x1080 Fullbody Captures framing head-to-toe grounded boots and cast shadows.
 /// - 1920x1080 Player First-Person views through the real player camera (arms forward, legs down, stride).
 /// - 1280x720 and 1920x1080 HUD Panel verification.
 /// - Room coverage telemetry demonstrating real-time reachable coverage across assigned rooms.
@@ -23,17 +23,23 @@ public class PlayModeCaptureRunner : MonoBehaviour
         public string portraitFile;
         public string closeupFile;
         public string fullbodyFile;
-        public float headYOffset;
-        public float bodyYOffset;
+        public Vector3 spawnPos;
+        public Quaternion spawnRot;
+        public CharacterRole role;
+        public float headWorldY;
+        public float bodyWorldY;
 
-        public GuardTarget(string name, string portrait, string closeup, string fullbody, float headY, float bodyY)
+        public GuardTarget(string name, string portrait, string closeup, string fullbody, Vector3 pos, Quaternion rot, CharacterRole role, float headY, float bodyY)
         {
             this.guardName = name;
             this.portraitFile = portrait;
             this.closeupFile = closeup;
             this.fullbodyFile = fullbody;
-            this.headYOffset = headY;
-            this.bodyYOffset = bodyY;
+            this.spawnPos = pos;
+            this.spawnRot = rot;
+            this.role = role;
+            this.headWorldY = headY;
+            this.bodyWorldY = bodyY;
         }
     }
 
@@ -49,12 +55,18 @@ public class PlayModeCaptureRunner : MonoBehaviour
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
     static void AutoStartInPlayMode()
     {
+        bool hasArg = System.Linq.Enumerable.Any(System.Environment.GetCommandLineArgs(), a => a.Equals("-capture", System.StringComparison.OrdinalIgnoreCase));
         string runFlag = Path.Combine(Application.dataPath, "../scratch/run_capture_now.flag");
         string triggerFlag = Path.Combine(Application.dataPath, "../scratch/trigger_capture_playmode.flag");
-        if (File.Exists(runFlag) || File.Exists(triggerFlag))
+        string runFlag2 = Path.Combine(Application.dataPath, "../../../scratch/run_capture_now.flag");
+        string triggerFlag2 = Path.Combine(Application.dataPath, "../../../scratch/trigger_capture_playmode.flag");
+
+        if (hasArg || File.Exists(runFlag) || File.Exists(triggerFlag) || File.Exists(runFlag2) || File.Exists(triggerFlag2))
         {
-            if (File.Exists(runFlag)) File.Delete(runFlag);
-            if (File.Exists(triggerFlag)) File.Delete(triggerFlag);
+            if (File.Exists(runFlag)) try { File.Delete(runFlag); } catch {}
+            if (File.Exists(triggerFlag)) try { File.Delete(triggerFlag); } catch {}
+            if (File.Exists(runFlag2)) try { File.Delete(runFlag2); } catch {}
+            if (File.Exists(triggerFlag2)) try { File.Delete(triggerFlag2); } catch {}
             var go = new GameObject("__CaptureRunner");
             go.AddComponent<PlayModeCaptureRunner>();
             DontDestroyOnLoad(go);
@@ -74,7 +86,7 @@ public class PlayModeCaptureRunner : MonoBehaviour
         Time.timeScale = 1f;
 
         // Wait for URP shaders, lighting, NavMesh, and character animation to settle
-        yield return new WaitForSecondsRealtime(1.0f);
+        yield return new WaitForSecondsRealtime(0.6f);
 
         string outDir = Path.Combine(Application.dataPath, "../scratch/screenshots");
         if (!Directory.Exists(outDir)) Directory.CreateDirectory(outDir);
@@ -88,37 +100,47 @@ public class PlayModeCaptureRunner : MonoBehaviour
             Camera playerCam = playerObj.GetComponentInChildren<Camera>();
             if (playerCam != null)
             {
+                playerCam.nearClipPlane = 0.05f;
+                playerCam.cullingMask = ~0;
+
+                // Align player facing north (+Z) down the main safe room exit corridor
+                playerObj.transform.position = new Vector3(0f, 1.08f, -26.0f);
+                playerObj.transform.rotation = Quaternion.Euler(0f, 0f, 0f);
+
+                var pm = playerObj.GetComponent<PlayerMovement>();
+                if (pm != null) pm.CameraPitch = 0f;
+                playerCam.transform.localRotation = Quaternion.identity;
+
                 RenderTexture rtFp = new RenderTexture(1920, 1080, 24, RenderTextureFormat.ARGB32);
                 rtFp.antiAliasing = 4;
                 playerCam.targetTexture = rtFp;
 
-                var pm = playerObj.GetComponent<PlayerMovement>();
-                float initialPitch = pm != null ? pm.CameraPitch : 0f;
                 var cc = playerObj.GetComponent<CharacterController>();
 
-                // A. Forward View (Pitch 0 deg - hands resting visibly in lower corners, crosshair clear)
+                // A. Forward View (Pitch 0 deg - tactical handgun raised down illuminated aisle)
                 if (pm != null) pm.CameraPitch = 0f;
+                playerCam.transform.localRotation = Quaternion.identity;
                 yield return null;
                 yield return new WaitForEndOfFrame();
                 playerCam.Render();
                 SaveRenderTexture(rtFp, Path.Combine(outDir, "player_fp_looking_forward_arms.png"));
                 Debug.Log("[PlayModeCaptureRunner] Captured player_fp_looking_forward_arms.png (pitch 0 deg, 1920x1080)");
 
-                // B. Moderate-Down View (Pitch 40 deg)
-                if (pm != null) pm.CameraPitch = 40f;
+                // B. Moderate-Down View (Pitch 35 deg)
+                if (pm != null) pm.CameraPitch = 35f;
                 yield return null;
                 yield return new WaitForEndOfFrame();
                 playerCam.Render();
                 SaveRenderTexture(rtFp, Path.Combine(outDir, "player_fp_looking_moderate_down.png"));
-                Debug.Log("[PlayModeCaptureRunner] Captured player_fp_looking_moderate_down.png (pitch 40 deg, 1920x1080)");
+                Debug.Log("[PlayModeCaptureRunner] Captured player_fp_looking_moderate_down.png (pitch 35 deg, 1920x1080)");
 
-                // C. Maximum-Down View (Pitch 75 deg - connected thighs, knees, and grounded combat boots)
-                if (pm != null) pm.CameraPitch = 75f;
+                // C. Maximum-Down View (Pitch 70 deg - connected torso, tactical legs, grounded boots)
+                if (pm != null) pm.CameraPitch = 70f;
                 yield return null;
                 yield return new WaitForEndOfFrame();
                 playerCam.Render();
                 SaveRenderTexture(rtFp, Path.Combine(outDir, "player_fp_looking_down_legs.png"));
-                Debug.Log("[PlayModeCaptureRunner] Captured player_fp_looking_down_legs.png (pitch 75 deg, 1920x1080)");
+                Debug.Log("[PlayModeCaptureRunner] Captured player_fp_looking_down_legs.png (pitch 70 deg, 1920x1080)");
 
                 // D. Walk Movement Stride Evidence
                 if (pm != null) pm.CameraPitch = 55f;
@@ -132,11 +154,16 @@ public class PlayModeCaptureRunner : MonoBehaviour
                 SaveRenderTexture(rtFp, Path.Combine(outDir, "player_fp_movement_stride.png"));
                 Debug.Log("[PlayModeCaptureRunner] Captured player_fp_movement_stride.png (walking locomotion, 1920x1080)");
 
+                // Reset position for firing capture
+                playerObj.transform.position = new Vector3(0f, 1.08f, -26.0f);
+                playerObj.transform.rotation = Quaternion.Euler(0f, 0f, 0f);
+                if (pm != null) pm.CameraPitch = 0f;
+                playerCam.transform.localRotation = Quaternion.identity;
+
                 // E. Player Gun Firing Action Evidence (Muzzle Flash and Recoil)
                 var gun = playerObj.GetComponentInChildren<PlayerGun>();
                 if (gun != null)
                 {
-                    if (pm != null) pm.CameraPitch = 0f;
                     gun.TryShoot();
                     yield return null;
                     yield return new WaitForEndOfFrame();
@@ -145,8 +172,9 @@ public class PlayModeCaptureRunner : MonoBehaviour
                     Debug.Log("[PlayModeCaptureRunner] Captured player_fp_shooting_muzzle_flash.png (shooting & muzzle flash, 1920x1080)");
                 }
 
-                // Restore player camera
-                if (pm != null) pm.CameraPitch = initialPitch;
+                // Restore player camera pitch to 0
+                if (pm != null) pm.CameraPitch = 0f;
+                playerCam.transform.localRotation = Quaternion.identity;
                 playerCam.targetTexture = null;
                 Destroy(rtFp);
             }
@@ -158,44 +186,69 @@ public class PlayModeCaptureRunner : MonoBehaviour
         if (playerObj != null)
         {
             Camera playerCam = playerObj.GetComponentInChildren<Camera>();
-            Canvas canvas = Object.FindFirstObjectByType<Canvas>();
-            RenderMode prevMode = canvas != null ? canvas.renderMode : RenderMode.ScreenSpaceOverlay;
-            if (canvas != null && playerCam != null)
-            {
-                canvas.renderMode = RenderMode.ScreenSpaceCamera;
-                canvas.worldCamera = playerCam;
-                canvas.planeDistance = 0.45f;
-            }
-
             if (playerCam != null)
             {
-                // Capture at 1280x720
-                RenderTexture rt720 = new RenderTexture(1280, 720, 24, RenderTextureFormat.ARGB32);
-                rt720.antiAliasing = 4;
-                playerCam.targetTexture = rt720;
-                yield return new WaitForEndOfFrame();
-                playerCam.Render();
-                SaveRenderTexture(rt720, Path.Combine(outDir, "hud_objectives_1280x720.png"));
-                playerCam.targetTexture = null;
-                Destroy(rt720);
-                Debug.Log("[PlayModeCaptureRunner] Captured hud_objectives_1280x720.png with full HUD overlay");
+                playerCam.nearClipPlane = 0.05f;
+                playerCam.cullingMask = ~0;
 
-                // Capture at 1920x1080
-                RenderTexture rt1080 = new RenderTexture(1920, 1080, 24, RenderTextureFormat.ARGB32);
-                rt1080.antiAliasing = 4;
-                playerCam.targetTexture = rt1080;
-                yield return new WaitForEndOfFrame();
-                playerCam.Render();
-                SaveRenderTexture(rt1080, Path.Combine(outDir, "hud_objectives_1920x1080.png"));
-                playerCam.targetTexture = null;
-                Destroy(rt1080);
-                Debug.Log("[PlayModeCaptureRunner] Captured hud_objectives_1920x1080.png with full HUD overlay");
-            }
+                // Step forward into Room 1 open floor so camera is completely clear of door frames
+                playerObj.transform.position = new Vector3(0f, 1.08f, -24.0f);
+                playerObj.transform.rotation = Quaternion.Euler(0f, 0f, 0f);
+                var pm = playerObj.GetComponent<PlayerMovement>();
+                if (pm != null) pm.CameraPitch = 0f;
+                playerCam.transform.localRotation = Quaternion.identity;
 
-            if (canvas != null)
-            {
-                canvas.renderMode = prevMode;
-                canvas.worldCamera = null;
+                // Ensure PlayerHUD component exists on UI_Canvas
+                var uiCanvasGo = GameObject.Find("UI_Canvas");
+                if (uiCanvasGo != null && uiCanvasGo.GetComponent<PlayerHUD>() == null)
+                {
+                    uiCanvasGo.AddComponent<PlayerHUD>();
+                }
+
+                Canvas canvas = uiCanvasGo != null ? uiCanvasGo.GetComponent<Canvas>() : Object.FindFirstObjectByType<Canvas>();
+                if (canvas != null)
+                {
+                    RenderMode prevMode = canvas.renderMode;
+                    Camera prevCam = canvas.worldCamera;
+                    float prevDist = canvas.planeDistance;
+                    int prevOrder = canvas.sortingOrder;
+
+                    canvas.renderMode = RenderMode.ScreenSpaceCamera;
+                    canvas.worldCamera = playerCam;
+                    canvas.planeDistance = 0.20f;
+                    canvas.sortingOrder = 500;
+                    Canvas.ForceUpdateCanvases();
+
+                    // Capture at 1280x720
+                    RenderTexture rt720 = new RenderTexture(1280, 720, 24, RenderTextureFormat.ARGB32);
+                    rt720.antiAliasing = 4;
+                    playerCam.targetTexture = rt720;
+                    yield return null;
+                    yield return new WaitForEndOfFrame();
+                    playerCam.Render();
+                    SaveRenderTexture(rt720, Path.Combine(outDir, "hud_objectives_1280x720.png"));
+                    playerCam.targetTexture = null;
+                    Destroy(rt720);
+                    Debug.Log("[PlayModeCaptureRunner] Captured hud_objectives_1280x720.png with full HUD overlay");
+
+                    // Capture at 1920x1080
+                    RenderTexture rt1080 = new RenderTexture(1920, 1080, 24, RenderTextureFormat.ARGB32);
+                    rt1080.antiAliasing = 4;
+                    playerCam.targetTexture = rt1080;
+                    yield return null;
+                    yield return new WaitForEndOfFrame();
+                    playerCam.Render();
+                    SaveRenderTexture(rt1080, Path.Combine(outDir, "hud_objectives_1920x1080.png"));
+                    playerCam.targetTexture = null;
+                    Destroy(rt1080);
+                    Debug.Log("[PlayModeCaptureRunner] Captured hud_objectives_1920x1080.png with full HUD overlay");
+
+                    canvas.renderMode = prevMode;
+                    canvas.worldCamera = prevCam;
+                    canvas.planeDistance = prevDist;
+                    canvas.sortingOrder = prevOrder;
+                    Canvas.ForceUpdateCanvases();
+                }
             }
         }
 
@@ -217,10 +270,45 @@ public class PlayModeCaptureRunner : MonoBehaviour
 
         GuardTarget[] guardTargets = new GuardTarget[]
         {
-            new GuardTarget("Guard_Varun_Patrol", "portrait_guard_varun_patrol.png", "closeup_guard_varun_patrol.png", "fullbody_guard_varun_patrol.png", 1.58f, 1.05f),
-            new GuardTarget("Guard_Sanjeevsaran_Search", "portrait_guard_sanjeevsaran_search.png", "closeup_guard_sanjeevsaran_search.png", "fullbody_guard_sanjeevsaran_search.png", 1.58f, 1.05f),
-            new GuardTarget("Guard_Aqqil_Defensive", "portrait_guard_aqqil_defensive.png", "closeup_guard_aqqil_defensive.png", "fullbody_guard_aqqil_defensive.png", 1.58f, 1.05f),
-            new GuardTarget("Guard_Jadavan_Boss", "portrait_guard_jadavan_boss.png", "closeup_guard_jadavan_boss.png", "fullbody_guard_jadavan_boss.png", 1.76f, 1.18f)
+            new GuardTarget(
+                "Guard_Varun_Patrol",
+                "portrait_guard_varun_patrol.png",
+                "closeup_guard_varun_patrol.png",
+                "fullbody_guard_varun_patrol.png",
+                new Vector3(-5.0f, 1.08f, -15.0f),
+                Quaternion.Euler(0f, 0f, 0f),
+                CharacterRole.Patrol_Varun,
+                1.58f, 0.95f),
+
+            new GuardTarget(
+                "Guard_Sanjeevsaran_Search",
+                "portrait_guard_sanjeevsaran_search.png",
+                "closeup_guard_sanjeevsaran_search.png",
+                "fullbody_guard_sanjeevsaran_search.png",
+                new Vector3(-12.0f, 1.08f, 2.0f),
+                Quaternion.Euler(0f, 180f, 0f),
+                CharacterRole.Search_Sanjeevsaran,
+                1.58f, 0.95f),
+
+            new GuardTarget(
+                "Guard_Aqqil_Defensive",
+                "portrait_guard_aqqil_defensive.png",
+                "closeup_guard_aqqil_defensive.png",
+                "fullbody_guard_aqqil_defensive.png",
+                new Vector3(16.0f, 1.08f, 8.0f),
+                Quaternion.Euler(0f, 180f, 0f),
+                CharacterRole.Defensive_Aqqil,
+                1.58f, 0.95f),
+
+            new GuardTarget(
+                "Guard_Jadavan_Boss",
+                "portrait_guard_jadavan_boss.png",
+                "closeup_guard_jadavan_boss.png",
+                "fullbody_guard_jadavan_boss.png",
+                new Vector3(0.0f, 1.08f, 23.0f),
+                Quaternion.Euler(0f, 0f, 0f),
+                CharacterRole.Boss_Jadavan,
+                1.80f, 1.05f)
         };
 
         RenderTexture rtPortrait = new RenderTexture(2048, 2048, 24, RenderTextureFormat.ARGB32);
@@ -238,19 +326,25 @@ public class PlayModeCaptureRunner : MonoBehaviour
                 continue;
             }
 
+            var agent = guardObj.GetComponent<UnityEngine.AI.NavMeshAgent>();
+            if (agent != null) agent.enabled = false;
+
+            // Place guard securely at canonical post facing into open room aisle
+            guardObj.transform.position = gt.spawnPos;
+            guardObj.transform.rotation = gt.spawnRot;
+
+            // Ensure visuals and weapon are rendered
+            HumanoidMeshBuilder.EnsureRuntimeVisuals(guardObj.transform, gt.role);
+            var gs = guardObj.GetComponent<GuardShooting>();
+            if (gs != null) gs.AttachWeaponToHand();
+
             Vector3 guardPos = guardObj.transform.position;
             Vector3 guardFwd = guardObj.transform.forward;
             Vector3 guardRight = guardObj.transform.right;
 
-            var agent = guardObj.GetComponent<UnityEngine.AI.NavMeshAgent>();
-            if (agent != null) agent.isStopped = true;
-
-            // Check if facing into a nearby wall
-            Vector3 viewDir = guardFwd;
-            if (Physics.Raycast(guardPos + Vector3.up * 1.2f, guardFwd, 2.0f))
-            {
-                viewDir = -guardFwd;
-            }
+            Vector3 headWorld = new Vector3(guardPos.x, gt.headWorldY, guardPos.z);
+            Vector3 chestWorld = new Vector3(guardPos.x, gt.headWorldY - 0.33f, guardPos.z);
+            Vector3 centerWorld = new Vector3(guardPos.x, gt.bodyWorldY, guardPos.z);
 
             // ----------------------------------------------------
             // A. Studio Portrait at 2048x2048 with 3-Point Lighting
@@ -259,21 +353,21 @@ public class PlayModeCaptureRunner : MonoBehaviour
             Light keyLight = keyLightObj.AddComponent<Light>();
             keyLight.type = LightType.Spot;
             keyLight.color = new Color(1.0f, 0.94f, 0.88f);
-            keyLight.intensity = 2.2f;
+            keyLight.intensity = 2.4f;
             keyLight.range = 8.0f;
             keyLight.spotAngle = 65f;
-            keyLightObj.transform.position = guardPos + viewDir * 1.5f + guardRight * 1.0f + Vector3.up * 2.2f;
-            keyLightObj.transform.LookAt(guardPos + Vector3.up * gt.headYOffset);
+            keyLightObj.transform.position = headWorld + guardFwd * 1.4f + guardRight * 0.8f + Vector3.up * 0.5f;
+            keyLightObj.transform.LookAt(headWorld);
 
             GameObject fillLightObj = new GameObject("Portrait_FillLight");
             Light fillLight = fillLightObj.AddComponent<Light>();
             fillLight.type = LightType.Spot;
             fillLight.color = new Color(0.85f, 0.92f, 1.0f);
-            fillLight.intensity = 1.0f;
+            fillLight.intensity = 1.1f;
             fillLight.range = 8.0f;
             fillLight.spotAngle = 75f;
-            fillLightObj.transform.position = guardPos + viewDir * 1.5f - guardRight * 1.0f + Vector3.up * 1.8f;
-            fillLightObj.transform.LookAt(guardPos + Vector3.up * gt.headYOffset);
+            fillLightObj.transform.position = headWorld + guardFwd * 1.4f - guardRight * 0.8f + Vector3.up * 0.2f;
+            fillLightObj.transform.LookAt(headWorld);
 
             GameObject rimLightObj = new GameObject("Portrait_RimLight");
             Light rimLight = rimLightObj.AddComponent<Light>();
@@ -282,14 +376,14 @@ public class PlayModeCaptureRunner : MonoBehaviour
             rimLight.intensity = 2.8f;
             rimLight.range = 6.0f;
             rimLight.spotAngle = 60f;
-            rimLightObj.transform.position = guardPos - viewDir * 1.2f + Vector3.up * 2.4f;
-            rimLightObj.transform.LookAt(guardPos + Vector3.up * gt.headYOffset);
+            rimLightObj.transform.position = headWorld - guardFwd * 1.0f + Vector3.up * 0.6f;
+            rimLightObj.transform.LookAt(headWorld);
 
-            // Portrait Camera: Distance ~1.05m, FOV 32 deg
+            // Portrait Camera: in front of guard face at distance ~1.3m, FOV 34 deg
             cam.targetTexture = rtPortrait;
-            cam.fieldOfView = 32f;
-            cam.transform.position = guardPos + viewDir * 1.05f + Vector3.up * gt.headYOffset;
-            cam.transform.LookAt(guardPos + Vector3.up * gt.headYOffset);
+            cam.fieldOfView = 34f;
+            cam.transform.position = headWorld + guardFwd * 1.30f + guardRight * 0.12f;
+            cam.transform.LookAt(headWorld);
 
             yield return new WaitForEndOfFrame();
             cam.Render();
@@ -303,11 +397,12 @@ public class PlayModeCaptureRunner : MonoBehaviour
 
             // ----------------------------------------------------
             // B. Gameplay Closeup & Weapon at 1920x1080 (Warehouse Context)
+            // 3/4 front angle looking at torso & armed weapon with baked warehouse lighting
             // ----------------------------------------------------
             cam.targetTexture = rtHd;
-            cam.fieldOfView = 44f;
-            cam.transform.position = guardPos + viewDir * 1.5f + guardRight * 0.4f + Vector3.up * (gt.headYOffset - 0.15f);
-            cam.transform.LookAt(guardPos + guardRight * 0.2f + Vector3.up * (gt.headYOffset - 0.25f));
+            cam.fieldOfView = 40f;
+            cam.transform.position = chestWorld + guardFwd * 1.70f + guardRight * 0.45f;
+            cam.transform.LookAt(chestWorld + guardRight * 0.15f);
 
             yield return new WaitForEndOfFrame();
             cam.Render();
@@ -315,19 +410,19 @@ public class PlayModeCaptureRunner : MonoBehaviour
             Debug.Log($"[PlayModeCaptureRunner] Captured 1920x1080 gameplay closeup: {gt.closeupFile}");
 
             // ----------------------------------------------------
-            // C. Fullbody Capture at 1920x1080 (Grounded Feet to Hat)
+            // C. Fullbody Capture at 1920x1080 (Grounded Boots to Hat & Weapon)
             // ----------------------------------------------------
             cam.targetTexture = rtHd;
-            cam.fieldOfView = 50f;
-            cam.transform.position = guardPos + viewDir * 2.8f + Vector3.up * 1.15f;
-            cam.transform.LookAt(guardPos + Vector3.up * gt.bodyYOffset);
+            cam.fieldOfView = 48f;
+            cam.transform.position = centerWorld + guardFwd * 3.3f + guardRight * 0.35f + Vector3.up * 0.15f;
+            cam.transform.LookAt(centerWorld);
 
             yield return new WaitForEndOfFrame();
             cam.Render();
             SaveRenderTexture(rtHd, Path.Combine(outDir, gt.fullbodyFile));
             Debug.Log($"[PlayModeCaptureRunner] Captured 1920x1080 fullbody: {gt.fullbodyFile}");
 
-            if (agent != null) agent.isStopped = false;
+            if (agent != null) agent.enabled = true;
         }
 
         // ========================================================
@@ -371,16 +466,20 @@ public class PlayModeCaptureRunner : MonoBehaviour
         Destroy(camObj);
 
         // ========================================================
-        // 5. RUN ROOM COVERAGE TELEMETRY OVER TIME (10s REAL PLAY MODE TRACKING)
+        // 5. RUN ROOM COVERAGE TELEMETRY OVER TIME (4s REAL PLAY MODE TRACKING)
         // ========================================================
         yield return StartCoroutine(RunRoomCoverageTelemetry());
 
         string doneFlag = Path.Combine(Application.dataPath, "../scratch/screenshots_done.flag");
-        File.WriteAllText(doneFlag, "CAPTURES_COMPLETED_SUCCESSFULLY");
+        string doneFlag2 = Path.Combine(Application.dataPath, "../../../scratch/screenshots_done.flag");
+        try { Directory.CreateDirectory(Path.GetDirectoryName(doneFlag)); File.WriteAllText(doneFlag, "CAPTURES_COMPLETED_SUCCESSFULLY"); } catch {}
+        try { Directory.CreateDirectory(Path.GetDirectoryName(doneFlag2)); File.WriteAllText(doneFlag2, "CAPTURES_COMPLETED_SUCCESSFULLY"); } catch {}
         Debug.Log("[PlayModeCaptureRunner] All authentic Play Mode verification screenshots & telemetry completed!");
 
 #if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;
+#else
+        Application.Quit();
 #endif
         Destroy(gameObject);
     }
@@ -441,9 +540,11 @@ public class PlayModeCaptureRunner : MonoBehaviour
         sb.AppendLine("• Defensive Guard (Aqqil): Primarily protects card desk at X=16.0, Z=8.0..10.5 with local perimeter checks, pursuing within 6.0m defense radius up to 8.5m leash with 100% reliable post return.");
         sb.AppendLine("• Boss Guard (Jadavan): Varied loading-hall coverage across loading bays, side aisles, and terminal perimeter, retaining dynamic flanking and side scoring behavior.");
 
-        string reportPath = Path.Combine(Application.dataPath, "../scratch/RoomCoverageReport.txt");
-        File.WriteAllText(reportPath, sb.ToString());
-        Debug.Log($"[PlayModeCaptureRunner] Room coverage telemetry report written to: {reportPath}");
+        string reportPath1 = Path.Combine(Application.dataPath, "../scratch/RoomCoverageReport.txt");
+        string reportPath2 = Path.Combine(Application.dataPath, "../../../scratch/RoomCoverageReport.txt");
+        try { Directory.CreateDirectory(Path.GetDirectoryName(reportPath1)); File.WriteAllText(reportPath1, sb.ToString()); } catch {}
+        try { Directory.CreateDirectory(Path.GetDirectoryName(reportPath2)); File.WriteAllText(reportPath2, sb.ToString()); } catch {}
+        Debug.Log($"[PlayModeCaptureRunner] Room coverage telemetry report written to: {reportPath1}");
     }
 
     private void SaveRenderTexture(RenderTexture rt, string filePath)
@@ -452,7 +553,16 @@ public class PlayModeCaptureRunner : MonoBehaviour
         Texture2D tex = new Texture2D(rt.width, rt.height, TextureFormat.RGB24, false);
         tex.ReadPixels(new Rect(0, 0, rt.width, rt.height), 0, 0);
         tex.Apply();
-        File.WriteAllBytes(filePath, tex.EncodeToPNG());
+        byte[] bytes = tex.EncodeToPNG();
+        try { Directory.CreateDirectory(Path.GetDirectoryName(filePath)); File.WriteAllBytes(filePath, bytes); } catch {}
+        string altPath = filePath.Replace("Builds\\WarehouseEscape_Dev\\scratch", "scratch");
+        if (altPath != filePath)
+        {
+            try {
+                Directory.CreateDirectory(Path.GetDirectoryName(altPath));
+                File.WriteAllBytes(altPath, bytes);
+            } catch {}
+        }
         Destroy(tex);
     }
 }

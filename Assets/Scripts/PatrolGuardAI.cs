@@ -264,6 +264,7 @@ public class PatrolGuardAI : MonoBehaviour
     public void TransitionToPatrol()
     {
         currentState = PatrolGuardState.Patrol;
+        Debug.Log($"[{gameObject.name}] State -> Patrol");
         isWaiting = false;
         DispatchCurrentWaypoint();
     }
@@ -271,6 +272,7 @@ public class PatrolGuardAI : MonoBehaviour
     public void TransitionToPursue()
     {
         currentState = PatrolGuardState.Pursue;
+        Debug.Log($"[{gameObject.name}] State -> Pursue (Intruder detected)");
         repathTimer = 0f;
         DispatchPursuitDestination();
     }

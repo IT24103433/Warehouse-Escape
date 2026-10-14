@@ -286,6 +286,7 @@ public class SearchGuardAI : MonoBehaviour
     public void TransitionToPatrol()
     {
         currentState = SearchGuardState.Patrol;
+        Debug.Log($"[{gameObject.name}] State -> Patrol");
         isInvestigating = false;
         isWaitingAtWaypoint = false;
         DispatchCurrentWaypoint();
@@ -294,6 +295,7 @@ public class SearchGuardAI : MonoBehaviour
     public void TransitionToPursue()
     {
         currentState = SearchGuardState.Pursue;
+        Debug.Log($"[{gameObject.name}] State -> Pursue (Intruder detected)");
         isInvestigating = false;
         repathTimer = 0f;
         DispatchPursuitDestination();
@@ -333,6 +335,7 @@ public class SearchGuardAI : MonoBehaviour
     public void TransitionToSearch()
     {
         currentState = SearchGuardState.Search;
+        Debug.Log($"[{gameObject.name}] State -> Search (Investigating last seen at {lastSeenPosition})");
         searchTimer = searchTimeout;
         isInvestigating = true;
 

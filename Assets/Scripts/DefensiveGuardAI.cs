@@ -296,6 +296,7 @@ public class DefensiveGuardAI : MonoBehaviour
     public void TransitionToPursueIntruder()
     {
         currentState = DefensiveGuardState.PursueIntruder;
+        Debug.Log($"[{gameObject.name}] State -> PursueIntruder (Intruder entered defensive perimeter)");
         isWaitingAtInspection = false;
         repathTimer = 0f;
         DispatchPursuitDestination();
@@ -340,6 +341,7 @@ public class DefensiveGuardAI : MonoBehaviour
     public void TransitionToReturnToPost()
     {
         currentState = DefensiveGuardState.ReturnToPost;
+        Debug.Log($"[{gameObject.name}] State -> ReturnToPost (Returning to anchor post at {postPosition})");
         enemyMovement.SetDestination(postPosition);
         enemyMovement.Resume();
     }
@@ -369,6 +371,7 @@ public class DefensiveGuardAI : MonoBehaviour
     public void TransitionToGuardingPost()
     {
         currentState = DefensiveGuardState.GuardingPost;
+        Debug.Log($"[{gameObject.name}] State -> GuardingPost (Stationed at defense post)");
         enemyMovement.Stop();
     }
 

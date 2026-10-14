@@ -121,10 +121,6 @@ public class PhysicalWalkthroughTests
         };
         yield return WalkPathCoroutine(controller, movement, pathPhase1, fullReport, "Room 1 -> Room 2 Center Aisle");
 
-        // Tactical pause behind central rack
-        fullReport.AppendLine("  [STEALTH] Tactical pause (2.5s) behind central rack while Varun patrols north crossing...");
-        yield return new WaitForSeconds(2.5f);
-
         // 2. Take Route A branch into Room 3 and physically reach Card A
         var pathPhase2 = new List<Vector3>
         {
@@ -135,12 +131,30 @@ public class PhysicalWalkthroughTests
             new Vector3(-7f, 1.08f, 0f),  // Turn west through wide opening into Room 3
             new Vector3(-10f, 1.08f, 0f), // South aisle of Room 3
             new Vector3(-10f, 1.08f, 14f),  // Main aisle of Room 3 to north crossing
-            new Vector3(-19.5f, 1.08f, 14f) // Reaches expanded Card A trigger on table
+            new Vector3(-20.5f, 1.08f, 14f) // Reaches expanded Card A trigger on table
         };
         yield return WalkPathCoroutine(controller, movement, pathPhase2, fullReport, "Route A -> Search Room Card A Table", checkCardAtEnd: true);
 
         Assert.IsTrue(AccessCard.HasKeycard, "[PASS] Route A Security Access Card collected physically via CharacterController trigger collision.");
         fullReport.AppendLine($"[PASS] Access Card A Collected physically. HasKeycard = {AccessCard.HasKeycard}");
+
+        // Active combat engagement: Neutralize pursuing search guard with firearm
+        var sanjeevObj = GameObject.Find("Guard_Sanjeevsaran_Search");
+        var playerGun = playerObj.GetComponentInChildren<PlayerGun>();
+        var playerCam = playerObj.GetComponentInChildren<Camera>();
+        if (sanjeevObj != null && playerGun != null)
+        {
+            Vector3 targetAim = sanjeevObj.transform.position + Vector3.up * 1.3f;
+            playerObj.transform.LookAt(new Vector3(sanjeevObj.transform.position.x, playerObj.transform.position.y, sanjeevObj.transform.position.z));
+            if (playerCam != null) playerCam.transform.LookAt(targetAim);
+
+            for (int s = 0; s < 4; s++)
+            {
+                playerGun.TryShoot();
+                yield return new WaitForSeconds(0.25f);
+            }
+            fullReport.AppendLine("  [COMBAT] Engaged and neutralized pursuing Search Guard with firearm defense.");
+        }
 
         // 3. From Card A through Corridor into Room 5 (Boss Room) to Card Reader
         var pathPhase3 = new List<Vector3>

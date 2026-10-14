@@ -30,6 +30,28 @@ public class EnemyMovement : MonoBehaviour
 
         // Disable automatic agent angular rotation snapping to allow custom smooth rotation
         agent.updateRotation = false;
+
+        EnsureAgentOnNavMesh();
+    }
+
+    void Start()
+    {
+        EnsureAgentOnNavMesh();
+    }
+
+    /// <summary>
+    /// Snaps agent onto the nearest active NavMesh region if not already seated.
+    /// </summary>
+    public void EnsureAgentOnNavMesh()
+    {
+        if (agent == null) return;
+        if (!agent.isOnNavMesh)
+        {
+            if (NavMesh.SamplePosition(transform.position, out NavMeshHit hit, 3.0f, NavMesh.AllAreas))
+            {
+                agent.Warp(hit.position);
+            }
+        }
     }
 
     void Update()

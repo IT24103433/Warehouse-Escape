@@ -342,6 +342,7 @@ public class FlankingGuardAI : MonoBehaviour
     public void TransitionToFlank(Vector3 targetPos, FlankSide side, NavMeshPath path)
     {
         currentState = GuardState.Flank;
+        Debug.Log($"[{gameObject.name}] State -> Flank (Tactical approach: {side})");
         currentFlankSide = side;
         selectedFlankPosition = targetPos;
         activeFlankPath = path;
@@ -487,6 +488,7 @@ public class FlankingGuardAI : MonoBehaviour
     public void TransitionToPursue()
     {
         currentState = GuardState.Pursue;
+        Debug.Log($"[{gameObject.name}] State -> Pursue (Intruder sighted)");
         currentFlankSide = FlankSide.None;
         activeFlankPath = null;
 
@@ -795,6 +797,7 @@ public class FlankingGuardAI : MonoBehaviour
     public void TransitionToSearch()
     {
         currentState = GuardState.Search;
+        Debug.Log($"[{gameObject.name}] State -> Search (Investigating last seen at {lastSeenPosition})");
         currentFlankSide = FlankSide.None;
         activeFlankPath = null;
 
@@ -874,6 +877,7 @@ public class FlankingGuardAI : MonoBehaviour
     public void TransitionToPatrol()
     {
         currentState = GuardState.Patrol;
+        Debug.Log($"[{gameObject.name}] State -> Patrol");
         currentFlankSide = FlankSide.None;
         activeFlankPath = null;
         isInvestigating = false;
