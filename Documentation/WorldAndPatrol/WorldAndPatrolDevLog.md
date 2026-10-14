@@ -67,3 +67,7 @@ Removed raw boundary and disconnected proposals from the patrol-candidate matrix
 ## 2026-10-13 · Add local visibility scoring and path-length penalty trace
 
 Replaced the neutral visibility baseline with eight-direction modeled occlusion, added more detours, and expanded the arithmetic examples with capped and competing terms.
+
+## 2026-10-14 · Document complete-path validation for patrol candidate filtering
+
+Recorded the sampling filter, corner-based length, Room 2 endpoint gate and final destination acceptance. Added checks for the difference between being on a NavMesh island and reaching it.

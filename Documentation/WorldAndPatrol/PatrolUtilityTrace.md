@@ -118,6 +118,26 @@ the corners to get 9 m. The straight-line displacement is approximately
 6.708 m. Feeding that displacement into utility would incorrectly reduce
 the travel penalty from 0.075 to approximately 0.056.
 
+## Candidate gate order
+
+1. Skip null transforms and confirm the agent is on a NavMesh.
+2. Sample within 1.5 m using the movement agent's type and area mask.
+3. Require a successful path calculation with status `PathComplete`.
+4. Sum Euclidean segment lengths using the returned 3D corners.
+5. Check the sampled point against the inclusive Room 2 X/Z predicate.
+6. Exclude the current index if the configured array has more than one entry.
+7. Compute age, openness and utility for each remaining point.
+8. Choose the strictly greatest score and send the sampled target to
+   `EnemyMovement.SetDestination`, which recalculates and validates the path.
+9. Record the index and `SelectedDecisionTarget` only after acceptance.
+
+A completed query is a selection-time result. If destination submission
+fails, the state retains previous selection fields and stops movement.
+`nextDecisionAt` bounds subsequent attempts through `AdvanceWaypoint`
+to approximately one-second spacing. Entering Patrol calls dispatch directly.
+The patrol update's planar arrival fallback or a stopped previous path can
+affect when the next attempt actually happens.
+
 ## Controlled comparisons
 
 Inputs in this table are controlled mathematical cases. The visibility column shows clear rays divided by eight.
