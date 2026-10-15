@@ -138,6 +138,27 @@ to approximately one-second spacing. Entering Patrol calls dispatch directly.
 The patrol update's planar arrival fallback or a stopped previous path can
 affect when the next attempt actually happens.
 
+## Player sight is a state transition input
+
+`GuardPerception.CanSeePlayer` checks 3D range, horizontal angle and cover
+rays toward derived head/chest targets. Cached animated head direction can
+replace body-forward. Defaults in `PatrolGuardAI` are 16 m range and a
+90° total aperture. Within 2.5 m the shared perception helper uses at least
+110° total aperture. The serialized values in a loaded scene can override
+the code defaults. The checked-in Room 2 guard uses 16 m and 90°.
+
+| Controlled player pose | Range | Angle from gaze | Cover | Expected default outcome |
+| --- | ---: | ---: | --- | --- |
+| In Room 2, open aisle | 10 m | 30° | Clear | Pursue on visual confirmation |
+| In Room 2, side of gaze | 10 m | 50° | Clear | Stay in current patrol/inspection behavior |
+| In Room 2, close periphery | 2 m | 50° | Clear | Close-range aperture can confirm |
+| In Room 2, behind shelf | 10 m | 30° | Blocks head and chest | No visual confirmation |
+| Beyond either border | Within 16 m | Within aperture | Clear | Patrol does not pursue the out-of-room target |
+
+Keep the guard's pose and occluders fixed while introducing the player.
+Compare `CanSeePlayer` with `HasConfirmedVisualContact()` at the boundary.
+The latter additionally checks player membership in Room 2.
+
 ## Controlled comparisons
 
 Inputs in this table are controlled mathematical cases. The visibility column shows clear rays divided by eight.

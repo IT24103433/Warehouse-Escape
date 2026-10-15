@@ -71,3 +71,7 @@ Replaced the neutral visibility baseline with eight-direction modeled occlusion,
 ## 2026-10-14 · Document complete-path validation for patrol candidate filtering
 
 Recorded the sampling filter, corner-based length, Room 2 endpoint gate and final destination acceptance. Added checks for the difference between being on a NavMesh island and reaching it.
+
+## 2026-10-15 · Add player detection FOV and patrol-to-chase transition notes
+
+Mapped the sight test to the cached head direction, range, horizontal aperture and cover rays. A controlled example varies facing while candidate utility inputs stay fixed.
