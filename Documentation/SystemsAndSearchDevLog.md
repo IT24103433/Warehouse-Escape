@@ -67,3 +67,7 @@ Prevented hidden live player coordinates from leaking into search origin initial
 ## 2026-10-14 — Design SearchDecisionPolicy reachable hypothesis generation
 Designed SearchDecisionPolicy to sample concentric candidate rings at 2.5 m and 5.0 m around the last sighting.
 Filtered raw samples through NavMesh path completeness checks before entering belief scoring.
+
+## 2026-10-15 — Cap search candidates to 17 reachable positions around last sighting
+Bounded candidate generation to at most 17 positions (last sighting plus two 8-point rings) for predictable frame cost.
+Verified O(n^2) visibility comparisons remain lightweight at decision boundaries.
