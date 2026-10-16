@@ -71,3 +71,7 @@ Filtered raw samples through NavMesh path completeness checks before entering be
 ## 2026-10-15 — Cap search candidates to 17 reachable positions around last sighting
 Bounded candidate generation to at most 17 positions (last sighting plus two 8-point rings) for predictable frame cost.
 Verified O(n^2) visibility comparisons remain lightweight at decision boundaries.
+
+## 2026-10-16 — Add candidate utility formula weighting observable belief and path length
+Formulated candidate utility as observableBelief / (1 + 0.15 * pathLength) to balance information gain against travel.
+Added Gaussian distance falloff and directional heading bias to initialize discrete prior weights.
