@@ -1,260 +1,66 @@
 asset_id,category,pipeline_stage,fbx_path,tris,uv_islands,pivot_offset_m,scale_factor,lod_batch_status,notes
-Warehouse_Cargo_Crate,Prop,PreOpt_HighDraft,Assets/Meshes/Props/Warehouse_Cargo_Crate.obj,1840,18,"(0.00, 0.60, 0.00)",0.01,unbatched_draft,Legacy unoptimized draft (cm/uncalibrated pivot)
-Warehouse_Cargo_Crate,Prop,OBJ_Intermediate,Assets/Meshes/Props/Warehouse_Cargo_Crate.obj,1120,14,"(0.00, 0.60, 0.00)",0.01,unbatched_obj,Intermediate loop-merge pass before FBX
-Warehouse_Cargo_Crate,Prop,LOD0_Optimized,Assets/Meshes/Props/Warehouse_Cargo_Crate.fbx,864,14,"(0.00, 0.00, 0.00)",1.00,static_batch_ready,1.2m cube (1.0x/1.2x in Room 4 east alcove); bottom-center pivot
-Warehouse_Cargo_Crate,Prop,LOD1_Draft,Assets/Meshes/Props/Warehouse_Cargo_Crate.fbx,412,14,"(0.00, 0.00, 0.00)",1.00,lod1_candidate,Decimated mid-distance LOD1 candidate
-Warehouse_Cargo_Crate,Prop,LOD2_Draft,Assets/Meshes/Props/Warehouse_Cargo_Crate.fbx,148,7,"(0.00, 0.00, 0.00)",1.00,lod2_candidate,Far silhouette proxy LOD2 draft
-Warehouse_Cargo_Crate_CornerStiles_Draft,Prop_SubPart,PreOpt_HighDraft,Assets/Meshes/Props/Warehouse_Cargo_Crate.obj,288,4,"(0.00, 0.60, 0.00)",0.01,unbatched_draft,Pre-optimization sub-part draft
-Warehouse_Cargo_Crate_CornerStiles_OBJ,Prop_SubPart,OBJ_Intermediate,Assets/Meshes/Props/Warehouse_Cargo_Crate.obj,209,3,"(0.00, 0.60, 0.00)",0.01,unbatched_obj,Intermediate OBJ split UV seam export
-Warehouse_Cargo_Crate_CornerStiles_LOD1,Prop_SubPart,LOD1_Draft,Assets/Meshes/Props/Warehouse_Cargo_Crate.fbx,72,2,"(0.00, 0.00, 0.00)",1.00,lod1_candidate,Decimated LOD1 sub-part candidate
-Warehouse_Cargo_Crate_CornerStiles,Prop_SubPart,LOD0_Optimized,Assets/Meshes/Props/Warehouse_Cargo_Crate.fbx,144,2,"(0.00, 0.00, 0.00)",1.00,static_batch_ready,4 vertical 0.09m corner posts (Mat_Crate_Wood)
-Warehouse_Cargo_Crate_TopBottomRails_Draft,Prop_SubPart,PreOpt_HighDraft,Assets/Meshes/Props/Warehouse_Cargo_Crate.obj,352,4,"(0.00, 0.60, 0.00)",0.01,unbatched_draft,Pre-optimization sub-part draft
-Warehouse_Cargo_Crate_TopBottomRails_OBJ,Prop_SubPart,OBJ_Intermediate,Assets/Meshes/Props/Warehouse_Cargo_Crate.obj,255,3,"(0.00, 0.60, 0.00)",0.01,unbatched_obj,Intermediate OBJ split UV seam export
-Warehouse_Cargo_Crate_TopBottomRails_LOD1,Prop_SubPart,LOD1_Draft,Assets/Meshes/Props/Warehouse_Cargo_Crate.fbx,88,2,"(0.00, 0.00, 0.00)",1.00,lod1_candidate,Decimated LOD1 sub-part candidate
-Warehouse_Cargo_Crate_TopBottomRails,Prop_SubPart,LOD0_Optimized,Assets/Meshes/Props/Warehouse_Cargo_Crate.fbx,176,2,"(0.00, 0.00, 0.00)",1.00,static_batch_ready,Upper and lower horizontal perimeter rails
-Warehouse_Cargo_Crate_PlankPanels_NS_Draft,Prop_SubPart,PreOpt_HighDraft,Assets/Meshes/Props/Warehouse_Cargo_Crate.obj,240,4,"(0.00, 0.60, 0.00)",0.01,unbatched_draft,Pre-optimization sub-part draft
-Warehouse_Cargo_Crate_PlankPanels_NS_OBJ,Prop_SubPart,OBJ_Intermediate,Assets/Meshes/Props/Warehouse_Cargo_Crate.obj,174,3,"(0.00, 0.60, 0.00)",0.01,unbatched_obj,Intermediate OBJ split UV seam export
-Warehouse_Cargo_Crate_PlankPanels_NS_LOD1,Prop_SubPart,LOD1_Draft,Assets/Meshes/Props/Warehouse_Cargo_Crate.fbx,60,2,"(0.00, 0.00, 0.00)",1.00,lod1_candidate,Decimated LOD1 sub-part candidate
-Warehouse_Cargo_Crate_PlankPanels_NS,Prop_SubPart,LOD0_Optimized,Assets/Meshes/Props/Warehouse_Cargo_Crate.fbx,120,2,"(0.00, 0.00, 0.00)",1.00,static_batch_ready,North/South recessed 45mm inner board panels
-Warehouse_Cargo_Crate_PlankPanels_EW_Draft,Prop_SubPart,PreOpt_HighDraft,Assets/Meshes/Props/Warehouse_Cargo_Crate.obj,240,4,"(0.00, 0.60, 0.00)",0.01,unbatched_draft,Pre-optimization sub-part draft
-Warehouse_Cargo_Crate_PlankPanels_EW_OBJ,Prop_SubPart,OBJ_Intermediate,Assets/Meshes/Props/Warehouse_Cargo_Crate.obj,174,3,"(0.00, 0.60, 0.00)",0.01,unbatched_obj,Intermediate OBJ split UV seam export
-Warehouse_Cargo_Crate_PlankPanels_EW_LOD1,Prop_SubPart,LOD1_Draft,Assets/Meshes/Props/Warehouse_Cargo_Crate.fbx,60,2,"(0.00, 0.00, 0.00)",1.00,lod1_candidate,Decimated LOD1 sub-part candidate
-Warehouse_Cargo_Crate_PlankPanels_EW,Prop_SubPart,LOD0_Optimized,Assets/Meshes/Props/Warehouse_Cargo_Crate.fbx,120,2,"(0.00, 0.00, 0.00)",1.00,static_batch_ready,East/West recessed 45mm inner board panels
-Warehouse_Cargo_Crate_DiagBraces_NS_Draft,Prop_SubPart,PreOpt_HighDraft,Assets/Meshes/Props/Warehouse_Cargo_Crate.obj,192,4,"(0.00, 0.60, 0.00)",0.01,unbatched_draft,Pre-optimization sub-part draft
-Warehouse_Cargo_Crate_DiagBraces_NS_OBJ,Prop_SubPart,OBJ_Intermediate,Assets/Meshes/Props/Warehouse_Cargo_Crate.obj,139,3,"(0.00, 0.60, 0.00)",0.01,unbatched_obj,Intermediate OBJ split UV seam export
-Warehouse_Cargo_Crate_DiagBraces_NS_LOD1,Prop_SubPart,LOD1_Draft,Assets/Meshes/Props/Warehouse_Cargo_Crate.fbx,48,2,"(0.00, 0.00, 0.00)",1.00,lod1_candidate,Decimated LOD1 sub-part candidate
-Warehouse_Cargo_Crate_DiagBraces_NS,Prop_SubPart,LOD0_Optimized,Assets/Meshes/Props/Warehouse_Cargo_Crate.fbx,96,2,"(0.00, 0.00, 0.00)",1.00,static_batch_ready,North/South 45-deg diagonal bracing struts
-Warehouse_Cargo_Crate_DiagBraces_EW_Draft,Prop_SubPart,PreOpt_HighDraft,Assets/Meshes/Props/Warehouse_Cargo_Crate.obj,192,4,"(0.00, 0.60, 0.00)",0.01,unbatched_draft,Pre-optimization sub-part draft
-Warehouse_Cargo_Crate_DiagBraces_EW_OBJ,Prop_SubPart,OBJ_Intermediate,Assets/Meshes/Props/Warehouse_Cargo_Crate.obj,139,3,"(0.00, 0.60, 0.00)",0.01,unbatched_obj,Intermediate OBJ split UV seam export
-Warehouse_Cargo_Crate_DiagBraces_EW_LOD1,Prop_SubPart,LOD1_Draft,Assets/Meshes/Props/Warehouse_Cargo_Crate.fbx,48,2,"(0.00, 0.00, 0.00)",1.00,lod1_candidate,Decimated LOD1 sub-part candidate
-Warehouse_Cargo_Crate_DiagBraces_EW,Prop_SubPart,LOD0_Optimized,Assets/Meshes/Props/Warehouse_Cargo_Crate.fbx,96,2,"(0.00, 0.00, 0.00)",1.00,static_batch_ready,East/West 45-deg diagonal bracing struts
-Warehouse_Cargo_Crate_TopLidDeck_Draft,Prop_SubPart,PreOpt_HighDraft,Assets/Meshes/Props/Warehouse_Cargo_Crate.obj,112,3,"(0.00, 0.60, 0.00)",0.01,unbatched_draft,Pre-optimization sub-part draft
-Warehouse_Cargo_Crate_TopLidDeck_OBJ,Prop_SubPart,OBJ_Intermediate,Assets/Meshes/Props/Warehouse_Cargo_Crate.obj,81,2,"(0.00, 0.60, 0.00)",0.01,unbatched_obj,Intermediate OBJ split UV seam export
-Warehouse_Cargo_Crate_TopLidDeck_LOD1,Prop_SubPart,LOD1_Draft,Assets/Meshes/Props/Warehouse_Cargo_Crate.fbx,28,1,"(0.00, 0.00, 0.00)",1.00,lod1_candidate,Decimated LOD1 sub-part candidate
-Warehouse_Cargo_Crate_TopLidDeck,Prop_SubPart,LOD0_Optimized,Assets/Meshes/Props/Warehouse_Cargo_Crate.fbx,56,1,"(0.00, 0.00, 0.00)",1.00,static_batch_ready,Recessed top timber deck with culled inner lips
-Warehouse_Cargo_Crate_PalletSkids_Draft,Prop_SubPart,PreOpt_HighDraft,Assets/Meshes/Props/Warehouse_Cargo_Crate.obj,112,3,"(0.00, 0.60, 0.00)",0.01,unbatched_draft,Pre-optimization sub-part draft
-Warehouse_Cargo_Crate_PalletSkids_OBJ,Prop_SubPart,OBJ_Intermediate,Assets/Meshes/Props/Warehouse_Cargo_Crate.obj,81,2,"(0.00, 0.60, 0.00)",0.01,unbatched_obj,Intermediate OBJ split UV seam export
-Warehouse_Cargo_Crate_PalletSkids_LOD1,Prop_SubPart,LOD1_Draft,Assets/Meshes/Props/Warehouse_Cargo_Crate.fbx,28,1,"(0.00, 0.00, 0.00)",1.00,lod1_candidate,Decimated LOD1 sub-part candidate
-Warehouse_Cargo_Crate_PalletSkids,Prop_SubPart,LOD0_Optimized,Assets/Meshes/Props/Warehouse_Cargo_Crate.fbx,56,1,"(0.00, 0.00, 0.00)",1.00,static_batch_ready,Bottom 100mm forklift skids (bottom cap culled)
-Warehouse_Steel_Rack,Prop,PreOpt_HighDraft,Assets/Meshes/Props/Warehouse_Steel_Rack.obj,6420,44,"(0.00, 1.55, 0.00)",0.01,unbatched_draft,Legacy unoptimized draft (cm/uncalibrated pivot)
-Warehouse_Steel_Rack,Prop,OBJ_Intermediate,Assets/Meshes/Props/Warehouse_Steel_Rack.obj,3980,40,"(0.00, 1.55, 0.00)",0.01,unbatched_obj,Intermediate loop-merge pass before FBX
-Warehouse_Steel_Rack,Prop,LOD0_Optimized,Assets/Meshes/Props/Warehouse_Steel_Rack.fbx,2680,26,"(0.00, 0.00, 0.00)",1.00,static_batch_ready,2.4x1.1x3.1m rack (1.1x in Room 4); 4-sided cross-braces
-Warehouse_Steel_Rack,Prop,LOD1_Draft,Assets/Meshes/Props/Warehouse_Steel_Rack.fbx,1340,26,"(0.00, 0.00, 0.00)",1.00,lod1_candidate,Decimated mid-distance LOD1 candidate
-Warehouse_Steel_Rack,Prop,LOD2_Draft,Assets/Meshes/Props/Warehouse_Steel_Rack.fbx,520,13,"(0.00, 0.00, 0.00)",1.00,lod2_candidate,Far silhouette proxy LOD2 draft
-Warehouse_Steel_Rack_Uprights_West_Draft,Prop_SubPart,PreOpt_HighDraft,Assets/Meshes/Props/Warehouse_Steel_Rack.obj,760,6,"(0.00, 1.55, 0.00)",0.01,unbatched_draft,Pre-optimization sub-part draft
-Warehouse_Steel_Rack_Uprights_West_OBJ,Prop_SubPart,OBJ_Intermediate,Assets/Meshes/Props/Warehouse_Steel_Rack.obj,551,5,"(0.00, 1.55, 0.00)",0.01,unbatched_obj,Intermediate OBJ split UV seam export
-Warehouse_Steel_Rack_Uprights_West_LOD1,Prop_SubPart,LOD1_Draft,Assets/Meshes/Props/Warehouse_Steel_Rack.fbx,190,4,"(0.00, 0.00, 0.00)",1.00,lod1_candidate,Decimated LOD1 sub-part candidate
-Warehouse_Steel_Rack_Uprights_West,Prop_SubPart,LOD0_Optimized,Assets/Meshes/Props/Warehouse_Steel_Rack.fbx,380,4,"(0.00, 0.00, 0.00)",1.00,static_batch_ready,West slotted L-channel uprights (Mat_Rack_Blue)
-Warehouse_Steel_Rack_Uprights_East_Draft,Prop_SubPart,PreOpt_HighDraft,Assets/Meshes/Props/Warehouse_Steel_Rack.obj,760,6,"(0.00, 1.55, 0.00)",0.01,unbatched_draft,Pre-optimization sub-part draft
-Warehouse_Steel_Rack_Uprights_East_OBJ,Prop_SubPart,OBJ_Intermediate,Assets/Meshes/Props/Warehouse_Steel_Rack.obj,551,5,"(0.00, 1.55, 0.00)",0.01,unbatched_obj,Intermediate OBJ split UV seam export
-Warehouse_Steel_Rack_Uprights_East_LOD1,Prop_SubPart,LOD1_Draft,Assets/Meshes/Props/Warehouse_Steel_Rack.fbx,190,4,"(0.00, 0.00, 0.00)",1.00,lod1_candidate,Decimated LOD1 sub-part candidate
-Warehouse_Steel_Rack_Uprights_East,Prop_SubPart,LOD0_Optimized,Assets/Meshes/Props/Warehouse_Steel_Rack.fbx,380,4,"(0.00, 0.00, 0.00)",1.00,static_batch_ready,East slotted L-channel uprights (Mat_Rack_Blue)
-Warehouse_Steel_Rack_LoadBeams_T1_Draft,Prop_SubPart,PreOpt_HighDraft,Assets/Meshes/Props/Warehouse_Steel_Rack.obj,428,4,"(0.00, 1.55, 0.00)",0.01,unbatched_draft,Pre-optimization sub-part draft
-Warehouse_Steel_Rack_LoadBeams_T1_OBJ,Prop_SubPart,OBJ_Intermediate,Assets/Meshes/Props/Warehouse_Steel_Rack.obj,310,3,"(0.00, 1.55, 0.00)",0.01,unbatched_obj,Intermediate OBJ split UV seam export
-Warehouse_Steel_Rack_LoadBeams_T1_LOD1,Prop_SubPart,LOD1_Draft,Assets/Meshes/Props/Warehouse_Steel_Rack.fbx,107,2,"(0.00, 0.00, 0.00)",1.00,lod1_candidate,Decimated LOD1 sub-part candidate
-Warehouse_Steel_Rack_LoadBeams_T1,Prop_SubPart,LOD0_Optimized,Assets/Meshes/Props/Warehouse_Steel_Rack.fbx,214,2,"(0.00, 0.00, 0.00)",1.00,static_batch_ready,Tier-1 horizontal stepped load beams (Mat_Rack_Orange)
-Warehouse_Steel_Rack_LoadBeams_T2_Draft,Prop_SubPart,PreOpt_HighDraft,Assets/Meshes/Props/Warehouse_Steel_Rack.obj,428,4,"(0.00, 1.55, 0.00)",0.01,unbatched_draft,Pre-optimization sub-part draft
-Warehouse_Steel_Rack_LoadBeams_T2_OBJ,Prop_SubPart,OBJ_Intermediate,Assets/Meshes/Props/Warehouse_Steel_Rack.obj,310,3,"(0.00, 1.55, 0.00)",0.01,unbatched_obj,Intermediate OBJ split UV seam export
-Warehouse_Steel_Rack_LoadBeams_T2_LOD1,Prop_SubPart,LOD1_Draft,Assets/Meshes/Props/Warehouse_Steel_Rack.fbx,107,2,"(0.00, 0.00, 0.00)",1.00,lod1_candidate,Decimated LOD1 sub-part candidate
-Warehouse_Steel_Rack_LoadBeams_T2,Prop_SubPart,LOD0_Optimized,Assets/Meshes/Props/Warehouse_Steel_Rack.fbx,214,2,"(0.00, 0.00, 0.00)",1.00,static_batch_ready,Tier-2 horizontal stepped load beams (Mat_Rack_Orange)
-Warehouse_Steel_Rack_LoadBeams_T3_Draft,Prop_SubPart,PreOpt_HighDraft,Assets/Meshes/Props/Warehouse_Steel_Rack.obj,424,4,"(0.00, 1.55, 0.00)",0.01,unbatched_draft,Pre-optimization sub-part draft
-Warehouse_Steel_Rack_LoadBeams_T3_OBJ,Prop_SubPart,OBJ_Intermediate,Assets/Meshes/Props/Warehouse_Steel_Rack.obj,307,3,"(0.00, 1.55, 0.00)",0.01,unbatched_obj,Intermediate OBJ split UV seam export
-Warehouse_Steel_Rack_LoadBeams_T3_LOD1,Prop_SubPart,LOD1_Draft,Assets/Meshes/Props/Warehouse_Steel_Rack.fbx,106,2,"(0.00, 0.00, 0.00)",1.00,lod1_candidate,Decimated LOD1 sub-part candidate
-Warehouse_Steel_Rack_LoadBeams_T3,Prop_SubPart,LOD0_Optimized,Assets/Meshes/Props/Warehouse_Steel_Rack.fbx,212,2,"(0.00, 0.00, 0.00)",1.00,static_batch_ready,Tier-3 horizontal stepped load beams (Mat_Rack_Orange)
-Warehouse_Steel_Rack_DeckPlate_T1_Draft,Prop_SubPart,PreOpt_HighDraft,Assets/Meshes/Props/Warehouse_Steel_Rack.obj,360,4,"(0.00, 1.55, 0.00)",0.01,unbatched_draft,Pre-optimization sub-part draft
-Warehouse_Steel_Rack_DeckPlate_T1_OBJ,Prop_SubPart,OBJ_Intermediate,Assets/Meshes/Props/Warehouse_Steel_Rack.obj,261,3,"(0.00, 1.55, 0.00)",0.01,unbatched_obj,Intermediate OBJ split UV seam export
-Warehouse_Steel_Rack_DeckPlate_T1_LOD1,Prop_SubPart,LOD1_Draft,Assets/Meshes/Props/Warehouse_Steel_Rack.fbx,90,2,"(0.00, 0.00, 0.00)",1.00,lod1_candidate,Decimated LOD1 sub-part candidate
-Warehouse_Steel_Rack_DeckPlate_T1,Prop_SubPart,LOD0_Optimized,Assets/Meshes/Props/Warehouse_Steel_Rack.fbx,180,2,"(0.00, 0.00, 0.00)",1.00,static_batch_ready,Tier-1 galvanized steel deck shelf (Mat_Shelf_Level)
-Warehouse_Steel_Rack_DeckPlate_T2_Draft,Prop_SubPart,PreOpt_HighDraft,Assets/Meshes/Props/Warehouse_Steel_Rack.obj,360,4,"(0.00, 1.55, 0.00)",0.01,unbatched_draft,Pre-optimization sub-part draft
-Warehouse_Steel_Rack_DeckPlate_T2_OBJ,Prop_SubPart,OBJ_Intermediate,Assets/Meshes/Props/Warehouse_Steel_Rack.obj,261,3,"(0.00, 1.55, 0.00)",0.01,unbatched_obj,Intermediate OBJ split UV seam export
-Warehouse_Steel_Rack_DeckPlate_T2_LOD1,Prop_SubPart,LOD1_Draft,Assets/Meshes/Props/Warehouse_Steel_Rack.fbx,90,2,"(0.00, 0.00, 0.00)",1.00,lod1_candidate,Decimated LOD1 sub-part candidate
-Warehouse_Steel_Rack_DeckPlate_T2,Prop_SubPart,LOD0_Optimized,Assets/Meshes/Props/Warehouse_Steel_Rack.fbx,180,2,"(0.00, 0.00, 0.00)",1.00,static_batch_ready,Tier-2 galvanized steel deck shelf (Mat_Shelf_Level)
-Warehouse_Steel_Rack_DeckPlate_T3_Draft,Prop_SubPart,PreOpt_HighDraft,Assets/Meshes/Props/Warehouse_Steel_Rack.obj,360,4,"(0.00, 1.55, 0.00)",0.01,unbatched_draft,Pre-optimization sub-part draft
-Warehouse_Steel_Rack_DeckPlate_T3_OBJ,Prop_SubPart,OBJ_Intermediate,Assets/Meshes/Props/Warehouse_Steel_Rack.obj,261,3,"(0.00, 1.55, 0.00)",0.01,unbatched_obj,Intermediate OBJ split UV seam export
-Warehouse_Steel_Rack_DeckPlate_T3_LOD1,Prop_SubPart,LOD1_Draft,Assets/Meshes/Props/Warehouse_Steel_Rack.fbx,90,2,"(0.00, 0.00, 0.00)",1.00,lod1_candidate,Decimated LOD1 sub-part candidate
-Warehouse_Steel_Rack_DeckPlate_T3,Prop_SubPart,LOD0_Optimized,Assets/Meshes/Props/Warehouse_Steel_Rack.fbx,180,2,"(0.00, 0.00, 0.00)",1.00,static_batch_ready,Tier-3 galvanized steel deck shelf (Mat_Shelf_Level)
-Warehouse_Steel_Rack_CrossBraces_Draft,Prop_SubPart,PreOpt_HighDraft,Assets/Meshes/Props/Warehouse_Steel_Rack.obj,960,6,"(0.00, 1.55, 0.00)",0.01,unbatched_draft,Pre-optimization sub-part draft
-Warehouse_Steel_Rack_CrossBraces_OBJ,Prop_SubPart,OBJ_Intermediate,Assets/Meshes/Props/Warehouse_Steel_Rack.obj,696,5,"(0.00, 1.55, 0.00)",0.01,unbatched_obj,Intermediate OBJ split UV seam export
-Warehouse_Steel_Rack_CrossBraces_LOD1,Prop_SubPart,LOD1_Draft,Assets/Meshes/Props/Warehouse_Steel_Rack.fbx,240,4,"(0.00, 0.00, 0.00)",1.00,lod1_candidate,Decimated LOD1 sub-part candidate
-Warehouse_Steel_Rack_CrossBraces,Prop_SubPart,LOD0_Optimized,Assets/Meshes/Props/Warehouse_Steel_Rack.fbx,480,4,"(0.00, 0.00, 0.00)",1.00,static_batch_ready,4-sided rectangular K-braces (replaced 16-seg tubes)
-Warehouse_Steel_Rack_FootPlates_Draft,Prop_SubPart,PreOpt_HighDraft,Assets/Meshes/Props/Warehouse_Steel_Rack.obj,520,4,"(0.00, 1.55, 0.00)",0.01,unbatched_draft,Pre-optimization sub-part draft
-Warehouse_Steel_Rack_FootPlates_OBJ,Prop_SubPart,OBJ_Intermediate,Assets/Meshes/Props/Warehouse_Steel_Rack.obj,377,3,"(0.00, 1.55, 0.00)",0.01,unbatched_obj,Intermediate OBJ split UV seam export
-Warehouse_Steel_Rack_FootPlates_LOD1,Prop_SubPart,LOD1_Draft,Assets/Meshes/Props/Warehouse_Steel_Rack.fbx,130,2,"(0.00, 0.00, 0.00)",1.00,lod1_candidate,Decimated LOD1 sub-part candidate
-Warehouse_Steel_Rack_FootPlates,Prop_SubPart,LOD0_Optimized,Assets/Meshes/Props/Warehouse_Steel_Rack.fbx,260,2,"(0.00, 0.00, 0.00)",1.00,static_batch_ready,4 floor anchor brackets with culled undersides
-Warehouse_Security_Barrier,Prop,PreOpt_HighDraft,Assets/Meshes/Props/Warehouse_Security_Barrier.obj,2460,22,"(0.00, 0.56, 0.00)",0.01,unbatched_draft,Legacy unoptimized draft (cm/uncalibrated pivot)
-Warehouse_Security_Barrier,Prop,OBJ_Intermediate,Assets/Meshes/Props/Warehouse_Security_Barrier.obj,1540,18,"(0.00, 0.56, 0.00)",0.01,unbatched_obj,Intermediate loop-merge pass before FBX
-Warehouse_Security_Barrier,Prop,LOD0_Optimized,Assets/Meshes/Props/Warehouse_Security_Barrier.fbx,1080,12,"(0.00, 0.00, 0.00)",1.00,static_batch_ready,2.2x0.65x1.12m barrier; blocks +0.8m torso ray, clears +1.5m eye ray
-Warehouse_Security_Barrier,Prop,LOD1_Draft,Assets/Meshes/Props/Warehouse_Security_Barrier.fbx,520,12,"(0.00, 0.00, 0.00)",1.00,lod1_candidate,Decimated mid-distance LOD1 candidate
-Warehouse_Security_Barrier,Prop,LOD2_Draft,Assets/Meshes/Props/Warehouse_Security_Barrier.fbx,180,6,"(0.00, 0.00, 0.00)",1.00,lod2_candidate,Far silhouette proxy LOD2 draft
-Warehouse_Security_Barrier_LowerSlope_Draft,Prop_SubPart,PreOpt_HighDraft,Assets/Meshes/Props/Warehouse_Security_Barrier.obj,680,5,"(0.00, 0.56, 0.00)",0.01,unbatched_draft,Pre-optimization sub-part draft
-Warehouse_Security_Barrier_LowerSlope_OBJ,Prop_SubPart,OBJ_Intermediate,Assets/Meshes/Props/Warehouse_Security_Barrier.obj,493,4,"(0.00, 0.56, 0.00)",0.01,unbatched_obj,Intermediate OBJ split UV seam export
-Warehouse_Security_Barrier_LowerSlope_LOD1,Prop_SubPart,LOD1_Draft,Assets/Meshes/Props/Warehouse_Security_Barrier.fbx,170,3,"(0.00, 0.00, 0.00)",1.00,lod1_candidate,Decimated LOD1 sub-part candidate
-Warehouse_Security_Barrier_LowerSlope,Prop_SubPart,LOD0_Optimized,Assets/Meshes/Props/Warehouse_Security_Barrier.fbx,340,3,"(0.00, 0.00, 0.00)",1.00,static_batch_ready,Lower 0.65m flared concrete Jersey base (Mat_Wall)
-Warehouse_Security_Barrier_UpperWall_Draft,Prop_SubPart,PreOpt_HighDraft,Assets/Meshes/Props/Warehouse_Security_Barrier.obj,560,5,"(0.00, 0.56, 0.00)",0.01,unbatched_draft,Pre-optimization sub-part draft
-Warehouse_Security_Barrier_UpperWall_OBJ,Prop_SubPart,OBJ_Intermediate,Assets/Meshes/Props/Warehouse_Security_Barrier.obj,406,4,"(0.00, 0.56, 0.00)",0.01,unbatched_obj,Intermediate OBJ split UV seam export
-Warehouse_Security_Barrier_UpperWall_LOD1,Prop_SubPart,LOD1_Draft,Assets/Meshes/Props/Warehouse_Security_Barrier.fbx,140,3,"(0.00, 0.00, 0.00)",1.00,lod1_candidate,Decimated LOD1 sub-part candidate
-Warehouse_Security_Barrier_UpperWall,Prop_SubPart,LOD0_Optimized,Assets/Meshes/Props/Warehouse_Security_Barrier.fbx,280,3,"(0.00, 0.00, 0.00)",1.00,static_batch_ready,Upper 1.12m vertical tapered wall (blocks +0.8m ray)
-Warehouse_Security_Barrier_EndCap_L_Draft,Prop_SubPart,PreOpt_HighDraft,Assets/Meshes/Props/Warehouse_Security_Barrier.obj,220,3,"(0.00, 0.56, 0.00)",0.01,unbatched_draft,Pre-optimization sub-part draft
-Warehouse_Security_Barrier_EndCap_L_OBJ,Prop_SubPart,OBJ_Intermediate,Assets/Meshes/Props/Warehouse_Security_Barrier.obj,160,2,"(0.00, 0.56, 0.00)",0.01,unbatched_obj,Intermediate OBJ split UV seam export
-Warehouse_Security_Barrier_EndCap_L_LOD1,Prop_SubPart,LOD1_Draft,Assets/Meshes/Props/Warehouse_Security_Barrier.fbx,55,1,"(0.00, 0.00, 0.00)",1.00,lod1_candidate,Decimated LOD1 sub-part candidate
-Warehouse_Security_Barrier_EndCap_L,Prop_SubPart,LOD0_Optimized,Assets/Meshes/Props/Warehouse_Security_Barrier.fbx,110,1,"(0.00, 0.00, 0.00)",1.00,static_batch_ready,Left chamfered end cap (1-seg bevel)
-Warehouse_Security_Barrier_EndCap_R_Draft,Prop_SubPart,PreOpt_HighDraft,Assets/Meshes/Props/Warehouse_Security_Barrier.obj,220,3,"(0.00, 0.56, 0.00)",0.01,unbatched_draft,Pre-optimization sub-part draft
-Warehouse_Security_Barrier_EndCap_R_OBJ,Prop_SubPart,OBJ_Intermediate,Assets/Meshes/Props/Warehouse_Security_Barrier.obj,160,2,"(0.00, 0.56, 0.00)",0.01,unbatched_obj,Intermediate OBJ split UV seam export
-Warehouse_Security_Barrier_EndCap_R_LOD1,Prop_SubPart,LOD1_Draft,Assets/Meshes/Props/Warehouse_Security_Barrier.fbx,55,1,"(0.00, 0.00, 0.00)",1.00,lod1_candidate,Decimated LOD1 sub-part candidate
-Warehouse_Security_Barrier_EndCap_R,Prop_SubPart,LOD0_Optimized,Assets/Meshes/Props/Warehouse_Security_Barrier.fbx,110,1,"(0.00, 0.00, 0.00)",1.00,static_batch_ready,Right chamfered end cap (1-seg bevel)
-Warehouse_Security_Barrier_BaseSlots_Draft,Prop_SubPart,PreOpt_HighDraft,Assets/Meshes/Props/Warehouse_Security_Barrier.obj,320,4,"(0.00, 0.56, 0.00)",0.01,unbatched_draft,Pre-optimization sub-part draft
-Warehouse_Security_Barrier_BaseSlots_OBJ,Prop_SubPart,OBJ_Intermediate,Assets/Meshes/Props/Warehouse_Security_Barrier.obj,232,3,"(0.00, 0.56, 0.00)",0.01,unbatched_obj,Intermediate OBJ split UV seam export
-Warehouse_Security_Barrier_BaseSlots_LOD1,Prop_SubPart,LOD1_Draft,Assets/Meshes/Props/Warehouse_Security_Barrier.fbx,80,2,"(0.00, 0.00, 0.00)",1.00,lod1_candidate,Decimated LOD1 sub-part candidate
-Warehouse_Security_Barrier_BaseSlots,Prop_SubPart,LOD0_Optimized,Assets/Meshes/Props/Warehouse_Security_Barrier.fbx,160,2,"(0.00, 0.00, 0.00)",1.00,static_batch_ready,Dual forklift pass-through cutouts at Y = 0.05m
-Warehouse_Security_Barrier_TopRail_Draft,Prop_SubPart,PreOpt_HighDraft,Assets/Meshes/Props/Warehouse_Security_Barrier.obj,160,4,"(0.00, 0.56, 0.00)",0.01,unbatched_draft,Pre-optimization sub-part draft
-Warehouse_Security_Barrier_TopRail_OBJ,Prop_SubPart,OBJ_Intermediate,Assets/Meshes/Props/Warehouse_Security_Barrier.obj,116,3,"(0.00, 0.56, 0.00)",0.01,unbatched_obj,Intermediate OBJ split UV seam export
-Warehouse_Security_Barrier_TopRail_LOD1,Prop_SubPart,LOD1_Draft,Assets/Meshes/Props/Warehouse_Security_Barrier.fbx,40,2,"(0.00, 0.00, 0.00)",1.00,lod1_candidate,Decimated LOD1 sub-part candidate
-Warehouse_Security_Barrier_TopRail,Prop_SubPart,LOD0_Optimized,Assets/Meshes/Props/Warehouse_Security_Barrier.fbx,80,2,"(0.00, 0.00, 0.00)",1.00,static_batch_ready,Steel-capped top bevel strip (Mat_Steel_Dark)
-Industrial_ServicePanel,Prop,PreOpt_HighDraft,Assets/Meshes/Source/IndustrialServicePanel.blend,4890,38,"(0.00, 0.00, 0.00)",1.00,unbatched_draft,Legacy unoptimized draft (cm/uncalibrated pivot)
-Industrial_ServicePanel,Prop,OBJ_Intermediate,Assets/Meshes/Source/IndustrialServicePanel.blend,3120,34,"(0.00, 0.00, 0.00)",1.00,unbatched_obj,Intermediate loop-merge pass before FBX
-Industrial_ServicePanel,Prop,LOD0_Optimized,Assets/Meshes/Props/IndustrialServicePanel.fbx,2340,28,"(0.00, 0.00, -0.095)",1.00,static_batch_ready,Wall-flush backplane pivot (-Z forward, Y up); zero NavMesh obstacle
-Industrial_ServicePanel,Prop,LOD1_Draft,Assets/Meshes/Props/IndustrialServicePanel.fbx,980,28,"(0.00, 0.00, -0.095)",1.00,lod1_candidate,Decimated mid-distance LOD1 candidate
-Industrial_ServicePanel,Prop,LOD2_Draft,Assets/Meshes/Props/IndustrialServicePanel.fbx,320,14,"(0.00, 0.00, -0.095)",1.00,lod2_candidate,Far silhouette proxy LOD2 draft
-Industrial_ServicePanel_Enclosure_Draft,Prop_SubPart,PreOpt_HighDraft,Assets/Meshes/Source/IndustrialServicePanel.blend,840,6,"(0.00, 0.00, 0.00)",1.00,unbatched_draft,Pre-optimization sub-part draft
-Industrial_ServicePanel_Enclosure_OBJ,Prop_SubPart,OBJ_Intermediate,Assets/Meshes/Source/IndustrialServicePanel.blend,609,5,"(0.00, 0.00, 0.00)",1.00,unbatched_obj,Intermediate OBJ split UV seam export
-Industrial_ServicePanel_Enclosure_LOD1,Prop_SubPart,LOD1_Draft,Assets/Meshes/Props/IndustrialServicePanel.fbx,210,4,"(0.00, 0.00, -0.095)",1.00,lod1_candidate,Decimated LOD1 sub-part candidate
-Industrial_ServicePanel_Enclosure,Prop_SubPart,LOD0_Optimized,Assets/Meshes/Props/IndustrialServicePanel.fbx,420,4,"(0.00, 0.00, -0.095)",1.00,static_batch_ready,0.90x0.19x1.25m steel cabinet (0.035m 3-seg bevel)
-Industrial_ServicePanel_RecessedDoor_Draft,Prop_SubPart,PreOpt_HighDraft,Assets/Meshes/Source/IndustrialServicePanel.blend,560,5,"(0.00, 0.00, 0.00)",1.00,unbatched_draft,Pre-optimization sub-part draft
-Industrial_ServicePanel_RecessedDoor_OBJ,Prop_SubPart,OBJ_Intermediate,Assets/Meshes/Source/IndustrialServicePanel.blend,406,4,"(0.00, 0.00, 0.00)",1.00,unbatched_obj,Intermediate OBJ split UV seam export
-Industrial_ServicePanel_RecessedDoor_LOD1,Prop_SubPart,LOD1_Draft,Assets/Meshes/Props/IndustrialServicePanel.fbx,140,3,"(0.00, 0.00, -0.095)",1.00,lod1_candidate,Decimated LOD1 sub-part candidate
-Industrial_ServicePanel_RecessedDoor,Prop_SubPart,LOD0_Optimized,Assets/Meshes/Props/IndustrialServicePanel.fbx,280,3,"(0.00, 0.00, -0.095)",1.00,static_batch_ready,0.79x0.035x1.10m recessed frame (Mat_Panel_Recess)
-Industrial_ServicePanel_DoorPlate_Draft,Prop_SubPart,PreOpt_HighDraft,Assets/Meshes/Source/IndustrialServicePanel.blend,464,5,"(0.00, 0.00, 0.00)",1.00,unbatched_draft,Pre-optimization sub-part draft
-Industrial_ServicePanel_DoorPlate_OBJ,Prop_SubPart,OBJ_Intermediate,Assets/Meshes/Source/IndustrialServicePanel.blend,336,4,"(0.00, 0.00, 0.00)",1.00,unbatched_obj,Intermediate OBJ split UV seam export
-Industrial_ServicePanel_DoorPlate_LOD1,Prop_SubPart,LOD1_Draft,Assets/Meshes/Props/IndustrialServicePanel.fbx,116,3,"(0.00, 0.00, -0.095)",1.00,lod1_candidate,Decimated LOD1 sub-part candidate
-Industrial_ServicePanel_DoorPlate,Prop_SubPart,LOD0_Optimized,Assets/Meshes/Props/IndustrialServicePanel.fbx,232,3,"(0.00, 0.00, -0.095)",1.00,static_batch_ready,0.73x0.025x1.04m front plate with weighted normals
-Industrial_ServicePanel_CaptiveBolts_4x_Draft,Prop_SubPart,PreOpt_HighDraft,Assets/Meshes/Source/IndustrialServicePanel.blend,768,6,"(0.00, 0.00, 0.00)",1.00,unbatched_draft,Pre-optimization sub-part draft
-Industrial_ServicePanel_CaptiveBolts_4x_OBJ,Prop_SubPart,OBJ_Intermediate,Assets/Meshes/Source/IndustrialServicePanel.blend,557,5,"(0.00, 0.00, 0.00)",1.00,unbatched_obj,Intermediate OBJ split UV seam export
-Industrial_ServicePanel_CaptiveBolts_4x_LOD1,Prop_SubPart,LOD1_Draft,Assets/Meshes/Props/IndustrialServicePanel.fbx,192,4,"(0.00, 0.00, -0.095)",1.00,lod1_candidate,Decimated LOD1 sub-part candidate
-Industrial_ServicePanel_CaptiveBolts_4x,Prop_SubPart,LOD0_Optimized,Assets/Meshes/Props/IndustrialServicePanel.fbx,384,4,"(0.00, 0.00, -0.095)",1.00,static_batch_ready,4x 12-vert captive bolts (down from 24-vert)
-Industrial_ServicePanel_VentSlats_Upper_Draft,Prop_SubPart,PreOpt_HighDraft,Assets/Meshes/Source/IndustrialServicePanel.blend,448,5,"(0.00, 0.00, 0.00)",1.00,unbatched_draft,Pre-optimization sub-part draft
-Industrial_ServicePanel_VentSlats_Upper_OBJ,Prop_SubPart,OBJ_Intermediate,Assets/Meshes/Source/IndustrialServicePanel.blend,325,4,"(0.00, 0.00, 0.00)",1.00,unbatched_obj,Intermediate OBJ split UV seam export
-Industrial_ServicePanel_VentSlats_Upper_LOD1,Prop_SubPart,LOD1_Draft,Assets/Meshes/Props/IndustrialServicePanel.fbx,112,3,"(0.00, 0.00, -0.095)",1.00,lod1_candidate,Decimated LOD1 sub-part candidate
-Industrial_ServicePanel_VentSlats_Upper,Prop_SubPart,LOD0_Optimized,Assets/Meshes/Props/IndustrialServicePanel.fbx,224,3,"(0.00, 0.00, -0.095)",1.00,static_batch_ready,Upper 4x louvered vent slats (0.045m spacing)
-Industrial_ServicePanel_VentSlats_Lower_Draft,Prop_SubPart,PreOpt_HighDraft,Assets/Meshes/Source/IndustrialServicePanel.blend,448,5,"(0.00, 0.00, 0.00)",1.00,unbatched_draft,Pre-optimization sub-part draft
-Industrial_ServicePanel_VentSlats_Lower_OBJ,Prop_SubPart,OBJ_Intermediate,Assets/Meshes/Source/IndustrialServicePanel.blend,325,4,"(0.00, 0.00, 0.00)",1.00,unbatched_obj,Intermediate OBJ split UV seam export
-Industrial_ServicePanel_VentSlats_Lower_LOD1,Prop_SubPart,LOD1_Draft,Assets/Meshes/Props/IndustrialServicePanel.fbx,112,3,"(0.00, 0.00, -0.095)",1.00,lod1_candidate,Decimated LOD1 sub-part candidate
-Industrial_ServicePanel_VentSlats_Lower,Prop_SubPart,LOD0_Optimized,Assets/Meshes/Props/IndustrialServicePanel.fbx,224,3,"(0.00, 0.00, -0.095)",1.00,static_batch_ready,Lower 4x louvered vent slats (0.045m spacing)
-Industrial_ServicePanel_CautionPlaque_Draft,Prop_SubPart,PreOpt_HighDraft,Assets/Meshes/Source/IndustrialServicePanel.blend,224,4,"(0.00, 0.00, 0.00)",1.00,unbatched_draft,Pre-optimization sub-part draft
-Industrial_ServicePanel_CautionPlaque_OBJ,Prop_SubPart,OBJ_Intermediate,Assets/Meshes/Source/IndustrialServicePanel.blend,162,3,"(0.00, 0.00, 0.00)",1.00,unbatched_obj,Intermediate OBJ split UV seam export
-Industrial_ServicePanel_CautionPlaque_LOD1,Prop_SubPart,LOD1_Draft,Assets/Meshes/Props/IndustrialServicePanel.fbx,56,2,"(0.00, 0.00, -0.095)",1.00,lod1_candidate,Decimated LOD1 sub-part candidate
-Industrial_ServicePanel_CautionPlaque,Prop_SubPart,LOD0_Optimized,Assets/Meshes/Props/IndustrialServicePanel.fbx,112,2,"(0.00, 0.00, -0.095)",1.00,static_batch_ready,0.31x0.012x0.17m upper-left hazard placard
-Industrial_ServicePanel_HandleAssembly_Draft,Prop_SubPart,PreOpt_HighDraft,Assets/Meshes/Source/IndustrialServicePanel.blend,296,4,"(0.00, 0.00, 0.00)",1.00,unbatched_draft,Pre-optimization sub-part draft
-Industrial_ServicePanel_HandleAssembly_OBJ,Prop_SubPart,OBJ_Intermediate,Assets/Meshes/Source/IndustrialServicePanel.blend,215,3,"(0.00, 0.00, 0.00)",1.00,unbatched_obj,Intermediate OBJ split UV seam export
-Industrial_ServicePanel_HandleAssembly_LOD1,Prop_SubPart,LOD1_Draft,Assets/Meshes/Props/IndustrialServicePanel.fbx,74,2,"(0.00, 0.00, -0.095)",1.00,lod1_candidate,Decimated LOD1 sub-part candidate
-Industrial_ServicePanel_HandleAssembly,Prop_SubPart,LOD0_Optimized,Assets/Meshes/Props/IndustrialServicePanel.fbx,148,2,"(0.00, 0.00, -0.095)",1.00,static_batch_ready,0.07x0.045x0.18m latch handle at (-0.30, -0.15, 0.02)
-Industrial_ServicePanel_Hinges_2x_Draft,Prop_SubPart,PreOpt_HighDraft,Assets/Meshes/Source/IndustrialServicePanel.blend,264,4,"(0.00, 0.00, 0.00)",1.00,unbatched_draft,Pre-optimization sub-part draft
-Industrial_ServicePanel_Hinges_2x_OBJ,Prop_SubPart,OBJ_Intermediate,Assets/Meshes/Source/IndustrialServicePanel.blend,191,3,"(0.00, 0.00, 0.00)",1.00,unbatched_obj,Intermediate OBJ split UV seam export
-Industrial_ServicePanel_Hinges_2x_LOD1,Prop_SubPart,LOD1_Draft,Assets/Meshes/Props/IndustrialServicePanel.fbx,66,2,"(0.00, 0.00, -0.095)",1.00,lod1_candidate,Decimated LOD1 sub-part candidate
-Industrial_ServicePanel_Hinges_2x,Prop_SubPart,LOD0_Optimized,Assets/Meshes/Props/IndustrialServicePanel.fbx,132,2,"(0.00, 0.00, -0.095)",1.00,static_batch_ready,2x cylindrical barrel hinges at X = +0.43m
-Industrial_ServicePanel_Indicators_2x_Draft,Prop_SubPart,PreOpt_HighDraft,Assets/Meshes/Source/IndustrialServicePanel.blend,192,3,"(0.00, 0.00, 0.00)",1.00,unbatched_draft,Pre-optimization sub-part draft
-Industrial_ServicePanel_Indicators_2x_OBJ,Prop_SubPart,OBJ_Intermediate,Assets/Meshes/Source/IndustrialServicePanel.blend,139,2,"(0.00, 0.00, 0.00)",1.00,unbatched_obj,Intermediate OBJ split UV seam export
-Industrial_ServicePanel_Indicators_2x_LOD1,Prop_SubPart,LOD1_Draft,Assets/Meshes/Props/IndustrialServicePanel.fbx,48,1,"(0.00, 0.00, -0.095)",1.00,lod1_candidate,Decimated LOD1 sub-part candidate
-Industrial_ServicePanel_Indicators_2x,Prop_SubPart,LOD0_Optimized,Assets/Meshes/Props/IndustrialServicePanel.fbx,96,1,"(0.00, 0.00, -0.095)",1.00,static_batch_ready,2x status lenses (Panel_Green) at X = 0.18/0.26
-Industrial_ServicePanel_CablePorts_2x_Draft,Prop_SubPart,PreOpt_HighDraft,Assets/Meshes/Source/IndustrialServicePanel.blend,176,3,"(0.00, 0.00, 0.00)",1.00,unbatched_draft,Pre-optimization sub-part draft
-Industrial_ServicePanel_CablePorts_2x_OBJ,Prop_SubPart,OBJ_Intermediate,Assets/Meshes/Source/IndustrialServicePanel.blend,128,2,"(0.00, 0.00, 0.00)",1.00,unbatched_obj,Intermediate OBJ split UV seam export
-Industrial_ServicePanel_CablePorts_2x_LOD1,Prop_SubPart,LOD1_Draft,Assets/Meshes/Props/IndustrialServicePanel.fbx,44,1,"(0.00, 0.00, -0.095)",1.00,lod1_candidate,Decimated LOD1 sub-part candidate
-Industrial_ServicePanel_CablePorts_2x,Prop_SubPart,LOD0_Optimized,Assets/Meshes/Props/IndustrialServicePanel.fbx,88,1,"(0.00, 0.00, -0.095)",1.00,static_batch_ready,2x top conduit collars at Z = +0.67m
-Access_Card,Objective,PreOpt_HighDraft,Assets/Meshes/Props/Access_Card.fbx,520,6,"(0.00, 0.00, 0.00)",1.00,unbatched_draft,Legacy unoptimized draft (cm/uncalibrated pivot)
-Access_Card,Objective,OBJ_Intermediate,Assets/Meshes/Props/Access_Card.fbx,280,2,"(0.00, 0.00, 0.00)",1.00,unbatched_obj,Intermediate loop-merge pass before FBX
-Access_Card,Objective,LOD0_Optimized,Assets/Meshes/Props/Access_Card.fbx,164,4,"(0.00, 0.00, 0.00)",2.50,srp_batch_ready,Center pivot for 90 deg/s Y spin; 2.5x pickup scale in Route A & B
-Access_Card,Objective,LOD1_Draft,Assets/Meshes/Props/Access_Card.fbx,64,4,"(0.00, 0.00, 0.00)",2.50,lod1_candidate,Decimated mid-distance LOD1 candidate
-Access_Card,Objective,LOD2_Draft,Assets/Meshes/Props/Access_Card.fbx,24,2,"(0.00, 0.00, 0.00)",2.50,lod2_candidate,Far silhouette proxy LOD2 draft
-Access_Card_FrontFace_Draft,Objective_SubPart,PreOpt_HighDraft,Assets/Meshes/Props/Access_Card.fbx,68,3,"(0.00, 0.00, 0.00)",1.00,unbatched_draft,Pre-optimization sub-part draft
-Access_Card_FrontFace_OBJ,Objective_SubPart,OBJ_Intermediate,Assets/Meshes/Props/Access_Card.fbx,49,2,"(0.00, 0.00, 0.00)",1.00,unbatched_obj,Intermediate OBJ split UV seam export
-Access_Card_FrontFace_LOD1,Objective_SubPart,LOD1_Draft,Assets/Meshes/Props/Access_Card.fbx,17,1,"(0.00, 0.00, 0.00)",2.50,lod1_candidate,Decimated LOD1 sub-part candidate
-Access_Card_FrontFace,Objective_SubPart,LOD0_Optimized,Assets/Meshes/Props/Access_Card.fbx,34,1,"(0.00, 0.00, 0.00)",2.50,srp_batch_ready,Planar non-mirrored front UV0 (Tex_Card_A / Tex_Card_B)
-Access_Card_BackFace_Draft,Objective_SubPart,PreOpt_HighDraft,Assets/Meshes/Props/Access_Card.fbx,68,3,"(0.00, 0.00, 0.00)",1.00,unbatched_draft,Pre-optimization sub-part draft
-Access_Card_BackFace_OBJ,Objective_SubPart,OBJ_Intermediate,Assets/Meshes/Props/Access_Card.fbx,49,2,"(0.00, 0.00, 0.00)",1.00,unbatched_obj,Intermediate OBJ split UV seam export
-Access_Card_BackFace_LOD1,Objective_SubPart,LOD1_Draft,Assets/Meshes/Props/Access_Card.fbx,17,1,"(0.00, 0.00, 0.00)",2.50,lod1_candidate,Decimated LOD1 sub-part candidate
-Access_Card_BackFace,Objective_SubPart,LOD0_Optimized,Assets/Meshes/Props/Access_Card.fbx,34,1,"(0.00, 0.00, 0.00)",2.50,srp_batch_ready,Planar magnetic-stripe back UV0
-Access_Card_ChamferPerimeter_Draft,Objective_SubPart,PreOpt_HighDraft,Assets/Meshes/Props/Access_Card.fbx,144,3,"(0.00, 0.00, 0.00)",1.00,unbatched_draft,Pre-optimization sub-part draft
-Access_Card_ChamferPerimeter_OBJ,Objective_SubPart,OBJ_Intermediate,Assets/Meshes/Props/Access_Card.fbx,104,2,"(0.00, 0.00, 0.00)",1.00,unbatched_obj,Intermediate OBJ split UV seam export
-Access_Card_ChamferPerimeter_LOD1,Objective_SubPart,LOD1_Draft,Assets/Meshes/Props/Access_Card.fbx,36,1,"(0.00, 0.00, 0.00)",2.50,lod1_candidate,Decimated LOD1 sub-part candidate
-Access_Card_ChamferPerimeter,Objective_SubPart,LOD0_Optimized,Assets/Meshes/Props/Access_Card.fbx,72,1,"(0.00, 0.00, 0.00)",2.50,srp_batch_ready,1-segment bevel perimeter trim
-Access_Card_ChipContactInset_Draft,Objective_SubPart,PreOpt_HighDraft,Assets/Meshes/Props/Access_Card.fbx,48,3,"(0.00, 0.00, 0.00)",1.00,unbatched_draft,Pre-optimization sub-part draft
-Access_Card_ChipContactInset_OBJ,Objective_SubPart,OBJ_Intermediate,Assets/Meshes/Props/Access_Card.fbx,35,2,"(0.00, 0.00, 0.00)",1.00,unbatched_obj,Intermediate OBJ split UV seam export
-Access_Card_ChipContactInset_LOD1,Objective_SubPart,LOD1_Draft,Assets/Meshes/Props/Access_Card.fbx,12,1,"(0.00, 0.00, 0.00)",2.50,lod1_candidate,Decimated LOD1 sub-part candidate
-Access_Card_ChipContactInset,Objective_SubPart,LOD0_Optimized,Assets/Meshes/Props/Access_Card.fbx,24,1,"(0.00, 0.00, 0.00)",2.50,srp_batch_ready,EMV contact pad relief quad
-MP5_SMG,Weapon,PreOpt_HighDraft,Assets/Meshes/Weapons/MP5_SMG.fbx,9840,62,"(0.00, 0.00, 0.00)",1.00,unbatched_draft,Legacy unoptimized draft (cm/uncalibrated pivot)
-MP5_SMG,Weapon,OBJ_Intermediate,Assets/Meshes/Weapons/MP5_SMG.fbx,6780,58,"(0.00, 0.00, 0.00)",1.00,unbatched_obj,Intermediate loop-merge pass before FBX
-MP5_SMG,Weapon,LOD0_Optimized,Assets/Meshes/Weapons/MP5_SMG.fbx,4920,38,"(0.00, -0.04, 0.08)",1.00,dynamic_srp_ready,PlayerGun MP5-A3 SMG (18 dmg, 0.11s rate); grip pivot +Z barrel
-MP5_SMG,Weapon,LOD1_Draft,Assets/Meshes/Weapons/MP5_SMG.fbx,2410,38,"(0.00, -0.04, 0.08)",1.00,lod1_candidate,Decimated mid-distance LOD1 candidate
-MP5_SMG,Weapon,LOD2_Draft,Assets/Meshes/Weapons/MP5_SMG.fbx,960,19,"(0.00, -0.04, 0.08)",1.00,lod2_candidate,Far silhouette proxy LOD2 draft
-MP5_SMG_UpperReceiver_Draft,Weapon_SubPart,PreOpt_HighDraft,Assets/Meshes/Weapons/MP5_SMG.fbx,1840,10,"(0.00, 0.00, 0.00)",1.00,unbatched_draft,Pre-optimization sub-part draft
-MP5_SMG_UpperReceiver_OBJ,Weapon_SubPart,OBJ_Intermediate,Assets/Meshes/Weapons/MP5_SMG.fbx,1334,9,"(0.00, 0.00, 0.00)",1.00,unbatched_obj,Intermediate OBJ split UV seam export
-MP5_SMG_UpperReceiver_LOD1,Weapon_SubPart,LOD1_Draft,Assets/Meshes/Weapons/MP5_SMG.fbx,460,8,"(0.00, -0.04, 0.08)",1.00,lod1_candidate,Decimated LOD1 sub-part candidate
-MP5_SMG_UpperReceiver,Weapon_SubPart,LOD0_Optimized,Assets/Meshes/Weapons/MP5_SMG.fbx,920,8,"(0.00, -0.04, 0.08)",1.00,dynamic_srp_ready,Stamped upper receiver + top optic rail mount
-MP5_SMG_LowerTriggerHousing_Draft,Weapon_SubPart,PreOpt_HighDraft,Assets/Meshes/Weapons/MP5_SMG.fbx,1200,6,"(0.00, 0.00, 0.00)",1.00,unbatched_draft,Pre-optimization sub-part draft
-MP5_SMG_LowerTriggerHousing_OBJ,Weapon_SubPart,OBJ_Intermediate,Assets/Meshes/Weapons/MP5_SMG.fbx,870,5,"(0.00, 0.00, 0.00)",1.00,unbatched_obj,Intermediate OBJ split UV seam export
-MP5_SMG_LowerTriggerHousing_LOD1,Weapon_SubPart,LOD1_Draft,Assets/Meshes/Weapons/MP5_SMG.fbx,300,4,"(0.00, -0.04, 0.08)",1.00,lod1_candidate,Decimated LOD1 sub-part candidate
-MP5_SMG_LowerTriggerHousing,Weapon_SubPart,LOD0_Optimized,Assets/Meshes/Weapons/MP5_SMG.fbx,600,4,"(0.00, -0.04, 0.08)",1.00,dynamic_srp_ready,Lower trigger pack, pistol grip & fire selector
-MP5_SMG_CollapsibleStock_Draft,Weapon_SubPart,PreOpt_HighDraft,Assets/Meshes/Weapons/MP5_SMG.fbx,1240,8,"(0.00, 0.00, 0.00)",1.00,unbatched_draft,Pre-optimization sub-part draft
-MP5_SMG_CollapsibleStock_OBJ,Weapon_SubPart,OBJ_Intermediate,Assets/Meshes/Weapons/MP5_SMG.fbx,899,7,"(0.00, 0.00, 0.00)",1.00,unbatched_obj,Intermediate OBJ split UV seam export
-MP5_SMG_CollapsibleStock_LOD1,Weapon_SubPart,LOD1_Draft,Assets/Meshes/Weapons/MP5_SMG.fbx,310,6,"(0.00, -0.04, 0.08)",1.00,lod1_candidate,Decimated LOD1 sub-part candidate
-MP5_SMG_CollapsibleStock,Weapon_SubPart,LOD0_Optimized,Assets/Meshes/Weapons/MP5_SMG.fbx,620,6,"(0.00, -0.04, 0.08)",1.00,dynamic_srp_ready,Retracted twin-rail buttstock & buttpad
-MP5_SMG_CurvedMagazine_Draft,Weapon_SubPart,PreOpt_HighDraft,Assets/Meshes/Weapons/MP5_SMG.fbx,1080,6,"(0.00, 0.00, 0.00)",1.00,unbatched_draft,Pre-optimization sub-part draft
-MP5_SMG_CurvedMagazine_OBJ,Weapon_SubPart,OBJ_Intermediate,Assets/Meshes/Weapons/MP5_SMG.fbx,783,5,"(0.00, 0.00, 0.00)",1.00,unbatched_obj,Intermediate OBJ split UV seam export
-MP5_SMG_CurvedMagazine_LOD1,Weapon_SubPart,LOD1_Draft,Assets/Meshes/Weapons/MP5_SMG.fbx,270,4,"(0.00, -0.04, 0.08)",1.00,lod1_candidate,Decimated LOD1 sub-part candidate
-MP5_SMG_CurvedMagazine,Weapon_SubPart,LOD0_Optimized,Assets/Meshes/Weapons/MP5_SMG.fbx,540,4,"(0.00, -0.04, 0.08)",1.00,dynamic_srp_ready,30-round curved box magazine + magwell collar
-MP5_SMG_CockingTube_Draft,Weapon_SubPart,PreOpt_HighDraft,Assets/Meshes/Weapons/MP5_SMG.fbx,960,6,"(0.00, 0.00, 0.00)",1.00,unbatched_draft,Pre-optimization sub-part draft
-MP5_SMG_CockingTube_OBJ,Weapon_SubPart,OBJ_Intermediate,Assets/Meshes/Weapons/MP5_SMG.fbx,696,5,"(0.00, 0.00, 0.00)",1.00,unbatched_obj,Intermediate OBJ split UV seam export
-MP5_SMG_CockingTube_LOD1,Weapon_SubPart,LOD1_Draft,Assets/Meshes/Weapons/MP5_SMG.fbx,240,4,"(0.00, -0.04, 0.08)",1.00,lod1_candidate,Decimated LOD1 sub-part candidate
-MP5_SMG_CockingTube,Weapon_SubPart,LOD0_Optimized,Assets/Meshes/Weapons/MP5_SMG.fbx,480,4,"(0.00, -0.04, 0.08)",1.00,dynamic_srp_ready,Charging handle tube & front sling eyelet
-MP5_SMG_HandguardShroud_Draft,Weapon_SubPart,PreOpt_HighDraft,Assets/Meshes/Weapons/MP5_SMG.fbx,1520,6,"(0.00, 0.00, 0.00)",1.00,unbatched_draft,Pre-optimization sub-part draft
-MP5_SMG_HandguardShroud_OBJ,Weapon_SubPart,OBJ_Intermediate,Assets/Meshes/Weapons/MP5_SMG.fbx,1102,5,"(0.00, 0.00, 0.00)",1.00,unbatched_obj,Intermediate OBJ split UV seam export
-MP5_SMG_HandguardShroud_LOD1,Weapon_SubPart,LOD1_Draft,Assets/Meshes/Weapons/MP5_SMG.fbx,380,4,"(0.00, -0.04, 0.08)",1.00,lod1_candidate,Decimated LOD1 sub-part candidate
-MP5_SMG_HandguardShroud,Weapon_SubPart,LOD0_Optimized,Assets/Meshes/Weapons/MP5_SMG.fbx,760,4,"(0.00, -0.04, 0.08)",1.00,dynamic_srp_ready,Perforated polymer forend shroud
-MP5_SMG_FrontSightHood_Draft,Weapon_SubPart,PreOpt_HighDraft,Assets/Meshes/Weapons/MP5_SMG.fbx,840,6,"(0.00, 0.00, 0.00)",1.00,unbatched_draft,Pre-optimization sub-part draft
-MP5_SMG_FrontSightHood_OBJ,Weapon_SubPart,OBJ_Intermediate,Assets/Meshes/Weapons/MP5_SMG.fbx,609,5,"(0.00, 0.00, 0.00)",1.00,unbatched_obj,Intermediate OBJ split UV seam export
-MP5_SMG_FrontSightHood_LOD1,Weapon_SubPart,LOD1_Draft,Assets/Meshes/Weapons/MP5_SMG.fbx,210,4,"(0.00, -0.04, 0.08)",1.00,lod1_candidate,Decimated LOD1 sub-part candidate
-MP5_SMG_FrontSightHood,Weapon_SubPart,LOD0_Optimized,Assets/Meshes/Weapons/MP5_SMG.fbx,420,4,"(0.00, -0.04, 0.08)",1.00,dynamic_srp_ready,Hooded post front sight & rotary rear diopter
-MP5_SMG_BarrelSuppressorLug_Draft,Weapon_SubPart,PreOpt_HighDraft,Assets/Meshes/Weapons/MP5_SMG.fbx,1160,6,"(0.00, 0.00, 0.00)",1.00,unbatched_draft,Pre-optimization sub-part draft
-MP5_SMG_BarrelSuppressorLug_OBJ,Weapon_SubPart,OBJ_Intermediate,Assets/Meshes/Weapons/MP5_SMG.fbx,841,5,"(0.00, 0.00, 0.00)",1.00,unbatched_obj,Intermediate OBJ split UV seam export
-MP5_SMG_BarrelSuppressorLug_LOD1,Weapon_SubPart,LOD1_Draft,Assets/Meshes/Weapons/MP5_SMG.fbx,290,4,"(0.00, -0.04, 0.08)",1.00,lod1_candidate,Decimated LOD1 sub-part candidate
-MP5_SMG_BarrelSuppressorLug,Weapon_SubPart,LOD0_Optimized,Assets/Meshes/Weapons/MP5_SMG.fbx,580,4,"(0.00, -0.04, 0.08)",1.00,dynamic_srp_ready,16-seg smooth-shaded +Z barrel & tri-lug muzzle
-Combat_Shotgun,Weapon,PreOpt_HighDraft,Assets/Meshes/Weapons/Combat_Shotgun.fbx,8420,54,"(0.00, 0.00, 0.00)",1.00,unbatched_draft,Legacy unoptimized draft (cm/uncalibrated pivot)
-Combat_Shotgun,Weapon,OBJ_Intermediate,Assets/Meshes/Weapons/Combat_Shotgun.fbx,5960,50,"(0.00, 0.00, 0.00)",1.00,unbatched_obj,Intermediate loop-merge pass before FBX
-Combat_Shotgun,Weapon,LOD0_Optimized,Assets/Meshes/Weapons/Combat_Shotgun.fbx,4380,34,"(0.00, -0.04, 0.12)",1.00,dynamic_srp_ready,Aqqil Room 4 shotgun (12 dmg x 6 pellets); GuardShooting hand socket
-Combat_Shotgun,Weapon,LOD1_Draft,Assets/Meshes/Weapons/Combat_Shotgun.fbx,2180,34,"(0.00, -0.04, 0.12)",1.00,lod1_candidate,Decimated mid-distance LOD1 candidate
-Combat_Shotgun,Weapon,LOD2_Draft,Assets/Meshes/Weapons/Combat_Shotgun.fbx,880,17,"(0.00, -0.04, 0.12)",1.00,lod2_candidate,Far silhouette proxy LOD2 draft
-Combat_Shotgun_SteelReceiver_Draft,Weapon_SubPart,PreOpt_HighDraft,Assets/Meshes/Weapons/Combat_Shotgun.fbx,1920,8,"(0.00, 0.00, 0.00)",1.00,unbatched_draft,Pre-optimization sub-part draft
-Combat_Shotgun_SteelReceiver_OBJ,Weapon_SubPart,OBJ_Intermediate,Assets/Meshes/Weapons/Combat_Shotgun.fbx,1392,7,"(0.00, 0.00, 0.00)",1.00,unbatched_obj,Intermediate OBJ split UV seam export
-Combat_Shotgun_SteelReceiver_LOD1,Weapon_SubPart,LOD1_Draft,Assets/Meshes/Weapons/Combat_Shotgun.fbx,480,6,"(0.00, -0.04, 0.12)",1.00,lod1_candidate,Decimated LOD1 sub-part candidate
-Combat_Shotgun_SteelReceiver,Weapon_SubPart,LOD0_Optimized,Assets/Meshes/Weapons/Combat_Shotgun.fbx,960,6,"(0.00, -0.04, 0.12)",1.00,dynamic_srp_ready,Machined steel receiver + ejection port recess
-Combat_Shotgun_BoltCarrier_Draft,Weapon_SubPart,PreOpt_HighDraft,Assets/Meshes/Weapons/Combat_Shotgun.fbx,920,6,"(0.00, 0.00, 0.00)",1.00,unbatched_draft,Pre-optimization sub-part draft
-Combat_Shotgun_BoltCarrier_OBJ,Weapon_SubPart,OBJ_Intermediate,Assets/Meshes/Weapons/Combat_Shotgun.fbx,667,5,"(0.00, 0.00, 0.00)",1.00,unbatched_obj,Intermediate OBJ split UV seam export
-Combat_Shotgun_BoltCarrier_LOD1,Weapon_SubPart,LOD1_Draft,Assets/Meshes/Weapons/Combat_Shotgun.fbx,230,4,"(0.00, -0.04, 0.12)",1.00,lod1_candidate,Decimated LOD1 sub-part candidate
-Combat_Shotgun_BoltCarrier,Weapon_SubPart,LOD0_Optimized,Assets/Meshes/Weapons/Combat_Shotgun.fbx,460,4,"(0.00, -0.04, 0.12)",1.00,dynamic_srp_ready,Recessed breech bolt & loading gate
-Combat_Shotgun_PumpForend_Draft,Weapon_SubPart,PreOpt_HighDraft,Assets/Meshes/Weapons/Combat_Shotgun.fbx,1960,10,"(0.00, 0.00, 0.00)",1.00,unbatched_draft,Pre-optimization sub-part draft
-Combat_Shotgun_PumpForend_OBJ,Weapon_SubPart,OBJ_Intermediate,Assets/Meshes/Weapons/Combat_Shotgun.fbx,1421,9,"(0.00, 0.00, 0.00)",1.00,unbatched_obj,Intermediate OBJ split UV seam export
-Combat_Shotgun_PumpForend_LOD1,Weapon_SubPart,LOD1_Draft,Assets/Meshes/Weapons/Combat_Shotgun.fbx,490,8,"(0.00, -0.04, 0.12)",1.00,lod1_candidate,Decimated LOD1 sub-part candidate
-Combat_Shotgun_PumpForend,Weapon_SubPart,LOD0_Optimized,Assets/Meshes/Weapons/Combat_Shotgun.fbx,980,8,"(0.00, -0.04, 0.12)",1.00,dynamic_srp_ready,Ribbed pump-action forend slide
-Combat_Shotgun_MagTube_Draft,Weapon_SubPart,PreOpt_HighDraft,Assets/Meshes/Weapons/Combat_Shotgun.fbx,1320,6,"(0.00, 0.00, 0.00)",1.00,unbatched_draft,Pre-optimization sub-part draft
-Combat_Shotgun_MagTube_OBJ,Weapon_SubPart,OBJ_Intermediate,Assets/Meshes/Weapons/Combat_Shotgun.fbx,957,5,"(0.00, 0.00, 0.00)",1.00,unbatched_obj,Intermediate OBJ split UV seam export
-Combat_Shotgun_MagTube_LOD1,Weapon_SubPart,LOD1_Draft,Assets/Meshes/Weapons/Combat_Shotgun.fbx,330,4,"(0.00, -0.04, 0.12)",1.00,lod1_candidate,Decimated LOD1 sub-part candidate
-Combat_Shotgun_MagTube,Weapon_SubPart,LOD0_Optimized,Assets/Meshes/Weapons/Combat_Shotgun.fbx,660,4,"(0.00, -0.04, 0.12)",1.00,dynamic_srp_ready,Underbarrel 8-shell magazine tube & barrel clamp
-Combat_Shotgun_PolymerStock_Draft,Weapon_SubPart,PreOpt_HighDraft,Assets/Meshes/Weapons/Combat_Shotgun.fbx,1160,8,"(0.00, 0.00, 0.00)",1.00,unbatched_draft,Pre-optimization sub-part draft
-Combat_Shotgun_PolymerStock_OBJ,Weapon_SubPart,OBJ_Intermediate,Assets/Meshes/Weapons/Combat_Shotgun.fbx,841,7,"(0.00, 0.00, 0.00)",1.00,unbatched_obj,Intermediate OBJ split UV seam export
-Combat_Shotgun_PolymerStock_LOD1,Weapon_SubPart,LOD1_Draft,Assets/Meshes/Weapons/Combat_Shotgun.fbx,290,6,"(0.00, -0.04, 0.12)",1.00,lod1_candidate,Decimated LOD1 sub-part candidate
-Combat_Shotgun_PolymerStock,Weapon_SubPart,LOD0_Optimized,Assets/Meshes/Weapons/Combat_Shotgun.fbx,580,6,"(0.00, -0.04, 0.12)",1.00,dynamic_srp_ready,Matte polymer stock, recoil pad & grip tang
-Combat_Shotgun_GhostRingSight_Draft,Weapon_SubPart,PreOpt_HighDraft,Assets/Meshes/Weapons/Combat_Shotgun.fbx,520,4,"(0.00, 0.00, 0.00)",1.00,unbatched_draft,Pre-optimization sub-part draft
-Combat_Shotgun_GhostRingSight_OBJ,Weapon_SubPart,OBJ_Intermediate,Assets/Meshes/Weapons/Combat_Shotgun.fbx,377,3,"(0.00, 0.00, 0.00)",1.00,unbatched_obj,Intermediate OBJ split UV seam export
-Combat_Shotgun_GhostRingSight_LOD1,Weapon_SubPart,LOD1_Draft,Assets/Meshes/Weapons/Combat_Shotgun.fbx,130,2,"(0.00, -0.04, 0.12)",1.00,lod1_candidate,Decimated LOD1 sub-part candidate
-Combat_Shotgun_GhostRingSight,Weapon_SubPart,LOD0_Optimized,Assets/Meshes/Weapons/Combat_Shotgun.fbx,260,2,"(0.00, -0.04, 0.12)",1.00,dynamic_srp_ready,Protected rear ghost-ring & front blade sight
-Combat_Shotgun_SmoothBarrel_Draft,Weapon_SubPart,PreOpt_HighDraft,Assets/Meshes/Weapons/Combat_Shotgun.fbx,960,6,"(0.00, 0.00, 0.00)",1.00,unbatched_draft,Pre-optimization sub-part draft
-Combat_Shotgun_SmoothBarrel_OBJ,Weapon_SubPart,OBJ_Intermediate,Assets/Meshes/Weapons/Combat_Shotgun.fbx,696,5,"(0.00, 0.00, 0.00)",1.00,unbatched_obj,Intermediate OBJ split UV seam export
-Combat_Shotgun_SmoothBarrel_LOD1,Weapon_SubPart,LOD1_Draft,Assets/Meshes/Weapons/Combat_Shotgun.fbx,240,4,"(0.00, -0.04, 0.12)",1.00,lod1_candidate,Decimated LOD1 sub-part candidate
-Combat_Shotgun_SmoothBarrel,Weapon_SubPart,LOD0_Optimized,Assets/Meshes/Weapons/Combat_Shotgun.fbx,480,4,"(0.00, -0.04, 0.12)",1.00,dynamic_srp_ready,Smooth-shaded 16-seg +Z barrel cylinder
-MP5_SMG_MuzzleAnchor,Weapon_Socket,LOD0_Optimized,Assets/Meshes/Weapons/MP5_SMG.fbx,0,0,"(0.00, 0.03, 0.42)",1.00,socket_calibrated,Forward +Z muzzle flash & raycast origin
-MP5_SMG_SightLine,Weapon_Socket,LOD0_Optimized,Assets/Meshes/Weapons/MP5_SMG.fbx,0,0,"(0.00, 0.08, 0.14)",1.00,socket_calibrated,Rear diopter to front hood sight axis
-MP5_SMG_FirstPersonMount,Weapon_Socket,LOD0_Optimized,Assets/Meshes/Weapons/MP5_SMG.fbx,0,0,"(0.22, -0.18, 0.45)",1.00,socket_calibrated,PlayerGun first-person camera offset
-MP5_SMG_EjectionPort,Weapon_Socket,LOD0_Optimized,Assets/Meshes/Weapons/MP5_SMG.fbx,0,0,"(0.02, 0.04, 0.16)",1.00,socket_calibrated,Right-side brass ejection anchor
-Combat_Shotgun_MuzzleAnchor,Weapon_Socket,LOD0_Optimized,Assets/Meshes/Weapons/Combat_Shotgun.fbx,0,0,"(0.00, 0.04, 0.62)",1.00,socket_calibrated,6-pellet cone origin (+Z barrel forward)
-Combat_Shotgun_HandSocket,Weapon_Socket,LOD0_Optimized,Assets/Meshes/Weapons/Combat_Shotgun.fbx,0,0,"(0.02, -0.04, 0.12)",1.00,socket_calibrated,GuardShooting.ResetCombat hand attachment offset
-Combat_Shotgun_PumpTrack,Weapon_Socket,LOD0_Optimized,Assets/Meshes/Weapons/Combat_Shotgun.fbx,0,0,"(0.00, -0.02, 0.34)",1.00,socket_calibrated,Forend slide stroke midpoint
-Combat_Shotgun_PickupProxy,Weapon_Socket,LOD0_Optimized,Assets/Meshes/Weapons/Combat_Shotgun.fbx,0,0,"(0.00, 0.25, 0.00)",1.00,socket_calibrated,GuardShooting.HandleDeath drop offset
+Warehouse_Cargo_Crate,Prop,LOD0_Production,Assets/Meshes/Props/Warehouse_Cargo_Crate.fbx,864,14,"(0.00, 0.00, 0.00)",1.00,static_batch_ready,Pruned 1840-tri & OBJ/LOD drafts (-53% tris); 1.2m cube (1.0x/1.2x in Room 4 east alcove); bottom-center pivot
+Warehouse_Cargo_Crate_CornerStiles,Prop_SubPart,LOD0_Production,Assets/Meshes/Props/Warehouse_Cargo_Crate.fbx,144,2,"(0.00, 0.00, 0.00)",1.00,static_batch_ready,4 vertical 0.09m corner posts (Mat_Crate_Wood)
+Warehouse_Cargo_Crate_TopBottomRails,Prop_SubPart,LOD0_Production,Assets/Meshes/Props/Warehouse_Cargo_Crate.fbx,176,2,"(0.00, 0.00, 0.00)",1.00,static_batch_ready,Upper and lower horizontal perimeter rails
+Warehouse_Cargo_Crate_PlankPanels_NS,Prop_SubPart,LOD0_Production,Assets/Meshes/Props/Warehouse_Cargo_Crate.fbx,120,2,"(0.00, 0.00, 0.00)",1.00,static_batch_ready,North/South recessed 45mm inner board panels
+Warehouse_Cargo_Crate_PlankPanels_EW,Prop_SubPart,LOD0_Production,Assets/Meshes/Props/Warehouse_Cargo_Crate.fbx,120,2,"(0.00, 0.00, 0.00)",1.00,static_batch_ready,East/West recessed 45mm inner board panels
+Warehouse_Cargo_Crate_DiagBraces_NS,Prop_SubPart,LOD0_Production,Assets/Meshes/Props/Warehouse_Cargo_Crate.fbx,96,2,"(0.00, 0.00, 0.00)",1.00,static_batch_ready,North/South 45-deg diagonal bracing struts
+Warehouse_Cargo_Crate_DiagBraces_EW,Prop_SubPart,LOD0_Production,Assets/Meshes/Props/Warehouse_Cargo_Crate.fbx,96,2,"(0.00, 0.00, 0.00)",1.00,static_batch_ready,East/West 45-deg diagonal bracing struts
+Warehouse_Cargo_Crate_TopLidDeck,Prop_SubPart,LOD0_Production,Assets/Meshes/Props/Warehouse_Cargo_Crate.fbx,56,1,"(0.00, 0.00, 0.00)",1.00,static_batch_ready,Recessed top timber deck with culled inner lips
+Warehouse_Cargo_Crate_PalletSkids,Prop_SubPart,LOD0_Production,Assets/Meshes/Props/Warehouse_Cargo_Crate.fbx,56,1,"(0.00, 0.00, 0.00)",1.00,static_batch_ready,Bottom 100mm forklift skids (bottom cap culled)
+Warehouse_Steel_Rack,Prop,LOD0_Production,Assets/Meshes/Props/Warehouse_Steel_Rack.fbx,2680,26,"(0.00, 0.00, 0.00)",1.00,static_batch_ready,Pruned 6420-tri & OBJ/LOD drafts (-58% tris); 2.4x1.1x3.1m rack (1.1x in Room 4); 4-sided cross-braces
+Warehouse_Steel_Rack_Uprights_West,Prop_SubPart,LOD0_Production,Assets/Meshes/Props/Warehouse_Steel_Rack.fbx,380,4,"(0.00, 0.00, 0.00)",1.00,static_batch_ready,West slotted L-channel uprights (Mat_Rack_Blue)
+Warehouse_Steel_Rack_Uprights_East,Prop_SubPart,LOD0_Production,Assets/Meshes/Props/Warehouse_Steel_Rack.fbx,380,4,"(0.00, 0.00, 0.00)",1.00,static_batch_ready,East slotted L-channel uprights (Mat_Rack_Blue)
+Warehouse_Steel_Rack_LoadBeams_T1,Prop_SubPart,LOD0_Production,Assets/Meshes/Props/Warehouse_Steel_Rack.fbx,214,2,"(0.00, 0.00, 0.00)",1.00,static_batch_ready,Tier-1 horizontal stepped load beams (Mat_Rack_Orange)
+Warehouse_Steel_Rack_LoadBeams_T2,Prop_SubPart,LOD0_Production,Assets/Meshes/Props/Warehouse_Steel_Rack.fbx,214,2,"(0.00, 0.00, 0.00)",1.00,static_batch_ready,Tier-2 horizontal stepped load beams (Mat_Rack_Orange)
+Warehouse_Steel_Rack_LoadBeams_T3,Prop_SubPart,LOD0_Production,Assets/Meshes/Props/Warehouse_Steel_Rack.fbx,212,2,"(0.00, 0.00, 0.00)",1.00,static_batch_ready,Tier-3 horizontal stepped load beams (Mat_Rack_Orange)
+Warehouse_Steel_Rack_DeckPlate_T1,Prop_SubPart,LOD0_Production,Assets/Meshes/Props/Warehouse_Steel_Rack.fbx,180,2,"(0.00, 0.00, 0.00)",1.00,static_batch_ready,Tier-1 galvanized steel deck shelf (Mat_Shelf_Level)
+Warehouse_Steel_Rack_DeckPlate_T2,Prop_SubPart,LOD0_Production,Assets/Meshes/Props/Warehouse_Steel_Rack.fbx,180,2,"(0.00, 0.00, 0.00)",1.00,static_batch_ready,Tier-2 galvanized steel deck shelf (Mat_Shelf_Level)
+Warehouse_Steel_Rack_DeckPlate_T3,Prop_SubPart,LOD0_Production,Assets/Meshes/Props/Warehouse_Steel_Rack.fbx,180,2,"(0.00, 0.00, 0.00)",1.00,static_batch_ready,Tier-3 galvanized steel deck shelf (Mat_Shelf_Level)
+Warehouse_Steel_Rack_CrossBraces,Prop_SubPart,LOD0_Production,Assets/Meshes/Props/Warehouse_Steel_Rack.fbx,480,4,"(0.00, 0.00, 0.00)",1.00,static_batch_ready,4-sided rectangular K-braces (replaced 16-seg tubes)
+Warehouse_Steel_Rack_FootPlates,Prop_SubPart,LOD0_Production,Assets/Meshes/Props/Warehouse_Steel_Rack.fbx,260,2,"(0.00, 0.00, 0.00)",1.00,static_batch_ready,4 floor anchor brackets with culled undersides
+Warehouse_Security_Barrier,Prop,LOD0_Production,Assets/Meshes/Props/Warehouse_Security_Barrier.fbx,1080,12,"(0.00, 0.00, 0.00)",1.00,static_batch_ready,Pruned 2460-tri & OBJ/LOD drafts (-56% tris); 2.2x0.65x1.12m barrier; blocks +0.8m torso ray, clears +1.5m eye ray
+Warehouse_Security_Barrier_LowerSlope,Prop_SubPart,LOD0_Production,Assets/Meshes/Props/Warehouse_Security_Barrier.fbx,340,3,"(0.00, 0.00, 0.00)",1.00,static_batch_ready,Lower 0.65m flared concrete Jersey base (Mat_Wall)
+Warehouse_Security_Barrier_UpperWall,Prop_SubPart,LOD0_Production,Assets/Meshes/Props/Warehouse_Security_Barrier.fbx,280,3,"(0.00, 0.00, 0.00)",1.00,static_batch_ready,Upper 1.12m vertical tapered wall (blocks +0.8m ray)
+Warehouse_Security_Barrier_EndCap_L,Prop_SubPart,LOD0_Production,Assets/Meshes/Props/Warehouse_Security_Barrier.fbx,110,1,"(0.00, 0.00, 0.00)",1.00,static_batch_ready,Left chamfered end cap (1-seg bevel)
+Warehouse_Security_Barrier_EndCap_R,Prop_SubPart,LOD0_Production,Assets/Meshes/Props/Warehouse_Security_Barrier.fbx,110,1,"(0.00, 0.00, 0.00)",1.00,static_batch_ready,Right chamfered end cap (1-seg bevel)
+Warehouse_Security_Barrier_BaseSlots,Prop_SubPart,LOD0_Production,Assets/Meshes/Props/Warehouse_Security_Barrier.fbx,160,2,"(0.00, 0.00, 0.00)",1.00,static_batch_ready,Dual forklift pass-through cutouts at Y = 0.05m
+Warehouse_Security_Barrier_TopRail,Prop_SubPart,LOD0_Production,Assets/Meshes/Props/Warehouse_Security_Barrier.fbx,80,2,"(0.00, 0.00, 0.00)",1.00,static_batch_ready,Steel-capped top bevel strip (Mat_Steel_Dark)
+Industrial_ServicePanel,Prop,LOD0_Production,Assets/Meshes/Props/IndustrialServicePanel.fbx,2340,28,"(0.00, 0.00, -0.095)",1.00,static_batch_ready,Pruned 4890-tri & OBJ/LOD drafts (-52% tris); Wall-flush backplane pivot (-Z forward, Y up); zero NavMesh obstacle
+Industrial_ServicePanel_Enclosure,Prop_SubPart,LOD0_Production,Assets/Meshes/Props/IndustrialServicePanel.fbx,420,4,"(0.00, 0.00, -0.095)",1.00,static_batch_ready,0.90x0.19x1.25m steel cabinet (0.035m 3-seg bevel)
+Industrial_ServicePanel_RecessedDoor,Prop_SubPart,LOD0_Production,Assets/Meshes/Props/IndustrialServicePanel.fbx,280,3,"(0.00, 0.00, -0.095)",1.00,static_batch_ready,0.79x0.035x1.10m recessed frame (Mat_Panel_Recess)
+Industrial_ServicePanel_DoorPlate,Prop_SubPart,LOD0_Production,Assets/Meshes/Props/IndustrialServicePanel.fbx,232,3,"(0.00, 0.00, -0.095)",1.00,static_batch_ready,0.73x0.025x1.04m front plate with weighted normals
+Industrial_ServicePanel_CaptiveBolts_4x,Prop_SubPart,LOD0_Production,Assets/Meshes/Props/IndustrialServicePanel.fbx,384,4,"(0.00, 0.00, -0.095)",1.00,static_batch_ready,4x 12-vert captive bolts (down from 24-vert)
+Industrial_ServicePanel_VentSlats_Upper,Prop_SubPart,LOD0_Production,Assets/Meshes/Props/IndustrialServicePanel.fbx,224,3,"(0.00, 0.00, -0.095)",1.00,static_batch_ready,Upper 4x louvered vent slats (0.045m spacing)
+Industrial_ServicePanel_VentSlats_Lower,Prop_SubPart,LOD0_Production,Assets/Meshes/Props/IndustrialServicePanel.fbx,224,3,"(0.00, 0.00, -0.095)",1.00,static_batch_ready,Lower 4x louvered vent slats (0.045m spacing)
+Industrial_ServicePanel_CautionPlaque,Prop_SubPart,LOD0_Production,Assets/Meshes/Props/IndustrialServicePanel.fbx,112,2,"(0.00, 0.00, -0.095)",1.00,static_batch_ready,0.31x0.012x0.17m upper-left hazard placard
+Industrial_ServicePanel_HandleAssembly,Prop_SubPart,LOD0_Production,Assets/Meshes/Props/IndustrialServicePanel.fbx,148,2,"(0.00, 0.00, -0.095)",1.00,static_batch_ready,0.07x0.045x0.18m latch handle at (-0.30, -0.15, 0.02)
+Industrial_ServicePanel_Hinges_2x,Prop_SubPart,LOD0_Production,Assets/Meshes/Props/IndustrialServicePanel.fbx,132,2,"(0.00, 0.00, -0.095)",1.00,static_batch_ready,2x cylindrical barrel hinges at X = +0.43m
+Industrial_ServicePanel_Indicators_2x,Prop_SubPart,LOD0_Production,Assets/Meshes/Props/IndustrialServicePanel.fbx,96,1,"(0.00, 0.00, -0.095)",1.00,static_batch_ready,2x status lenses (Panel_Green) at X = 0.18/0.26
+Industrial_ServicePanel_CablePorts_2x,Prop_SubPart,LOD0_Production,Assets/Meshes/Props/IndustrialServicePanel.fbx,88,1,"(0.00, 0.00, -0.095)",1.00,static_batch_ready,2x top conduit collars at Z = +0.67m
+Access_Card,Objective,LOD0_Production,Assets/Meshes/Props/Access_Card.fbx,164,4,"(0.00, 0.00, 0.00)",2.50,srp_batch_ready,Pruned 520-tri & OBJ/LOD drafts (-68% tris); Center pivot for 90 deg/s Y spin; 2.5x pickup scale in Route A & B
+Access_Card_FrontFace,Objective_SubPart,LOD0_Production,Assets/Meshes/Props/Access_Card.fbx,34,1,"(0.00, 0.00, 0.00)",2.50,srp_batch_ready,Planar non-mirrored front UV0 (Tex_Card_A / Tex_Card_B)
+Access_Card_BackFace,Objective_SubPart,LOD0_Production,Assets/Meshes/Props/Access_Card.fbx,34,1,"(0.00, 0.00, 0.00)",2.50,srp_batch_ready,Planar magnetic-stripe back UV0
+Access_Card_ChamferPerimeter,Objective_SubPart,LOD0_Production,Assets/Meshes/Props/Access_Card.fbx,72,1,"(0.00, 0.00, 0.00)",2.50,srp_batch_ready,1-segment bevel perimeter trim
+Access_Card_ChipContactInset,Objective_SubPart,LOD0_Production,Assets/Meshes/Props/Access_Card.fbx,24,1,"(0.00, 0.00, 0.00)",2.50,srp_batch_ready,EMV contact pad relief quad
+MP5_SMG,Weapon,LOD0_Production,Assets/Meshes/Weapons/MP5_SMG.fbx,4920,38,"(0.00, -0.04, 0.08)",1.00,dynamic_srp_ready,Pruned 9840-tri & OBJ/LOD drafts (-50% tris); PlayerGun MP5-A3 SMG (18 dmg, 0.11s rate); grip pivot +Z barrel
+MP5_SMG_UpperReceiver,Weapon_SubPart,LOD0_Production,Assets/Meshes/Weapons/MP5_SMG.fbx,920,8,"(0.00, -0.04, 0.08)",1.00,dynamic_srp_ready,Stamped upper receiver + top optic rail mount
+MP5_SMG_LowerTriggerHousing,Weapon_SubPart,LOD0_Production,Assets/Meshes/Weapons/MP5_SMG.fbx,600,4,"(0.00, -0.04, 0.08)",1.00,dynamic_srp_ready,Lower trigger pack, pistol grip & fire selector
+MP5_SMG_CollapsibleStock,Weapon_SubPart,LOD0_Production,Assets/Meshes/Weapons/MP5_SMG.fbx,620,6,"(0.00, -0.04, 0.08)",1.00,dynamic_srp_ready,Retracted twin-rail buttstock & buttpad
+MP5_SMG_CurvedMagazine,Weapon_SubPart,LOD0_Production,Assets/Meshes/Weapons/MP5_SMG.fbx,540,4,"(0.00, -0.04, 0.08)",1.00,dynamic_srp_ready,30-round curved box magazine + magwell collar
+MP5_SMG_CockingTube,Weapon_SubPart,LOD0_Production,Assets/Meshes/Weapons/MP5_SMG.fbx,480,4,"(0.00, -0.04, 0.08)",1.00,dynamic_srp_ready,Charging handle tube & front sling eyelet
+MP5_SMG_HandguardShroud,Weapon_SubPart,LOD0_Production,Assets/Meshes/Weapons/MP5_SMG.fbx,760,4,"(0.00, -0.04, 0.08)",1.00,dynamic_srp_ready,Perforated polymer forend shroud
+MP5_SMG_FrontSightHood,Weapon_SubPart,LOD0_Production,Assets/Meshes/Weapons/MP5_SMG.fbx,420,4,"(0.00, -0.04, 0.08)",1.00,dynamic_srp_ready,Hooded post front sight & rotary rear diopter
+MP5_SMG_BarrelSuppressorLug,Weapon_SubPart,LOD0_Production,Assets/Meshes/Weapons/MP5_SMG.fbx,580,4,"(0.00, -0.04, 0.08)",1.00,dynamic_srp_ready,16-seg smooth-shaded +Z barrel & tri-lug muzzle
+Combat_Shotgun,Weapon,LOD0_Production,Assets/Meshes/Weapons/Combat_Shotgun.fbx,4380,34,"(0.00, -0.04, 0.12)",1.00,dynamic_srp_ready,Pruned 8420-tri & OBJ/LOD drafts (-48% tris); Aqqil Room 4 shotgun (12 dmg x 6 pellets); GuardShooting hand socket
+Combat_Shotgun_SteelReceiver,Weapon_SubPart,LOD0_Production,Assets/Meshes/Weapons/Combat_Shotgun.fbx,960,6,"(0.00, -0.04, 0.12)",1.00,dynamic_srp_ready,Machined steel receiver + ejection port recess
+Combat_Shotgun_BoltCarrier,Weapon_SubPart,LOD0_Production,Assets/Meshes/Weapons/Combat_Shotgun.fbx,460,4,"(0.00, -0.04, 0.12)",1.00,dynamic_srp_ready,Recessed breech bolt & loading gate
+Combat_Shotgun_PumpForend,Weapon_SubPart,LOD0_Production,Assets/Meshes/Weapons/Combat_Shotgun.fbx,980,8,"(0.00, -0.04, 0.12)",1.00,dynamic_srp_ready,Ribbed pump-action forend slide
+Combat_Shotgun_MagTube,Weapon_SubPart,LOD0_Production,Assets/Meshes/Weapons/Combat_Shotgun.fbx,660,4,"(0.00, -0.04, 0.12)",1.00,dynamic_srp_ready,Underbarrel 8-shell magazine tube & barrel clamp
+Combat_Shotgun_PolymerStock,Weapon_SubPart,LOD0_Production,Assets/Meshes/Weapons/Combat_Shotgun.fbx,580,6,"(0.00, -0.04, 0.12)",1.00,dynamic_srp_ready,Matte polymer stock, recoil pad & grip tang
+Combat_Shotgun_GhostRingSight,Weapon_SubPart,LOD0_Production,Assets/Meshes/Weapons/Combat_Shotgun.fbx,260,2,"(0.00, -0.04, 0.12)",1.00,dynamic_srp_ready,Protected rear ghost-ring & front blade sight
+Combat_Shotgun_SmoothBarrel,Weapon_SubPart,LOD0_Production,Assets/Meshes/Weapons/Combat_Shotgun.fbx,480,4,"(0.00, -0.04, 0.12)",1.00,dynamic_srp_ready,Smooth-shaded 16-seg +Z barrel cylinder
+MP5_SMG_MuzzleAnchor,Weapon_Socket,LOD0_Production,Assets/Meshes/Weapons/MP5_SMG.fbx,0,0,"(0.00, 0.03, 0.42)",1.00,socket_calibrated,Forward +Z muzzle flash & raycast origin
+MP5_SMG_FirstPersonMount,Weapon_Socket,LOD0_Production,Assets/Meshes/Weapons/MP5_SMG.fbx,0,0,"(0.22, -0.18, 0.45)",1.00,socket_calibrated,PlayerGun first-person camera offset
+Combat_Shotgun_MuzzleAnchor,Weapon_Socket,LOD0_Production,Assets/Meshes/Weapons/Combat_Shotgun.fbx,0,0,"(0.00, 0.04, 0.62)",1.00,socket_calibrated,6-pellet cone origin (+Z barrel forward)
+Combat_Shotgun_HandSocket,Weapon_Socket,LOD0_Production,Assets/Meshes/Weapons/Combat_Shotgun.fbx,0,0,"(0.02, -0.04, 0.12)",1.00,socket_calibrated,GuardShooting.ResetCombat hand attachment offset
