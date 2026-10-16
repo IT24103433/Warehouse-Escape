@@ -75,3 +75,7 @@ Recorded the sampling filter, corner-based length, Room 2 endpoint gate and fina
 ## 2026-10-15 · Add player detection FOV and patrol-to-chase transition notes
 
 Mapped the sight test to the cached head direction, range, horizontal aperture and cover rays. A controlled example varies facing while candidate utility inputs stay fixed.
+
+## 2026-10-16 · Refactor PatrolUtilityTrace to replace fixed-loop draft logs
+
+Replaced the hand-stepped order worksheet with utility comparisons, selection events and arrival timestamps. The array order remains relevant as a tie-break and affects inspection pause lengths.

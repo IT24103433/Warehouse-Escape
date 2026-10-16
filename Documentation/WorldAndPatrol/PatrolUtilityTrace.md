@@ -19,41 +19,6 @@ arrival-facing direction. The inspection timeout clears aim before the next
 utility decision. Perception is checked before handling the wait timer, so a
 visible player can interrupt an inspection.
 
-## Draft fixed-loop worksheet for comparison
-
-The following worksheet assumes a fixed successor and uses hypothetical leg
-times. It is a baseline for comparing coverage sequences before reading
-the policy trace.
-
-| Index | Point | Fixed successor | Travel assumption | Dwell | Example time since last visit at leave |
-| --- | --- | --- | ---: | ---: | ---: |
-| 0 | South crossing | East south | 3.1 | 1 | 0 |
-| 1 | East south | East corridor | 2.0 | 2 | 0 |
-| 2 | East corridor | Northeast | 1.8 | 1 | 0 |
-| 3 | Northeast | North crossing | 1.9 | 2 | 0 |
-| 4 | North crossing | Northwest | 1.8 | 1 | 0 |
-| 5 | Northwest | West storage | 2.2 | 2 | 0 |
-| 6 | West storage | Southwest | 1.9 | 1 | 0 |
-| 7 | Southwest | South crossing | 1.1 | 2 | 0 |
-
-### Draft loop variants
-
-| Input event | Fixed-loop expectation | Observation to compare with utility selection |
-| --- | --- | --- |
-| Arrival at east south | Resume toward east corridor | Would a long-neglected west point outrank the adjacent one? |
-| Northern visibility improves | Preserve array order | Does the improved visibility alter the ranking for equal ages? |
-| West leg lengthens | Preserve array order | Can a short detour lower travel cost enough to change the winner? |
-| Current entry is unreachable | Skip to next array entry | Confirm evaluation of all remaining candidates |
-| Chase interrupts east inspection | Resume from next fixed entry | Record the latest real arrival and score the whole available set |
-| Two candidates have same score | Advance to fixed successor | Keep first eligible entry under a strict greater-than comparison |
-| One reachable alternative remains | Rotate past failures | Once one remains, inspect its eligibility relative to current index |
-| Player is behind a shelf | Continue scheduled leg | Leave candidate openness separate from confirmed visual contact |
-
-The fixed-loop baseline uses distance and elapsed time only for annotation.
-The active implementation treats path and age as features used to choose the
-next inspection. The data recorded at selection should be kept separate from
-the time spent traveling to the selected point.
-
 ## Utility formula
 
 For nonnegative age and path length and visibility already in [0, 1]:
@@ -159,6 +124,40 @@ Keep the guard's pose and occluders fixed while introducing the player.
 Compare `CanSeePlayer` with `HasConfirmedVisualContact()` at the boundary.
 The latter additionally checks player membership in Room 2.
 
+## Selection, arrival and re-evaluation timeline
+
+| Event | Example time (s) | Action | Memory consequence |
+| --- | ---: | --- | --- |
+| Dispatch | 100 | Rank two eligible candidates | Preserve their previous inspection timestamps |
+| Accepted | 100 | Store winning index and sampled goal | No inspection timestamp change |
+| Arrival | 104 | Stop movement and begin dwell | Winning point gets last-inspected time 104 |
+| Dwell finish | 106 | Clear aim and rank alternatives | Winning point is current and excluded with a multi-entry array |
+| Later re-evaluation | 118 | Compare available points again | If previously inspected winner is now eligible, its age is 14 s |
+
+If movement is interrupted before arrival, carry the old inspection
+timestamp into the next ranking. A change in destination order can come from
+the measured path or visibility without any change in configured points.
+
+## End-to-end example from the waypoint dataset
+
+At origin R2_W, compare R2_E at age 13.6 s and R2_N at age 15 s.
+Both candidates are inside and have a modeled complete path in each
+scenario. These ages are controlled inputs added to the CSV observations.
+
+| Scenario | Target | Length (m) | Openness | Age term | Openness term | Travel term | Utility |
+| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| `clear_graph` | R2_E | 9.5525 | 0.750 | 0.294667 | 0.262500 | 0.079604 | 0.477562 |
+| `clear_graph` | R2_N | 6.4031 | 0.625 | 0.325000 | 0.218750 | 0.053359 | 0.490391 |
+| `center_crossing_closed` | R2_E | 11.8115 | 0.750 | 0.294667 | 0.262500 | 0.098429 | 0.458737 |
+| `center_crossing_closed` | R2_N | 6.4031 | 0.500 | 0.325000 | 0.175000 | 0.053359 | 0.446641 |
+
+R2_N wins with the open crossing. In the closure fixture the east route
+lengthens, but the added modeled cover removes one clear ray at R2_N.
+The north candidate loses 0.04375 and the east candidate loses about
+0.01883, flipping their order in this two-candidate comparison.
+Use the path and occluder tables in the [layout spec](WarehouseLayoutSpec.md)
+to reproduce the inputs.
+
 ## Controlled comparisons
 
 Inputs in this table are controlled mathematical cases. The visibility column shows clear rays divided by eight.
@@ -209,3 +208,39 @@ Equal utility. The earlier eligible entry wins.
 | B | 21 | 6 | 45 | 0.455000 | 0.262500 | 0.250000 | 0.467500 |
 
 Equal utility. The earlier eligible entry wins.
+
+### Clamping rejects out-of-range arithmetic
+
+| Candidate | Age (s) | Clear rays | Path (m) | Age term | Visibility term | Travel term | Utility |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| A | -5 | 10 | -2 | 0.000000 | 0.350000 | 0.000000 | 0.350000 |
+| B | 0 | 8 | 0 | 0.000000 | 0.350000 | 0.000000 | 0.350000 |
+
+Equal utility. The earlier eligible entry wins.
+
+### A reachable point can have negative utility
+
+| Candidate | Age (s) | Clear rays | Path (m) | Age term | Visibility term | Travel term | Utility |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| A | 0 | 0 | 18 | 0.000000 | 0.000000 | 0.150000 | -0.150000 |
+| B | 1 | 0 | 30 | 0.021667 | 0.000000 | 0.250000 | -0.228333 |
+
+Candidate A ranks higher.
+
+### Open but farther versus sheltered and near
+
+| Candidate | Age (s) | Clear rays | Path (m) | Age term | Visibility term | Travel term | Utility |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| A | 14 | 7 | 21 | 0.303333 | 0.306250 | 0.175000 | 0.434583 |
+| B | 14 | 2 | 4 | 0.303333 | 0.087500 | 0.033333 | 0.357500 |
+
+Candidate A ranks higher.
+
+### Near-equal scores must be ranked before display rounding
+
+| Candidate | Age (s) | Clear rays | Path (m) | Age term | Visibility term | Travel term | Utility |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| A | 12 | 4 | 12.02 | 0.260000 | 0.175000 | 0.100167 | 0.334833 |
+| B | 12 | 4 | 12 | 0.260000 | 0.175000 | 0.100000 | 0.335000 |
+
+Candidate B ranks higher.
