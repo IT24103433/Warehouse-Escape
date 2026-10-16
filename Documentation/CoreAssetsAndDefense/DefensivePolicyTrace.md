@@ -1036,6 +1036,55 @@ return utility - 0.15f * Mathf.Clamp01(pathLength / 20f);
 | Corridor 4->5 Lip (8.0, 16.5) | `C16` | `6.67` | `true` | `true` | `0.00` | `0.722` | `0.444` | `5.74` | `0.4566` |
 <!-- END:THREAT_COVER_RANGE -->
 <!-- SECTION:LEASH_BOUNDS -->
+## 5. Pursuit Leash & Room 4 Boundary Enforcement
+
+### 5.1 Territorial Constants
+
+| Field | Script Default (`DefensiveGuardAI.cs`) | Room 4 Scene Value (`ExpandWarehouseLayout.cs`) | Behavior |
+| --- | --- | --- | --- |
+| `postPosition` | `(-5.0, 1.0, 6.5)` | `(16.0, 1.08, 8.0)` | Anchor node `C00` protecting Card B desk |
+| `defenseRadius` | `6.0 m` | `6.0 m` | Territory radius provoking `PursueIntruder` |
+| `leashDistance` | `8.5 m` | `9.0 m` | Hard pursuit & candidate sampling tether |
+| `roomBounds` | Serialized `Bounds` | `Room_4_Defensive` (`X [4, 28], Z [-2, 20]`) | `IsInsideRoom(pos)` X/Z check (ignores Y) |
+| `postArrivalThreshold` | `0.6 m` | `0.6 m` | Return completion tolerance |
+
+### 5.2 Five Disengage Conditions (`UpdatePursueIntruderState`)
+
+1. `distPlayerToPost > leashDistance` — intruder retreated beyond `9.0 m` from `(16, 1.08, 8)`.
+2. `distGuardToPost > leashDistance` — guard reached maximum radial leash.
+3. `!canSeePlayer && !isPlayerInsideTerritory` — lost LOS while player outside `6.0 m` radius.
+4. `playerTransform != null && !IsInsideRoom(playerTransform.position)` — player exited Room 4.
+5. `!IsInsideRoom(transform.position)` — guard exited `Room_4_Defensive` bounds.
+
+### 5.3 Room 4 Spatial Grid & Leash Verification (`24` Probe Coordinates)
+
+| Test Coordinate | Zone Description | `IsInsideRoom` | `Dist to Post (m)` | `TryReachable` | Decision Result |
+| --- | --- | --- | --- | --- | --- |
+| `(5.0, 1.0, -3.5)` | Room 2 doorway south | `false` | `15.91` | `skipped` | Rejected: outside `roomBounds` (`Z < -2`) |
+| `(5.0, 1.0, -2.0)` | Route B doorway threshold | `true` | `14.87` | `skipped` | Rejected: exceeds `leashDistance` (`> 9.0`) |
+| `(5.0, 1.0, -1.5)` | South entry threshold | `true` | `14.54` | `skipped` | Rejected: exceeds `leashDistance` (`> 9.0`) |
+| `(3.2, 1.0, 8.0)` | Room 3 West wall outside | `false` | `12.80` | `skipped` | Rejected: outside `roomBounds` (`X < 4`) |
+| `(6.5, 1.0, 8.0)` | West transit aisle | `true` | `9.50` | `skipped` | Rejected: exceeds `leashDistance` (`> 9.0`) |
+| `(7.2, 1.0, 8.0)` | West perimeter edge | `true` | `8.80` | `true` | Accepted: near outer `9.0 m` leash border |
+| `(9.5, 1.0, 4.5)` | SW diagonal leash edge | `true` | `7.38` | `true` | Accepted: within `9.0 m` SW quadrant |
+| `(11.0, 1.0, 5.5)` | West ring flank | `true` | `5.59` | `true` | Accepted: inner west flank coverage |
+| `(13.5, 1.0, 5.5)` | Behind Barrier West | `true` | `3.54` | `true` | Accepted: core cover slot |
+| `(14.8, 1.0, 5.8)` | West-center gap cover | `true` | `2.51` | `true` | Accepted: bridge between barriers |
+| `(16.0, 1.0, 5.8)` | Behind Barrier Center | `true` | `2.20` | `true` | Accepted: prime half-cover firing line |
+| `(17.0, 1.0, 5.0)` | Room4_Shock pad perimeter | `true` | `3.16` | `true` | Accepted: triggers alarm reaction zone |
+| `(16.0, 1.0, -1.2)` | South Room 4 wall | `true` | `9.20` | `skipped` | Rejected: exceeds `leashDistance` (`> 9.0`) |
+| `(19.5, 1.0, 6.8)` | Inside Barrier East south | `true` | `3.70` | `true` | Accepted: east barrier firing angle |
+| `(20.0, 1.0, 7.5)` | Inside Barrier East | `true` | `4.03` | `true` | Accepted: east flank defense slot |
+| `(16.0, 1.0, 10.0)` | At Terminal_Desk / Card B | `true` | `2.00` | `true` | Accepted: desk protection radius |
+| `(13.0, 1.0, 12.5)` | NW objective rear cover | `true` | `5.41` | `true` | Accepted: rear desk overwatch |
+| `(19.0, 1.0, 12.5)` | NE objective rear cover | `true` | `5.41` | `true` | Accepted: east rear overwatch |
+| `(16.0, 1.0, 16.5)` | North-center lane | `true` | `8.50` | `true` | Accepted: within `9.0 m` north boundary |
+| `(16.0, 1.0, 18.5)` | North Room 5 corridor lip | `true` | `10.50` | `skipped` | Rejected: exceeds `leashDistance` (`> 9.0`) |
+| `(6.5, 1.0, 19.5)` | Corridor 4->5 exit threshold | `true` | `14.92` | `skipped` | Rejected: exceeds `leashDistance` & triggers retreat |
+| `(6.5, 1.0, 21.0)` | Corridor 4->5 outside bounds | `false` | `16.10` | `skipped` | Rejected: outside `roomBounds` (`Z > 20`) |
+| `(25.5, 1.0, 7.5)` | East alcove rack edge | `true` | `9.51` | `skipped` | Rejected: exceeds `leashDistance` (`> 9.0`) |
+| `(28.5, 1.0, 8.0)` | Outside east Room 4 wall | `false` | `12.50` | `skipped` | Rejected: outside `roomBounds` (`X > 28`) |
+<!-- END:LEASH_BOUNDS -->
 <!-- SECTION:SWITCHING_BONUS -->
 <!-- SECTION:PRESSURE_RETREAT -->
 <!-- SECTION:VERIFICATION_LOG -->

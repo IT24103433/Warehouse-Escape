@@ -55,6 +55,19 @@ equal footing with Route A (Search Sector), keeping both routes independently co
   disengaging via `ReturnToPost` (Retreat) when the player exits the perimeter.
 <!-- END:R4_STATES_AND_LAYOUT -->
 <!-- SECTION:R4_LEASH_NOTES -->
+## 3. Room 4 Boundary & Leash Containment Rules
+
+| Boundary / Zone | Coordinate Span | Guard Containment Effect |
+| --- | --- | --- |
+| `Room_4_Defensive` Bounds | `X [4, 28], Z [-2, 20]` | Hard `IsInsideRoom` X/Z gate for player & guard |
+| Guard `defenseRadius` (`6.0 m`) | `X [10, 22], Z [2, 14]` around post | Entering with LOS transitions `GuardingPost -> PursueIntruder` |
+| Guard `leashDistance` (`9.0 m`) | `X [7, 25], Z [-1, 17]` around post | Covers all 3 barriers + Card B desk; never blocks `X = 4..6.5` doorway |
+| West Transit Aisle | `X [4, 7]`, `Z [-2, 18]` | Safe flanking / retreat lane outside `leashDistance` |
+| Corridor 4->5 Exit | `X ~ 6.5`, `Z = 17.5..20.0` | Outside `9.0 m` leash; disengages pursuit cleanly |
+
+This geometry guarantees players can disengage to Room 2 or Room 5 corridor without being
+pursued across room boundaries, matching the Route B fairness specification.
+<!-- END:R4_LEASH_NOTES -->
 <!-- SECTION:R4_PRESSURE_NOTES -->
 <!-- SECTION:R4_SHOTGUN_BALANCE -->
 <!-- SECTION:R4_TRAPS_AND_CARD_B -->
