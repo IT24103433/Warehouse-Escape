@@ -298,12 +298,44 @@ public class HumanoidAnimator : MonoBehaviour
         var guardShooting = GetComponentInParent<GuardShooting>();
         if (guardShooting != null)
         {
-            // Tactical ready weapon carry: Right arm raised forward and bent holding gun
-            float subtleAimSway = Mathf.Sin(Time.time * 2f) * 1.5f;
-            if (upperArmR != null)
-                upperArmR.localRotation = upperArmRBaseRot * Quaternion.Euler(-38f + subtleAimSway, 0f, 15f);
-            if (forearmR != null)
-                forearmR.localRotation = forearmRBaseRot * Quaternion.Euler(45f, 0f, 0f);
+            if (guardShooting.IsReloading)
+            {
+                // Tactical reload presentation: weapon lowered, left hand working magazine
+                float reloadDip = Mathf.Sin(Time.time * 5f) * 4f;
+                if (upperArmR != null)
+                    upperArmR.localRotation = upperArmRBaseRot * Quaternion.Euler(-22f + reloadDip, 0f, 10f);
+                if (forearmR != null)
+                    forearmR.localRotation = forearmRBaseRot * Quaternion.Euler(55f, 0f, 0f);
+
+                if (upperArmL != null)
+                    upperArmL.localRotation = upperArmLBaseRot * Quaternion.Euler(-28f, 15f, -20f);
+                if (forearmL != null)
+                    forearmL.localRotation = forearmLBaseRot * Quaternion.Euler(75f, 0f, 0f);
+            }
+            else if (guardShooting.IsAiming)
+            {
+                // Active two-handed aim presentation: arms extended and raised toward target
+                float subtleAimSway = Mathf.Sin(Time.time * 3f) * 1.2f;
+                if (upperArmR != null)
+                    upperArmR.localRotation = upperArmRBaseRot * Quaternion.Euler(-58f + subtleAimSway, 0f, 8f);
+                if (forearmR != null)
+                    forearmR.localRotation = forearmRBaseRot * Quaternion.Euler(28f, 0f, 0f);
+
+                // Left arm supports foregrip
+                if (upperArmL != null)
+                    upperArmL.localRotation = upperArmLBaseRot * Quaternion.Euler(-48f, 18f, -15f);
+                if (forearmL != null)
+                    forearmL.localRotation = forearmLBaseRot * Quaternion.Euler(48f, 0f, 0f);
+            }
+            else
+            {
+                // Low-ready tactical patrol carry
+                float subtleAimSway = Mathf.Sin(Time.time * 2f) * 1.5f;
+                if (upperArmR != null)
+                    upperArmR.localRotation = upperArmRBaseRot * Quaternion.Euler(-38f + subtleAimSway, 0f, 15f);
+                if (forearmR != null)
+                    forearmR.localRotation = forearmRBaseRot * Quaternion.Euler(45f, 0f, 0f);
+            }
         }
         else
         {

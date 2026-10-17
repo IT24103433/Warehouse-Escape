@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -8,15 +9,16 @@ using UnityEngine.AI;
 public enum PatrolGuardState
 {
     Patrol,
-    Pursue
+    Pursue,
+    Investigate
 }
 
 /// <summary>
 /// Varun's Patrol Guard AI.
-/// Continuously walks assigned waypoint routes across the warehouse.
-/// Engages in direct pursuit when the player is sighted, and immediately resumes
-/// regular waypoint patrol as soon as the intruder breaks line of sight.
-/// Intentionally does not perform extended search or last-seen position investigations.
+/// Continuously inspects varied reachable aisles and corners in Room 2 (Patrol Hall).
+/// Pauses at inspection points to actively scan surroundings with smooth head/body sweeps.
+/// Senses audio and visual disturbances, investigates suspicious locations within Room 2,
+/// and resumes patrol circuit when clear. Stays strictly inside Room 2 (Safe Room protection).
 /// </summary>
 [RequireComponent(typeof(EnemyMovement))]
 public class PatrolGuardAI : MonoBehaviour
@@ -54,17 +56,24 @@ public class PatrolGuardAI : MonoBehaviour
     [Tooltip("Layer mask for line of sight occlusion (walls, shelves, crates).")]
     [SerializeField] private LayerMask obstacleMask = ~0;
 
-    [Header("Pursuit Settings")]
+    [Header("Pursuit & Investigation Settings")]
     [Tooltip("Interval in seconds between destination repaths during pursuit.")]
     [SerializeField] private float repathInterval = 0.25f;
 
+    [Tooltip("Duration in seconds spent investigating a disturbance point.")]
+    [SerializeField] private float investigateDuration = 2.5f;
+
     private EnemyMovement enemyMovement;
+    private GuardPerceptionMemory perceptionMemory;
     private Transform playerTransform;
 
     private int currentWaypointIndex = 0;
     private float waitTimer = 0f;
     private bool isWaiting = false;
     private float repathTimer = 0f;
+    private Vector3 investigatePosition;
+    private float investigateTimer = 0f;
+    private bool isInvestigatingArrival = false;
 
     public PatrolGuardState CurrentState => currentState;
     public bool CanSeePlayer => canSeePlayer;
@@ -94,6 +103,12 @@ public class PatrolGuardAI : MonoBehaviour
             shooting.ConfigureRole(GuardShooting.WeaponType.Pistol, 12, 1.1f, 12f, 1, 3.5f);
         }
 
+        perceptionMemory = GetComponent<GuardPerceptionMemory>();
+        if (perceptionMemory == null)
+        {
+            perceptionMemory = gameObject.AddComponent<GuardPerceptionMemory>();
+        }
+
         if (GetComponent<EnemyHealthBar>() == null)
         {
             gameObject.AddComponent<EnemyHealthBar>();
@@ -120,7 +135,7 @@ public class PatrolGuardAI : MonoBehaviour
         {
             var wpParent = GameObject.Find("Waypoints_Varun");
             if (wpParent == null) wpParent = new GameObject("Waypoints_Varun");
-            var list = new System.Collections.Generic.List<Transform>();
+            var list = new List<Transform>();
 
             for (int i = 0; i < StorageInspectionRoute.Length; i++)
             {
@@ -143,6 +158,22 @@ public class PatrolGuardAI : MonoBehaviour
         }
     }
 
+    void OnEnable()
+    {
+        if (perceptionMemory != null)
+        {
+            perceptionMemory.OnDisturbanceDetected += HandleDisturbance;
+        }
+    }
+
+    void OnDisable()
+    {
+        if (perceptionMemory != null)
+        {
+            perceptionMemory.OnDisturbanceDetected -= HandleDisturbance;
+        }
+    }
+
     void Start()
     {
         FindPlayerReference();
@@ -152,14 +183,16 @@ public class PatrolGuardAI : MonoBehaviour
 
     void Update()
     {
-        if (playerTransform == null) FindPlayerReference();
+        if (playerTransform == null)
+        {
+            FindPlayerReference();
+        }
 
-        // 1. Evaluate perception using shared helper
+        // Evaluate visual line of sight
         canSeePlayer = GuardPerception.CanSeePlayer(
             transform, playerTransform, sightDistance, fieldOfView, eyeHeight, playerTargetHeight, obstacleMask
         );
 
-        // 2. State Machine
         switch (currentState)
         {
             case PatrolGuardState.Patrol:
@@ -169,32 +202,50 @@ public class PatrolGuardAI : MonoBehaviour
             case PatrolGuardState.Pursue:
                 UpdatePursueState();
                 break;
+
+            case PatrolGuardState.Investigate:
+                UpdateInvestigateState();
+                break;
         }
     }
 
     private void FindPlayerReference()
     {
         var playerObj = GameObject.FindGameObjectWithTag("Player");
-        if (playerObj != null) playerTransform = playerObj.transform;
+        if (playerObj != null)
+        {
+            playerTransform = playerObj.transform;
+        }
     }
 
     public void SetPlayer(Transform player) => playerTransform = player;
 
     [Header("Room Boundaries")]
     [Tooltip("Encounter room boundaries. Guard stays within this area and disengages if player leaves the room.")]
-    [SerializeField] private Bounds roomBounds;
+    [SerializeField] private Bounds roomBounds = new Bounds(new Vector3(0f, 2.0f, -10.5f), new Vector3(18f, 6f, 15f));
     public Bounds RoomBounds { get => roomBounds; set => roomBounds = value; }
 
     public bool IsInsideRoom(Vector3 pos)
     {
-        if (roomBounds.size == Vector3.zero) return true;
-        Vector3 min = roomBounds.min;
-        Vector3 max = roomBounds.max;
-        return pos.x >= min.x && pos.x <= max.x && pos.z >= min.z && pos.z <= max.z;
+        // Room 2 bounds (Z: -18.0 to -2.0, X: -9.0 to +9.0)
+        return pos.z >= -17.8f && pos.z <= -2.0f && pos.x >= -9.0f && pos.x <= 9.0f;
+    }
+
+    private void HandleDisturbance(Vector3 disturbancePos)
+    {
+        // Only respond to disturbances inside Room 2
+        if (IsInsideRoom(disturbancePos))
+        {
+            if (currentState == PatrolGuardState.Patrol)
+            {
+                TransitionToInvestigate(disturbancePos);
+            }
+        }
     }
 
     private void UpdatePatrolState()
     {
+        // If player spotted inside Room 2, transition to pursue immediately
         if (canSeePlayer && (playerTransform == null || IsInsideRoom(playerTransform.position)))
         {
             TransitionToPursue();
@@ -206,9 +257,16 @@ public class PatrolGuardAI : MonoBehaviour
         if (isWaiting)
         {
             waitTimer -= Time.deltaTime;
+
+            // Perform inspection scanning (sweep facing direction left & right)
+            float sweepAngle = Mathf.Sin(Time.time * 2.2f) * 35f;
+            Vector3 sweepDir = Quaternion.Euler(0f, sweepAngle, 0f) * transform.forward;
+            enemyMovement.SetAimTarget(transform.position + sweepDir * 4.0f);
+
             if (waitTimer <= 0f)
             {
                 isWaiting = false;
+                enemyMovement.ClearAimTarget();
                 AdvanceWaypoint();
             }
             return;
@@ -217,7 +275,7 @@ public class PatrolGuardAI : MonoBehaviour
         if (enemyMovement.HasReachedDestination(arrivalThreshold))
         {
             isWaiting = true;
-            // Inspection points (odd indices) pause longer (2.0s) for head/body scanning
+            // Inspection points (odd indices) pause 2.0s with scanning
             waitTimer = (currentWaypointIndex % 2 == 1) ? 2.0f : waypointWaitTime;
             enemyMovement.Stop();
             return;
@@ -243,21 +301,16 @@ public class PatrolGuardAI : MonoBehaviour
         if (wp != null)
         {
             Vector3 targetPos = wp.position;
-            NavMeshHit hit;
-            if (NavMesh.SamplePosition(targetPos, out hit, 1.5f, NavMesh.AllAreas))
+            if (NavMesh.SamplePosition(targetPos, out NavMeshHit hit, 2.0f, NavMesh.AllAreas))
             {
-                NavMeshPath path = new NavMeshPath();
-                if (NavMesh.CalculatePath(transform.position, hit.position, NavMesh.AllAreas, path) &&
-                    path.status == NavMeshPathStatus.PathComplete)
-                {
-                    enemyMovement.SetDestination(hit.position);
-                    enemyMovement.Resume();
-                    return;
-                }
+                enemyMovement.SetDestination(hit.position);
+                enemyMovement.Resume();
             }
-
-            enemyMovement.SetDestination(targetPos);
-            enemyMovement.Resume();
+            else
+            {
+                enemyMovement.SetDestination(targetPos);
+                enemyMovement.Resume();
+            }
         }
     }
 
@@ -266,20 +319,23 @@ public class PatrolGuardAI : MonoBehaviour
         currentState = PatrolGuardState.Patrol;
         Debug.Log($"[{gameObject.name}] State -> Patrol");
         isWaiting = false;
+        enemyMovement.ClearAimTarget();
+        if (perceptionMemory != null) perceptionMemory.ResetPerception();
         DispatchCurrentWaypoint();
     }
 
     public void TransitionToPursue()
     {
         currentState = PatrolGuardState.Pursue;
-        Debug.Log($"[{gameObject.name}] State -> Pursue (Intruder detected)");
+        Debug.Log($"[{gameObject.name}] State -> Pursue (Intruder detected in Room 2)");
+        enemyMovement.ClearAimTarget();
         repathTimer = 0f;
         DispatchPursuitDestination();
     }
 
     private void UpdatePursueState()
     {
-        // When sight is lost, or either intruder or guard is outside room boundaries, IMMEDIATELY resume patrol
+        // When sight is lost, or either intruder or guard is outside room boundaries, resume patrol
         if (!canSeePlayer || (playerTransform != null && !IsInsideRoom(playerTransform.position)) || !IsInsideRoom(transform.position))
         {
             TransitionToPatrol();
@@ -301,24 +357,70 @@ public class PatrolGuardAI : MonoBehaviour
         enemyMovement.Resume();
     }
 
+    public void TransitionToInvestigate(Vector3 disturbancePos)
+    {
+        currentState = PatrolGuardState.Investigate;
+        investigatePosition = disturbancePos;
+        investigateTimer = investigateDuration;
+        isInvestigatingArrival = false;
+        Debug.Log($"[{gameObject.name}] State -> Investigate disturbance at {investigatePosition:F1}");
+
+        if (NavMesh.SamplePosition(investigatePosition, out NavMeshHit hit, 2.0f, NavMesh.AllAreas))
+        {
+            enemyMovement.SetDestination(hit.position);
+        }
+        else
+        {
+            enemyMovement.SetDestination(investigatePosition);
+        }
+        enemyMovement.Resume();
+    }
+
+    private void UpdateInvestigateState()
+    {
+        if (canSeePlayer && (playerTransform == null || IsInsideRoom(playerTransform.position)))
+        {
+            TransitionToPursue();
+            return;
+        }
+
+        if (!isInvestigatingArrival)
+        {
+            if (enemyMovement.HasReachedDestination(arrivalThreshold + 0.4f))
+            {
+                isInvestigatingArrival = true;
+                enemyMovement.Stop();
+            }
+        }
+        else
+        {
+            // Scanning disturbance area
+            investigateTimer -= Time.deltaTime;
+            float sweepAngle = Mathf.Sin(Time.time * 2.5f) * 45f;
+            Vector3 sweepDir = Quaternion.Euler(0f, sweepAngle, 0f) * transform.forward;
+            enemyMovement.SetAimTarget(transform.position + sweepDir * 4.0f);
+
+            if (investigateTimer <= 0f)
+            {
+                enemyMovement.ClearAimTarget();
+                TransitionToPatrol();
+            }
+        }
+    }
+
     void OnDrawGizmosSelected()
     {
         Vector3 eyePos = transform.position + Vector3.up * eyeHeight;
-        Gizmos.color = new Color(0.7f, 0.2f, 0.9f); // Violet / Purple
+        Gizmos.color = Color.cyan;
         Gizmos.DrawWireSphere(eyePos, sightDistance);
 
-        if (waypoints != null)
+        if (waypoints == null) return;
+        Gizmos.color = Color.green;
+        for (int i = 0; i < waypoints.Length; i++)
         {
-            Gizmos.color = new Color(0.7f, 0.2f, 0.9f, 0.5f);
-            for (int i = 0; i < waypoints.Length; i++)
+            if (waypoints[i] != null)
             {
-                if (waypoints[i] == null) continue;
                 Gizmos.DrawWireSphere(waypoints[i].position, arrivalThreshold);
-                int next = (i + 1) % waypoints.Length;
-                if (waypoints[next] != null)
-                {
-                    Gizmos.DrawLine(waypoints[i].position, waypoints[next].position);
-                }
             }
         }
     }

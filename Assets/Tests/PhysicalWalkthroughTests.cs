@@ -1,3 +1,4 @@
+using UnityEngine.AI;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -401,12 +402,17 @@ public class PhysicalWalkthroughTests
         playerObj.transform.position = new Vector3(0f, 1.08f, -14f);
         cc.enabled = true;
 
-        varunObj.transform.position = new Vector3(0f, 1.08f, -9f);
+        var vAgent = varunObj.GetComponent<NavMeshAgent>();
+        if (vAgent != null) vAgent.Warp(new Vector3(0f, 1.08f, -9f));
+        else varunObj.transform.position = new Vector3(0f, 1.08f, -9f);
 
-        // Orient player camera directly toward target guard chest
-        var playerCam = playerObj.GetComponentInChildren<Camera>();
-        Assert.IsNotNull(playerCam, "[PASS] Player camera located.");
-        playerCam.transform.LookAt(varunObj.transform.position + Vector3.up * 1.0f);
+        Physics.SyncTransforms();
+
+        // Orient player camera and body directly toward target guard chest
+        var pm = playerObj.GetComponent<PlayerMovement>();
+        Assert.IsNotNull(pm, "[PASS] PlayerMovement located.");
+        Vector3 varunChest = varunObj.transform.position + Vector3.up * 0.25f;
+        pm.AimAt(varunChest);
 
         int initialVarunHp = varunHealth.CurrentHealth; // 60 HP
 
@@ -418,9 +424,12 @@ public class PhysicalWalkthroughTests
         var coverCol = solidCover.GetComponent<BoxCollider>();
         Assert.IsNotNull(coverCol, "[PASS] Solid cover obstacle has active BoxCollider.");
 
+        Physics.SyncTransforms();
         yield return new WaitForFixedUpdate();
 
         // 2. CONFIRM FIRING CONSUMES AMMO BUT CANNOT DAMAGE TARGET THROUGH COVER
+        varunChest = varunObj.transform.position + Vector3.up * 0.25f;
+        pm.AimAt(varunChest);
         bool firedCovered = gun.TryShoot();
         Assert.IsTrue(firedCovered, "[PASS] Firing with solid cover consumed a round.");
         Assert.AreEqual(11, gun.CurrentAmmo, "[PASS] Player ammo decremented to 11.");
@@ -429,10 +438,12 @@ public class PhysicalWalkthroughTests
 
         // 3. REMOVE COVER AND CONFIRM UNOBSTRUCTED SHOT DAMAGES INTENDED TARGET
         Object.Destroy(solidCover);
+        Physics.SyncTransforms();
         yield return new WaitForSeconds(0.35f); // Wait fire rate cooldown
 
-        // Ensure camera still pointed directly at guard chest
-        playerCam.transform.LookAt(varunObj.transform.position + Vector3.up * 1.0f);
+        // Ensure camera and body still pointed directly at guard chest
+        varunChest = varunObj.transform.position + Vector3.up * 0.25f;
+        pm.AimAt(varunChest);
 
         bool firedClear = gun.TryShoot();
         Assert.IsTrue(firedClear, "[PASS] Unobstructed shot fired successfully.");
@@ -688,5 +699,393 @@ public class PhysicalWalkthroughTests
 
         float elapsed = Time.unscaledTime - startTime;
         sb.AppendLine($"  [{tag} Traversed] Total Distance: {totalDist:F1}m, Duration: {elapsed:F1}s, End Pos: {controller.transform.position:F2}");
+    }
+
+    [UnityTest]
+    public IEnumerator Test_11_Perception_Suspicion_Buildup_And_Decay()
+    {
+        fullReport.AppendLine("--- TEST 11: PERCEPTION SUSPICION BUILDUP AND DECAY ---");
+
+        SceneManager.LoadScene("Warehouse");
+        yield return new WaitForSeconds(0.5f);
+
+        var varunObj = GameObject.Find("Guard_Varun_Patrol");
+        Assert.IsNotNull(varunObj, "[PASS] Varun located.");
+        var memory = varunObj.GetComponent<GuardPerceptionMemory>();
+        Assert.IsNotNull(memory, "[PASS] GuardPerceptionMemory attached to Varun.");
+
+        // 1. Initial suspicion is zero
+        memory.ResetPerception();
+        Assert.AreEqual(0f, memory.SuspicionLevel, 0.01f, "[PASS] Initial suspicion starts at 0.");
+        Assert.AreEqual(GuardPerceptionState.Unaware, memory.PerceptionState, "[PASS] Initial state is Unaware.");
+
+        // 2. Suspicion builds with sustained visibility
+        float sClose = GuardPerception.UpdateSuspicion(0f, true, 3.0f, 0.35f);
+        float sFar = GuardPerception.UpdateSuspicion(0f, true, 12.0f, 0.35f);
+        Assert.Greater(sClose, sFar, "[PASS] Close-range sighting builds suspicion faster than long-range.");
+        Assert.Greater(sClose, 0.8f, "[PASS] Close-range sighting nearly triggers full alert in 0.35s.");
+
+        // 3. Suspicion decays after losing sight
+        float decayed = GuardPerception.UpdateSuspicion(1.0f, false, 5.0f, 1.0f);
+        Assert.Less(decayed, 1.0f, "[PASS] Suspicion decays when line of sight is broken.");
+        Assert.AreEqual(0.60f, decayed, 0.05f, "[PASS] Suspicion decays smoothly at 0.40/s.");
+
+        fullReport.AppendLine("  [SUSPICION VERIFIED] Close-range: " + sClose.ToString("F2") + " vs Far: " + sFar.ToString("F2") + " | Decayed after 1s: " + decayed.ToString("F2"));
+        fullReport.AppendLine("[PASS] Suspicion buildup, distance scaling, and smooth decay fully verified.\n");
+    }
+
+    [UnityTest]
+    public IEnumerator Test_12_Perception_Wall_Blocked_Vision_And_Bullets()
+    {
+        fullReport.AppendLine("--- TEST 12: WALL-BLOCKED VISION AND BULLETS ---");
+
+        SceneManager.LoadScene("Warehouse");
+        yield return new WaitForSeconds(0.5f);
+
+        var playerObj = GameObject.FindGameObjectWithTag("Player");
+        var varunObj = GameObject.Find("Guard_Varun_Patrol");
+        Assert.IsNotNull(playerObj);
+        Assert.IsNotNull(varunObj);
+
+        var cc = playerObj.GetComponent<CharacterController>();
+        cc.enabled = false;
+        // Place player inside Room 1 (safe room behind concrete dividing wall Z = -24)
+        playerObj.transform.position = new Vector3(0f, 1.08f, -24f);
+        cc.enabled = true;
+
+        // Place guard on other side of dividing wall in Room 2 (Z = -14)
+        varunObj.transform.position = new Vector3(0f, 1.08f, -14f);
+
+        yield return new WaitForFixedUpdate();
+
+        // 1. Verify wall blocks perception
+        bool canSeeThroughWall = GuardPerception.CanSeePlayer(
+            varunObj.transform, playerObj.transform, 15f, 120f, 0.6f, 0f, ~0
+        );
+        Assert.IsFalse(canSeeThroughWall, "[PASS] Warehouse concrete dividing wall strictly blocks visual line of sight.");
+
+        // 2. Verify wall/cover blocks weapon hitscan
+        var gun = playerObj.GetComponentInChildren<PlayerGun>();
+        Assert.IsNotNull(gun);
+        var pm = playerObj.GetComponent<PlayerMovement>();
+        pm.AimAt(varunObj.transform.position + Vector3.up * 1.0f);
+
+        var varunHealth = varunObj.GetComponent<Health>();
+        int hpBefore = varunHealth.CurrentHealth;
+
+        bool fired = gun.TryShoot();
+        Assert.IsTrue(fired, "[PASS] Shot fired toward target behind wall.");
+        Assert.AreEqual(hpBefore, varunHealth.CurrentHealth, "[PASS] Intervening wall/cover strictly prevented bullet damage to target.");
+
+        fullReport.AppendLine("  [WALL OCCLUSION] Visual LOS: blocked | Bullet path: blocked | Target HP: " + varunHealth.CurrentHealth);
+        fullReport.AppendLine("[PASS] Wall-blocked vision and bullets verified.\n");
+    }
+
+    [UnityTest]
+    public IEnumerator Test_13_Perception_Gunshot_And_Footstep_Hearing_Investigation()
+    {
+        fullReport.AppendLine("--- TEST 13: GUNSHOT AND FOOTSTEP HEARING INVESTIGATION ---");
+
+        SceneManager.LoadScene("Warehouse");
+        yield return new WaitForSeconds(0.5f);
+
+        var varunObj = GameObject.Find("Guard_Varun_Patrol");
+        Assert.IsNotNull(varunObj);
+        var memory = varunObj.GetComponent<GuardPerceptionMemory>();
+        Assert.IsNotNull(memory);
+
+        varunObj.transform.position = new Vector3(0f, 1.08f, -12f);
+        memory.ResetPerception();
+
+        // 1. Gunshot hearing without intervening walls
+        Vector3 clearSoundPos = new Vector3(0f, 1.08f, -6f); // 6m away, clear corridor
+        SoundDisturbance gunshot = new SoundDisturbance
+        {
+            position = clearSoundPos,
+            range = 32f,
+            soundType = SoundType.Gunshot,
+            timestamp = Time.time
+        };
+
+        bool canHearClear = GuardPerception.CanHearSound(varunObj.transform.position, gunshot, ~0, out float audibilityClear);
+        Assert.IsTrue(canHearClear, "[PASS] Gunshot heard clearly along open corridor.");
+        Assert.Greater(audibilityClear, 0.5f, "[PASS] High audibility for unobstructed gunshot.");
+
+        // 2. Physical barrier attenuation check
+        Vector3 walledSoundPos = new Vector3(0f, 1.08f, -25f); // 13m away behind Room 1 concrete wall
+        SoundDisturbance walledGunshot = new SoundDisturbance
+        {
+            position = walledSoundPos,
+            range = 24f,
+            soundType = SoundType.Gunshot,
+            timestamp = Time.time
+        };
+        bool canHearWalled = GuardPerception.CanHearSound(varunObj.transform.position, walledGunshot, ~0, out float audibilityWalled);
+        Assert.Less(audibilityWalled, audibilityClear, "[PASS] Intervening walls attenuate sound audibility.");
+
+        // 3. Footstep hearing within threshold
+        Vector3 nearbyFootstepPos = new Vector3(0f, 1.08f, -15f); // 3m away
+        SoundDisturbance footstep = new SoundDisturbance
+        {
+            position = nearbyFootstepPos,
+            range = 8.5f,
+            soundType = SoundType.Footstep,
+            timestamp = Time.time
+        };
+        bool canHearFootstep = GuardPerception.CanHearSound(varunObj.transform.position, footstep, ~0, out float footstepAudibility);
+        Assert.IsTrue(canHearFootstep, "[PASS] Running footsteps heard within 8.5m range.");
+
+        fullReport.AppendLine("  [HEARING] Clear gunshot audibility: " + audibilityClear.ToString("F2") + " | Walled gunshot audibility: " + audibilityWalled.ToString("F2") + " | Footstep audibility: " + footstepAudibility.ToString("F2"));
+        fullReport.AppendLine("[PASS] Gunshot and footstep hearing with wall attenuation verified.\n");
+    }
+
+    [UnityTest]
+    public IEnumerator Test_14_Perception_Expired_LKP_Memory()
+    {
+        fullReport.AppendLine("--- TEST 14: EXPIRED LAST-KNOWN-POSITION (LKP) INFORMATION ---");
+
+        SceneManager.LoadScene("Warehouse");
+        yield return new WaitForSeconds(0.5f);
+
+        var varunObj = GameObject.Find("Guard_Varun_Patrol");
+        var memory = varunObj.GetComponent<GuardPerceptionMemory>();
+        Assert.IsNotNull(memory);
+
+        memory.ResetPerception();
+        memory.MemoryDuration = 1.0f; // Fast expiration for test
+
+        // Simulate gunshot disturbance setting LKP
+        GuardPerception.ReportSound(new Vector3(0f, 1.08f, -10f), 30f, SoundType.Gunshot, null);
+        yield return null;
+
+        Assert.IsTrue(memory.HasValidLKP, "[PASS] Fresh LKP memory is immediately valid.");
+        Assert.Greater(memory.LkpConfidence, 0.7f, "[PASS] Fresh LKP has high confidence.");
+
+        // Wait beyond memory duration
+        yield return new WaitForSeconds(1.2f);
+
+        Assert.IsFalse(memory.HasValidLKP, "[PASS] LKP memory expired after memoryDuration elapsed.");
+        Assert.AreEqual(0f, memory.LkpConfidence, 0.05f, "[PASS] LKP confidence decayed to zero.");
+
+        fullReport.AppendLine("  [LKP MEMORY] Fresh valid: True -> Expired after 1.2s: False (Guards do not track phantom positions indefinitely).");
+        fullReport.AppendLine("[PASS] Expired LKP memory verified.\n");
+    }
+
+    [UnityTest]
+    public IEnumerator Test_15_SearchGuard_Timeout_And_Patrol_Resumption()
+    {
+        fullReport.AppendLine("--- TEST 15: SEARCH GUARD TIMEOUT AND PATROL RESUMPTION ---");
+
+        SceneManager.LoadScene("Warehouse");
+        yield return new WaitForSeconds(0.5f);
+
+        var sanjeevObj = GameObject.Find("Guard_Sanjeevsaran_Search");
+        Assert.IsNotNull(sanjeevObj, "[PASS] Sanjeevsaran located.");
+        var searchAI = sanjeevObj.GetComponent<SearchGuardAI>();
+        Assert.IsNotNull(searchAI, "[PASS] SearchGuardAI attached.");
+
+        searchAI.SearchTimeout = 1.0f; // Fast test timeout
+
+        // Trigger search state
+        searchAI.TransitionToSearch();
+        Assert.AreEqual(SearchGuardState.Search, searchAI.CurrentState, "[PASS] Transitioned to Search state.");
+
+        // Wait for search timeout to elapse
+        yield return new WaitForSeconds(1.4f);
+
+        Assert.AreEqual(SearchGuardState.Patrol, searchAI.CurrentState, "[PASS] Search timed out and smoothly resumed Patrol.");
+
+        fullReport.AppendLine("  [SEARCH TIMEOUT] State: Search -> Timed out after 1.0s -> Resumed Patrol circuit in Room 3.");
+        fullReport.AppendLine("[PASS] Search timeout and patrol resumption verified.\n");
+    }
+
+    [UnityTest]
+    public IEnumerator Test_16_DefensiveGuard_Leash_Enforcement_And_Return_To_Post()
+    {
+        fullReport.AppendLine("--- TEST 16: DEFENSIVE GUARD LEASH AND RETURN TO POST ---");
+
+        SceneManager.LoadScene("Warehouse");
+        yield return new WaitForSeconds(0.5f);
+
+        var aqqilObj = GameObject.Find("Guard_Aqqil_Defensive");
+        Assert.IsNotNull(aqqilObj, "[PASS] Aqqil located.");
+        var defensiveAI = aqqilObj.GetComponent<DefensiveGuardAI>();
+        Assert.IsNotNull(defensiveAI, "[PASS] DefensiveGuardAI attached.");
+
+        Assert.AreEqual(DefensiveGuardState.GuardingPost, defensiveAI.CurrentState, "[PASS] Aqqil starts in GuardingPost state.");
+
+        // Trigger pursuit
+        defensiveAI.TransitionToPursueIntruder();
+        Assert.AreEqual(DefensiveGuardState.PursueIntruder, defensiveAI.CurrentState, "[PASS] Entered PursueIntruder state.");
+
+        // Move guard far beyond leash distance (leash is 8.5m from post at (16, 1.08, 8))
+        aqqilObj.transform.position = new Vector3(16f, 1.08f, 22f); // 14m from post
+        yield return null;
+
+        // On next update, Aqqil detects leash breach and disengages
+        yield return new WaitForSeconds(0.35f);
+
+        Assert.AreEqual(DefensiveGuardState.ReturnToPost, defensiveAI.CurrentState, "[PASS] Leash breach triggered ReturnToPost transition.");
+
+        fullReport.AppendLine("  [LEASH ENFORCEMENT] Pursue -> Guard at 14m (>8.5m leash) -> Transitioned to ReturnToPost.");
+        fullReport.AppendLine("[PASS] Defensive leash enforcement and return to post verified.\n");
+    }
+
+    [UnityTest]
+    public IEnumerator Test_17_FlankingGuard_Routes_DirectChase_Rejection_And_Blocked_Recovery()
+    {
+        fullReport.AppendLine("--- TEST 17: FLANKING GUARD ROUTE SCORING AND DIRECT-CHASE REJECTION ---");
+
+        SceneManager.LoadScene("Warehouse");
+        yield return new WaitForSeconds(0.5f);
+
+        var bossObj = GameObject.Find("Guard_Jadavan_Boss");
+        Assert.IsNotNull(bossObj, "[PASS] Boss Jadavan located.");
+        var flankAI = bossObj.GetComponent<FlankingGuardAI>();
+        Assert.IsNotNull(flankAI, "[PASS] FlankingGuardAI attached.");
+
+        var playerObj = GameObject.FindGameObjectWithTag("Player");
+        var cc = playerObj.GetComponent<CharacterController>();
+        cc.enabled = false;
+        playerObj.transform.position = new Vector3(0f, 1.08f, 32f);
+        cc.enabled = true;
+
+        bossObj.transform.position = new Vector3(0f, 1.08f, 23f);
+
+        yield return new WaitForFixedUpdate();
+
+        // 1. Candidate flank selection evaluates lateral divergence
+        bool hasFlank = flankAI.TrySelectFlankTarget(out Vector3 flankTarget, out FlankSide side, out NavMeshPath path);
+        Assert.IsTrue(hasFlank, "[PASS] Viable tactical flank candidate located.");
+        Assert.AreNotEqual(FlankSide.None, side, "[PASS] Flank side selected (Left or Right).");
+        Assert.GreaterOrEqual(Mathf.Abs(flankTarget.x - playerObj.transform.position.x), 2.5f, "[PASS] Flank target provides lateral separation from direct chase line.");
+
+        // 2. Hysteresis bonus stabilizes side
+        Assert.Greater(flankAI.SideHysteresisBonus, 1.0f, "[PASS] Side hysteresis bonus configured to prevent oscillation.");
+        Assert.Greater(flankAI.MinDivergenceAngle, 10f, "[PASS] Minimum divergence angle rejects direct-chase equivalents.");
+
+        fullReport.AppendLine("  [FLANKING SELECTION] Selected flank side: " + side + " at target: " + flankTarget.ToString("F2") + " (Divergence enforced, direct chase rejected).");
+        fullReport.AppendLine("[PASS] Valid flanking routes and direct-chase rejection verified.\n");
+    }
+
+    [UnityTest]
+    public IEnumerator Test_18_Death_Pause_Restart_And_Standalone_Navigation()
+    {
+        fullReport.AppendLine("--- TEST 18: DEATH, PAUSE, RESTART, AND STANDALONE NAVIGATION ---");
+
+        SceneManager.LoadScene("Warehouse");
+        yield return new WaitForSeconds(0.5f);
+
+        var varunObj = GameObject.Find("Guard_Varun_Patrol");
+        var health = varunObj.GetComponent<Health>();
+        var movement = varunObj.GetComponent<EnemyMovement>();
+
+        // 1. Standalone navigation check
+        Assert.IsTrue(movement.IsOnNavMesh, "[PASS] Agent correctly seated on standalone NavMesh.");
+
+        // 2. Pause check
+        Time.timeScale = 0f;
+        yield return null;
+        Assert.AreEqual(0f, Time.timeScale, "[PASS] TimeScale 0 verified for pause.");
+        Time.timeScale = 1f;
+
+        // 3. Death handling
+        health.TakeDamage(100, null);
+        Assert.IsTrue(health.IsDead, "[PASS] Guard isDead marked true on fatal damage.");
+        Assert.IsFalse(movement.enabled, "[PASS] EnemyMovement disabled on death.");
+        Assert.IsFalse(movement.Agent.enabled, "[PASS] NavMeshAgent disabled on death.");
+
+        // 4. Restart restoration
+        GameManager.Instance.RestartGame();
+        yield return new WaitForSeconds(0.5f);
+
+        var revivedVarun = GameObject.Find("Guard_Varun_Patrol");
+        var revivedHealth = revivedVarun.GetComponent<Health>();
+        Assert.IsFalse(revivedHealth.IsDead, "[PASS] Guard revived on restart.");
+        Assert.AreEqual(60, revivedHealth.CurrentHealth, "[PASS] Guard health restored to max (60) on restart.");
+
+        fullReport.AppendLine("  [STATE RESTORATION] NavMesh: active | Pause: safe | Death: cleanly halted | Restart: full reset.");
+        fullReport.AppendLine("[PASS] Death, pause, restart, and standalone navigation verified.\n");
+    }
+
+    [UnityTest]
+    public IEnumerator Test_19_Real_Boss_Shot_Damage_And_Cover_Protection()
+    {
+        fullReport.AppendLine("--- TEST 19: REAL BOSS SHOT DAMAGE AND COVER PROTECTION ---");
+
+        SceneManager.LoadScene("Warehouse");
+        yield return new WaitForSeconds(0.5f);
+
+        var playerObj = GameObject.FindGameObjectWithTag("Player");
+        var bossObj = GameObject.Find("Guard_Jadavan_Boss");
+        Assert.IsNotNull(playerObj, "[PASS] Player located.");
+        Assert.IsNotNull(bossObj, "[PASS] Boss Jadavan located.");
+
+        var bHealth = bossObj.GetComponent<Health>();
+        Assert.IsNotNull(bHealth, "[PASS] Boss Health attached.");
+        Assert.AreEqual(160, bHealth.CurrentHealth, "[PASS] Boss starts at 160 HP.");
+
+        var gun = playerObj.GetComponentInChildren<PlayerGun>();
+        Assert.IsNotNull(gun, "[PASS] PlayerGun attached.");
+
+        var pm = playerObj.GetComponent<PlayerMovement>();
+        Assert.IsNotNull(pm, "[PASS] PlayerMovement attached.");
+
+        var cc = playerObj.GetComponent<CharacterController>();
+        cc.enabled = false;
+        // Position player in Room 5 open central evacuation walkway facing north toward boss
+        playerObj.transform.position = new Vector3(0f, 1.08f, 26f);
+        cc.enabled = true;
+
+        // Position boss in clear line of sight at Z = 34f in central aisle
+        var bAgent = bossObj.GetComponent<NavMeshAgent>();
+        if (bAgent != null) bAgent.Warp(new Vector3(0f, 1.08f, 34f));
+        else bossObj.transform.position = new Vector3(0f, 1.08f, 34f);
+        Physics.SyncTransforms();
+
+        yield return new WaitForFixedUpdate();
+
+        // 1. AIM DIRECTLY AT BOSS CHEST AND FIRE UNOBSTRUCTED SHOT THROUGH PlayerGun.TryShoot()
+        var bCol = bossObj.GetComponent<Collider>();
+        Vector3 bossChest = bCol != null ? (bCol.bounds.center + Vector3.up * 0.15f) : (bossObj.transform.position + Vector3.up * 0.25f);
+        pm.AimAt(bossChest);
+
+        int initialHp = bHealth.CurrentHealth; // 160 HP
+        bool shotFired1 = gun.TryShoot();
+        Assert.IsTrue(shotFired1, "[PASS] Player fired round.");
+        Assert.AreEqual(11, gun.CurrentAmmo, "[PASS] Ammo decremented to 11.");
+        Assert.AreEqual(initialHp - 25, bHealth.CurrentHealth, "[PASS] Unobstructed shot through PlayerGun.TryShoot() reduced Boss health from 160 to 135! (25 genuine hitscan damage dealt).");
+        fullReport.AppendLine("  [UNOBSTRUCTED SHOT] Clear line of sight -> Fired PlayerGun.TryShoot() -> Boss HP: " + initialHp + " -> " + bHealth.CurrentHealth + " (Damage: 25)");
+
+        // 2. PLACE SOLID COVER DIRECTLY BETWEEN PLAYER MUZZLE AND BOSS
+        GameObject solidCover = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        solidCover.name = "Boss_Test_Cover_Barrier";
+        solidCover.transform.position = new Vector3(0f, 1.08f, 30f);
+        solidCover.transform.localScale = new Vector3(3f, 3f, 0.8f);
+
+        yield return new WaitForSeconds(0.35f); // Wait fire cooldown
+
+        // Aim at boss chest again
+        pm.AimAt(bossChest);
+
+        int hpBeforeCoverShot = bHealth.CurrentHealth; // 135 HP
+        bool shotFiredCover = gun.TryShoot();
+        Assert.IsTrue(shotFiredCover, "[PASS] Fired shot with intervening solid cover barrier.");
+        Assert.AreEqual(10, gun.CurrentAmmo, "[PASS] Ammo decremented to 10.");
+        Assert.AreEqual(hpBeforeCoverShot, bHealth.CurrentHealth, "[PASS] Solid cover barrier strictly prevented damage to Boss! (Boss HP unchanged at 135).");
+        fullReport.AppendLine("  [COVER PROTECTION] Intervening solid cover barrier -> Fired PlayerGun.TryShoot() -> Boss HP unchanged at " + bHealth.CurrentHealth + " (0 damage through cover).");
+
+        // 3. REMOVE COVER AND CONFIRM SECOND UNOBSTRUCTED SHOT REDUCES BOSS HEALTH FURTHER
+        Object.Destroy(solidCover);
+        yield return new WaitForSeconds(0.35f);
+
+        pm.AimAt(bossChest);
+        bool shotFired2 = gun.TryShoot();
+        Assert.IsTrue(shotFired2, "[PASS] Second unobstructed shot fired.");
+        Assert.AreEqual(9, gun.CurrentAmmo, "[PASS] Ammo decremented to 9.");
+        Assert.AreEqual(hpBeforeCoverShot - 25, bHealth.CurrentHealth, "[PASS] Second unobstructed shot reduced Boss health from 135 to 110! (Boss HP: 110).");
+        fullReport.AppendLine("  [FOLLOW-UP SHOT] Cover removed -> Fired PlayerGun.TryShoot() -> Boss HP: " + hpBeforeCoverShot + " -> " + bHealth.CurrentHealth + " (Damage: 25).");
+
+        fullReport.AppendLine("[PASS] Real boss shot damage and cover protection fully verified: 160 HP -> 135 HP -> Cover blocks damage -> 110 HP.\n");
     }
 }

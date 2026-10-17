@@ -228,10 +228,10 @@ public class CombatWalkthroughProfiler : MonoBehaviour
                     float dist = Vector3.Distance(player.transform.position, sanjeevObj.transform.position);
                     if (dist < 18f)
                     {
-                        var playerCam = player.GetComponentInChildren<Camera>();
-                        Vector3 targetAim = sanjeevObj.transform.position + Vector3.up * 1.3f;
-                        player.transform.LookAt(new Vector3(sanjeevObj.transform.position.x, player.transform.position.y, sanjeevObj.transform.position.z));
-                        if (playerCam != null) playerCam.transform.LookAt(targetAim);
+                        var pmSan = player.GetComponent<PlayerMovement>();
+                        var sCol = sanjeevObj.GetComponent<Collider>();
+                        Vector3 targetAim = sCol != null ? (sCol.bounds.center + Vector3.up * 0.15f) : (sanjeevObj.transform.position + Vector3.up * 0.25f);
+                        if (pmSan != null) pmSan.AimAt(targetAim);
                         for (int s = 0; s < 3; s++)
                         {
                             gun.TryShoot();
@@ -253,24 +253,23 @@ public class CombatWalkthroughProfiler : MonoBehaviour
                 int pHealthStart = pHealth != null ? pHealth.CurrentHealth : 0;
                 int bHealthStart = bHealth != null ? bHealth.CurrentHealth : 0;
 
-                if (bossObj != null && player != null)
+                var pm = player != null ? player.GetComponent<PlayerMovement>() : null;
+                if (bossObj != null && pm != null)
                 {
-                    Vector3 bossChest = bossObj.transform.position + Vector3.up * 1.4f;
-                    player.transform.LookAt(new Vector3(bossObj.transform.position.x, player.transform.position.y, bossObj.transform.position.z));
-                    if (playerCam != null)
-                    {
-                        playerCam.transform.LookAt(bossChest);
-                    }
+                    var bCol = bossObj.GetComponent<Collider>();
+                    Vector3 bossChest = bCol != null ? (bCol.bounds.center + Vector3.up * 0.15f) : (bossObj.transform.position + Vector3.up * 0.25f);
+                    pm.AimAt(bossChest);
                 }
 
                 // Exchange genuine combat shots
                 for (int s = 0; s < 4; s++)
                 {
                     // Re-align camera crosshair to boss center-mass before each shot
-                    if (bossObj != null && playerCam != null)
+                    if (bossObj != null && pm != null)
                     {
-                        Vector3 bossChest = bossObj.transform.position + Vector3.up * 1.4f;
-                        playerCam.transform.LookAt(bossChest);
+                        var bCol = bossObj.GetComponent<Collider>();
+                        Vector3 bossChest = bCol != null ? (bCol.bounds.center + Vector3.up * 0.15f) : (bossObj.transform.position + Vector3.up * 0.25f);
+                        pm.AimAt(bossChest);
                     }
 
                     // Genuine weapon firing: crosshair raycast, cover validation, ammo consumption, recoil, muzzle flash

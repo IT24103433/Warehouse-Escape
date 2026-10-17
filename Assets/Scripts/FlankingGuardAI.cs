@@ -156,6 +156,10 @@ public class FlankingGuardAI : MonoBehaviour
     private float pathGraceTimer = 0f;
     private bool isInvestigating = false;
     private bool hasLoggedUnreachableWarning = false;
+    private GuardPerceptionMemory perceptionMemory;
+    private bool isTacticalFiringPause = false;
+    private float tacticalFiringTimer = 0f;
+    [SerializeField] private float tacticalFiringDuration = 0.9f;
 
     private Vector3 lastPlannedPlayerPosition;
     private Vector3 lastPlannedPlayerForward;
@@ -221,6 +225,12 @@ public class FlankingGuardAI : MonoBehaviour
         if (GetComponent<EnemyHealthBar>() == null)
         {
             gameObject.AddComponent<EnemyHealthBar>();
+        }
+
+        perceptionMemory = GetComponent<GuardPerceptionMemory>();
+        if (perceptionMemory == null)
+        {
+            perceptionMemory = gameObject.AddComponent<GuardPerceptionMemory>();
         }
 
         HumanoidMeshBuilder.EnsureRuntimeVisuals(transform, CharacterRole.Boss_Jadavan);
@@ -342,6 +352,8 @@ public class FlankingGuardAI : MonoBehaviour
     public void TransitionToFlank(Vector3 targetPos, FlankSide side, NavMeshPath path)
     {
         currentState = GuardState.Flank;
+        isTacticalFiringPause = false;
+        if (enemyMovement != null) enemyMovement.ClearAimTarget();
         Debug.Log($"[{gameObject.name}] State -> Flank (Tactical approach: {side})");
         currentFlankSide = side;
         selectedFlankPosition = targetPos;
@@ -397,9 +409,40 @@ public class FlankingGuardAI : MonoBehaviour
             return;
         }
 
-        // Handle arrival at current flank position: update to subsequent flank waypoint or close in
+        // Handle arrival at current flank position: alternate firing from cover with repositioning
         if (enemyMovement.HasReachedDestination(flankArrivalThreshold))
         {
+            if (!isTacticalFiringPause)
+            {
+                // Enter tactical firing pause at flank position
+                isTacticalFiringPause = true;
+                tacticalFiringTimer = tacticalFiringDuration;
+                enemyMovement.Stop();
+                if (playerTransform != null)
+                {
+                    enemyMovement.SetAimTarget(playerTransform.position + Vector3.up * 1.0f);
+                }
+                return;
+            }
+            else
+            {
+                // Countdown firing window while aiming
+                tacticalFiringTimer -= Time.deltaTime;
+                if (playerTransform != null)
+                {
+                    enemyMovement.SetAimTarget(playerTransform.position + Vector3.up * 1.0f);
+                }
+
+                if (tacticalFiringTimer > 0f)
+                {
+                    return; // Hold position and fire burst
+                }
+
+                // Firing window complete: resume tactical repositioning to new flank angle!
+                isTacticalFiringPause = false;
+                enemyMovement.ClearAimTarget();
+            }
+
             if (distToPlayer > minFlankPlayerDistance && TrySelectFlankTarget(out Vector3 nextTarget, out FlankSide nextSide, out NavMeshPath nextPath))
             {
                 selectedFlankPosition = nextTarget;
@@ -877,6 +920,9 @@ public class FlankingGuardAI : MonoBehaviour
     public void TransitionToPatrol()
     {
         currentState = GuardState.Patrol;
+        isTacticalFiringPause = false;
+        if (enemyMovement != null) enemyMovement.ClearAimTarget();
+        if (perceptionMemory != null) perceptionMemory.ResetPerception();
         Debug.Log($"[{gameObject.name}] State -> Patrol");
         currentFlankSide = FlankSide.None;
         activeFlankPath = null;

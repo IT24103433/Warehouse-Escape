@@ -206,41 +206,87 @@ public class PlayerGun : MonoBehaviour
     /// <summary>
     /// Executes hitscan from camera crosshair, then validates muzzle-to-impact path
     /// so shots cannot pass through nearby cover or geometry when hugging a wall.
+    /// Excludes the player's own colliders from blocking shots.
+    /// Diagnoses aiming, hit colliders, muzzle obstruction, layers, and damage routing.
     /// </summary>
     private void ExecuteHitscanShot()
     {
         if (playerCamera == null) return;
 
-        // 1. Crosshair ray from camera center
+        // Broadcast gunshot audio disturbance to guard perception
+        GuardPerception.ReportSound(transform.position, 32f, SoundType.Gunshot, gameObject);
+
+        // 1. Crosshair ray from camera center (ignoring player's own colliders)
         Ray crosshairRay = new Ray(playerCamera.transform.position, playerCamera.transform.forward);
-        Vector3 intendedTarget;
-        RaycastHit camHit;
+        bool hasCamHit = RaycastNonPlayer(crosshairRay, maxRange, out RaycastHit camHit);
 
-        if (Physics.Raycast(crosshairRay, out camHit, maxRange, shootableLayers, QueryTriggerInteraction.Ignore))
-        {
-            intendedTarget = camHit.point;
-        }
-        else
-        {
-            intendedTarget = crosshairRay.GetPoint(maxRange);
-        }
+        Vector3 intendedTarget = hasCamHit ? camHit.point : crosshairRay.GetPoint(maxRange);
 
-        // 2. Muzzle-to-impact path validation
+        // 2. Muzzle-to-impact path validation (ignoring player's own colliders)
         Vector3 muzzlePos = muzzlePoint != null ? muzzlePoint.position : playerCamera.transform.position;
         Vector3 toTarget = intendedTarget - muzzlePos;
         float totalDist = toTarget.magnitude;
 
-        RaycastHit actualHit;
-        bool hasHit = Physics.Raycast(muzzlePos, toTarget.normalized, out actualHit, totalDist + 0.1f, shootableLayers, QueryTriggerInteraction.Ignore);
+        if (totalDist < 0.05f) return;
 
-        if (hasHit)
+        bool hasMuzzleHit = RaycastNonPlayer(new Ray(muzzlePos, toTarget.normalized), totalDist + 0.15f, out RaycastHit muzzleHit);
+
+        // Analyze path and cover obstruction
+        if (hasMuzzleHit && hasCamHit)
         {
-            ProcessHit(actualHit);
+            var camHealth = camHit.collider.GetComponentInParent<Health>();
+            var muzzleHealth = muzzleHit.collider.GetComponentInParent<Health>();
+
+            // If muzzle hit an obstacle significantly before the intended target
+            // and the obstacle is not part of the same entity:
+            if (muzzleHit.distance < totalDist - 0.25f && (muzzleHealth == null || muzzleHealth.IsPlayer))
+            {
+                // Muzzle path is blocked by intervening cover/geometry
+                Debug.Log($"[PlayerGun] Shot BLOCKED by cover/obstacle: '{muzzleHit.collider.gameObject.name}' at {muzzleHit.point:F2} (Hit distance: {muzzleHit.distance:F1}m, Target distance: {totalDist:F1}m). Cover occlusion verified.");
+                SpawnImpactEffect(muzzleHit.point, muzzleHit.normal);
+                return;
+            }
+
+            // Muzzle path reached the intended target
+            ProcessHit(muzzleHit);
         }
-        else if (camHit.collider != null)
+        else if (hasMuzzleHit)
+        {
+            ProcessHit(muzzleHit);
+        }
+        else if (hasCamHit)
         {
             ProcessHit(camHit);
         }
+        else
+        {
+            Debug.Log($"[PlayerGun] Shot MISSED - crosshair ray did not intersect any collider within {maxRange:F1}m.");
+        }
+    }
+
+    private bool RaycastNonPlayer(Ray ray, float maxDist, out RaycastHit closestValidHit)
+    {
+        closestValidHit = default;
+        RaycastHit[] hits = Physics.RaycastAll(ray, maxDist, shootableLayers, QueryTriggerInteraction.Ignore);
+        if (hits == null || hits.Length == 0) return false;
+
+        System.Array.Sort(hits, (a, b) => a.distance.CompareTo(b.distance));
+
+        Transform playerRoot = transform.root;
+        for (int i = 0; i < hits.Length; i++)
+        {
+            var h = hits[i];
+            if (h.collider == null) continue;
+            // Ignore player root, character controller, and weapon visuals
+            if (h.transform == playerRoot || h.transform.IsChildOf(playerRoot)) continue;
+            var hp = h.collider.GetComponentInParent<Health>();
+            if (hp != null && hp.IsPlayer) continue;
+
+            closestValidHit = h;
+            return true;
+        }
+
+        return false;
     }
 
     private void ProcessHit(RaycastHit hit)
@@ -251,14 +297,15 @@ public class PlayerGun : MonoBehaviour
         {
             health.TakeDamage(damage, gameObject);
             PlaySound(hitConfirmClip, 0.9f);
-            Debug.Log($"[PlayerGun] HIT guard '{health.gameObject.name}' for {damage} damage! Remaining HP: {health.CurrentHealth}");
+            Debug.Log($"[PlayerGun] HIT guard '{health.gameObject.name}' ({health.CharacterName}) for {damage} damage! Remaining HP: {health.CurrentHealth}");
 
             // Notify HUD hit marker pulse
             PlayerHUD.TriggerHitMarker();
         }
         else
         {
-            // Environment impact
+            // Environment / cover impact
+            Debug.Log($"[PlayerGun] Shot hit environment/cover: '{hit.collider.gameObject.name}' at {hit.point:F2} (distance {hit.distance:F1}m).");
             SpawnImpactEffect(hit.point, hit.normal);
         }
     }

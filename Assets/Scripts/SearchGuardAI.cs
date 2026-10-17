@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -14,9 +15,10 @@ public enum SearchGuardState
 
 /// <summary>
 /// Sanjeevsaran's Search Guard AI.
-/// Focuses on systematic patrol, active pursuit, and extended investigation of the player's last seen position.
-/// When line of sight is broken, investigates the last confirmed coordinates, spends a configurable search timeout
-/// inspecting the area, and resumes its patrol circuit only after the timeout elapses.
+/// Focuses on systematic patrol, active pursuit, and systematic multi-point investigation around the Last Known Position.
+/// When line of sight is broken, systematically inspects several reachable candidate locations around the last known position,
+/// spends a configurable search timeout inspecting the area, and abandons the search after the timeout elapses.
+/// Stays strictly inside Room 3 (Search & Card A).
 /// </summary>
 [RequireComponent(typeof(EnemyMovement))]
 public class SearchGuardAI : MonoBehaviour
@@ -62,31 +64,34 @@ public class SearchGuardAI : MonoBehaviour
     [SerializeField] private float repathInterval = 0.25f;
 
     [Tooltip("Duration in seconds to search at the last seen position before giving up.")]
-    [SerializeField] private float searchTimeout = 3.0f;
+    [SerializeField] private float searchTimeout = 3.5f;
 
     [Tooltip("Arrival distance threshold for investigating last seen position.")]
     [SerializeField] private float searchArrivalThreshold = 1.0f;
 
     private EnemyMovement enemyMovement;
+    private GuardPerceptionMemory perceptionMemory;
     private Transform playerTransform;
 
     private int currentWaypointIndex = 0;
     private float waitTimer = 0f;
     private bool isWaitingAtWaypoint = false;
+
     private float repathTimer = 0f;
     private float searchTimer = 0f;
-    private bool isInvestigating = false;
+
+    // Systematic multi-location search inspection points
+    private List<Vector3> searchCandidates = new List<Vector3>();
+    private int currentSearchCandidateIndex = 0;
+    private float candidateInspectTimer = 0f;
+    private bool isWaitingAtCandidate = false;
 
     public SearchGuardState CurrentState => currentState;
     public bool CanSeePlayer => canSeePlayer;
     public Vector3 LastSeenPosition => lastSeenPosition;
     public Transform[] PatrolWaypoints { get => patrolWaypoints; set => patrolWaypoints = value; }
     public float SearchTimeout { get => searchTimeout; set => searchTimeout = value; }
-    public void SetSearchTimeout(float timeout)
-    {
-        searchTimeout = timeout;
-        if (currentState == SearchGuardState.Search && searchTimer > timeout) searchTimer = timeout;
-    }
+    public void SetSearchTimeout(float timeout) => searchTimeout = timeout;
 
     void Awake()
     {
@@ -108,7 +113,13 @@ public class SearchGuardAI : MonoBehaviour
         if (shooting == null)
         {
             shooting = gameObject.AddComponent<GuardShooting>();
-            shooting.ConfigureRole(GuardShooting.WeaponType.Rifle, 10, 1.4f, 14f, 2, 3.0f);
+            shooting.ConfigureRole(GuardShooting.WeaponType.Pistol, 12, 1.1f, 12f, 1, 3.5f);
+        }
+
+        perceptionMemory = GetComponent<GuardPerceptionMemory>();
+        if (perceptionMemory == null)
+        {
+            perceptionMemory = gameObject.AddComponent<GuardPerceptionMemory>();
         }
 
         if (GetComponent<EnemyHealthBar>() == null)
@@ -119,15 +130,14 @@ public class SearchGuardAI : MonoBehaviour
         HumanoidMeshBuilder.EnsureRuntimeVisuals(transform, CharacterRole.Search_Sanjeevsaran);
     }
 
-    private static readonly Vector3[] SearchSectorInspectionRoute = new Vector3[]
+    private static readonly Vector3[] SearchRoomNaturalCircuit = new Vector3[]
     {
-        new Vector3(-10.0f, 1.08f,  2.0f), // South entrance arrival
-        new Vector3( -8.5f, 1.08f,  6.5f), // East aisle inspection (checks corridor)
-        new Vector3( -8.5f, 1.08f, 11.5f), // Northeast corridor junction
-        new Vector3(-13.5f, 1.08f, 12.0f), // North aisle inspection (scans storage rows)
-        new Vector3(-15.5f, 1.08f,  7.0f), // West center crossing
-        new Vector3(-18.5f, 1.08f,  2.5f), // Southwest inspection nook
-        new Vector3(-18.5f, 1.08f,  7.5f)  // West aisle
+        new Vector3(-10.0f, 1.08f,  2.0f), // South main aisle entry
+        new Vector3(-19.5f, 1.08f,  2.5f), // Southwest pallet stack inspection
+        new Vector3(-20.5f, 1.08f, 10.0f), // Card A desk security approach
+        new Vector3(-15.0f, 1.08f, 14.5f), // North rack alcove crossing
+        new Vector3(-10.0f, 1.08f, 13.0f), // East central passage
+        new Vector3(-10.0f, 1.08f,  6.5f)  // Southeast aisle return
     };
 
     private void EnsureNaturalRoute()
@@ -136,9 +146,9 @@ public class SearchGuardAI : MonoBehaviour
         {
             var wpParent = GameObject.Find("Waypoints_Sanjeevsaran");
             if (wpParent == null) wpParent = new GameObject("Waypoints_Sanjeevsaran");
-            var list = new System.Collections.Generic.List<Transform>();
+            var list = new List<Transform>();
 
-            for (int i = 0; i < SearchSectorInspectionRoute.Length; i++)
+            for (int i = 0; i < SearchRoomNaturalCircuit.Length; i++)
             {
                 string wpName = $"WP_Sanjeev_Natural_{i + 1}";
                 Transform existing = wpParent.transform.Find(wpName);
@@ -146,16 +156,32 @@ public class SearchGuardAI : MonoBehaviour
                 {
                     GameObject go = new GameObject(wpName);
                     go.transform.SetParent(wpParent.transform);
-                    go.transform.position = SearchSectorInspectionRoute[i];
+                    go.transform.position = SearchRoomNaturalCircuit[i];
                     existing = go.transform;
                 }
                 else
                 {
-                    existing.position = SearchSectorInspectionRoute[i];
+                    existing.position = SearchRoomNaturalCircuit[i];
                 }
                 list.Add(existing);
             }
             patrolWaypoints = list.ToArray();
+        }
+    }
+
+    void OnEnable()
+    {
+        if (perceptionMemory != null)
+        {
+            perceptionMemory.OnDisturbanceDetected += HandleDisturbance;
+        }
+    }
+
+    void OnDisable()
+    {
+        if (perceptionMemory != null)
+        {
+            perceptionMemory.OnDisturbanceDetected -= HandleDisturbance;
         }
     }
 
@@ -168,14 +194,15 @@ public class SearchGuardAI : MonoBehaviour
 
     void Update()
     {
-        if (playerTransform == null) FindPlayerReference();
+        if (playerTransform == null)
+        {
+            FindPlayerReference();
+        }
 
-        // 1. Evaluate perception using shared helper
         canSeePlayer = GuardPerception.CanSeePlayer(
             transform, playerTransform, sightDistance, fieldOfView, eyeHeight, playerTargetHeight, obstacleMask
         );
 
-        // 2. State Machine
         switch (currentState)
         {
             case SearchGuardState.Patrol:
@@ -195,22 +222,35 @@ public class SearchGuardAI : MonoBehaviour
     private void FindPlayerReference()
     {
         var playerObj = GameObject.FindGameObjectWithTag("Player");
-        if (playerObj != null) playerTransform = playerObj.transform;
+        if (playerObj != null)
+        {
+            playerTransform = playerObj.transform;
+        }
     }
 
     public void SetPlayer(Transform player) => playerTransform = player;
 
     [Header("Room Boundaries")]
     [Tooltip("Encounter room boundaries. Guard stays within this area and disengages if player leaves the room.")]
-    [SerializeField] private Bounds roomBounds;
+    [SerializeField] private Bounds roomBounds = new Bounds(new Vector3(-15.5f, 2.0f, 9.5f), new Vector3(15f, 6f, 19f));
     public Bounds RoomBounds { get => roomBounds; set => roomBounds = value; }
 
     public bool IsInsideRoom(Vector3 pos)
     {
-        if (roomBounds.size == Vector3.zero) return true;
-        Vector3 min = roomBounds.min;
-        Vector3 max = roomBounds.max;
-        return pos.x >= min.x && pos.x <= max.x && pos.z >= min.z && pos.z <= max.z;
+        // Room 3 bounds (X: -23.0 to -6.5, Z: -1.0 to 18.5)
+        return pos.x >= -23.5f && pos.x <= -6.0f && pos.z >= -1.5f && pos.z <= 19.0f;
+    }
+
+    private void HandleDisturbance(Vector3 disturbancePos)
+    {
+        if (IsInsideRoom(disturbancePos))
+        {
+            lastSeenPosition = disturbancePos;
+            if (currentState == SearchGuardState.Patrol)
+            {
+                TransitionToSearch();
+            }
+        }
     }
 
     private void UpdatePatrolState()
@@ -222,15 +262,20 @@ public class SearchGuardAI : MonoBehaviour
             return;
         }
 
-        // Patrol waypoint traversal
         if (patrolWaypoints == null || patrolWaypoints.Length == 0) return;
 
         if (isWaitingAtWaypoint)
         {
             waitTimer -= Time.deltaTime;
+            // Scan during pause
+            float sweepAngle = Mathf.Sin(Time.time * 2.0f) * 30f;
+            Vector3 sweepDir = Quaternion.Euler(0f, sweepAngle, 0f) * transform.forward;
+            enemyMovement.SetAimTarget(transform.position + sweepDir * 4.0f);
+
             if (waitTimer <= 0f)
             {
                 isWaitingAtWaypoint = false;
+                enemyMovement.ClearAimTarget();
                 AdvanceWaypoint();
             }
             return;
@@ -239,7 +284,6 @@ public class SearchGuardAI : MonoBehaviour
         if (enemyMovement.HasReachedDestination(waypointArrivalThreshold))
         {
             isWaitingAtWaypoint = true;
-            // Inspection points pause 2.0s with scanning
             waitTimer = (currentWaypointIndex % 2 == 1) ? 2.0f : waypointWaitTime;
             enemyMovement.Stop();
             return;
@@ -265,38 +309,34 @@ public class SearchGuardAI : MonoBehaviour
         if (wp != null)
         {
             Vector3 targetPos = wp.position;
-            NavMeshHit hit;
-            if (NavMesh.SamplePosition(targetPos, out hit, 1.5f, NavMesh.AllAreas))
+            if (NavMesh.SamplePosition(targetPos, out NavMeshHit hit, 2.0f, NavMesh.AllAreas))
             {
-                NavMeshPath path = new NavMeshPath();
-                if (NavMesh.CalculatePath(transform.position, hit.position, NavMesh.AllAreas, path) &&
-                    path.status == NavMeshPathStatus.PathComplete)
-                {
-                    enemyMovement.SetDestination(hit.position);
-                    enemyMovement.Resume();
-                    return;
-                }
+                enemyMovement.SetDestination(hit.position);
+                enemyMovement.Resume();
             }
-
-            enemyMovement.SetDestination(targetPos);
-            enemyMovement.Resume();
+            else
+            {
+                enemyMovement.SetDestination(targetPos);
+                enemyMovement.Resume();
+            }
         }
     }
 
     public void TransitionToPatrol()
     {
         currentState = SearchGuardState.Patrol;
-        Debug.Log($"[{gameObject.name}] State -> Patrol");
-        isInvestigating = false;
+        Debug.Log($"[{gameObject.name}] State -> Patrol (Resuming natural circuit in Room 3)");
         isWaitingAtWaypoint = false;
+        enemyMovement.ClearAimTarget();
+        if (perceptionMemory != null) perceptionMemory.ResetPerception();
         DispatchCurrentWaypoint();
     }
 
     public void TransitionToPursue()
     {
         currentState = SearchGuardState.Pursue;
-        Debug.Log($"[{gameObject.name}] State -> Pursue (Intruder detected)");
-        isInvestigating = false;
+        Debug.Log($"[{gameObject.name}] State -> Pursue (Engaging intruder in Room 3)");
+        enemyMovement.ClearAimTarget();
         repathTimer = 0f;
         DispatchPursuitDestination();
     }
@@ -323,11 +363,8 @@ public class SearchGuardAI : MonoBehaviour
     {
         if (playerTransform == null) return;
         Vector3 target = playerTransform.position;
-        if (roomBounds.size != Vector3.zero)
-        {
-            target.x = Mathf.Clamp(target.x, roomBounds.min.x + 0.5f, roomBounds.max.x - 0.5f);
-            target.z = Mathf.Clamp(target.z, roomBounds.min.z + 0.5f, roomBounds.max.z - 0.5f);
-        }
+        target.x = Mathf.Clamp(target.x, -22.5f, -6.5f);
+        target.z = Mathf.Clamp(target.z, -1.0f, 18.0f);
         enemyMovement.SetDestination(target);
         enemyMovement.Resume();
     }
@@ -335,62 +372,129 @@ public class SearchGuardAI : MonoBehaviour
     public void TransitionToSearch()
     {
         currentState = SearchGuardState.Search;
-        Debug.Log($"[{gameObject.name}] State -> Search (Investigating last seen at {lastSeenPosition})");
+        Debug.Log($"[{gameObject.name}] State -> Search (Systematically inspecting reachable points around last seen: {lastSeenPosition:F1})");
         searchTimer = searchTimeout;
-        isInvestigating = true;
+        if (perceptionMemory != null) perceptionMemory.SetSearchingState();
 
-        Vector3 searchTarget = lastSeenPosition;
-        if (roomBounds.size != Vector3.zero)
-        {
-            searchTarget.x = Mathf.Clamp(searchTarget.x, roomBounds.min.x + 0.5f, roomBounds.max.x - 0.5f);
-            searchTarget.z = Mathf.Clamp(searchTarget.z, roomBounds.min.z + 0.5f, roomBounds.max.z - 0.5f);
-        }
+        GenerateSearchCandidates(lastSeenPosition);
+        currentSearchCandidateIndex = 0;
+        isWaitingAtCandidate = false;
 
-        bool ok = enemyMovement.SetDestination(searchTarget);
-        if (ok)
-        {
-            enemyMovement.Resume();
-        }
+        DispatchSearchCandidate(currentSearchCandidateIndex);
+    }
+
+    private void GenerateSearchCandidates(Vector3 center)
+    {
+        searchCandidates.Clear();
+
+        // 1. Primary LKP
+        Vector3 c0 = center;
+        c0.x = Mathf.Clamp(c0.x, -22.5f, -6.5f);
+        c0.z = Mathf.Clamp(c0.z, -1.0f, 18.0f);
+        if (NavMesh.SamplePosition(c0, out NavMeshHit h0, 2.5f, NavMesh.AllAreas))
+            searchCandidates.Add(h0.position);
         else
+            searchCandidates.Add(c0);
+
+        // 2. Flank search points around LKP (offset left and right by 3.5m)
+        Vector3[] offsets = new Vector3[]
         {
-            enemyMovement.Stop();
-            isInvestigating = false;
+            new Vector3(-3.5f, 0f, 1.5f),
+            new Vector3( 3.5f, 0f, 1.5f),
+            new Vector3( 0.0f, 0f, -3.0f)
+        };
+
+        foreach (var off in offsets)
+        {
+            Vector3 raw = center + off;
+            raw.x = Mathf.Clamp(raw.x, -22.5f, -6.5f);
+            raw.z = Mathf.Clamp(raw.z, -1.0f, 18.0f);
+
+            if (NavMesh.SamplePosition(raw, out NavMeshHit hit, 3.0f, NavMesh.AllAreas))
+            {
+                NavMeshPath path = new NavMeshPath();
+                if (NavMesh.CalculatePath(transform.position, hit.position, NavMesh.AllAreas, path) &&
+                    path.status == NavMeshPathStatus.PathComplete)
+                {
+                    searchCandidates.Add(hit.position);
+                }
+            }
         }
+    }
+
+    private void DispatchSearchCandidate(int index)
+    {
+        if (searchCandidates.Count == 0 || index >= searchCandidates.Count)
+        {
+            TransitionToPatrol();
+            return;
+        }
+
+        Vector3 target = searchCandidates[index];
+        enemyMovement.ClearAimTarget();
+        enemyMovement.SetDestination(target);
+        enemyMovement.Resume();
     }
 
     private void UpdateSearchState()
     {
-        // If spotted again, immediately resume pursuit
-        if (canSeePlayer)
+        // Re-acquire line of sight -> immediately resume pursuit
+        if (canSeePlayer && (playerTransform == null || IsInsideRoom(playerTransform.position)))
         {
             lastSeenPosition = playerTransform.position;
             TransitionToPursue();
             return;
         }
 
-        // Check arrival at last seen position
-        if (isInvestigating)
+        // Search timeout check
+        searchTimer -= Time.deltaTime;
+        if (searchTimer <= 0f)
         {
-            if (enemyMovement.HasReachedDestination(searchArrivalThreshold))
-            {
-                enemyMovement.Stop();
-                isInvestigating = false;
-            }
-            else if (!enemyMovement.PathPending && (!enemyMovement.HasPath || enemyMovement.PathStatus == NavMeshPathStatus.PathInvalid))
-            {
-                enemyMovement.Stop();
-                isInvestigating = false;
-            }
+            Debug.Log($"[{gameObject.name}] Search timeout elapsed ({searchTimeout:F1}s). Abandoning search.");
+            TransitionToPatrol();
+            return;
         }
 
-        // Countdown search timeout at last seen position
-        if (!isInvestigating)
+        if (isWaitingAtCandidate)
         {
-            searchTimer -= Time.deltaTime;
-            if (searchTimer <= 0f)
+            candidateInspectTimer -= Time.deltaTime;
+
+            // Inspection sweep
+            float sweepAngle = Mathf.Sin(Time.time * 3f) * 45f;
+            Vector3 sweepDir = Quaternion.Euler(0f, sweepAngle, 0f) * transform.forward;
+            enemyMovement.SetAimTarget(transform.position + sweepDir * 4.0f);
+
+            if (candidateInspectTimer <= 0f)
             {
-                TransitionToPatrol();
+                isWaitingAtCandidate = false;
+                enemyMovement.ClearAimTarget();
+                currentSearchCandidateIndex++;
+
+                if (currentSearchCandidateIndex < searchCandidates.Count)
+                {
+                    DispatchSearchCandidate(currentSearchCandidateIndex);
+                }
+                else
+                {
+                    // Inspected all candidates without finding target
+                    TransitionToPatrol();
+                }
             }
+            return;
+        }
+
+        // Moving to current candidate
+        if (enemyMovement.HasReachedDestination(searchArrivalThreshold))
+        {
+            isWaitingAtCandidate = true;
+            candidateInspectTimer = 0.85f;
+            enemyMovement.Stop();
+        }
+        else if (!enemyMovement.PathPending && (!enemyMovement.HasPath || enemyMovement.PathStatus == NavMeshPathStatus.PathInvalid))
+        {
+            // Path lost/blocked -> advance to next candidate
+            currentSearchCandidateIndex++;
+            DispatchSearchCandidate(currentSearchCandidateIndex);
         }
     }
 
@@ -405,6 +509,12 @@ public class SearchGuardAI : MonoBehaviour
             Gizmos.color = Color.yellow;
             Gizmos.DrawWireSphere(lastSeenPosition, searchArrivalThreshold);
             Gizmos.DrawLine(eyePos, lastSeenPosition);
+
+            Gizmos.color = Color.cyan;
+            foreach (var sc in searchCandidates)
+            {
+                Gizmos.DrawWireSphere(sc, 0.4f);
+            }
         }
     }
 }

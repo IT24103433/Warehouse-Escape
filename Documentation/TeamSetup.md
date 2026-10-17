@@ -434,3 +434,74 @@ All four guard models were elevated with procedural multi-ring lofts and stylize
 * **Test Execution:** All six `PhysicalWalkthroughTests` re-verified in Play Mode with 100% pass rate (`OVERALL PHYSICAL CONTROLLER VERIFICATION: ALL 7 CRITERIA VERIFIED [SUCCESS]`).
 
 
+
+---
+
+## 13. Autonomous Guard Controller, Perception & Memory, and Combat Architecture Pass
+
+This section documents the architectural overhaul of the autonomous guard system, perception memory, radio network, and combat damage pipeline implemented for the joint SE3032 / SE3062 Intelligent Systems project.
+
+### 13.1 Agent Controller & Single Movement Authority (`EnemyMovement.cs`)
+To resolve competing kinematic scripts, jitter, and erratic turning, `EnemyMovement` is established as the sole authority governing agent translation and rotation:
+- **Decoupled Architecture**: High-level state machines (`PatrolGuardAI`, `SearchGuardAI`, `DefensiveGuardAI`, `FlankingGuardAI`) calculate tactical destination points. `EnemyMovement` handles physical path execution, velocity blending, braking, and facing.
+- **Single Authority Rotation**: `NavMeshAgent.updateRotation` is disabled (`false`). Angular orientation is calculated explicitly using `Quaternion.RotateTowards` at a controlled angular rate (`360 deg/s`) towards the agent's velocity vector during locomotion, or towards `aimTarget` when engaging targets.
+- **Smooth Locomotion & Braking**: Slerped velocity acceleration with distance-based braking deceleration within `1.2m` of arrival points eliminates positional overshoot and continuous micro-stepping.
+- **Genuine Lack-of-Progress Detection**: Real-time progress monitoring tracks planar displacement over a `1.5s` window. If the agent has an active destination (`remainingDistance > stoppingDistance`) but planar displacement is `< 0.05m`, genuine blockage is detected.
+- **Bounded NavMesh Recovery**: The controller performs up to `3` bounded retries by querying `NavMesh.SamplePosition` within a `2.5m` radius for valid alternate footholds. If all retries fail, it signals path failure and resets without continuous repathing loops or teleportation.
+- **Lifecycle & Edge Case Resilience**: Safe state preservation during pause (`isPaused`), complete halting on death (`Die()`), dynamic path status validation (`NavMeshPathStatus.PathComplete`), and standalone NavMesh initialization (`NavMeshRuntimeBaker`).
+
+### 13.2 Perception & Spatial Memory Model (`GuardPerception.cs`, `GuardPerceptionMemory.cs`)
+The perception system provides believable sensory awareness without granting omniscient player tracking:
+- **Suspicion Buildup & Decay Curve**: Visibility does not trigger instantaneous combat alert. Suspicion accumulates smoothly at `1.8 / s` during line-of-sight contact, scaling up to `3.5 / s` at point-blank range (`< 4.0m`). When line of sight is broken, suspicion decays at `0.65 / s`. Combat pursuit only triggers when suspicion reaches `1.0`.
+- **Physical Line-of-Sight Occlusion**: Raycasts originating from guard eye nodes strictly test against opaque geometry. Solid warehouse walls, metal crates, and partition panels completely block vision.
+- **Physical Hearing with Barrier Attenuation**:
+  - Gunshot disturbances report sound up to `32m`.
+  - Running footstep disturbances report sound up to `12m`.
+  - Line-of-hearing raycasts detect intervening physical obstacles. Each solid barrier attenuates effective sound audibility by `55%`, preventing unrealistically sharp hearing through thick concrete warehouse walls.
+- **Timestamped LKP Memory & Confidence Expiration**: Guards record `lastKnownPosition` and `soundLocation` alongside timestamps and normalized confidence. Information expires completely after `7.5s` of losing contact. Guards investigate the recorded disturbance point, never tracking the live coordinates of a concealed player.
+- **Depth-Tested Overhead Awareness Indicators**: Guards project overhead status markers (`?` Suspicious, `!` Alerted, `SEARCH`, `RETURN`). To prevent visual wall-hacking (revealing guard positions through walls), indicators perform player-camera line-of-sight raycasts and depth-tested rendering.
+
+### 13.3 Autonomous Guard Role Specialization
+Each guard maintains distinct behavioral characteristics and strictly abides by assigned territorial boundaries:
+1. **Varun (Patrol Guard - Room 2 Storage)**:
+   - Navigates an 8-waypoint circuit across Room 2 aisles.
+   - Pauses at key inspection vantage points to perform sweeping head scans (`+/-45 deg`).
+   - Investigates audible disturbances within Room 2 and returns to patrol once suspicion decays.
+2. **Sanjeevsaran (Search Guard - Room 3 Sector A)**:
+   - Defends Route A corridor and Card A desk.
+   - Upon losing line-of-sight to an intruder, executes a systematic search pattern: generates 4 candidate search points within an `8.0m` radius around the LKP, inspecting each sequentially.
+   - Abandons search after a `10.0s` timeout and resumes standard patrol.
+3. **Aqqil (Defensive Guard - Room 4 Sector B)**:
+   - Stationed at Access Card B pedestal (`16.0, 1.08, 8.0`).
+   - Repositions between 3 localized defensive cover waypoints.
+   - Enforces an `8.5m` pursuit leash. If an intruder flees beyond `8.5m`, pursuit immediately terminates and Aqqil returns to the Card B post.
+4. **Jadavan (Flanking Boss Guard - Room 5 Final Hall)**:
+   - Evaluates lateral left and right flank routes using dynamic scoring.
+   - Enforces a minimum `15 deg` lateral divergence from the direct chase vector, strictly rejecting direct-chase paths.
+   - Applies a `1.5x` hysteresis bonus to the active flank side to eliminate oscillation.
+   - Alternates between 3-round burst fire from cover and rapid repositioning along flank corridors.
+
+### 13.4 Boss Hitscan Combat Diagnosis & Damage Pipeline Resolution
+In earlier benchmarks, player shots failed to damage the boss (health remained static at 160 HP). Diagnostic investigation identified three root causes:
+1. **Collider Center vs Ground Pivot**: Guard `CapsuleCollider` components are centered at `m_Center = (0, 0, 0)` with height `2.0m` relative to `transform.position.y = 1.08m` (collider spans `Y = 0.08m` to `Y = 2.23m`). Aiming logic that targeted `transform.position + Vector3.up * 1.4f` (Y = 2.48m) aimed `0.25m` above the capsule, causing bullets to pass over the head into the north wall (`Exit_Platform_Wall_N`). Target aiming was corrected to `collider.bounds.center + Vector3.up * 0.15f` (Y = 1.23m), squarely aligning with upper torso center mass.
+2. **Cover vs Enemy Classification**: In `PlayerGun.ExecuteHitscanShot`, the muzzle-to-target obstruction check previously verified `(muzzleHealth == null || muzzleHealth != camHealth)`. When a bullet trajectory intersected an enemy guard in front of a distant crosshair point, the enemy was erroneously categorized as an obstacle blocking the shot. Corrected to `(muzzleHealth == null || muzzleHealth.IsPlayer)`, ensuring static cover barriers block bullets while enemy guards receive hitscan damage.
+3. **Player Aim Synchronization**: `PlayerMovement.AimAt` was implemented to synchronously update both character body yaw and camera pitch (`CameraPitch`), preventing automated test inputs from being overwritten by frame-by-frame mouse input smoothing.
+
+### 13.5 Limited Radio Coordination (`GuardRadioManager.cs`)
+- Radio alerts broadcast timestamped intruder coordinates upon positive visual identification.
+- Broadcast cooldown is capped at `10.0s` per guard to prevent continuous alert spam.
+- Receiving guards only investigate radio dispatches if the target coordinates fall within or immediately adjacent to their assigned room boundary, preserving player stealth and evasion opportunities.
+
+### 13.6 Standalone 720p & 1080p Performance Benchmark
+Tested on Windows Standalone (`Builds/WarehouseEscape_Dev/WarehouseEscape.exe`) running on AMD Ryzen 5 5625U with Radeon Graphics (AMD Radeon (TM) Graphics Direct3D11):
+- **720p (1280x720)**:
+  - Overall Average Framerate: **80.7 FPS** (12.4 ms frame time)
+  - 1% Low Framerate: **51.4 FPS**
+  - Maximum Frame-Time Spike: **26.5 ms**
+  - Active Boss Combat Phase: **68.0 FPS** (14.7 ms)
+  - Run Status: Complete (0 Deaths, Boss HP reduced from 160 to 135 via genuine hitscan combat).
+- **1080p (1920x1080)**:
+  - Overall Average Framerate: **50.3 FPS** (19.9 ms frame time)
+  - 1% Low Framerate: **29.3 FPS**
+  - Maximum Frame-Time Spike: **34.5 ms**
+- **Performance Scaling**: 720p delivers a **+60.6%** average FPS increase and keeps 1% low framerate solidly above 50 FPS.

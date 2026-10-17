@@ -68,6 +68,7 @@ public class DefensiveGuardAI : MonoBehaviour
     [SerializeField] private float repathInterval = 0.25f;
 
     private EnemyMovement enemyMovement;
+    private GuardPerceptionMemory perceptionMemory;
     private Transform playerTransform;
     private float repathTimer = 0f;
 
@@ -100,6 +101,12 @@ public class DefensiveGuardAI : MonoBehaviour
         if (GetComponent<EnemyHealthBar>() == null)
         {
             gameObject.AddComponent<EnemyHealthBar>();
+        }
+
+        perceptionMemory = GetComponent<GuardPerceptionMemory>();
+        if (perceptionMemory == null)
+        {
+            perceptionMemory = gameObject.AddComponent<GuardPerceptionMemory>();
         }
 
         CleanupRoom4PlaceholdersAndCapsule();
@@ -342,6 +349,7 @@ public class DefensiveGuardAI : MonoBehaviour
     {
         currentState = DefensiveGuardState.ReturnToPost;
         Debug.Log($"[{gameObject.name}] State -> ReturnToPost (Returning to anchor post at {postPosition})");
+        if (perceptionMemory != null) perceptionMemory.SetReturningState();
         enemyMovement.SetDestination(postPosition);
         enemyMovement.Resume();
     }
@@ -372,6 +380,7 @@ public class DefensiveGuardAI : MonoBehaviour
     {
         currentState = DefensiveGuardState.GuardingPost;
         Debug.Log($"[{gameObject.name}] State -> GuardingPost (Stationed at defense post)");
+        if (perceptionMemory != null) perceptionMemory.ResetPerception();
         enemyMovement.Stop();
     }
 

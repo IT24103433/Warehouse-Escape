@@ -1,13 +1,131 @@
 using System;
 using UnityEngine;
 
+public enum SoundType
+{
+    Gunshot,
+    Footstep
+}
+
+public struct SoundDisturbance
+{
+    public Vector3 position;
+    public float range;
+    public SoundType soundType;
+    public GameObject source;
+    public float timestamp;
+}
+
 /// <summary>
 /// Shared perception utility for all guard AI implementations.
 /// Provides consistent, physically realistic evaluation of sight distance,
-/// horizontal field of view, and obstacle occlusion through warehouse walls and shelves.
+/// horizontal field of view, obstacle occlusion through warehouse walls and shelves,
+/// sound disturbance propagation with obstacle attenuation, and dynamic suspicion mechanics.
 /// </summary>
 public static class GuardPerception
 {
+    public static event Action<SoundDisturbance> OnSoundReported;
+
+    /// <summary>
+    /// Broadcasts an audio disturbance into the environment (gunshot or footsteps).
+    /// Guards listening on this channel evaluate physical reachability and wall attenuation.
+    /// </summary>
+    public static void ReportSound(Vector3 position, float range, SoundType soundType, GameObject source = null)
+    {
+        OnSoundReported?.Invoke(new SoundDisturbance
+        {
+            position = position,
+            range = range,
+            soundType = soundType,
+            source = source,
+            timestamp = Time.time
+        });
+    }
+
+    /// <summary>
+    /// Evaluates whether a listener at listenerPos can hear a sound disturbance,
+    /// applying distance falloff and physical barrier attenuation through walls/shelves.
+    /// </summary>
+    public static bool CanHearSound(
+        Vector3 listenerPos,
+        SoundDisturbance sound,
+        LayerMask obstacleMask,
+        out float effectiveAudibility)
+    {
+        effectiveAudibility = 0f;
+        float dist = Vector3.Distance(listenerPos, sound.position);
+        if (dist > sound.range) return false;
+
+        // Trace line from listener to sound position to detect physical intervening obstacles
+        Vector3 dir = (sound.position - listenerPos);
+        if (dir.sqrMagnitude < 0.01f)
+        {
+            effectiveAudibility = 1.0f;
+            return true;
+        }
+
+        Ray ray = new Ray(listenerPos, dir.normalized);
+        RaycastHit[] hits = Physics.RaycastAll(ray, dist, obstacleMask, QueryTriggerInteraction.Ignore);
+
+        int wallCount = 0;
+        foreach (var h in hits)
+        {
+            if (h.collider != null && !h.collider.isTrigger)
+            {
+                // Count distinct non-agent static obstacles
+                if (sound.source == null || (h.transform != sound.source.transform && !h.transform.IsChildOf(sound.source.transform)))
+                {
+                    wallCount++;
+                }
+            }
+        }
+
+        // Each solid intervening wall reduces effective audible range by 45%
+        float attenuationFactor = Mathf.Pow(0.55f, Mathf.Min(wallCount, 5));
+        float effectiveMaxRange = sound.range * attenuationFactor;
+
+        if (dist <= effectiveMaxRange)
+        {
+            effectiveAudibility = Mathf.Clamp01(1f - (dist / effectiveMaxRange));
+            return true;
+        }
+
+        return false;
+    }
+
+    /// <summary>
+    /// Calculates progressive suspicion buildup or decay based on sustained line of sight,
+    /// distance proximity, and elapsed time.
+    /// </summary>
+    public static float UpdateSuspicion(
+        float currentSuspicion,
+        bool hasLineOfSight,
+        float distanceToPlayer,
+        float deltaTime)
+    {
+        if (hasLineOfSight)
+        {
+            // Close range (< 4m): Rapid alert buildup (~0.35s to full alert)
+            // Mid range (4-10m): Moderate buildup (~0.85s to full alert)
+            // Long range (> 10m): Slow suspicion buildup (~1.8s to full alert)
+            float buildRate = 1.0f;
+            if (distanceToPlayer < 4.0f)
+                buildRate = 3.2f;
+            else if (distanceToPlayer <= 10.0f)
+                buildRate = 1.4f;
+            else
+                buildRate = 0.65f;
+
+            return Mathf.Clamp01(currentSuspicion + buildRate * deltaTime);
+        }
+        else
+        {
+            // Smooth decay over ~2.5s after losing sight
+            float decayRate = 0.40f;
+            return Mathf.Clamp01(currentSuspicion - decayRate * deltaTime);
+        }
+    }
+
     /// <summary>
     /// Evaluates whether the guard has clear line of sight to the player.
     /// Checks sight distance, horizontal field of view angle, and raycast occlusion.

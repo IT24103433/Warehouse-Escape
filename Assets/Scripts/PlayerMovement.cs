@@ -92,4 +92,30 @@ public class PlayerMovement : MonoBehaviour
 
         transform.Rotate(Vector3.up * mouseX);
     }
+
+    /// <summary>
+    /// Explicitly aims the player view toward a target world position.
+    /// Sets root yaw and camera pitch synchronously so programmatic tests and automated benchmarks
+    /// aim with precision without input-smoothing interference.
+    /// </summary>
+    public void AimAt(Vector3 targetWorldPos)
+    {
+        if (playerCamera == null) playerCamera = GetComponentInChildren<Camera>();
+        Vector3 camPos = playerCamera != null ? playerCamera.transform.position : (transform.position + Vector3.up * 1.78f);
+        Vector3 toTarget = targetWorldPos - camPos;
+        if (toTarget.sqrMagnitude < 0.001f) return;
+
+        // Yaw on player root
+        Vector3 horizontalDir = toTarget;
+        horizontalDir.y = 0f;
+        if (horizontalDir.sqrMagnitude > 0.001f)
+        {
+            transform.rotation = Quaternion.LookRotation(horizontalDir.normalized);
+        }
+
+        // Pitch on camera
+        float distH = horizontalDir.magnitude;
+        float pitch = -Mathf.Atan2(toTarget.y, distH) * Mathf.Rad2Deg;
+        CameraPitch = pitch;
+    }
 }

@@ -4,7 +4,12 @@ using UnityEngine;
 /// <summary>
 /// Guard weapon controller attaching guns to hands, aiming at visible targets,
 /// and executing balanced combat shooting with strict line-of-sight and cover occlusion.
-/// Walls, shelving, crates, and safe-room boundaries strictly block shots.
+/// Features:
+/// - Reaction delay and visible aim preparation before opening fire.
+/// - Ammunition tracking, firing cooldowns, and realistic reload pauses.
+/// - Controlled accuracy spread that scales with distance.
+/// - Strict physical muzzle-to-target raycasts; walls, shelving, crates, and safe-room boundaries strictly block shots.
+/// - Broadcasts gunshot sound disturbances for perception.
 /// </summary>
 public class GuardShooting : MonoBehaviour
 {
@@ -24,6 +29,16 @@ public class GuardShooting : MonoBehaviour
     [SerializeField] private float burstInterval = 0.15f;
     [SerializeField] private float accuracySpread = 3.5f;
 
+    [Header("Combat Reaction & Reload Settings")]
+    [Tooltip("Delay in seconds between visually acquiring the target and pulling the trigger (aim preparation).")]
+    [SerializeField] private float reactionDelay = 0.35f;
+
+    [Tooltip("Maximum burst cycles before initiating a tactical reload.")]
+    [SerializeField] private int magazineBursts = 4;
+
+    [Tooltip("Duration in seconds of tactical reload.")]
+    [SerializeField] private float reloadDuration = 1.35f;
+
     [Header("Weapon Prefabs (assign in Inspector for standalone builds)")]
     /// <summary>Assign Tactical_Pistol FBX/Prefab here. Used when weaponType == Pistol.</summary>
     [SerializeField] private GameObject pistolPrefab;
@@ -39,10 +54,17 @@ public class GuardShooting : MonoBehaviour
     private Transform gunTransform;
     private Transform muzzlePoint;
     private Light muzzleLight;
+
     private float lastShotTime = -99f;
     private bool isShootingBurst = false;
+    private bool isReloading = false;
+    private float targetVisibleDuration = 0f;
+    private int burstsRemaining = 4;
 
     private static AudioClip guardGunshotClip;
+
+    public bool IsAiming => targetVisibleDuration > 0.05f;
+    public bool IsReloading => isReloading;
 
     void Awake()
     {
@@ -53,6 +75,7 @@ public class GuardShooting : MonoBehaviour
         audioSource.minDistance = 2f;
         audioSource.maxDistance = 35f;
 
+        burstsRemaining = magazineBursts;
         EnsureGuardAudioClip();
     }
 
@@ -82,8 +105,7 @@ public class GuardShooting : MonoBehaviour
         Transform handR = FindDeepChild(transform, "Hand_R");
         if (handR == null) handR = transform;
 
-        // Resolve weapon model: Inspector prefab slot → Resources folder → procedural fallback.
-        // No AssetDatabase calls — works in both editor and standalone builds.
+        // Resolve weapon model: Inspector prefab slot -> Resources folder -> procedural fallback.
         bool isPistol = (weaponType == WeaponType.Pistol);
         GameObject resolvedPrefab = isPistol ? pistolPrefab : riflePrefab;
         if (resolvedPrefab == null)
@@ -124,7 +146,7 @@ public class GuardShooting : MonoBehaviour
             gunTransform.localScale = (weaponType == WeaponType.BossRifle) ? Vector3.one * 1.15f : Vector3.one * 1.0f;
         }
 
-        // Disable any child colliders on weapon
+        // Disable any child colliders on weapon to prevent self-collision
         foreach (var col in gunGo.GetComponentsInChildren<Collider>())
         {
             col.enabled = false;
@@ -159,21 +181,45 @@ public class GuardShooting : MonoBehaviour
 
         // Safe Room Protection: Never target or shoot into Room 1 (Z < -18.0)
         if (transform.position.z < -18.0f || playerTransform.position.z < -18.0f)
+        {
+            targetVisibleDuration = 0f;
             return;
+        }
 
         // Evaluate target distance
         float distToPlayer = Vector3.Distance(transform.position, playerTransform.position);
-        if (distToPlayer > maxFiringRange) return;
+        if (distToPlayer > maxFiringRange)
+        {
+            targetVisibleDuration = 0f;
+            return;
+        }
 
         // Check unoccluded line of sight
         if (!HasClearLineOfSight(playerTransform.position))
+        {
+            targetVisibleDuration = Mathf.Max(0f, targetVisibleDuration - Time.deltaTime * 2f);
             return;
+        }
 
         // Aim weapon towards visible target
         AimGunAtTarget(playerTransform.position + Vector3.up * 1.0f);
 
+        // Accumulate visible aim preparation time
+        targetVisibleDuration += Time.deltaTime;
+
+        // Must satisfy reaction delay (aim preparation) before opening fire
+        if (targetVisibleDuration < reactionDelay)
+            return;
+
+        // Reload check
+        if (burstsRemaining <= 0 && !isReloading && !isShootingBurst)
+        {
+            StartCoroutine(ReloadRoutine());
+            return;
+        }
+
         // Firing cooldown check
-        if (!isShootingBurst && Time.time - lastShotTime >= fireCooldown)
+        if (!isShootingBurst && !isReloading && Time.time - lastShotTime >= fireCooldown)
         {
             StartCoroutine(FireBurstRoutine());
         }
@@ -186,7 +232,6 @@ public class GuardShooting : MonoBehaviour
             Vector3 toTarget = targetWorldPos - gunTransform.position;
             if (toTarget.sqrMagnitude > 0.1f)
             {
-                // Smoothly orient weapon toward target direction
                 Quaternion targetRot = Quaternion.LookRotation(toTarget.normalized);
                 gunTransform.rotation = Quaternion.Slerp(gunTransform.rotation, targetRot, Time.deltaTime * 12f);
             }
@@ -206,15 +251,17 @@ public class GuardShooting : MonoBehaviour
 
         if (dist < 0.2f) return true;
 
-        RaycastHit hit;
-        if (Physics.Raycast(origin, dir.normalized, out hit, dist, obstacleMask, QueryTriggerInteraction.Ignore))
+        RaycastHit[] hits = Physics.RaycastAll(new Ray(origin, dir.normalized), dist, obstacleMask, QueryTriggerInteraction.Ignore);
+        System.Array.Sort(hits, (a, b) => a.distance.CompareTo(b.distance));
+
+        foreach (var h in hits)
         {
             // Ignore guard's own colliders
-            if (hit.transform == transform || hit.transform.IsChildOf(transform))
-                return true;
+            if (h.transform == transform || h.transform.IsChildOf(transform))
+                continue;
 
-            // Hit target player
-            if (hit.transform == playerTransform || hit.transform.IsChildOf(playerTransform) || hit.transform.CompareTag("Player"))
+            // Hit target player -> clear line of sight
+            if (h.transform == playerTransform || h.transform.IsChildOf(playerTransform) || h.collider.CompareTag("Player"))
                 return true;
 
             // Intersected warehouse geometry (wall, shelf, crate) -> BLOCKED!
@@ -228,6 +275,7 @@ public class GuardShooting : MonoBehaviour
     {
         isShootingBurst = true;
         lastShotTime = Time.time;
+        burstsRemaining--;
 
         for (int i = 0; i < burstCount; i++)
         {
@@ -262,18 +310,33 @@ public class GuardShooting : MonoBehaviour
             0f
         ) * dir;
 
-        RaycastHit hit;
-        if (Physics.Raycast(origin, spreadDir, out hit, maxFiringRange + 5f, obstacleMask, QueryTriggerInteraction.Ignore))
+        // Broadcast gunshot audio disturbance to guard network
+        GuardPerception.ReportSound(origin, 32f, SoundType.Gunshot, gameObject);
+
+        RaycastHit[] hits = Physics.RaycastAll(new Ray(origin, spreadDir), maxFiringRange + 5f, obstacleMask, QueryTriggerInteraction.Ignore);
+        System.Array.Sort(hits, (a, b) => a.distance.CompareTo(b.distance));
+
+        foreach (var h in hits)
         {
-            if (hit.transform == playerTransform || hit.transform.IsChildOf(playerTransform) || hit.transform.CompareTag("Player"))
+            // Ignore guard's own colliders
+            if (h.transform == transform || h.transform.IsChildOf(transform))
+                continue;
+
+            if (h.transform == playerTransform || h.transform.IsChildOf(playerTransform) || h.collider.CompareTag("Player"))
             {
                 var playerHealth = playerTransform.GetComponent<Health>();
                 if (playerHealth != null && !playerHealth.IsDead)
                 {
                     playerHealth.TakeDamage(damagePerShot, gameObject);
-                    Debug.Log($"[GuardShooting] Guard '{gameObject.name}' hit player for {damagePerShot} damage!");
+                    Debug.Log($"[GuardShooting] Guard '{gameObject.name}' hit player for {damagePerShot} damage! (Player HP: {playerHealth.CurrentHealth})");
                 }
             }
+            else
+            {
+                // Shot hit cover
+                Debug.Log($"[GuardShooting] Guard '{gameObject.name}' shot blocked by cover: '{h.collider.gameObject.name}' at distance {h.distance:F1}m.");
+            }
+            break;
         }
 
         // Muzzle flash & sound
@@ -283,6 +346,16 @@ public class GuardShooting : MonoBehaviour
             audioSource.pitch = Random.Range(0.92f, 1.08f);
             audioSource.PlayOneShot(guardGunshotClip, 0.75f);
         }
+    }
+
+    private IEnumerator ReloadRoutine()
+    {
+        isReloading = true;
+        Debug.Log($"[GuardShooting] Guard '{gameObject.name}' tactical reload ({reloadDuration:F1}s)...");
+        yield return new WaitForSeconds(reloadDuration);
+        burstsRemaining = magazineBursts;
+        isReloading = false;
+        Debug.Log($"[GuardShooting] Guard '{gameObject.name}' reloaded! Bursts available: {burstsRemaining}");
     }
 
     private IEnumerator FlashMuzzleLight()
@@ -311,6 +384,8 @@ public class GuardShooting : MonoBehaviour
         maxFiringRange = range;
         burstCount = bursts;
         accuracySpread = spread;
+        magazineBursts = (type == WeaponType.BossRifle) ? 5 : (type == WeaponType.Rifle ? 4 : 3);
+        burstsRemaining = magazineBursts;
     }
 
     public void SetWeaponPrefabs(GameObject pistol, GameObject rifle)
