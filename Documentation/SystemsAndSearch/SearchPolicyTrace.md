@@ -195,309 +195,409 @@
 - **Pre-Trace Observation `PRE-158`:** Raycast visibility matrix row 158 evaluated against Room 3 shelving colliders (`6.0 m` sweep radius, horizontal ray buffer reused without heap allocation).
 - **Pre-Trace Observation `PRE-159`:** Raycast visibility matrix row 159 evaluated against Room 3 shelving colliders (`6.0 m` sweep radius, horizontal ray buffer reused without heap allocation).
 
-<!-- BEGIN_LINEAR_DECAY_TRACE -->
-## 3. Draft Linear-Decay Search Trace Logs (Legacy Prototype)
+<!-- BEGIN_RAW_NEG_EVIDENCE_DUMP -->
+## 3. Negative-Evidence Discount (`0.08`) & Search Termination Trace
 
-> **Legacy Note:** Initial draft used a linear subtraction step (`belief -= 0.15`) per empty inspection.
+Replaced naive linear decay with `SearchDecisionPolicy.NegativeObservation(prior) => prior * 0.08f`.
+Residual belief mass (`RemainingBeliefMass`) is **not** renormalized after an empty inspection so that
+total remaining support shrinks naturally toward the `0.05` termination threshold or `12.0 s` search deadline.
 
-### 3.1 Legacy Linear Iteration #01
-- **Selected Target:** `C02` at distance `2.00 m`
-- **Observable Belief Before Sweep:** `0.8750`
-- **Computed Utility Score:** `0.7000`
-- **Linear Decay Rule:** Subtracted fixed `0.15` from inspected nodes; clamped at `0.00`.
-- **Legacy Residual Sum:** Renormalized across remaining uninspected slots (causes false certainty shift).
-  - `[LIN-01-1]` Candidate `C03` linear-decay snapshot: prior=`0.0800`, path=`2.70 m`, linear_post=`0.0500`.
-  - `[LIN-01-2]` Candidate `C04` linear-decay snapshot: prior=`0.0400`, path=`3.40 m`, linear_post=`0.0100`.
-  - `[LIN-01-3]` Candidate `C05` linear-decay snapshot: prior=`0.0267`, path=`4.10 m`, linear_post=`0.0000`.
-  - `[LIN-01-4]` Candidate `C06` linear-decay snapshot: prior=`0.0200`, path=`4.80 m`, linear_post=`0.0000`.
-### 3.2 Legacy Linear Iteration #02
-- **Selected Target:** `C03` at distance `2.80 m`
-- **Observable Belief Before Sweep:** `0.8500`
-- **Computed Utility Score:** `0.6800`
-- **Linear Decay Rule:** Subtracted fixed `0.15` from inspected nodes; clamped at `0.00`.
-- **Legacy Residual Sum:** Renormalized across remaining uninspected slots (causes false certainty shift).
-  - `[LIN-02-1]` Candidate `C04` linear-decay snapshot: prior=`0.0800`, path=`2.70 m`, linear_post=`0.0500`.
-  - `[LIN-02-2]` Candidate `C05` linear-decay snapshot: prior=`0.0400`, path=`3.40 m`, linear_post=`0.0100`.
-  - `[LIN-02-3]` Candidate `C06` linear-decay snapshot: prior=`0.0267`, path=`4.10 m`, linear_post=`0.0000`.
-  - `[LIN-02-4]` Candidate `C07` linear-decay snapshot: prior=`0.0200`, path=`4.80 m`, linear_post=`0.0000`.
-### 3.3 Legacy Linear Iteration #03
-- **Selected Target:** `C04` at distance `3.60 m`
-- **Observable Belief Before Sweep:** `0.8250`
-- **Computed Utility Score:** `0.6600`
-- **Linear Decay Rule:** Subtracted fixed `0.15` from inspected nodes; clamped at `0.00`.
-- **Legacy Residual Sum:** Renormalized across remaining uninspected slots (causes false certainty shift).
-  - `[LIN-03-1]` Candidate `C05` linear-decay snapshot: prior=`0.0800`, path=`2.70 m`, linear_post=`0.0500`.
-  - `[LIN-03-2]` Candidate `C06` linear-decay snapshot: prior=`0.0400`, path=`3.40 m`, linear_post=`0.0100`.
-  - `[LIN-03-3]` Candidate `C07` linear-decay snapshot: prior=`0.0267`, path=`4.10 m`, linear_post=`0.0000`.
-  - `[LIN-03-4]` Candidate `C08` linear-decay snapshot: prior=`0.0200`, path=`4.80 m`, linear_post=`0.0000`.
-### 3.4 Legacy Linear Iteration #04
-- **Selected Target:** `C05` at distance `4.40 m`
-- **Observable Belief Before Sweep:** `0.8000`
-- **Computed Utility Score:** `0.6400`
-- **Linear Decay Rule:** Subtracted fixed `0.15` from inspected nodes; clamped at `0.00`.
-- **Legacy Residual Sum:** Renormalized across remaining uninspected slots (causes false certainty shift).
-  - `[LIN-04-1]` Candidate `C06` linear-decay snapshot: prior=`0.0800`, path=`2.70 m`, linear_post=`0.0500`.
-  - `[LIN-04-2]` Candidate `C07` linear-decay snapshot: prior=`0.0400`, path=`3.40 m`, linear_post=`0.0100`.
-  - `[LIN-04-3]` Candidate `C08` linear-decay snapshot: prior=`0.0267`, path=`4.10 m`, linear_post=`0.0000`.
-  - `[LIN-04-4]` Candidate `C09` linear-decay snapshot: prior=`0.0200`, path=`4.80 m`, linear_post=`0.0000`.
-### 3.5 Legacy Linear Iteration #05
-- **Selected Target:** `C06` at distance `5.20 m`
-- **Observable Belief Before Sweep:** `0.7750`
-- **Computed Utility Score:** `0.6200`
-- **Linear Decay Rule:** Subtracted fixed `0.15` from inspected nodes; clamped at `0.00`.
-- **Legacy Residual Sum:** Renormalized across remaining uninspected slots (causes false certainty shift).
-  - `[LIN-05-1]` Candidate `C07` linear-decay snapshot: prior=`0.0800`, path=`2.70 m`, linear_post=`0.0500`.
-  - `[LIN-05-2]` Candidate `C08` linear-decay snapshot: prior=`0.0400`, path=`3.40 m`, linear_post=`0.0100`.
-  - `[LIN-05-3]` Candidate `C09` linear-decay snapshot: prior=`0.0267`, path=`4.10 m`, linear_post=`0.0000`.
-  - `[LIN-05-4]` Candidate `C10` linear-decay snapshot: prior=`0.0200`, path=`4.80 m`, linear_post=`0.0000`.
-### 3.6 Legacy Linear Iteration #06
-- **Selected Target:** `C07` at distance `1.20 m`
-- **Observable Belief Before Sweep:** `0.7500`
-- **Computed Utility Score:** `0.6000`
-- **Linear Decay Rule:** Subtracted fixed `0.15` from inspected nodes; clamped at `0.00`.
-- **Legacy Residual Sum:** Renormalized across remaining uninspected slots (causes false certainty shift).
-  - `[LIN-06-1]` Candidate `C08` linear-decay snapshot: prior=`0.0800`, path=`2.70 m`, linear_post=`0.0500`.
-  - `[LIN-06-2]` Candidate `C09` linear-decay snapshot: prior=`0.0400`, path=`3.40 m`, linear_post=`0.0100`.
-  - `[LIN-06-3]` Candidate `C10` linear-decay snapshot: prior=`0.0267`, path=`4.10 m`, linear_post=`0.0000`.
-  - `[LIN-06-4]` Candidate `C11` linear-decay snapshot: prior=`0.0200`, path=`4.80 m`, linear_post=`0.0000`.
-### 3.7 Legacy Linear Iteration #07
-- **Selected Target:** `C08` at distance `2.00 m`
-- **Observable Belief Before Sweep:** `0.7250`
-- **Computed Utility Score:** `0.5800`
-- **Linear Decay Rule:** Subtracted fixed `0.15` from inspected nodes; clamped at `0.00`.
-- **Legacy Residual Sum:** Renormalized across remaining uninspected slots (causes false certainty shift).
-  - `[LIN-07-1]` Candidate `C09` linear-decay snapshot: prior=`0.0800`, path=`2.70 m`, linear_post=`0.0500`.
-  - `[LIN-07-2]` Candidate `C10` linear-decay snapshot: prior=`0.0400`, path=`3.40 m`, linear_post=`0.0100`.
-  - `[LIN-07-3]` Candidate `C11` linear-decay snapshot: prior=`0.0267`, path=`4.10 m`, linear_post=`0.0000`.
-  - `[LIN-07-4]` Candidate `C12` linear-decay snapshot: prior=`0.0200`, path=`4.80 m`, linear_post=`0.0000`.
-### 3.8 Legacy Linear Iteration #08
-- **Selected Target:** `C09` at distance `2.80 m`
-- **Observable Belief Before Sweep:** `0.7000`
-- **Computed Utility Score:** `0.5600`
-- **Linear Decay Rule:** Subtracted fixed `0.15` from inspected nodes; clamped at `0.00`.
-- **Legacy Residual Sum:** Renormalized across remaining uninspected slots (causes false certainty shift).
-  - `[LIN-08-1]` Candidate `C10` linear-decay snapshot: prior=`0.0800`, path=`2.70 m`, linear_post=`0.0500`.
-  - `[LIN-08-2]` Candidate `C11` linear-decay snapshot: prior=`0.0400`, path=`3.40 m`, linear_post=`0.0100`.
-  - `[LIN-08-3]` Candidate `C12` linear-decay snapshot: prior=`0.0267`, path=`4.10 m`, linear_post=`0.0000`.
-  - `[LIN-08-4]` Candidate `C13` linear-decay snapshot: prior=`0.0200`, path=`4.80 m`, linear_post=`0.0000`.
-### 3.9 Legacy Linear Iteration #09
-- **Selected Target:** `C10` at distance `3.60 m`
-- **Observable Belief Before Sweep:** `0.6750`
-- **Computed Utility Score:** `0.5400`
-- **Linear Decay Rule:** Subtracted fixed `0.15` from inspected nodes; clamped at `0.00`.
-- **Legacy Residual Sum:** Renormalized across remaining uninspected slots (causes false certainty shift).
-  - `[LIN-09-1]` Candidate `C11` linear-decay snapshot: prior=`0.0800`, path=`2.70 m`, linear_post=`0.0500`.
-  - `[LIN-09-2]` Candidate `C12` linear-decay snapshot: prior=`0.0400`, path=`3.40 m`, linear_post=`0.0100`.
-  - `[LIN-09-3]` Candidate `C13` linear-decay snapshot: prior=`0.0267`, path=`4.10 m`, linear_post=`0.0000`.
-  - `[LIN-09-4]` Candidate `C14` linear-decay snapshot: prior=`0.0200`, path=`4.80 m`, linear_post=`0.0000`.
-### 3.10 Legacy Linear Iteration #10
-- **Selected Target:** `C11` at distance `4.40 m`
-- **Observable Belief Before Sweep:** `0.6500`
-- **Computed Utility Score:** `0.5200`
-- **Linear Decay Rule:** Subtracted fixed `0.15` from inspected nodes; clamped at `0.00`.
-- **Legacy Residual Sum:** Renormalized across remaining uninspected slots (causes false certainty shift).
-  - `[LIN-10-1]` Candidate `C12` linear-decay snapshot: prior=`0.0800`, path=`2.70 m`, linear_post=`0.0500`.
-  - `[LIN-10-2]` Candidate `C13` linear-decay snapshot: prior=`0.0400`, path=`3.40 m`, linear_post=`0.0100`.
-  - `[LIN-10-3]` Candidate `C14` linear-decay snapshot: prior=`0.0267`, path=`4.10 m`, linear_post=`0.0000`.
-  - `[LIN-10-4]` Candidate `C15` linear-decay snapshot: prior=`0.0200`, path=`4.80 m`, linear_post=`0.0000`.
-### 3.11 Legacy Linear Iteration #11
-- **Selected Target:** `C12` at distance `5.20 m`
-- **Observable Belief Before Sweep:** `0.6250`
-- **Computed Utility Score:** `0.5000`
-- **Linear Decay Rule:** Subtracted fixed `0.15` from inspected nodes; clamped at `0.00`.
-- **Legacy Residual Sum:** Renormalized across remaining uninspected slots (causes false certainty shift).
-  - `[LIN-11-1]` Candidate `C13` linear-decay snapshot: prior=`0.0800`, path=`2.70 m`, linear_post=`0.0500`.
-  - `[LIN-11-2]` Candidate `C14` linear-decay snapshot: prior=`0.0400`, path=`3.40 m`, linear_post=`0.0100`.
-  - `[LIN-11-3]` Candidate `C15` linear-decay snapshot: prior=`0.0267`, path=`4.10 m`, linear_post=`0.0000`.
-  - `[LIN-11-4]` Candidate `C16` linear-decay snapshot: prior=`0.0200`, path=`4.80 m`, linear_post=`0.0000`.
-### 3.12 Legacy Linear Iteration #12
-- **Selected Target:** `C13` at distance `1.20 m`
-- **Observable Belief Before Sweep:** `0.6000`
-- **Computed Utility Score:** `0.4800`
-- **Linear Decay Rule:** Subtracted fixed `0.15` from inspected nodes; clamped at `0.00`.
-- **Legacy Residual Sum:** Renormalized across remaining uninspected slots (causes false certainty shift).
-  - `[LIN-12-1]` Candidate `C14` linear-decay snapshot: prior=`0.0800`, path=`2.70 m`, linear_post=`0.0500`.
-  - `[LIN-12-2]` Candidate `C15` linear-decay snapshot: prior=`0.0400`, path=`3.40 m`, linear_post=`0.0100`.
-  - `[LIN-12-3]` Candidate `C16` linear-decay snapshot: prior=`0.0267`, path=`4.10 m`, linear_post=`0.0000`.
-  - `[LIN-12-4]` Candidate `C17` linear-decay snapshot: prior=`0.0200`, path=`4.80 m`, linear_post=`0.0000`.
-### 3.13 Legacy Linear Iteration #13
-- **Selected Target:** `C14` at distance `2.00 m`
-- **Observable Belief Before Sweep:** `0.5750`
-- **Computed Utility Score:** `0.4600`
-- **Linear Decay Rule:** Subtracted fixed `0.15` from inspected nodes; clamped at `0.00`.
-- **Legacy Residual Sum:** Renormalized across remaining uninspected slots (causes false certainty shift).
-  - `[LIN-13-1]` Candidate `C15` linear-decay snapshot: prior=`0.0800`, path=`2.70 m`, linear_post=`0.0500`.
-  - `[LIN-13-2]` Candidate `C16` linear-decay snapshot: prior=`0.0400`, path=`3.40 m`, linear_post=`0.0100`.
-  - `[LIN-13-3]` Candidate `C17` linear-decay snapshot: prior=`0.0267`, path=`4.10 m`, linear_post=`0.0000`.
-  - `[LIN-13-4]` Candidate `C01` linear-decay snapshot: prior=`0.0200`, path=`4.80 m`, linear_post=`0.0000`.
-### 3.14 Legacy Linear Iteration #14
-- **Selected Target:** `C15` at distance `2.80 m`
-- **Observable Belief Before Sweep:** `0.5500`
-- **Computed Utility Score:** `0.4400`
-- **Linear Decay Rule:** Subtracted fixed `0.15` from inspected nodes; clamped at `0.00`.
-- **Legacy Residual Sum:** Renormalized across remaining uninspected slots (causes false certainty shift).
-  - `[LIN-14-1]` Candidate `C16` linear-decay snapshot: prior=`0.0800`, path=`2.70 m`, linear_post=`0.0500`.
-  - `[LIN-14-2]` Candidate `C17` linear-decay snapshot: prior=`0.0400`, path=`3.40 m`, linear_post=`0.0100`.
-  - `[LIN-14-3]` Candidate `C01` linear-decay snapshot: prior=`0.0267`, path=`4.10 m`, linear_post=`0.0000`.
-  - `[LIN-14-4]` Candidate `C02` linear-decay snapshot: prior=`0.0200`, path=`4.80 m`, linear_post=`0.0000`.
-### 3.15 Legacy Linear Iteration #15
-- **Selected Target:** `C16` at distance `3.60 m`
-- **Observable Belief Before Sweep:** `0.5250`
-- **Computed Utility Score:** `0.4200`
-- **Linear Decay Rule:** Subtracted fixed `0.15` from inspected nodes; clamped at `0.00`.
-- **Legacy Residual Sum:** Renormalized across remaining uninspected slots (causes false certainty shift).
-  - `[LIN-15-1]` Candidate `C17` linear-decay snapshot: prior=`0.0800`, path=`2.70 m`, linear_post=`0.0500`.
-  - `[LIN-15-2]` Candidate `C01` linear-decay snapshot: prior=`0.0400`, path=`3.40 m`, linear_post=`0.0100`.
-  - `[LIN-15-3]` Candidate `C02` linear-decay snapshot: prior=`0.0267`, path=`4.10 m`, linear_post=`0.0000`.
-  - `[LIN-15-4]` Candidate `C03` linear-decay snapshot: prior=`0.0200`, path=`4.80 m`, linear_post=`0.0000`.
-### 3.16 Legacy Linear Iteration #16
-- **Selected Target:** `C17` at distance `4.40 m`
-- **Observable Belief Before Sweep:** `0.5000`
-- **Computed Utility Score:** `0.4000`
-- **Linear Decay Rule:** Subtracted fixed `0.15` from inspected nodes; clamped at `0.00`.
-- **Legacy Residual Sum:** Renormalized across remaining uninspected slots (causes false certainty shift).
-  - `[LIN-16-1]` Candidate `C01` linear-decay snapshot: prior=`0.0800`, path=`2.70 m`, linear_post=`0.0500`.
-  - `[LIN-16-2]` Candidate `C02` linear-decay snapshot: prior=`0.0400`, path=`3.40 m`, linear_post=`0.0100`.
-  - `[LIN-16-3]` Candidate `C03` linear-decay snapshot: prior=`0.0267`, path=`4.10 m`, linear_post=`0.0000`.
-  - `[LIN-16-4]` Candidate `C04` linear-decay snapshot: prior=`0.0200`, path=`4.80 m`, linear_post=`0.0000`.
-### 3.17 Legacy Linear Iteration #17
-- **Selected Target:** `C01` at distance `5.20 m`
-- **Observable Belief Before Sweep:** `0.4750`
-- **Computed Utility Score:** `0.3800`
-- **Linear Decay Rule:** Subtracted fixed `0.15` from inspected nodes; clamped at `0.00`.
-- **Legacy Residual Sum:** Renormalized across remaining uninspected slots (causes false certainty shift).
-  - `[LIN-17-1]` Candidate `C02` linear-decay snapshot: prior=`0.0800`, path=`2.70 m`, linear_post=`0.0500`.
-  - `[LIN-17-2]` Candidate `C03` linear-decay snapshot: prior=`0.0400`, path=`3.40 m`, linear_post=`0.0100`.
-  - `[LIN-17-3]` Candidate `C04` linear-decay snapshot: prior=`0.0267`, path=`4.10 m`, linear_post=`0.0000`.
-  - `[LIN-17-4]` Candidate `C05` linear-decay snapshot: prior=`0.0200`, path=`4.80 m`, linear_post=`0.0000`.
-### 3.18 Legacy Linear Iteration #18
-- **Selected Target:** `C02` at distance `1.20 m`
-- **Observable Belief Before Sweep:** `0.4500`
-- **Computed Utility Score:** `0.3600`
-- **Linear Decay Rule:** Subtracted fixed `0.15` from inspected nodes; clamped at `0.00`.
-- **Legacy Residual Sum:** Renormalized across remaining uninspected slots (causes false certainty shift).
-  - `[LIN-18-1]` Candidate `C03` linear-decay snapshot: prior=`0.0800`, path=`2.70 m`, linear_post=`0.0500`.
-  - `[LIN-18-2]` Candidate `C04` linear-decay snapshot: prior=`0.0400`, path=`3.40 m`, linear_post=`0.0100`.
-  - `[LIN-18-3]` Candidate `C05` linear-decay snapshot: prior=`0.0267`, path=`4.10 m`, linear_post=`0.0000`.
-  - `[LIN-18-4]` Candidate `C06` linear-decay snapshot: prior=`0.0200`, path=`4.80 m`, linear_post=`0.0000`.
-### 3.19 Legacy Linear Iteration #19
-- **Selected Target:** `C03` at distance `2.00 m`
-- **Observable Belief Before Sweep:** `0.4250`
-- **Computed Utility Score:** `0.3400`
-- **Linear Decay Rule:** Subtracted fixed `0.15` from inspected nodes; clamped at `0.00`.
-- **Legacy Residual Sum:** Renormalized across remaining uninspected slots (causes false certainty shift).
-  - `[LIN-19-1]` Candidate `C04` linear-decay snapshot: prior=`0.0800`, path=`2.70 m`, linear_post=`0.0500`.
-  - `[LIN-19-2]` Candidate `C05` linear-decay snapshot: prior=`0.0400`, path=`3.40 m`, linear_post=`0.0100`.
-  - `[LIN-19-3]` Candidate `C06` linear-decay snapshot: prior=`0.0267`, path=`4.10 m`, linear_post=`0.0000`.
-  - `[LIN-19-4]` Candidate `C07` linear-decay snapshot: prior=`0.0200`, path=`4.80 m`, linear_post=`0.0000`.
-### 3.20 Legacy Linear Iteration #20
-- **Selected Target:** `C04` at distance `2.80 m`
-- **Observable Belief Before Sweep:** `0.4000`
-- **Computed Utility Score:** `0.3200`
-- **Linear Decay Rule:** Subtracted fixed `0.15` from inspected nodes; clamped at `0.00`.
-- **Legacy Residual Sum:** Renormalized across remaining uninspected slots (causes false certainty shift).
-  - `[LIN-20-1]` Candidate `C05` linear-decay snapshot: prior=`0.0800`, path=`2.70 m`, linear_post=`0.0500`.
-  - `[LIN-20-2]` Candidate `C06` linear-decay snapshot: prior=`0.0400`, path=`3.40 m`, linear_post=`0.0100`.
-  - `[LIN-20-3]` Candidate `C07` linear-decay snapshot: prior=`0.0267`, path=`4.10 m`, linear_post=`0.0000`.
-  - `[LIN-20-4]` Candidate `C08` linear-decay snapshot: prior=`0.0200`, path=`4.80 m`, linear_post=`0.0000`.
-### 3.21 Legacy Linear Iteration #21
-- **Selected Target:** `C05` at distance `3.60 m`
-- **Observable Belief Before Sweep:** `0.3750`
-- **Computed Utility Score:** `0.3000`
-- **Linear Decay Rule:** Subtracted fixed `0.15` from inspected nodes; clamped at `0.00`.
-- **Legacy Residual Sum:** Renormalized across remaining uninspected slots (causes false certainty shift).
-  - `[LIN-21-1]` Candidate `C06` linear-decay snapshot: prior=`0.0800`, path=`2.70 m`, linear_post=`0.0500`.
-  - `[LIN-21-2]` Candidate `C07` linear-decay snapshot: prior=`0.0400`, path=`3.40 m`, linear_post=`0.0100`.
-  - `[LIN-21-3]` Candidate `C08` linear-decay snapshot: prior=`0.0267`, path=`4.10 m`, linear_post=`0.0000`.
-  - `[LIN-21-4]` Candidate `C09` linear-decay snapshot: prior=`0.0200`, path=`4.80 m`, linear_post=`0.0000`.
-### 3.22 Legacy Linear Iteration #22
-- **Selected Target:** `C06` at distance `4.40 m`
-- **Observable Belief Before Sweep:** `0.3500`
-- **Computed Utility Score:** `0.2800`
-- **Linear Decay Rule:** Subtracted fixed `0.15` from inspected nodes; clamped at `0.00`.
-- **Legacy Residual Sum:** Renormalized across remaining uninspected slots (causes false certainty shift).
-  - `[LIN-22-1]` Candidate `C07` linear-decay snapshot: prior=`0.0800`, path=`2.70 m`, linear_post=`0.0500`.
-  - `[LIN-22-2]` Candidate `C08` linear-decay snapshot: prior=`0.0400`, path=`3.40 m`, linear_post=`0.0100`.
-  - `[LIN-22-3]` Candidate `C09` linear-decay snapshot: prior=`0.0267`, path=`4.10 m`, linear_post=`0.0000`.
-  - `[LIN-22-4]` Candidate `C10` linear-decay snapshot: prior=`0.0200`, path=`4.80 m`, linear_post=`0.0000`.
-### 3.23 Legacy Linear Iteration #23
-- **Selected Target:** `C07` at distance `5.20 m`
-- **Observable Belief Before Sweep:** `0.3250`
-- **Computed Utility Score:** `0.2600`
-- **Linear Decay Rule:** Subtracted fixed `0.15` from inspected nodes; clamped at `0.00`.
-- **Legacy Residual Sum:** Renormalized across remaining uninspected slots (causes false certainty shift).
-  - `[LIN-23-1]` Candidate `C08` linear-decay snapshot: prior=`0.0800`, path=`2.70 m`, linear_post=`0.0500`.
-  - `[LIN-23-2]` Candidate `C09` linear-decay snapshot: prior=`0.0400`, path=`3.40 m`, linear_post=`0.0100`.
-  - `[LIN-23-3]` Candidate `C10` linear-decay snapshot: prior=`0.0267`, path=`4.10 m`, linear_post=`0.0000`.
-  - `[LIN-23-4]` Candidate `C11` linear-decay snapshot: prior=`0.0200`, path=`4.80 m`, linear_post=`0.0000`.
-### 3.24 Legacy Linear Iteration #24
-- **Selected Target:** `C08` at distance `1.20 m`
-- **Observable Belief Before Sweep:** `0.3000`
-- **Computed Utility Score:** `0.2400`
-- **Linear Decay Rule:** Subtracted fixed `0.15` from inspected nodes; clamped at `0.00`.
-- **Legacy Residual Sum:** Renormalized across remaining uninspected slots (causes false certainty shift).
-  - `[LIN-24-1]` Candidate `C09` linear-decay snapshot: prior=`0.0800`, path=`2.70 m`, linear_post=`0.0500`.
-  - `[LIN-24-2]` Candidate `C10` linear-decay snapshot: prior=`0.0400`, path=`3.40 m`, linear_post=`0.0100`.
-  - `[LIN-24-3]` Candidate `C11` linear-decay snapshot: prior=`0.0267`, path=`4.10 m`, linear_post=`0.0000`.
-  - `[LIN-24-4]` Candidate `C12` linear-decay snapshot: prior=`0.0200`, path=`4.80 m`, linear_post=`0.0000`.
-### 3.25 Legacy Linear Iteration #25
-- **Selected Target:** `C09` at distance `2.00 m`
-- **Observable Belief Before Sweep:** `0.2750`
-- **Computed Utility Score:** `0.2200`
-- **Linear Decay Rule:** Subtracted fixed `0.15` from inspected nodes; clamped at `0.00`.
-- **Legacy Residual Sum:** Renormalized across remaining uninspected slots (causes false certainty shift).
-  - `[LIN-25-1]` Candidate `C10` linear-decay snapshot: prior=`0.0800`, path=`2.70 m`, linear_post=`0.0500`.
-  - `[LIN-25-2]` Candidate `C11` linear-decay snapshot: prior=`0.0400`, path=`3.40 m`, linear_post=`0.0100`.
-  - `[LIN-25-3]` Candidate `C12` linear-decay snapshot: prior=`0.0267`, path=`4.10 m`, linear_post=`0.0000`.
-  - `[LIN-25-4]` Candidate `C13` linear-decay snapshot: prior=`0.0200`, path=`4.80 m`, linear_post=`0.0000`.
-### 3.26 Legacy Linear Iteration #26
-- **Selected Target:** `C10` at distance `2.80 m`
-- **Observable Belief Before Sweep:** `0.2500`
-- **Computed Utility Score:** `0.2000`
-- **Linear Decay Rule:** Subtracted fixed `0.15` from inspected nodes; clamped at `0.00`.
-- **Legacy Residual Sum:** Renormalized across remaining uninspected slots (causes false certainty shift).
-  - `[LIN-26-1]` Candidate `C11` linear-decay snapshot: prior=`0.0800`, path=`2.70 m`, linear_post=`0.0500`.
-  - `[LIN-26-2]` Candidate `C12` linear-decay snapshot: prior=`0.0400`, path=`3.40 m`, linear_post=`0.0100`.
-  - `[LIN-26-3]` Candidate `C13` linear-decay snapshot: prior=`0.0267`, path=`4.10 m`, linear_post=`0.0000`.
-  - `[LIN-26-4]` Candidate `C14` linear-decay snapshot: prior=`0.0200`, path=`4.80 m`, linear_post=`0.0000`.
-### 3.27 Legacy Linear Iteration #27
-- **Selected Target:** `C11` at distance `3.60 m`
-- **Observable Belief Before Sweep:** `0.2250`
-- **Computed Utility Score:** `0.1800`
-- **Linear Decay Rule:** Subtracted fixed `0.15` from inspected nodes; clamped at `0.00`.
-- **Legacy Residual Sum:** Renormalized across remaining uninspected slots (causes false certainty shift).
-  - `[LIN-27-1]` Candidate `C12` linear-decay snapshot: prior=`0.0800`, path=`2.70 m`, linear_post=`0.0500`.
-  - `[LIN-27-2]` Candidate `C13` linear-decay snapshot: prior=`0.0400`, path=`3.40 m`, linear_post=`0.0100`.
-  - `[LIN-27-3]` Candidate `C14` linear-decay snapshot: prior=`0.0267`, path=`4.10 m`, linear_post=`0.0000`.
-  - `[LIN-27-4]` Candidate `C15` linear-decay snapshot: prior=`0.0200`, path=`4.80 m`, linear_post=`0.0000`.
-### 3.28 Legacy Linear Iteration #28
-- **Selected Target:** `C12` at distance `4.40 m`
-- **Observable Belief Before Sweep:** `0.2000`
-- **Computed Utility Score:** `0.1600`
-- **Linear Decay Rule:** Subtracted fixed `0.15` from inspected nodes; clamped at `0.00`.
-- **Legacy Residual Sum:** Renormalized across remaining uninspected slots (causes false certainty shift).
-  - `[LIN-28-1]` Candidate `C13` linear-decay snapshot: prior=`0.0800`, path=`2.70 m`, linear_post=`0.0500`.
-  - `[LIN-28-2]` Candidate `C14` linear-decay snapshot: prior=`0.0400`, path=`3.40 m`, linear_post=`0.0100`.
-  - `[LIN-28-3]` Candidate `C15` linear-decay snapshot: prior=`0.0267`, path=`4.10 m`, linear_post=`0.0000`.
-  - `[LIN-28-4]` Candidate `C16` linear-decay snapshot: prior=`0.0200`, path=`4.80 m`, linear_post=`0.0000`.
-### 3.29 Legacy Linear Iteration #29
-- **Selected Target:** `C13` at distance `5.20 m`
-- **Observable Belief Before Sweep:** `0.1750`
-- **Computed Utility Score:** `0.1400`
-- **Linear Decay Rule:** Subtracted fixed `0.15` from inspected nodes; clamped at `0.00`.
-- **Legacy Residual Sum:** Renormalized across remaining uninspected slots (causes false certainty shift).
-  - `[LIN-29-1]` Candidate `C14` linear-decay snapshot: prior=`0.0800`, path=`2.70 m`, linear_post=`0.0500`.
-  - `[LIN-29-2]` Candidate `C15` linear-decay snapshot: prior=`0.0400`, path=`3.40 m`, linear_post=`0.0100`.
-  - `[LIN-29-3]` Candidate `C16` linear-decay snapshot: prior=`0.0267`, path=`4.10 m`, linear_post=`0.0000`.
-  - `[LIN-29-4]` Candidate `C17` linear-decay snapshot: prior=`0.0200`, path=`4.80 m`, linear_post=`0.0000`.
-### 3.30 Legacy Linear Iteration #30
-- **Selected Target:** `C14` at distance `1.20 m`
-- **Observable Belief Before Sweep:** `0.1500`
-- **Computed Utility Score:** `0.1200`
-- **Linear Decay Rule:** Subtracted fixed `0.15` from inspected nodes; clamped at `0.00`.
-- **Legacy Residual Sum:** Renormalized across remaining uninspected slots (causes false certainty shift).
-  - `[LIN-30-1]` Candidate `C15` linear-decay snapshot: prior=`0.0800`, path=`2.70 m`, linear_post=`0.0500`.
-  - `[LIN-30-2]` Candidate `C16` linear-decay snapshot: prior=`0.0400`, path=`3.40 m`, linear_post=`0.0100`.
-  - `[LIN-30-3]` Candidate `C17` linear-decay snapshot: prior=`0.0267`, path=`4.10 m`, linear_post=`0.0000`.
-  - `[LIN-30-4]` Candidate `C01` linear-decay snapshot: prior=`0.0200`, path=`4.80 m`, linear_post=`0.0000`.
-<!-- END_LINEAR_DECAY_TRACE -->
+### 3.1 Step-by-Step Negative-Evidence Iterations
+
+#### Iteration 01 — Inspect Candidate `C01`
+- **Pre-Sweep Mass:** `1.0000` | **Observable Belief:** `0.3818` | **Path:** `2.25 m`
+- **Utility `Score`:** `0.2855` (`observableBelief / (1 + 0.15 * pathLength)`)
+- **Discount Applied:** `NegativeObservation(p) = p * 0.08f` on all observable hypotheses (`<= 6.0 m`, clear LOS)
+- **Post-Sweep Residual Mass:** `0.6688` (unrenormalized; stop check `< 0.05`: `false`)
+- **Elapsed Search Timer:** `0.85 s / 12.00 s` | **Sound Rebuild Cooldown:** `0.75 s`
+
+#### Iteration 02 — Inspect Candidate `C02`
+- **Pre-Sweep Mass:** `0.6688` | **Observable Belief:** `0.2341` | **Path:** `3.00 m`
+- **Utility `Score`:** `0.1614` (`observableBelief / (1 + 0.15 * pathLength)`)
+- **Discount Applied:** `NegativeObservation(p) = p * 0.08f` on all observable hypotheses (`<= 6.0 m`, clear LOS)
+- **Post-Sweep Residual Mass:** `0.4473` (unrenormalized; stop check `< 0.05`: `false`)
+- **Elapsed Search Timer:** `1.70 s / 12.00 s` | **Sound Rebuild Cooldown:** `0.75 s`
+
+#### Iteration 03 — Inspect Candidate `C03`
+- **Pre-Sweep Mass:** `0.4473` | **Observable Belief:** `0.1445` | **Path:** `3.75 m`
+- **Utility `Score`:** `0.0925` (`observableBelief / (1 + 0.15 * pathLength)`)
+- **Discount Applied:** `NegativeObservation(p) = p * 0.08f` on all observable hypotheses (`<= 6.0 m`, clear LOS)
+- **Post-Sweep Residual Mass:** `0.2992` (unrenormalized; stop check `< 0.05`: `false`)
+- **Elapsed Search Timer:** `2.55 s / 12.00 s` | **Sound Rebuild Cooldown:** `0.75 s`
+
+#### Iteration 04 — Inspect Candidate `C04`
+- **Pre-Sweep Mass:** `0.2992` | **Observable Belief:** `0.0898` | **Path:** `4.50 m`
+- **Utility `Score`:** `0.0536` (`observableBelief / (1 + 0.15 * pathLength)`)
+- **Discount Applied:** `NegativeObservation(p) = p * 0.08f` on all observable hypotheses (`<= 6.0 m`, clear LOS)
+- **Post-Sweep Residual Mass:** `0.2001` (unrenormalized; stop check `< 0.05`: `false`)
+- **Elapsed Search Timer:** `3.40 s / 12.00 s` | **Sound Rebuild Cooldown:** `0.75 s`
+
+#### Iteration 05 — Inspect Candidate `C05`
+- **Pre-Sweep Mass:** `0.2001` | **Observable Belief:** `0.0840` | **Path:** `5.25 m`
+- **Utility `Score`:** `0.0470` (`observableBelief / (1 + 0.15 * pathLength)`)
+- **Discount Applied:** `NegativeObservation(p) = p * 0.08f` on all observable hypotheses (`<= 6.0 m`, clear LOS)
+- **Post-Sweep Residual Mass:** `0.1338` (unrenormalized; stop check `< 0.05`: `false`)
+- **Elapsed Search Timer:** `4.25 s / 12.00 s` | **Sound Rebuild Cooldown:** `0.75 s`
+
+#### Iteration 06 — Inspect Candidate `C06`
+- **Pre-Sweep Mass:** `0.1338` | **Observable Belief:** `0.0511` | **Path:** `6.00 m`
+- **Utility `Score`:** `0.0269` (`observableBelief / (1 + 0.15 * pathLength)`)
+- **Discount Applied:** `NegativeObservation(p) = p * 0.08f` on all observable hypotheses (`<= 6.0 m`, clear LOS)
+- **Post-Sweep Residual Mass:** `0.0895` (unrenormalized; stop check `< 0.05`: `false`)
+- **Elapsed Search Timer:** `5.10 s / 12.00 s` | **Sound Rebuild Cooldown:** `0.75 s`
+
+#### Iteration 07 — Inspect Candidate `C07`
+- **Pre-Sweep Mass:** `0.0895` | **Observable Belief:** `0.0313` | **Path:** `1.50 m`
+- **Utility `Score`:** `0.0256` (`observableBelief / (1 + 0.15 * pathLength)`)
+- **Discount Applied:** `NegativeObservation(p) = p * 0.08f` on all observable hypotheses (`<= 6.0 m`, clear LOS)
+- **Post-Sweep Residual Mass:** `0.0599` (unrenormalized; stop check `< 0.05`: `false`)
+- **Elapsed Search Timer:** `5.95 s / 12.00 s` | **Sound Rebuild Cooldown:** `0.75 s`
+
+#### Iteration 08 — Inspect Candidate `C08`
+- **Pre-Sweep Mass:** `0.0599` | **Observable Belief:** `0.0194` | **Path:** `2.25 m`
+- **Utility `Score`:** `0.0145` (`observableBelief / (1 + 0.15 * pathLength)`)
+- **Discount Applied:** `NegativeObservation(p) = p * 0.08f` on all observable hypotheses (`<= 6.0 m`, clear LOS)
+- **Post-Sweep Residual Mass:** `0.0401` (unrenormalized; stop check `< 0.05`: `true`)
+- **Elapsed Search Timer:** `6.80 s / 12.00 s` | **Sound Rebuild Cooldown:** `0.75 s`
+
+#### Iteration 09 — Inspect Candidate `C09`
+- **Pre-Sweep Mass:** `0.0401` | **Observable Belief:** `0.0120` | **Path:** `3.00 m`
+- **Utility `Score`:** `0.0083` (`observableBelief / (1 + 0.15 * pathLength)`)
+- **Discount Applied:** `NegativeObservation(p) = p * 0.08f` on all observable hypotheses (`<= 6.0 m`, clear LOS)
+- **Post-Sweep Residual Mass:** `0.0268` (unrenormalized; stop check `< 0.05`: `true`)
+- **Elapsed Search Timer:** `7.65 s / 12.00 s` | **Sound Rebuild Cooldown:** `0.75 s`
+
+#### Iteration 10 — Inspect Candidate `C10`
+- **Pre-Sweep Mass:** `0.0268` | **Observable Belief:** `0.0120` | **Path:** `3.75 m`
+- **Utility `Score`:** `0.0077` (`observableBelief / (1 + 0.15 * pathLength)`)
+- **Discount Applied:** `NegativeObservation(p) = p * 0.08f` on all observable hypotheses (`<= 6.0 m`, clear LOS)
+- **Post-Sweep Residual Mass:** `0.0250` (unrenormalized; stop check `< 0.05`: `true`)
+- **Elapsed Search Timer:** `8.50 s / 12.00 s` | **Sound Rebuild Cooldown:** `0.75 s`
+
+#### Iteration 11 — Inspect Candidate `C11`
+- **Pre-Sweep Mass:** `0.0250` | **Observable Belief:** `0.0120` | **Path:** `4.50 m`
+- **Utility `Score`:** `0.0072` (`observableBelief / (1 + 0.15 * pathLength)`)
+- **Discount Applied:** `NegativeObservation(p) = p * 0.08f` on all observable hypotheses (`<= 6.0 m`, clear LOS)
+- **Post-Sweep Residual Mass:** `0.0250` (unrenormalized; stop check `< 0.05`: `true`)
+- **Elapsed Search Timer:** `9.35 s / 12.00 s` | **Sound Rebuild Cooldown:** `0.75 s`
+
+#### Iteration 12 — Inspect Candidate `C12`
+- **Pre-Sweep Mass:** `0.0250` | **Observable Belief:** `0.0120` | **Path:** `5.25 m`
+- **Utility `Score`:** `0.0067` (`observableBelief / (1 + 0.15 * pathLength)`)
+- **Discount Applied:** `NegativeObservation(p) = p * 0.08f` on all observable hypotheses (`<= 6.0 m`, clear LOS)
+- **Post-Sweep Residual Mass:** `0.0250` (unrenormalized; stop check `< 0.05`: `true`)
+- **Elapsed Search Timer:** `10.20 s / 12.00 s` | **Sound Rebuild Cooldown:** `0.75 s`
+
+#### Iteration 13 — Inspect Candidate `C13`
+- **Pre-Sweep Mass:** `0.0250` | **Observable Belief:** `0.0120` | **Path:** `6.00 m`
+- **Utility `Score`:** `0.0063` (`observableBelief / (1 + 0.15 * pathLength)`)
+- **Discount Applied:** `NegativeObservation(p) = p * 0.08f` on all observable hypotheses (`<= 6.0 m`, clear LOS)
+- **Post-Sweep Residual Mass:** `0.0250` (unrenormalized; stop check `< 0.05`: `true`)
+- **Elapsed Search Timer:** `11.05 s / 12.00 s` | **Sound Rebuild Cooldown:** `0.75 s`
+
+#### Iteration 14 — Inspect Candidate `C14`
+- **Pre-Sweep Mass:** `0.0250` | **Observable Belief:** `0.0120` | **Path:** `1.50 m`
+- **Utility `Score`:** `0.0098` (`observableBelief / (1 + 0.15 * pathLength)`)
+- **Discount Applied:** `NegativeObservation(p) = p * 0.08f` on all observable hypotheses (`<= 6.0 m`, clear LOS)
+- **Post-Sweep Residual Mass:** `0.0250` (unrenormalized; stop check `< 0.05`: `true`)
+- **Elapsed Search Timer:** `11.90 s / 12.00 s` | **Sound Rebuild Cooldown:** `0.75 s`
+
+#### Iteration 15 — Inspect Candidate `C15`
+- **Pre-Sweep Mass:** `0.0250` | **Observable Belief:** `0.0120` | **Path:** `2.25 m`
+- **Utility `Score`:** `0.0090` (`observableBelief / (1 + 0.15 * pathLength)`)
+- **Discount Applied:** `NegativeObservation(p) = p * 0.08f` on all observable hypotheses (`<= 6.0 m`, clear LOS)
+- **Post-Sweep Residual Mass:** `0.0250` (unrenormalized; stop check `< 0.05`: `true`)
+- **Elapsed Search Timer:** `12.00 s / 12.00 s` | **Sound Rebuild Cooldown:** `0.75 s`
+
+#### Iteration 16 — Inspect Candidate `C16`
+- **Pre-Sweep Mass:** `0.0250` | **Observable Belief:** `0.0120` | **Path:** `3.00 m`
+- **Utility `Score`:** `0.0083` (`observableBelief / (1 + 0.15 * pathLength)`)
+- **Discount Applied:** `NegativeObservation(p) = p * 0.08f` on all observable hypotheses (`<= 6.0 m`, clear LOS)
+- **Post-Sweep Residual Mass:** `0.0250` (unrenormalized; stop check `< 0.05`: `true`)
+- **Elapsed Search Timer:** `12.00 s / 12.00 s` | **Sound Rebuild Cooldown:** `0.75 s`
+
+#### Iteration 17 — Inspect Candidate `C17`
+- **Pre-Sweep Mass:** `0.0250` | **Observable Belief:** `0.0120` | **Path:** `3.75 m`
+- **Utility `Score`:** `0.0077` (`observableBelief / (1 + 0.15 * pathLength)`)
+- **Discount Applied:** `NegativeObservation(p) = p * 0.08f` on all observable hypotheses (`<= 6.0 m`, clear LOS)
+- **Post-Sweep Residual Mass:** `0.0250` (unrenormalized; stop check `< 0.05`: `true`)
+- **Elapsed Search Timer:** `12.00 s / 12.00 s` | **Sound Rebuild Cooldown:** `0.75 s`
+
+#### Iteration 18 — Inspect Candidate `C01`
+- **Pre-Sweep Mass:** `0.0250` | **Observable Belief:** `0.0120` | **Path:** `4.50 m`
+- **Utility `Score`:** `0.0072` (`observableBelief / (1 + 0.15 * pathLength)`)
+- **Discount Applied:** `NegativeObservation(p) = p * 0.08f` on all observable hypotheses (`<= 6.0 m`, clear LOS)
+- **Post-Sweep Residual Mass:** `0.0250` (unrenormalized; stop check `< 0.05`: `true`)
+- **Elapsed Search Timer:** `12.00 s / 12.00 s` | **Sound Rebuild Cooldown:** `0.75 s`
+
+#### Iteration 19 — Inspect Candidate `C02`
+- **Pre-Sweep Mass:** `0.0250` | **Observable Belief:** `0.0120` | **Path:** `5.25 m`
+- **Utility `Score`:** `0.0067` (`observableBelief / (1 + 0.15 * pathLength)`)
+- **Discount Applied:** `NegativeObservation(p) = p * 0.08f` on all observable hypotheses (`<= 6.0 m`, clear LOS)
+- **Post-Sweep Residual Mass:** `0.0250` (unrenormalized; stop check `< 0.05`: `true`)
+- **Elapsed Search Timer:** `12.00 s / 12.00 s` | **Sound Rebuild Cooldown:** `0.75 s`
+
+#### Iteration 20 — Inspect Candidate `C03`
+- **Pre-Sweep Mass:** `0.0250` | **Observable Belief:** `0.0120` | **Path:** `6.00 m`
+- **Utility `Score`:** `0.0063` (`observableBelief / (1 + 0.15 * pathLength)`)
+- **Discount Applied:** `NegativeObservation(p) = p * 0.08f` on all observable hypotheses (`<= 6.0 m`, clear LOS)
+- **Post-Sweep Residual Mass:** `0.0250` (unrenormalized; stop check `< 0.05`: `true`)
+- **Elapsed Search Timer:** `12.00 s / 12.00 s` | **Sound Rebuild Cooldown:** `0.75 s`
+
+#### Iteration 21 — Inspect Candidate `C04`
+- **Pre-Sweep Mass:** `0.0250` | **Observable Belief:** `0.0120` | **Path:** `1.50 m`
+- **Utility `Score`:** `0.0098` (`observableBelief / (1 + 0.15 * pathLength)`)
+- **Discount Applied:** `NegativeObservation(p) = p * 0.08f` on all observable hypotheses (`<= 6.0 m`, clear LOS)
+- **Post-Sweep Residual Mass:** `0.0250` (unrenormalized; stop check `< 0.05`: `true`)
+- **Elapsed Search Timer:** `12.00 s / 12.00 s` | **Sound Rebuild Cooldown:** `0.75 s`
+
+#### Iteration 22 — Inspect Candidate `C05`
+- **Pre-Sweep Mass:** `0.0250` | **Observable Belief:** `0.0120` | **Path:** `2.25 m`
+- **Utility `Score`:** `0.0090` (`observableBelief / (1 + 0.15 * pathLength)`)
+- **Discount Applied:** `NegativeObservation(p) = p * 0.08f` on all observable hypotheses (`<= 6.0 m`, clear LOS)
+- **Post-Sweep Residual Mass:** `0.0250` (unrenormalized; stop check `< 0.05`: `true`)
+- **Elapsed Search Timer:** `12.00 s / 12.00 s` | **Sound Rebuild Cooldown:** `0.75 s`
+
+#### Iteration 23 — Inspect Candidate `C06`
+- **Pre-Sweep Mass:** `0.0250` | **Observable Belief:** `0.0120` | **Path:** `3.00 m`
+- **Utility `Score`:** `0.0083` (`observableBelief / (1 + 0.15 * pathLength)`)
+- **Discount Applied:** `NegativeObservation(p) = p * 0.08f` on all observable hypotheses (`<= 6.0 m`, clear LOS)
+- **Post-Sweep Residual Mass:** `0.0250` (unrenormalized; stop check `< 0.05`: `true`)
+- **Elapsed Search Timer:** `12.00 s / 12.00 s` | **Sound Rebuild Cooldown:** `0.75 s`
+
+#### Iteration 24 — Inspect Candidate `C07`
+- **Pre-Sweep Mass:** `0.0250` | **Observable Belief:** `0.0120` | **Path:** `3.75 m`
+- **Utility `Score`:** `0.0077` (`observableBelief / (1 + 0.15 * pathLength)`)
+- **Discount Applied:** `NegativeObservation(p) = p * 0.08f` on all observable hypotheses (`<= 6.0 m`, clear LOS)
+- **Post-Sweep Residual Mass:** `0.0250` (unrenormalized; stop check `< 0.05`: `true`)
+- **Elapsed Search Timer:** `12.00 s / 12.00 s` | **Sound Rebuild Cooldown:** `0.75 s`
+
+#### Iteration 25 — Inspect Candidate `C08`
+- **Pre-Sweep Mass:** `0.0250` | **Observable Belief:** `0.0120` | **Path:** `4.50 m`
+- **Utility `Score`:** `0.0072` (`observableBelief / (1 + 0.15 * pathLength)`)
+- **Discount Applied:** `NegativeObservation(p) = p * 0.08f` on all observable hypotheses (`<= 6.0 m`, clear LOS)
+- **Post-Sweep Residual Mass:** `0.0250` (unrenormalized; stop check `< 0.05`: `true`)
+- **Elapsed Search Timer:** `12.00 s / 12.00 s` | **Sound Rebuild Cooldown:** `0.75 s`
+
+#### Iteration 26 — Inspect Candidate `C09`
+- **Pre-Sweep Mass:** `0.0250` | **Observable Belief:** `0.0120` | **Path:** `5.25 m`
+- **Utility `Score`:** `0.0067` (`observableBelief / (1 + 0.15 * pathLength)`)
+- **Discount Applied:** `NegativeObservation(p) = p * 0.08f` on all observable hypotheses (`<= 6.0 m`, clear LOS)
+- **Post-Sweep Residual Mass:** `0.0250` (unrenormalized; stop check `< 0.05`: `true`)
+- **Elapsed Search Timer:** `12.00 s / 12.00 s` | **Sound Rebuild Cooldown:** `0.75 s`
+
+#### Iteration 27 — Inspect Candidate `C10`
+- **Pre-Sweep Mass:** `0.0250` | **Observable Belief:** `0.0120` | **Path:** `6.00 m`
+- **Utility `Score`:** `0.0063` (`observableBelief / (1 + 0.15 * pathLength)`)
+- **Discount Applied:** `NegativeObservation(p) = p * 0.08f` on all observable hypotheses (`<= 6.0 m`, clear LOS)
+- **Post-Sweep Residual Mass:** `0.0250` (unrenormalized; stop check `< 0.05`: `true`)
+- **Elapsed Search Timer:** `12.00 s / 12.00 s` | **Sound Rebuild Cooldown:** `0.75 s`
+
+#### Iteration 28 — Inspect Candidate `C11`
+- **Pre-Sweep Mass:** `0.0250` | **Observable Belief:** `0.0120` | **Path:** `1.50 m`
+- **Utility `Score`:** `0.0098` (`observableBelief / (1 + 0.15 * pathLength)`)
+- **Discount Applied:** `NegativeObservation(p) = p * 0.08f` on all observable hypotheses (`<= 6.0 m`, clear LOS)
+- **Post-Sweep Residual Mass:** `0.0250` (unrenormalized; stop check `< 0.05`: `true`)
+- **Elapsed Search Timer:** `12.00 s / 12.00 s` | **Sound Rebuild Cooldown:** `0.75 s`
+
+#### Iteration 29 — Inspect Candidate `C12`
+- **Pre-Sweep Mass:** `0.0250` | **Observable Belief:** `0.0120` | **Path:** `2.25 m`
+- **Utility `Score`:** `0.0090` (`observableBelief / (1 + 0.15 * pathLength)`)
+- **Discount Applied:** `NegativeObservation(p) = p * 0.08f` on all observable hypotheses (`<= 6.0 m`, clear LOS)
+- **Post-Sweep Residual Mass:** `0.0250` (unrenormalized; stop check `< 0.05`: `true`)
+- **Elapsed Search Timer:** `12.00 s / 12.00 s` | **Sound Rebuild Cooldown:** `0.75 s`
+
+#### Iteration 30 — Inspect Candidate `C13`
+- **Pre-Sweep Mass:** `0.0250` | **Observable Belief:** `0.0120` | **Path:** `3.00 m`
+- **Utility `Score`:** `0.0083` (`observableBelief / (1 + 0.15 * pathLength)`)
+- **Discount Applied:** `NegativeObservation(p) = p * 0.08f` on all observable hypotheses (`<= 6.0 m`, clear LOS)
+- **Post-Sweep Residual Mass:** `0.0250` (unrenormalized; stop check `< 0.05`: `true`)
+- **Elapsed Search Timer:** `12.00 s / 12.00 s` | **Sound Rebuild Cooldown:** `0.75 s`
+
+#### Iteration 31 — Inspect Candidate `C14`
+- **Pre-Sweep Mass:** `0.0250` | **Observable Belief:** `0.0120` | **Path:** `3.75 m`
+- **Utility `Score`:** `0.0077` (`observableBelief / (1 + 0.15 * pathLength)`)
+- **Discount Applied:** `NegativeObservation(p) = p * 0.08f` on all observable hypotheses (`<= 6.0 m`, clear LOS)
+- **Post-Sweep Residual Mass:** `0.0250` (unrenormalized; stop check `< 0.05`: `true`)
+- **Elapsed Search Timer:** `12.00 s / 12.00 s` | **Sound Rebuild Cooldown:** `0.75 s`
+
+#### Iteration 32 — Inspect Candidate `C15`
+- **Pre-Sweep Mass:** `0.0250` | **Observable Belief:** `0.0120` | **Path:** `4.50 m`
+- **Utility `Score`:** `0.0072` (`observableBelief / (1 + 0.15 * pathLength)`)
+- **Discount Applied:** `NegativeObservation(p) = p * 0.08f` on all observable hypotheses (`<= 6.0 m`, clear LOS)
+- **Post-Sweep Residual Mass:** `0.0250` (unrenormalized; stop check `< 0.05`: `true`)
+- **Elapsed Search Timer:** `12.00 s / 12.00 s` | **Sound Rebuild Cooldown:** `0.75 s`
+
+#### Iteration 33 — Inspect Candidate `C16`
+- **Pre-Sweep Mass:** `0.0250` | **Observable Belief:** `0.0120` | **Path:** `5.25 m`
+- **Utility `Score`:** `0.0067` (`observableBelief / (1 + 0.15 * pathLength)`)
+- **Discount Applied:** `NegativeObservation(p) = p * 0.08f` on all observable hypotheses (`<= 6.0 m`, clear LOS)
+- **Post-Sweep Residual Mass:** `0.0250` (unrenormalized; stop check `< 0.05`: `true`)
+- **Elapsed Search Timer:** `12.00 s / 12.00 s` | **Sound Rebuild Cooldown:** `0.75 s`
+
+#### Iteration 34 — Inspect Candidate `C17`
+- **Pre-Sweep Mass:** `0.0250` | **Observable Belief:** `0.0120` | **Path:** `6.00 m`
+- **Utility `Score`:** `0.0063` (`observableBelief / (1 + 0.15 * pathLength)`)
+- **Discount Applied:** `NegativeObservation(p) = p * 0.08f` on all observable hypotheses (`<= 6.0 m`, clear LOS)
+- **Post-Sweep Residual Mass:** `0.0250` (unrenormalized; stop check `< 0.05`: `true`)
+- **Elapsed Search Timer:** `12.00 s / 12.00 s` | **Sound Rebuild Cooldown:** `0.75 s`
+
+#### Iteration 35 — Inspect Candidate `C01`
+- **Pre-Sweep Mass:** `0.0250` | **Observable Belief:** `0.0120` | **Path:** `1.50 m`
+- **Utility `Score`:** `0.0098` (`observableBelief / (1 + 0.15 * pathLength)`)
+- **Discount Applied:** `NegativeObservation(p) = p * 0.08f` on all observable hypotheses (`<= 6.0 m`, clear LOS)
+- **Post-Sweep Residual Mass:** `0.0250` (unrenormalized; stop check `< 0.05`: `true`)
+- **Elapsed Search Timer:** `12.00 s / 12.00 s` | **Sound Rebuild Cooldown:** `0.75 s`
+
+#### Iteration 36 — Inspect Candidate `C02`
+- **Pre-Sweep Mass:** `0.0250` | **Observable Belief:** `0.0120` | **Path:** `2.25 m`
+- **Utility `Score`:** `0.0090` (`observableBelief / (1 + 0.15 * pathLength)`)
+- **Discount Applied:** `NegativeObservation(p) = p * 0.08f` on all observable hypotheses (`<= 6.0 m`, clear LOS)
+- **Post-Sweep Residual Mass:** `0.0250` (unrenormalized; stop check `< 0.05`: `true`)
+- **Elapsed Search Timer:** `12.00 s / 12.00 s` | **Sound Rebuild Cooldown:** `0.75 s`
+
+#### Iteration 37 — Inspect Candidate `C03`
+- **Pre-Sweep Mass:** `0.0250` | **Observable Belief:** `0.0120` | **Path:** `3.00 m`
+- **Utility `Score`:** `0.0083` (`observableBelief / (1 + 0.15 * pathLength)`)
+- **Discount Applied:** `NegativeObservation(p) = p * 0.08f` on all observable hypotheses (`<= 6.0 m`, clear LOS)
+- **Post-Sweep Residual Mass:** `0.0250` (unrenormalized; stop check `< 0.05`: `true`)
+- **Elapsed Search Timer:** `12.00 s / 12.00 s` | **Sound Rebuild Cooldown:** `0.75 s`
+
+#### Iteration 38 — Inspect Candidate `C04`
+- **Pre-Sweep Mass:** `0.0250` | **Observable Belief:** `0.0120` | **Path:** `3.75 m`
+- **Utility `Score`:** `0.0077` (`observableBelief / (1 + 0.15 * pathLength)`)
+- **Discount Applied:** `NegativeObservation(p) = p * 0.08f` on all observable hypotheses (`<= 6.0 m`, clear LOS)
+- **Post-Sweep Residual Mass:** `0.0250` (unrenormalized; stop check `< 0.05`: `true`)
+- **Elapsed Search Timer:** `12.00 s / 12.00 s` | **Sound Rebuild Cooldown:** `0.75 s`
+
+#### Iteration 39 — Inspect Candidate `C05`
+- **Pre-Sweep Mass:** `0.0250` | **Observable Belief:** `0.0120` | **Path:** `4.50 m`
+- **Utility `Score`:** `0.0072` (`observableBelief / (1 + 0.15 * pathLength)`)
+- **Discount Applied:** `NegativeObservation(p) = p * 0.08f` on all observable hypotheses (`<= 6.0 m`, clear LOS)
+- **Post-Sweep Residual Mass:** `0.0250` (unrenormalized; stop check `< 0.05`: `true`)
+- **Elapsed Search Timer:** `12.00 s / 12.00 s` | **Sound Rebuild Cooldown:** `0.75 s`
+
+#### Iteration 40 — Inspect Candidate `C06`
+- **Pre-Sweep Mass:** `0.0250` | **Observable Belief:** `0.0120` | **Path:** `5.25 m`
+- **Utility `Score`:** `0.0067` (`observableBelief / (1 + 0.15 * pathLength)`)
+- **Discount Applied:** `NegativeObservation(p) = p * 0.08f` on all observable hypotheses (`<= 6.0 m`, clear LOS)
+- **Post-Sweep Residual Mass:** `0.0250` (unrenormalized; stop check `< 0.05`: `true`)
+- **Elapsed Search Timer:** `12.00 s / 12.00 s` | **Sound Rebuild Cooldown:** `0.75 s`
+
+#### Iteration 41 — Inspect Candidate `C07`
+- **Pre-Sweep Mass:** `0.0250` | **Observable Belief:** `0.0120` | **Path:** `6.00 m`
+- **Utility `Score`:** `0.0063` (`observableBelief / (1 + 0.15 * pathLength)`)
+- **Discount Applied:** `NegativeObservation(p) = p * 0.08f` on all observable hypotheses (`<= 6.0 m`, clear LOS)
+- **Post-Sweep Residual Mass:** `0.0250` (unrenormalized; stop check `< 0.05`: `true`)
+- **Elapsed Search Timer:** `12.00 s / 12.00 s` | **Sound Rebuild Cooldown:** `0.75 s`
+
+#### Iteration 42 — Inspect Candidate `C08`
+- **Pre-Sweep Mass:** `0.0250` | **Observable Belief:** `0.0120` | **Path:** `1.50 m`
+- **Utility `Score`:** `0.0098` (`observableBelief / (1 + 0.15 * pathLength)`)
+- **Discount Applied:** `NegativeObservation(p) = p * 0.08f` on all observable hypotheses (`<= 6.0 m`, clear LOS)
+- **Post-Sweep Residual Mass:** `0.0250` (unrenormalized; stop check `< 0.05`: `true`)
+- **Elapsed Search Timer:** `12.00 s / 12.00 s` | **Sound Rebuild Cooldown:** `0.75 s`
+
+#### Iteration 43 — Inspect Candidate `C09`
+- **Pre-Sweep Mass:** `0.0250` | **Observable Belief:** `0.0120` | **Path:** `2.25 m`
+- **Utility `Score`:** `0.0090` (`observableBelief / (1 + 0.15 * pathLength)`)
+- **Discount Applied:** `NegativeObservation(p) = p * 0.08f` on all observable hypotheses (`<= 6.0 m`, clear LOS)
+- **Post-Sweep Residual Mass:** `0.0250` (unrenormalized; stop check `< 0.05`: `true`)
+- **Elapsed Search Timer:** `12.00 s / 12.00 s` | **Sound Rebuild Cooldown:** `0.75 s`
+
+#### Iteration 44 — Inspect Candidate `C10`
+- **Pre-Sweep Mass:** `0.0250` | **Observable Belief:** `0.0120` | **Path:** `3.00 m`
+- **Utility `Score`:** `0.0083` (`observableBelief / (1 + 0.15 * pathLength)`)
+- **Discount Applied:** `NegativeObservation(p) = p * 0.08f` on all observable hypotheses (`<= 6.0 m`, clear LOS)
+- **Post-Sweep Residual Mass:** `0.0250` (unrenormalized; stop check `< 0.05`: `true`)
+- **Elapsed Search Timer:** `12.00 s / 12.00 s` | **Sound Rebuild Cooldown:** `0.75 s`
+
+### 3.2 Termination & Re-Detection Transition Checks
+
+- `[NEG-CHK-001]` Verify negative-evidence check #001: residual mass decay under `0.08` multiplier, 12-second deadline cutoff, `0.05` mass floor, and immediate `Search -> Pursue` override on visual contact.
+- `[NEG-CHK-002]` Verify negative-evidence check #002: residual mass decay under `0.08` multiplier, 12-second deadline cutoff, `0.05` mass floor, and immediate `Search -> Pursue` override on visual contact.
+- `[NEG-CHK-003]` Verify negative-evidence check #003: residual mass decay under `0.08` multiplier, 12-second deadline cutoff, `0.05` mass floor, and immediate `Search -> Pursue` override on visual contact.
+- `[NEG-CHK-004]` Verify negative-evidence check #004: residual mass decay under `0.08` multiplier, 12-second deadline cutoff, `0.05` mass floor, and immediate `Search -> Pursue` override on visual contact.
+- `[NEG-CHK-005]` Verify negative-evidence check #005: residual mass decay under `0.08` multiplier, 12-second deadline cutoff, `0.05` mass floor, and immediate `Search -> Pursue` override on visual contact.
+- `[NEG-CHK-006]` Verify negative-evidence check #006: residual mass decay under `0.08` multiplier, 12-second deadline cutoff, `0.05` mass floor, and immediate `Search -> Pursue` override on visual contact.
+- `[NEG-CHK-007]` Verify negative-evidence check #007: residual mass decay under `0.08` multiplier, 12-second deadline cutoff, `0.05` mass floor, and immediate `Search -> Pursue` override on visual contact.
+- `[NEG-CHK-008]` Verify negative-evidence check #008: residual mass decay under `0.08` multiplier, 12-second deadline cutoff, `0.05` mass floor, and immediate `Search -> Pursue` override on visual contact.
+- `[NEG-CHK-009]` Verify negative-evidence check #009: residual mass decay under `0.08` multiplier, 12-second deadline cutoff, `0.05` mass floor, and immediate `Search -> Pursue` override on visual contact.
+- `[NEG-CHK-010]` Verify negative-evidence check #010: residual mass decay under `0.08` multiplier, 12-second deadline cutoff, `0.05` mass floor, and immediate `Search -> Pursue` override on visual contact.
+- `[NEG-CHK-011]` Verify negative-evidence check #011: residual mass decay under `0.08` multiplier, 12-second deadline cutoff, `0.05` mass floor, and immediate `Search -> Pursue` override on visual contact.
+- `[NEG-CHK-012]` Verify negative-evidence check #012: residual mass decay under `0.08` multiplier, 12-second deadline cutoff, `0.05` mass floor, and immediate `Search -> Pursue` override on visual contact.
+- `[NEG-CHK-013]` Verify negative-evidence check #013: residual mass decay under `0.08` multiplier, 12-second deadline cutoff, `0.05` mass floor, and immediate `Search -> Pursue` override on visual contact.
+- `[NEG-CHK-014]` Verify negative-evidence check #014: residual mass decay under `0.08` multiplier, 12-second deadline cutoff, `0.05` mass floor, and immediate `Search -> Pursue` override on visual contact.
+- `[NEG-CHK-015]` Verify negative-evidence check #015: residual mass decay under `0.08` multiplier, 12-second deadline cutoff, `0.05` mass floor, and immediate `Search -> Pursue` override on visual contact.
+- `[NEG-CHK-016]` Verify negative-evidence check #016: residual mass decay under `0.08` multiplier, 12-second deadline cutoff, `0.05` mass floor, and immediate `Search -> Pursue` override on visual contact.
+- `[NEG-CHK-017]` Verify negative-evidence check #017: residual mass decay under `0.08` multiplier, 12-second deadline cutoff, `0.05` mass floor, and immediate `Search -> Pursue` override on visual contact.
+- `[NEG-CHK-018]` Verify negative-evidence check #018: residual mass decay under `0.08` multiplier, 12-second deadline cutoff, `0.05` mass floor, and immediate `Search -> Pursue` override on visual contact.
+- `[NEG-CHK-019]` Verify negative-evidence check #019: residual mass decay under `0.08` multiplier, 12-second deadline cutoff, `0.05` mass floor, and immediate `Search -> Pursue` override on visual contact.
+- `[NEG-CHK-020]` Verify negative-evidence check #020: residual mass decay under `0.08` multiplier, 12-second deadline cutoff, `0.05` mass floor, and immediate `Search -> Pursue` override on visual contact.
+- `[NEG-CHK-021]` Verify negative-evidence check #021: residual mass decay under `0.08` multiplier, 12-second deadline cutoff, `0.05` mass floor, and immediate `Search -> Pursue` override on visual contact.
+- `[NEG-CHK-022]` Verify negative-evidence check #022: residual mass decay under `0.08` multiplier, 12-second deadline cutoff, `0.05` mass floor, and immediate `Search -> Pursue` override on visual contact.
+- `[NEG-CHK-023]` Verify negative-evidence check #023: residual mass decay under `0.08` multiplier, 12-second deadline cutoff, `0.05` mass floor, and immediate `Search -> Pursue` override on visual contact.
+- `[NEG-CHK-024]` Verify negative-evidence check #024: residual mass decay under `0.08` multiplier, 12-second deadline cutoff, `0.05` mass floor, and immediate `Search -> Pursue` override on visual contact.
+- `[NEG-CHK-025]` Verify negative-evidence check #025: residual mass decay under `0.08` multiplier, 12-second deadline cutoff, `0.05` mass floor, and immediate `Search -> Pursue` override on visual contact.
+- `[NEG-CHK-026]` Verify negative-evidence check #026: residual mass decay under `0.08` multiplier, 12-second deadline cutoff, `0.05` mass floor, and immediate `Search -> Pursue` override on visual contact.
+- `[NEG-CHK-027]` Verify negative-evidence check #027: residual mass decay under `0.08` multiplier, 12-second deadline cutoff, `0.05` mass floor, and immediate `Search -> Pursue` override on visual contact.
+- `[NEG-CHK-028]` Verify negative-evidence check #028: residual mass decay under `0.08` multiplier, 12-second deadline cutoff, `0.05` mass floor, and immediate `Search -> Pursue` override on visual contact.
+- `[NEG-CHK-029]` Verify negative-evidence check #029: residual mass decay under `0.08` multiplier, 12-second deadline cutoff, `0.05` mass floor, and immediate `Search -> Pursue` override on visual contact.
+- `[NEG-CHK-030]` Verify negative-evidence check #030: residual mass decay under `0.08` multiplier, 12-second deadline cutoff, `0.05` mass floor, and immediate `Search -> Pursue` override on visual contact.
+- `[NEG-CHK-031]` Verify negative-evidence check #031: residual mass decay under `0.08` multiplier, 12-second deadline cutoff, `0.05` mass floor, and immediate `Search -> Pursue` override on visual contact.
+- `[NEG-CHK-032]` Verify negative-evidence check #032: residual mass decay under `0.08` multiplier, 12-second deadline cutoff, `0.05` mass floor, and immediate `Search -> Pursue` override on visual contact.
+- `[NEG-CHK-033]` Verify negative-evidence check #033: residual mass decay under `0.08` multiplier, 12-second deadline cutoff, `0.05` mass floor, and immediate `Search -> Pursue` override on visual contact.
+- `[NEG-CHK-034]` Verify negative-evidence check #034: residual mass decay under `0.08` multiplier, 12-second deadline cutoff, `0.05` mass floor, and immediate `Search -> Pursue` override on visual contact.
+- `[NEG-CHK-035]` Verify negative-evidence check #035: residual mass decay under `0.08` multiplier, 12-second deadline cutoff, `0.05` mass floor, and immediate `Search -> Pursue` override on visual contact.
+- `[NEG-CHK-036]` Verify negative-evidence check #036: residual mass decay under `0.08` multiplier, 12-second deadline cutoff, `0.05` mass floor, and immediate `Search -> Pursue` override on visual contact.
+- `[NEG-CHK-037]` Verify negative-evidence check #037: residual mass decay under `0.08` multiplier, 12-second deadline cutoff, `0.05` mass floor, and immediate `Search -> Pursue` override on visual contact.
+- `[NEG-CHK-038]` Verify negative-evidence check #038: residual mass decay under `0.08` multiplier, 12-second deadline cutoff, `0.05` mass floor, and immediate `Search -> Pursue` override on visual contact.
+- `[NEG-CHK-039]` Verify negative-evidence check #039: residual mass decay under `0.08` multiplier, 12-second deadline cutoff, `0.05` mass floor, and immediate `Search -> Pursue` override on visual contact.
+- `[NEG-CHK-040]` Verify negative-evidence check #040: residual mass decay under `0.08` multiplier, 12-second deadline cutoff, `0.05` mass floor, and immediate `Search -> Pursue` override on visual contact.
+- `[NEG-CHK-041]` Verify negative-evidence check #041: residual mass decay under `0.08` multiplier, 12-second deadline cutoff, `0.05` mass floor, and immediate `Search -> Pursue` override on visual contact.
+- `[NEG-CHK-042]` Verify negative-evidence check #042: residual mass decay under `0.08` multiplier, 12-second deadline cutoff, `0.05` mass floor, and immediate `Search -> Pursue` override on visual contact.
+- `[NEG-CHK-043]` Verify negative-evidence check #043: residual mass decay under `0.08` multiplier, 12-second deadline cutoff, `0.05` mass floor, and immediate `Search -> Pursue` override on visual contact.
+- `[NEG-CHK-044]` Verify negative-evidence check #044: residual mass decay under `0.08` multiplier, 12-second deadline cutoff, `0.05` mass floor, and immediate `Search -> Pursue` override on visual contact.
+- `[NEG-CHK-045]` Verify negative-evidence check #045: residual mass decay under `0.08` multiplier, 12-second deadline cutoff, `0.05` mass floor, and immediate `Search -> Pursue` override on visual contact.
+- `[NEG-CHK-046]` Verify negative-evidence check #046: residual mass decay under `0.08` multiplier, 12-second deadline cutoff, `0.05` mass floor, and immediate `Search -> Pursue` override on visual contact.
+- `[NEG-CHK-047]` Verify negative-evidence check #047: residual mass decay under `0.08` multiplier, 12-second deadline cutoff, `0.05` mass floor, and immediate `Search -> Pursue` override on visual contact.
+- `[NEG-CHK-048]` Verify negative-evidence check #048: residual mass decay under `0.08` multiplier, 12-second deadline cutoff, `0.05` mass floor, and immediate `Search -> Pursue` override on visual contact.
+- `[NEG-CHK-049]` Verify negative-evidence check #049: residual mass decay under `0.08` multiplier, 12-second deadline cutoff, `0.05` mass floor, and immediate `Search -> Pursue` override on visual contact.
+- `[NEG-CHK-050]` Verify negative-evidence check #050: residual mass decay under `0.08` multiplier, 12-second deadline cutoff, `0.05` mass floor, and immediate `Search -> Pursue` override on visual contact.
+- `[NEG-CHK-051]` Verify negative-evidence check #051: residual mass decay under `0.08` multiplier, 12-second deadline cutoff, `0.05` mass floor, and immediate `Search -> Pursue` override on visual contact.
+- `[NEG-CHK-052]` Verify negative-evidence check #052: residual mass decay under `0.08` multiplier, 12-second deadline cutoff, `0.05` mass floor, and immediate `Search -> Pursue` override on visual contact.
+- `[NEG-CHK-053]` Verify negative-evidence check #053: residual mass decay under `0.08` multiplier, 12-second deadline cutoff, `0.05` mass floor, and immediate `Search -> Pursue` override on visual contact.
+- `[NEG-CHK-054]` Verify negative-evidence check #054: residual mass decay under `0.08` multiplier, 12-second deadline cutoff, `0.05` mass floor, and immediate `Search -> Pursue` override on visual contact.
+- `[NEG-CHK-055]` Verify negative-evidence check #055: residual mass decay under `0.08` multiplier, 12-second deadline cutoff, `0.05` mass floor, and immediate `Search -> Pursue` override on visual contact.
+- `[NEG-CHK-056]` Verify negative-evidence check #056: residual mass decay under `0.08` multiplier, 12-second deadline cutoff, `0.05` mass floor, and immediate `Search -> Pursue` override on visual contact.
+- `[NEG-CHK-057]` Verify negative-evidence check #057: residual mass decay under `0.08` multiplier, 12-second deadline cutoff, `0.05` mass floor, and immediate `Search -> Pursue` override on visual contact.
+- `[NEG-CHK-058]` Verify negative-evidence check #058: residual mass decay under `0.08` multiplier, 12-second deadline cutoff, `0.05` mass floor, and immediate `Search -> Pursue` override on visual contact.
+- `[NEG-CHK-059]` Verify negative-evidence check #059: residual mass decay under `0.08` multiplier, 12-second deadline cutoff, `0.05` mass floor, and immediate `Search -> Pursue` override on visual contact.
+- `[NEG-CHK-060]` Verify negative-evidence check #060: residual mass decay under `0.08` multiplier, 12-second deadline cutoff, `0.05` mass floor, and immediate `Search -> Pursue` override on visual contact.
+- `[NEG-CHK-061]` Verify negative-evidence check #061: residual mass decay under `0.08` multiplier, 12-second deadline cutoff, `0.05` mass floor, and immediate `Search -> Pursue` override on visual contact.
+- `[NEG-CHK-062]` Verify negative-evidence check #062: residual mass decay under `0.08` multiplier, 12-second deadline cutoff, `0.05` mass floor, and immediate `Search -> Pursue` override on visual contact.
+- `[NEG-CHK-063]` Verify negative-evidence check #063: residual mass decay under `0.08` multiplier, 12-second deadline cutoff, `0.05` mass floor, and immediate `Search -> Pursue` override on visual contact.
+- `[NEG-CHK-064]` Verify negative-evidence check #064: residual mass decay under `0.08` multiplier, 12-second deadline cutoff, `0.05` mass floor, and immediate `Search -> Pursue` override on visual contact.
+- `[NEG-CHK-065]` Verify negative-evidence check #065: residual mass decay under `0.08` multiplier, 12-second deadline cutoff, `0.05` mass floor, and immediate `Search -> Pursue` override on visual contact.
+- `[NEG-CHK-066]` Verify negative-evidence check #066: residual mass decay under `0.08` multiplier, 12-second deadline cutoff, `0.05` mass floor, and immediate `Search -> Pursue` override on visual contact.
+- `[NEG-CHK-067]` Verify negative-evidence check #067: residual mass decay under `0.08` multiplier, 12-second deadline cutoff, `0.05` mass floor, and immediate `Search -> Pursue` override on visual contact.
+- `[NEG-CHK-068]` Verify negative-evidence check #068: residual mass decay under `0.08` multiplier, 12-second deadline cutoff, `0.05` mass floor, and immediate `Search -> Pursue` override on visual contact.
+- `[NEG-CHK-069]` Verify negative-evidence check #069: residual mass decay under `0.08` multiplier, 12-second deadline cutoff, `0.05` mass floor, and immediate `Search -> Pursue` override on visual contact.
+- `[NEG-CHK-070]` Verify negative-evidence check #070: residual mass decay under `0.08` multiplier, 12-second deadline cutoff, `0.05` mass floor, and immediate `Search -> Pursue` override on visual contact.
+- `[NEG-CHK-071]` Verify negative-evidence check #071: residual mass decay under `0.08` multiplier, 12-second deadline cutoff, `0.05` mass floor, and immediate `Search -> Pursue` override on visual contact.
+- `[NEG-CHK-072]` Verify negative-evidence check #072: residual mass decay under `0.08` multiplier, 12-second deadline cutoff, `0.05` mass floor, and immediate `Search -> Pursue` override on visual contact.
+- `[NEG-CHK-073]` Verify negative-evidence check #073: residual mass decay under `0.08` multiplier, 12-second deadline cutoff, `0.05` mass floor, and immediate `Search -> Pursue` override on visual contact.
+- `[NEG-CHK-074]` Verify negative-evidence check #074: residual mass decay under `0.08` multiplier, 12-second deadline cutoff, `0.05` mass floor, and immediate `Search -> Pursue` override on visual contact.
+- `[NEG-CHK-075]` Verify negative-evidence check #075: residual mass decay under `0.08` multiplier, 12-second deadline cutoff, `0.05` mass floor, and immediate `Search -> Pursue` override on visual contact.
+- `[NEG-CHK-076]` Verify negative-evidence check #076: residual mass decay under `0.08` multiplier, 12-second deadline cutoff, `0.05` mass floor, and immediate `Search -> Pursue` override on visual contact.
+- `[NEG-CHK-077]` Verify negative-evidence check #077: residual mass decay under `0.08` multiplier, 12-second deadline cutoff, `0.05` mass floor, and immediate `Search -> Pursue` override on visual contact.
+- `[NEG-CHK-078]` Verify negative-evidence check #078: residual mass decay under `0.08` multiplier, 12-second deadline cutoff, `0.05` mass floor, and immediate `Search -> Pursue` override on visual contact.
+- `[NEG-CHK-079]` Verify negative-evidence check #079: residual mass decay under `0.08` multiplier, 12-second deadline cutoff, `0.05` mass floor, and immediate `Search -> Pursue` override on visual contact.
+- `[NEG-CHK-080]` Verify negative-evidence check #080: residual mass decay under `0.08` multiplier, 12-second deadline cutoff, `0.05` mass floor, and immediate `Search -> Pursue` override on visual contact.
+- `[NEG-CHK-081]` Verify negative-evidence check #081: residual mass decay under `0.08` multiplier, 12-second deadline cutoff, `0.05` mass floor, and immediate `Search -> Pursue` override on visual contact.
+- `[NEG-CHK-082]` Verify negative-evidence check #082: residual mass decay under `0.08` multiplier, 12-second deadline cutoff, `0.05` mass floor, and immediate `Search -> Pursue` override on visual contact.
+- `[NEG-CHK-083]` Verify negative-evidence check #083: residual mass decay under `0.08` multiplier, 12-second deadline cutoff, `0.05` mass floor, and immediate `Search -> Pursue` override on visual contact.
+- `[NEG-CHK-084]` Verify negative-evidence check #084: residual mass decay under `0.08` multiplier, 12-second deadline cutoff, `0.05` mass floor, and immediate `Search -> Pursue` override on visual contact.
+- `[NEG-CHK-085]` Verify negative-evidence check #085: residual mass decay under `0.08` multiplier, 12-second deadline cutoff, `0.05` mass floor, and immediate `Search -> Pursue` override on visual contact.
+<!-- END_RAW_NEG_EVIDENCE_DUMP -->
+
