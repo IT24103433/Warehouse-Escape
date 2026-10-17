@@ -75,3 +75,7 @@ Verified O(n^2) visibility comparisons remain lightweight at decision boundaries
 ## 2026-10-16 — Add candidate utility formula weighting observable belief and path length
 Formulated candidate utility as observableBelief / (1 + 0.15 * pathLength) to balance information gain against travel.
 Added Gaussian distance falloff and directional heading bias to initialize discrete prior weights.
+
+## 2026-10-17 — Apply 0.08 belief discount factor after unsuccessful area inspection
+Applied a 0.08 negative-evidence multiplier to observable hypotheses following an empty local sweep.
+Left residual belief unnormalized so total remaining mass reflects support for the player staying nearby.
