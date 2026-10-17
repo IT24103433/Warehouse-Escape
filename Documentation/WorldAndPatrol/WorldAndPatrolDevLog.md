@@ -79,3 +79,7 @@ Mapped the sight test to the cached head direction, range, horizontal aperture a
 ## 2026-10-16 · Refactor PatrolUtilityTrace to replace fixed-loop draft logs
 
 Replaced the hand-stepped order worksheet with utility comparisons, selection events and arrival timestamps. The array order remains relevant as a tie-break and affects inspection pause lengths.
+
+## 2026-10-17 · Document UMP attack range and 120 HP balance for Room 2 guard
+
+Recorded the missing-component defaults and where to verify serialized overrides. Sight, firing eligibility, bullet obstruction and health are separate gates.

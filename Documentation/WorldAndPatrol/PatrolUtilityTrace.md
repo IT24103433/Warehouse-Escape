@@ -138,6 +138,34 @@ If movement is interrupted before arrival, carry the old inspection
 timestamp into the next ranking. A change in destination order can come from
 the measured path or visibility without any change in configured points.
 
+## Room 2 combat defaults and evidence
+
+When `Health` is missing, `Awake` creates it, names the character
+`Varun [Patrol]` and sets max health to 120. When `GuardShooting` is missing,
+the fallback configures a UMP SMG with damage 14, cooldown 1.1 s, range
+13 m, burst count 2 and spread 2.5. Pre-existing components retain their
+setup at this call site.
+
+| Field | Checked-in Room 2 guard | Fallback on missing component |
+| --- | ---: | ---: |
+| Max HP | 120 | 120 |
+| UMP damage per shot | 12 | 14 |
+| Firing cooldown (s) | 1.35 | 1.1 |
+| Firing range (m) | 13 | 13 |
+| Shots per burst | 2 | 2 |
+| Accuracy spread | 3 | 2.5 |
+
+The scene values come from `Health` and `GuardShooting` serialized on
+`Guard_Varun_Patrol`. The active guard must also be in Pursue for
+`GuardShooting.HasVisualTarget` to permit it to fire.
+
+With the default 16 m detection and 13 m attack ranges, a clear line at
+14 m can support pursuit before closing to firing range. Test aim and
+damage at a comfortably inside firing location and then repeat a little
+outside it. Confirmed visual contact, weapon range and bullet obstruction
+all contribute to whether the guard can land a shot. Compare each gate
+individually before attributing missed damage to health or weapon balance.
+
 ## End-to-end example from the waypoint dataset
 
 At origin R2_W, compare R2_E at age 13.6 s and R2_N at age 15 s.
