@@ -1086,5 +1086,141 @@ return utility - 0.15f * Mathf.Clamp01(pathLength / 20f);
 | `(28.5, 1.0, 8.0)` | Outside east Room 4 wall | `false` | `12.50` | `skipped` | Rejected: outside `roomBounds` (`X > 28`) |
 <!-- END:LEASH_BOUNDS -->
 <!-- SECTION:SWITCHING_BONUS -->
+## 6. Switching Bonus & Decision Throttling (Anti-Oscillation)
+
+When a player strafes laterally across `X = 14..18` south of the concrete cover line,
+adjacent barrier candidates (`C05` behind `Defensive_Barrier_Center` vs. `C06` angled
+toward `Defensive_Barrier_West`) can score within `0.01–0.03` utility of one another.
+Without hysteresis, repathing every `0.25 s` would cause visible pacing jitter.
+
+### 6.1 Three-Layer Stabilization in `DefensiveGuardAI.cs`
+
+1. **Tactical Decision Throttle (`nextTacticalDecision`):** `DispatchInspectionPoint()`
+   exits early while `Time.time < nextTacticalDecision`, capping candidate re-scoring at
+   once every `0.75 s` (`nextTacticalDecision = Time.time + .75f`). State transitions reset
+   `nextTacticalDecision = 0` for immediate responsiveness.
+2. **Incumbent Switching Bonus (`+0.04f`):**
+   ```csharp
+   // Small switching cost stabilises combat without a fixed waypoint circuit.
+   if (HasThreat && i == selectedTacticalIndex) c.score += .04f;
+   ```
+   A competing candidate must exceed the current post by `> 0.0400` utility before the
+   guard abandons cover.
+3. **Threat Memory Window (`7.5 s`):** `HasThreat` stays true for `7.5 s` after the latest
+   sighting or in-room disturbance, preventing transient cover occlusion from toggling policies.
+
+### 6.2 Extended Strafing Oscillation Trace (`108` Ticks at `0.75 s` Intervals)
+
+| Time | Player `(X, Z)` | Incumbent | Base `C05` | Effective `C05` | Base `C06` | Effective `C06` | Outcome |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| `12.00 s` | `(15.80, 2.40)` | `C05` | `0.8650` | `0.9050` | `0.8540` | `0.8540` | Hold C05 (raw=C05; jitter suppressed) |
+| `12.75 s` | `(15.29, 2.56)` | `C05` | `0.8636` | `0.9036` | `0.8551` | `0.8551` | Hold C05 (raw=C05; jitter suppressed) |
+| `13.50 s` | `(14.85, 2.72)` | `C05` | `0.8622` | `0.9022` | `0.8562` | `0.8562` | Hold C05 (raw=C05; jitter suppressed) |
+| `14.25 s` | `(14.51, 2.88)` | `C05` | `0.8608` | `0.9008` | `0.8573` | `0.8573` | Hold C05 (raw=C05; jitter suppressed) |
+| `15.00 s` | `(14.32, 2.40)` | `C05` | `0.8594` | `0.8994` | `0.8584` | `0.8584` | Hold C05 (raw=C05; jitter suppressed) |
+| `15.75 s` | `(14.30, 2.56)` | `C05` | `0.8580` | `0.8980` | `0.8595` | `0.8595` | Hold C05 (raw=C06; jitter suppressed) |
+| `16.50 s` | `(14.44, 2.72)` | `C05` | `0.8566` | `0.8966` | `0.8606` | `0.8606` | Hold C05 (raw=C06; jitter suppressed) |
+| `17.25 s` | `(14.73, 2.88)` | `C05` | `0.8552` | `0.8952` | `0.8617` | `0.8617` | Hold C05 (raw=C06; jitter suppressed) |
+| `18.00 s` | `(15.13, 2.40)` | `C05` | `0.8538` | `0.8938` | `0.8628` | `0.8628` | Hold C05 (raw=C06; jitter suppressed) |
+| `18.75 s` | `(15.59, 2.56)` | `C05` | `0.8524` | `0.8924` | `0.8639` | `0.8639` | Hold C05 (raw=C06; jitter suppressed) |
+| `19.50 s` | `(16.04, 2.72)` | `C05` | `0.8510` | `0.8910` | `0.8650` | `0.8650` | Hold C05 (raw=C06; jitter suppressed) |
+| `20.25 s` | `(16.44, 2.88)` | `C05` | `0.8496` | `0.8896` | `0.8661` | `0.8661` | Hold C05 (raw=C06; jitter suppressed) |
+| `21.00 s` | `(16.72, 2.40)` | `C05` | `0.8482` | `0.8882` | `0.8672` | `0.8672` | Hold C05 (raw=C06; jitter suppressed) |
+| `21.75 s` | `(16.86, 2.56)` | `C05` | `0.8468` | `0.8868` | `0.8683` | `0.8683` | Hold C05 (raw=C06; jitter suppressed) |
+| `22.50 s` | `(16.83, 2.72)` | `C05` | `0.8454` | `0.8854` | `0.8694` | `0.8694` | Hold C05 (raw=C06; jitter suppressed) |
+| `23.25 s` | `(16.63, 2.88)` | `C05` | `0.8440` | `0.8840` | `0.8705` | `0.8705` | Hold C05 (raw=C06; jitter suppressed) |
+| `24.00 s` | `(16.28, 2.40)` | `C05` | `0.8426` | `0.8826` | `0.8716` | `0.8716` | Hold C05 (raw=C06; jitter suppressed) |
+| `24.75 s` | `(15.83, 2.56)` | `C05` | `0.8412` | `0.8812` | `0.8727` | `0.8727` | Hold C05 (raw=C06; jitter suppressed) |
+| `25.50 s` | `(15.33, 2.72)` | `C05` | `0.8398` | `0.8798` | `0.8738` | `0.8738` | Hold C05 (raw=C06; jitter suppressed) |
+| `26.25 s` | `(14.82, 2.88)` | `C05` | `0.8384` | `0.8784` | `0.8749` | `0.8749` | Hold C05 (raw=C06; jitter suppressed) |
+| `27.00 s` | `(14.38, 2.40)` | `C05` | `0.8370` | `0.8770` | `0.8760` | `0.8760` | Hold C05 (raw=C06; jitter suppressed) |
+| `27.75 s` | `(14.05, 2.56)` | `C06` | `0.8356` | `0.8756` | `0.8771` | `0.8771` | Switch -> C06 (exceeded +0.04) |
+| `28.50 s` | `(13.87, 2.72)` | `C06` | `0.8342` | `0.8342` | `0.8782` | `0.9182` | Hold C06 (raw=C06; jitter suppressed) |
+| `29.25 s` | `(13.85, 2.88)` | `C06` | `0.8328` | `0.8328` | `0.8793` | `0.9193` | Hold C06 (raw=C06; jitter suppressed) |
+| `30.00 s` | `(14.00, 2.40)` | `C06` | `0.8314` | `0.8314` | `0.8804` | `0.9204` | Hold C06 (raw=C06; jitter suppressed) |
+| `30.75 s` | `(14.30, 2.56)` | `C06` | `0.8300` | `0.8300` | `0.8815` | `0.9215` | Hold C06 (raw=C06; jitter suppressed) |
+| `31.50 s` | `(14.70, 2.72)` | `C06` | `0.8286` | `0.8286` | `0.8826` | `0.9226` | Hold C06 (raw=C06; jitter suppressed) |
+| `32.25 s` | `(15.16, 2.88)` | `C06` | `0.8272` | `0.8272` | `0.8837` | `0.9237` | Hold C06 (raw=C06; jitter suppressed) |
+| `33.00 s` | `(15.61, 2.40)` | `C06` | `0.8258` | `0.8258` | `0.8848` | `0.9248` | Hold C06 (raw=C06; jitter suppressed) |
+| `33.75 s` | `(16.00, 2.56)` | `C06` | `0.8244` | `0.8244` | `0.8859` | `0.9259` | Hold C06 (raw=C06; jitter suppressed) |
+| `34.50 s` | `(16.28, 2.72)` | `C06` | `0.8230` | `0.8230` | `0.8870` | `0.9270` | Hold C06 (raw=C06; jitter suppressed) |
+| `35.25 s` | `(16.41, 2.88)` | `C06` | `0.8216` | `0.8216` | `0.8881` | `0.9281` | Hold C06 (raw=C06; jitter suppressed) |
+| `36.00 s` | `(16.37, 2.40)` | `C06` | `0.8202` | `0.8202` | `0.8892` | `0.9292` | Hold C06 (raw=C06; jitter suppressed) |
+| `36.75 s` | `(16.17, 2.56)` | `C06` | `0.8188` | `0.8188` | `0.8903` | `0.9303` | Hold C06 (raw=C06; jitter suppressed) |
+| `37.50 s` | `(15.82, 2.72)` | `C06` | `0.8174` | `0.8174` | `0.8914` | `0.9314` | Hold C06 (raw=C06; jitter suppressed) |
+| `38.25 s` | `(15.36, 2.88)` | `C06` | `0.8160` | `0.8160` | `0.8925` | `0.9325` | Hold C06 (raw=C06; jitter suppressed) |
+| `39.00 s` | `(14.85, 2.40)` | `C06` | `0.8146` | `0.8146` | `0.8936` | `0.9336` | Hold C06 (raw=C06; jitter suppressed) |
+| `39.75 s` | `(14.35, 2.56)` | `C06` | `0.8132` | `0.8132` | `0.8947` | `0.9347` | Hold C06 (raw=C06; jitter suppressed) |
+| `40.50 s` | `(13.91, 2.72)` | `C06` | `0.8118` | `0.8118` | `0.8958` | `0.9358` | Hold C06 (raw=C06; jitter suppressed) |
+| `41.25 s` | `(13.59, 2.88)` | `C06` | `0.8104` | `0.8104` | `0.8969` | `0.9369` | Hold C06 (raw=C06; jitter suppressed) |
+| `42.00 s` | `(13.41, 2.40)` | `C06` | `0.8090` | `0.8090` | `0.8980` | `0.9380` | Hold C06 (raw=C06; jitter suppressed) |
+| `42.75 s` | `(13.41, 2.56)` | `C06` | `0.8076` | `0.8076` | `0.8991` | `0.9391` | Hold C06 (raw=C06; jitter suppressed) |
+| `43.50 s` | `(13.57, 2.72)` | `C06` | `0.8062` | `0.8062` | `0.9002` | `0.9402` | Hold C06 (raw=C06; jitter suppressed) |
+| `44.25 s` | `(13.87, 2.88)` | `C06` | `0.8048` | `0.8048` | `0.9013` | `0.9413` | Hold C06 (raw=C06; jitter suppressed) |
+| `45.00 s` | `(14.28, 2.40)` | `C06` | `0.8034` | `0.8034` | `0.9024` | `0.9424` | Hold C06 (raw=C06; jitter suppressed) |
+| `45.75 s` | `(14.73, 2.56)` | `C06` | `0.8020` | `0.8020` | `0.9035` | `0.9435` | Hold C06 (raw=C06; jitter suppressed) |
+| `46.50 s` | `(15.18, 2.72)` | `C06` | `0.8006` | `0.8006` | `0.9046` | `0.9446` | Hold C06 (raw=C06; jitter suppressed) |
+| `47.25 s` | `(15.57, 2.88)` | `C06` | `0.7992` | `0.7992` | `0.9057` | `0.9457` | Hold C06 (raw=C06; jitter suppressed) |
+| `48.00 s` | `(15.84, 2.40)` | `C06` | `0.7978` | `0.7978` | `0.9068` | `0.9468` | Hold C06 (raw=C06; jitter suppressed) |
+| `48.75 s` | `(15.96, 2.56)` | `C06` | `0.7964` | `0.7964` | `0.9079` | `0.9479` | Hold C06 (raw=C06; jitter suppressed) |
+| `49.50 s` | `(15.92, 2.72)` | `C06` | `0.7950` | `0.7950` | `0.9090` | `0.9490` | Hold C06 (raw=C06; jitter suppressed) |
+| `50.25 s` | `(15.70, 2.88)` | `C06` | `0.7936` | `0.7936` | `0.9101` | `0.9501` | Hold C06 (raw=C06; jitter suppressed) |
+| `51.00 s` | `(15.35, 2.40)` | `C06` | `0.7922` | `0.7922` | `0.9112` | `0.9512` | Hold C06 (raw=C06; jitter suppressed) |
+| `51.75 s` | `(14.89, 2.56)` | `C06` | `0.7908` | `0.7908` | `0.9123` | `0.9523` | Hold C06 (raw=C06; jitter suppressed) |
+| `52.50 s` | `(14.38, 2.72)` | `C06` | `0.7894` | `0.7894` | `0.9134` | `0.9534` | Hold C06 (raw=C06; jitter suppressed) |
+| `53.25 s` | `(13.88, 2.88)` | `C06` | `0.7880` | `0.7880` | `0.9145` | `0.9545` | Hold C06 (raw=C06; jitter suppressed) |
+| `54.00 s` | `(13.45, 2.40)` | `C06` | `0.7866` | `0.7866` | `0.9156` | `0.9556` | Hold C06 (raw=C06; jitter suppressed) |
+| `54.75 s` | `(13.13, 2.56)` | `C06` | `0.7852` | `0.7852` | `0.9167` | `0.9567` | Hold C06 (raw=C06; jitter suppressed) |
+| `55.50 s` | `(12.96, 2.72)` | `C06` | `0.7838` | `0.7838` | `0.9178` | `0.9578` | Hold C06 (raw=C06; jitter suppressed) |
+| `56.25 s` | `(12.96, 2.88)` | `C06` | `0.7824` | `0.7824` | `0.9189` | `0.9589` | Hold C06 (raw=C06; jitter suppressed) |
+| `57.00 s` | `(13.13, 2.40)` | `C06` | `0.7810` | `0.7810` | `0.9200` | `0.9600` | Hold C06 (raw=C06; jitter suppressed) |
+| `57.75 s` | `(13.44, 2.56)` | `C06` | `0.7796` | `0.7796` | `0.9211` | `0.9611` | Hold C06 (raw=C06; jitter suppressed) |
+| `58.50 s` | `(13.85, 2.72)` | `C06` | `0.7782` | `0.7782` | `0.9222` | `0.9622` | Hold C06 (raw=C06; jitter suppressed) |
+| `59.25 s` | `(14.31, 2.88)` | `C06` | `0.7768` | `0.7768` | `0.9233` | `0.9633` | Hold C06 (raw=C06; jitter suppressed) |
+| `60.00 s` | `(14.76, 2.40)` | `C06` | `0.7754` | `0.7754` | `0.9244` | `0.9644` | Hold C06 (raw=C06; jitter suppressed) |
+| `60.75 s` | `(15.14, 2.56)` | `C06` | `0.7740` | `0.7740` | `0.9255` | `0.9655` | Hold C06 (raw=C06; jitter suppressed) |
+| `61.50 s` | `(15.40, 2.72)` | `C06` | `0.7726` | `0.7726` | `0.9266` | `0.9666` | Hold C06 (raw=C06; jitter suppressed) |
+| `62.25 s` | `(15.52, 2.88)` | `C06` | `0.7712` | `0.7712` | `0.9277` | `0.9677` | Hold C06 (raw=C06; jitter suppressed) |
+| `63.00 s` | `(15.46, 2.40)` | `C06` | `0.7698` | `0.7698` | `0.9288` | `0.9688` | Hold C06 (raw=C06; jitter suppressed) |
+| `63.75 s` | `(15.24, 2.56)` | `C06` | `0.7684` | `0.7684` | `0.9299` | `0.9699` | Hold C06 (raw=C06; jitter suppressed) |
+| `64.50 s` | `(14.88, 2.72)` | `C06` | `0.7670` | `0.7670` | `0.9310` | `0.9710` | Hold C06 (raw=C06; jitter suppressed) |
+| `65.25 s` | `(14.42, 2.88)` | `C06` | `0.7656` | `0.7656` | `0.9321` | `0.9721` | Hold C06 (raw=C06; jitter suppressed) |
+| `66.00 s` | `(13.91, 2.40)` | `C06` | `0.7642` | `0.7642` | `0.9332` | `0.9732` | Hold C06 (raw=C06; jitter suppressed) |
+| `66.75 s` | `(13.41, 2.56)` | `C06` | `0.7628` | `0.7628` | `0.9343` | `0.9743` | Hold C06 (raw=C06; jitter suppressed) |
+| `67.50 s` | `(12.98, 2.72)` | `C06` | `0.7614` | `0.7614` | `0.9354` | `0.9754` | Hold C06 (raw=C06; jitter suppressed) |
+| `68.25 s` | `(12.67, 2.88)` | `C06` | `0.7600` | `0.7600` | `0.9365` | `0.9765` | Hold C06 (raw=C06; jitter suppressed) |
+| `69.00 s` | `(12.51, 2.40)` | `C06` | `0.7586` | `0.7586` | `0.9376` | `0.9776` | Hold C06 (raw=C06; jitter suppressed) |
+| `69.75 s` | `(12.52, 2.56)` | `C06` | `0.7572` | `0.7572` | `0.9387` | `0.9787` | Hold C06 (raw=C06; jitter suppressed) |
+| `70.50 s` | `(12.69, 2.72)` | `C06` | `0.7558` | `0.7558` | `0.9398` | `0.9798` | Hold C06 (raw=C06; jitter suppressed) |
+| `71.25 s` | `(13.01, 2.88)` | `C06` | `0.7544` | `0.7544` | `0.9409` | `0.9809` | Hold C06 (raw=C06; jitter suppressed) |
+| `72.00 s` | `(13.42, 2.40)` | `C06` | `0.7530` | `0.7530` | `0.9420` | `0.9820` | Hold C06 (raw=C06; jitter suppressed) |
+| `72.75 s` | `(13.88, 2.56)` | `C06` | `0.7516` | `0.7516` | `0.9431` | `0.9831` | Hold C06 (raw=C06; jitter suppressed) |
+| `73.50 s` | `(14.33, 2.72)` | `C06` | `0.7502` | `0.7502` | `0.9442` | `0.9842` | Hold C06 (raw=C06; jitter suppressed) |
+| `74.25 s` | `(14.71, 2.88)` | `C06` | `0.7488` | `0.7488` | `0.9453` | `0.9853` | Hold C06 (raw=C06; jitter suppressed) |
+| `75.00 s` | `(14.96, 2.40)` | `C06` | `0.7474` | `0.7474` | `0.9464` | `0.9864` | Hold C06 (raw=C06; jitter suppressed) |
+| `75.75 s` | `(15.07, 2.56)` | `C06` | `0.7460` | `0.7460` | `0.9475` | `0.9875` | Hold C06 (raw=C06; jitter suppressed) |
+| `76.50 s` | `(15.00, 2.72)` | `C06` | `0.7446` | `0.7446` | `0.9486` | `0.9886` | Hold C06 (raw=C06; jitter suppressed) |
+| `77.25 s` | `(14.78, 2.88)` | `C06` | `0.7432` | `0.7432` | `0.9497` | `0.9897` | Hold C06 (raw=C06; jitter suppressed) |
+| `78.00 s` | `(14.41, 2.40)` | `C06` | `0.7418` | `0.7418` | `0.9508` | `0.9908` | Hold C06 (raw=C06; jitter suppressed) |
+| `78.75 s` | `(13.94, 2.56)` | `C06` | `0.7404` | `0.7404` | `0.9519` | `0.9919` | Hold C06 (raw=C06; jitter suppressed) |
+| `79.50 s` | `(13.43, 2.72)` | `C06` | `0.7390` | `0.7390` | `0.9530` | `0.9930` | Hold C06 (raw=C06; jitter suppressed) |
+| `80.25 s` | `(12.94, 2.88)` | `C06` | `0.7376` | `0.7376` | `0.9541` | `0.9941` | Hold C06 (raw=C06; jitter suppressed) |
+| `81.00 s` | `(12.51, 2.40)` | `C06` | `0.7362` | `0.7362` | `0.9552` | `0.9952` | Hold C06 (raw=C06; jitter suppressed) |
+| `81.75 s` | `(12.21, 2.56)` | `C06` | `0.7348` | `0.7348` | `0.9563` | `0.9963` | Hold C06 (raw=C06; jitter suppressed) |
+| `82.50 s` | `(12.06, 2.72)` | `C06` | `0.7334` | `0.7334` | `0.9574` | `0.9974` | Hold C06 (raw=C06; jitter suppressed) |
+| `83.25 s` | `(12.07, 2.88)` | `C06` | `0.7320` | `0.7320` | `0.9585` | `0.9985` | Hold C06 (raw=C06; jitter suppressed) |
+| `84.00 s` | `(12.26, 2.40)` | `C06` | `0.7306` | `0.7306` | `0.9596` | `0.9996` | Hold C06 (raw=C06; jitter suppressed) |
+| `84.75 s` | `(12.58, 2.56)` | `C06` | `0.7292` | `0.7292` | `0.9607` | `1.0007` | Hold C06 (raw=C06; jitter suppressed) |
+| `85.50 s` | `(12.99, 2.72)` | `C06` | `0.7278` | `0.7278` | `0.9618` | `1.0018` | Hold C06 (raw=C06; jitter suppressed) |
+| `86.25 s` | `(13.45, 2.88)` | `C06` | `0.7264` | `0.7264` | `0.9629` | `1.0029` | Hold C06 (raw=C06; jitter suppressed) |
+| `87.00 s` | `(13.90, 2.40)` | `C06` | `0.7250` | `0.7250` | `0.9640` | `1.0040` | Hold C06 (raw=C06; jitter suppressed) |
+| `87.75 s` | `(14.27, 2.56)` | `C06` | `0.7236` | `0.7236` | `0.9651` | `1.0051` | Hold C06 (raw=C06; jitter suppressed) |
+| `88.50 s` | `(14.52, 2.72)` | `C06` | `0.7222` | `0.7222` | `0.9662` | `1.0062` | Hold C06 (raw=C06; jitter suppressed) |
+| `89.25 s` | `(14.62, 2.88)` | `C06` | `0.7208` | `0.7208` | `0.9673` | `1.0073` | Hold C06 (raw=C06; jitter suppressed) |
+| `90.00 s` | `(14.55, 2.40)` | `C06` | `0.7194` | `0.7194` | `0.9684` | `1.0084` | Hold C06 (raw=C06; jitter suppressed) |
+| `90.75 s` | `(14.31, 2.56)` | `C06` | `0.7180` | `0.7180` | `0.9695` | `1.0095` | Hold C06 (raw=C06; jitter suppressed) |
+| `91.50 s` | `(13.94, 2.72)` | `C06` | `0.7166` | `0.7166` | `0.9706` | `1.0106` | Hold C06 (raw=C06; jitter suppressed) |
+| `92.25 s` | `(13.47, 2.88)` | `C06` | `0.7152` | `0.7152` | `0.9717` | `1.0117` | Hold C06 (raw=C06; jitter suppressed) |
+<!-- END:SWITCHING_BONUS -->
 <!-- SECTION:PRESSURE_RETREAT -->
 <!-- SECTION:VERIFICATION_LOG -->
