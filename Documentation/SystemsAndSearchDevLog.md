@@ -79,3 +79,7 @@ Added Gaussian distance falloff and directional heading bias to initialize discr
 ## 2026-10-17 — Apply 0.08 belief discount factor after unsuccessful area inspection
 Applied a 0.08 negative-evidence multiplier to observable hypotheses following an empty local sweep.
 Left residual belief unnormalized so total remaining mass reflects support for the player staying nearby.
+
+## 2026-10-18 — Configure search termination on exhausted evidence or timeout
+Added termination rules ending search when all candidates are inspected, residual mass drops below 0.05, or 12 s elapse.
+Ensured clean exit from search state without indefinite wandering around cleared aisles.
