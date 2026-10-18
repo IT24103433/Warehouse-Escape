@@ -53,9 +53,6 @@ public class GuardShooting : MonoBehaviour
     private int burstsRemaining = 4;
     private bool hasDroppedWeapon = false;
 
-    private static AudioClip guardGunshotClip;
-    private static AudioClip guardShotgunClip;
-
     public WeaponType AssignedWeapon => assignedWeapon;
     public int DamagePerShot => damagePerShot;
     public int PelletCount => pelletCount;
@@ -71,11 +68,13 @@ public class GuardShooting : MonoBehaviour
         audioSource = gameObject.AddComponent<AudioSource>();
         audioSource.playOnAwake = false;
         audioSource.spatialBlend = 1.0f; // 3D positional audio
-        audioSource.minDistance = 2f;
-        audioSource.maxDistance = 35f;
+        audioSource.rolloffMode = AudioRolloffMode.Linear;
+        audioSource.minDistance = 3.0f;
+        audioSource.maxDistance = 35.0f;
+        audioSource.dopplerLevel = 0f;
 
         burstsRemaining = magazineBursts;
-        EnsureGuardAudioClips();
+        WeaponAudio.EnsureClips();
     }
 
     void OnEnable()
@@ -363,10 +362,11 @@ public class GuardShooting : MonoBehaviour
         }
 
         if (muzzleLight != null) StartCoroutine(FlashMuzzleLight());
-        if (guardGunshotClip != null && audioSource != null)
+        if (audioSource != null)
         {
-            audioSource.pitch = Random.Range(0.92f, 1.08f);
-            audioSource.PlayOneShot(guardGunshotClip, 0.75f);
+            AudioClip clip = WeaponAudio.GetWeaponFireClip(assignedWeapon);
+            audioSource.pitch = Random.Range(0.95f, 1.05f);
+            audioSource.PlayOneShot(clip, 0.80f);
         }
     }
 
@@ -411,10 +411,11 @@ public class GuardShooting : MonoBehaviour
         }
 
         if (muzzleLight != null) StartCoroutine(FlashMuzzleLight());
-        if (guardShotgunClip != null && audioSource != null)
+        if (audioSource != null)
         {
-            audioSource.pitch = Random.Range(0.92f, 1.06f);
-            audioSource.PlayOneShot(guardShotgunClip, 0.85f);
+            AudioClip clip = WeaponAudio.GetWeaponFireClip(assignedWeapon);
+            audioSource.pitch = Random.Range(0.95f, 1.05f);
+            audioSource.PlayOneShot(clip, 0.90f);
         }
     }
 
@@ -510,48 +511,5 @@ public class GuardShooting : MonoBehaviour
             if (result != null) return result;
         }
         return null;
-    }
-
-    private static void EnsureGuardAudioClips()
-    {
-        if (guardGunshotClip == null)
-        {
-            int sampleRate = 44100;
-            float duration = 0.14f;
-            int count = Mathf.CeilToInt(sampleRate * duration);
-            float[] samples = new float[count];
-
-            for (int i = 0; i < count; i++)
-            {
-                float t = (float)i / sampleRate;
-                float env = Mathf.Exp(-t * 32f);
-                float noise = (Random.value * 2f - 1f) * 0.7f;
-                float pop = Mathf.Sin(2f * Mathf.PI * (220f - t * 600f) * t) * 0.45f;
-                samples[i] = Mathf.Clamp((noise + pop) * env, -1f, 1f);
-            }
-
-            guardGunshotClip = AudioClip.Create("GuardGunshot", count, 1, sampleRate, false);
-            guardGunshotClip.SetData(samples, 0);
-        }
-
-        if (guardShotgunClip == null)
-        {
-            int sampleRate = 44100;
-            float duration = 0.22f;
-            int count = Mathf.CeilToInt(sampleRate * duration);
-            float[] samples = new float[count];
-
-            for (int i = 0; i < count; i++)
-            {
-                float t = (float)i / sampleRate;
-                float env = Mathf.Exp(-t * 22f);
-                float noise = (Random.value * 2f - 1f) * 0.85f;
-                float blast = Mathf.Sin(2f * Mathf.PI * (140f - t * 300f) * t) * 0.55f;
-                samples[i] = Mathf.Clamp((noise + blast) * env, -1f, 1f);
-            }
-
-            guardShotgunClip = AudioClip.Create("GuardShotgun", count, 1, sampleRate, false);
-            guardShotgunClip.SetData(samples, 0);
-        }
     }
 }

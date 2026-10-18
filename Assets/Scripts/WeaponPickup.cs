@@ -169,10 +169,35 @@ public class WeaponPickup : MonoBehaviour
         }
     }
 
+    public static string GetShortName(WeaponType type)
+    {
+        switch (type)
+        {
+            case WeaponType.MP5_SMG: return "MP5";
+            case WeaponType.UMP_SMG: return "UMP";
+            case WeaponType.AK47_Rifle: return "AK47";
+            case WeaponType.Combat_Shotgun: return "Shotgun";
+            case WeaponType.SCAR_Rifle: return "SCAR";
+            default: return "Weapon";
+        }
+    }
+
     public string GetPrompt()
     {
-        string name = WeaponData.GetConfig(weaponType).weaponName;
-        return $"[E] Swap to {name} ({currentAmmo}/{reserveAmmo})";
+        var playerObj = GameObject.FindGameObjectWithTag("Player");
+        PlayerGun gun = playerObj != null ? playerObj.GetComponentInChildren<PlayerGun>() : null;
+        return GetPrompt(gun);
+    }
+
+    public string GetPrompt(PlayerGun playerGun)
+    {
+        string droppedName = GetShortName(weaponType);
+        if (playerGun != null)
+        {
+            string currentName = GetShortName(playerGun.CurrentWeaponType);
+            return $"[E] Swap {currentName} for {droppedName} ({currentAmmo}/{reserveAmmo})";
+        }
+        return $"[E] Pick up {droppedName} ({currentAmmo}/{reserveAmmo})";
     }
 
     /// <summary>

@@ -151,7 +151,7 @@ public class GameManager : MonoBehaviour
         if (objectiveText != null)
         {
             objectiveText.supportRichText = true;
-            objectiveText.fontSize = 12;
+            objectiveText.fontSize = 13;
             objectiveText.lineSpacing = 1.15f;
             objectiveText.alignment = TextAnchor.UpperLeft;
             objectiveText.horizontalOverflow = HorizontalWrapMode.Wrap;
@@ -163,12 +163,13 @@ public class GameManager : MonoBehaviour
                 RectTransform panelRt = panelTransform.GetComponent<RectTransform>();
                 if (panelRt != null)
                 {
-                    // Anchor to Top-Left, cleanly positioned directly below Health panel (gap at Y = -88)
+                    // Anchor to Top-Left, cleanly positioned directly below Health panel (which sits below Minimap)
+                    // Minimap: Y[-20 to -200], Health: Y[-208 to -260], Objectives: Y[-268 to -346]
                     panelRt.anchorMin = new Vector2(0f, 1f);
                     panelRt.anchorMax = new Vector2(0f, 1f);
                     panelRt.pivot = new Vector2(0f, 1f);
-                    panelRt.anchoredPosition = new Vector2(24f, -88f);
-                    panelRt.sizeDelta = new Vector2(300f, 82f);
+                    panelRt.anchoredPosition = new Vector2(24f, -268f);
+                    panelRt.sizeDelta = new Vector2(300f, 78f);
 
                     // Translucent high-contrast dark panel
                     var img = panelTransform.GetComponent<Image>();
@@ -181,49 +182,184 @@ public class GameManager : MonoBehaviour
                 {
                     textRt.anchorMin = Vector2.zero;
                     textRt.anchorMax = Vector2.one;
-                    textRt.offsetMin = new Vector2(12f, 8f);
-                    textRt.offsetMax = new Vector2(-12f, -8f);
+                    textRt.offsetMin = new Vector2(10f, 6f);
+                    textRt.offsetMax = new Vector2(-10f, -6f);
                 }
 
-                // Create compact Controls Help Panel directly below Objective panel
+                // Create or configure compact Controls Help Panel directly below Objective panel
+                // Controls Help: Y[-350 to -408]
                 Transform hudParent = panelTransform.parent;
-                if (hudParent != null && hudParent.Find("Controls_Help_Panel") == null)
+                if (hudParent != null)
                 {
-                    GameObject helpGo = new GameObject("Controls_Help_Panel");
-                    helpGo.transform.SetParent(hudParent, false);
-                    RectTransform helpRt = helpGo.AddComponent<RectTransform>();
+                    Transform existingHelp = hudParent.Find("Controls_Help_Panel");
+                    GameObject helpGo;
+                    if (existingHelp == null)
+                    {
+                        helpGo = new GameObject("Controls_Help_Panel");
+                        helpGo.transform.SetParent(hudParent, false);
+                    }
+                    else
+                    {
+                        helpGo = existingHelp.gameObject;
+                    }
+
+                    RectTransform helpRt = helpGo.GetComponent<RectTransform>();
+                    if (helpRt == null) helpRt = helpGo.AddComponent<RectTransform>();
                     helpRt.anchorMin = new Vector2(0f, 1f);
                     helpRt.anchorMax = new Vector2(0f, 1f);
                     helpRt.pivot = new Vector2(0f, 1f);
-                    helpRt.anchoredPosition = new Vector2(24f, -176f);
-                    helpRt.sizeDelta = new Vector2(300f, 56f);
+                    helpRt.anchoredPosition = new Vector2(24f, -350f);
+                    helpRt.sizeDelta = new Vector2(300f, 58f);
 
-                    var helpImg = helpGo.AddComponent<Image>();
+                    var helpImg = helpGo.GetComponent<Image>();
+                    if (helpImg == null) helpImg = helpGo.AddComponent<Image>();
                     helpImg.color = new Color(0.06f, 0.08f, 0.12f, 0.90f);
 
-                    GameObject helpTextGo = new GameObject("Help_Text");
-                    helpTextGo.transform.SetParent(helpGo.transform, false);
-                    RectTransform htRt = helpTextGo.AddComponent<RectTransform>();
+                    Transform existingHelpText = helpGo.transform.Find("Help_Text");
+                    GameObject helpTextGo;
+                    if (existingHelpText == null)
+                    {
+                        helpTextGo = new GameObject("Help_Text");
+                        helpTextGo.transform.SetParent(helpGo.transform, false);
+                    }
+                    else
+                    {
+                        helpTextGo = existingHelpText.gameObject;
+                    }
+
+                    RectTransform htRt = helpTextGo.GetComponent<RectTransform>();
+                    if (htRt == null) htRt = helpTextGo.AddComponent<RectTransform>();
                     htRt.anchorMin = Vector2.zero;
                     htRt.anchorMax = Vector2.one;
-                    htRt.offsetMin = new Vector2(12f, 6f);
-                    htRt.offsetMax = new Vector2(-12f, -6f);
+                    htRt.offsetMin = new Vector2(10f, 5f);
+                    htRt.offsetMax = new Vector2(-10f, -5f);
 
-                    var ht = helpTextGo.AddComponent<Text>();
+                    var ht = helpTextGo.GetComponent<Text>();
+                    if (ht == null) ht = helpTextGo.AddComponent<Text>();
                     ht.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
                     ht.fontSize = 11;
                     ht.supportRichText = true;
                     ht.lineSpacing = 1.15f;
                     ht.color = Color.white;
-                    ht.text = "<b><color=#95A5A6>CONTROLS</color></b>\n<color=#ECEFF1>[WASD] Move  •  [LMB] Fire (Continuous)\n[R] Reload  •  [E] Interact / Swap Weapon</color>";
+                    ht.text = "<b><color=#95A5A6>CONTROLS</color></b>\n<color=#ECEFF1>[WASD] Move  •  [LMB] Fire (Continuous)  •  [R] Reload\n[E] Interact / Swap Weapon  •  [ESC] Pause</color>";
+                }
+
+                // Build Pause Banner Panel if not existing
+                if (hudParent != null && hudParent.parent != null && hudParent.parent.Find("Pause_Panel") == null)
+                {
+                    GameObject pauseGo = new GameObject("Pause_Panel");
+                    pauseGo.transform.SetParent(hudParent.parent, false);
+                    RectTransform pRt = pauseGo.AddComponent<RectTransform>();
+                    pRt.anchorMin = Vector2.zero;
+                    pRt.anchorMax = Vector2.one;
+                    pRt.offsetMin = Vector2.zero;
+                    pRt.offsetMax = Vector2.zero;
+
+                    var pBg = pauseGo.AddComponent<Image>();
+                    pBg.color = new Color(0.02f, 0.04f, 0.07f, 0.75f);
+
+                    GameObject pBox = new GameObject("Pause_Box");
+                    pBox.transform.SetParent(pauseGo.transform, false);
+                    RectTransform bRt = pBox.AddComponent<RectTransform>();
+                    bRt.anchorMin = bRt.anchorMax = bRt.pivot = new Vector2(0.5f, 0.5f);
+                    bRt.sizeDelta = new Vector2(360f, 120f);
+                    var bImg = pBox.AddComponent<Image>();
+                    bImg.color = new Color(0.08f, 0.10f, 0.15f, 0.95f);
+
+                    GameObject pTitle = new GameObject("Title");
+                    pTitle.transform.SetParent(pBox.transform, false);
+                    RectTransform tRt = pTitle.AddComponent<RectTransform>();
+                    tRt.anchorMin = tRt.anchorMax = new Vector2(0.5f, 0.65f);
+                    tRt.sizeDelta = new Vector2(320f, 40f);
+                    var tText = pTitle.AddComponent<Text>();
+                    tText.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+                    tText.fontSize = 22;
+                    tText.fontStyle = FontStyle.Bold;
+                    tText.alignment = TextAnchor.MiddleCenter;
+                    tText.color = new Color(0.95f, 0.85f, 0.35f);
+                    tText.text = "TACTICAL PAUSE";
+
+                    GameObject pSub = new GameObject("Subtext");
+                    pSub.transform.SetParent(pBox.transform, false);
+                    RectTransform sRt = pSub.AddComponent<RectTransform>();
+                    sRt.anchorMin = sRt.anchorMax = new Vector2(0.5f, 0.32f);
+                    sRt.sizeDelta = new Vector2(320f, 30f);
+                    var sText = pSub.AddComponent<Text>();
+                    sText.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+                    sText.fontSize = 13;
+                    sText.alignment = TextAnchor.MiddleCenter;
+                    sText.color = Color.white;
+                    sText.text = "Press [ESC] to Resume";
+
+                    pausePanel = pauseGo;
+                    pausePanel.SetActive(false);
+                }
+
+                // Configure Interaction Prompt Panel styling
+                if (interactionPromptPanel != null)
+                {
+                    var ipRt = interactionPromptPanel.GetComponent<RectTransform>();
+                    if (ipRt != null)
+                    {
+                        ipRt.anchorMin = new Vector2(0.5f, 0.28f);
+                        ipRt.anchorMax = new Vector2(0.5f, 0.28f);
+                        ipRt.pivot = new Vector2(0.5f, 0.5f);
+                        ipRt.anchoredPosition = Vector2.zero;
+                        ipRt.sizeDelta = new Vector2(400f, 44f);
+                    }
+                    var ipImg = interactionPromptPanel.GetComponent<Image>();
+                    if (ipImg == null) ipImg = interactionPromptPanel.AddComponent<Image>();
+                    ipImg.color = new Color(0.06f, 0.08f, 0.12f, 0.90f);
+
+                    if (interactionPromptText != null)
+                    {
+                        interactionPromptText.alignment = TextAnchor.MiddleCenter;
+                        interactionPromptText.fontSize = 15;
+                        interactionPromptText.fontStyle = FontStyle.Bold;
+                        interactionPromptText.color = new Color(1.0f, 0.90f, 0.30f);
+                    }
                 }
             }
         }
     }
 
+    private bool isPaused = false;
+    private GameObject pausePanel;
+
+    public bool IsPaused => isPaused;
+
+    public void TogglePause()
+    {
+        if (IsGameEnded) return;
+
+        isPaused = !isPaused;
+        Time.timeScale = isPaused ? 0f : 1f;
+
+        if (pausePanel != null)
+        {
+            pausePanel.SetActive(isPaused);
+        }
+
+        if (isPaused)
+        {
+            ReleaseCursor();
+        }
+        else
+        {
+            LockCursor();
+        }
+
+        Debug.Log($"[GameManager] Pause toggled: {(isPaused ? "PAUSED" : "RESUMED")}");
+    }
+
     void Update()
     {
-        if (currentState == GameState.Playing)
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            TogglePause();
+        }
+
+        if (currentState == GameState.Playing && !isPaused)
         {
             UpdateHUD();
         }
@@ -287,7 +423,7 @@ public class GameManager : MonoBehaviour
     /// Displays a prominent "Current Objective" plus single instruction, followed by
     /// a clear progression breakdown.
     /// </summary>
-    private void UpdateHUD()
+    public void UpdateHUD()
     {
         if (cardReader == null)
         {
@@ -322,35 +458,48 @@ public class GameManager : MonoBehaviour
 
         if (interactionPromptPanel != null)
         {
-            if (cardReader != null)
+            // 1. Weapon pickup prompt takes first priority when player is looking at an eligible dropped weapon
+            string weaponPrompt = "";
+            var playerObj = GameObject.FindGameObjectWithTag("Player");
+            if (playerObj != null)
+            {
+                var gun = playerObj.GetComponentInChildren<PlayerGun>();
+                if (gun != null) weaponPrompt = gun.GetNearbyPickupPrompt();
+            }
+
+            if (!string.IsNullOrEmpty(weaponPrompt))
+            {
+                interactionPromptPanel.SetActive(true);
+                if (interactionPromptText != null)
+                    interactionPromptText.text = weaponPrompt;
+            }
+            else if (cardReader != null && (cardReader.IsPlayerInRange || !string.IsNullOrEmpty(cardReader.StatusFeedback)))
             {
                 bool inRange = cardReader.IsPlayerInRange;
                 bool hasFeedback = !string.IsNullOrEmpty(cardReader.StatusFeedback);
-                interactionPromptPanel.SetActive(inRange || hasFeedback);
+                string readerPrompt = hasFeedback ? cardReader.StatusFeedback : cardReader.GetInteractionPrompt();
+                bool show = !string.IsNullOrEmpty(readerPrompt);
+                interactionPromptPanel.SetActive(show);
 
-                if (interactionPromptText != null)
+                if (show && interactionPromptText != null)
                 {
-                    if (hasFeedback)
-                    {
-                        interactionPromptText.text = cardReader.StatusFeedback;
-                    }
-                    else if (inRange)
-                    {
-                        interactionPromptText.text = cardReader.GetInteractionPrompt();
-                    }
+                    interactionPromptText.text = readerPrompt;
                 }
             }
-            else if (doorController != null)
+            else if (doorController != null && doorController.IsPlayerInInteractionRange)
             {
-                bool inRange = doorController.IsPlayerInInteractionRange;
                 string prompt = doorController.GetInteractionPrompt();
-                bool show = inRange && !string.IsNullOrEmpty(prompt);
+                bool show = !string.IsNullOrEmpty(prompt);
                 interactionPromptPanel.SetActive(show);
 
                 if (show && interactionPromptText != null)
                 {
                     interactionPromptText.text = prompt;
                 }
+            }
+            else
+            {
+                interactionPromptPanel.SetActive(false);
             }
         }
     }
@@ -436,6 +585,8 @@ public class GameManager : MonoBehaviour
     {
         Debug.Log("[GameManager] RestartGame invoked: Restoring time scale, resetting inventory, and reloading Warehouse scene...");
         Time.timeScale = 1f;
+        isPaused = false;
+        if (pausePanel != null) pausePanel.SetActive(false);
         AccessCard.HasKeycard = false;
         WeaponPickup.ClearAllPickups();
         currentState = GameState.Playing;
@@ -455,6 +606,20 @@ public class GameManager : MonoBehaviour
     }
 
     /// <summary>
+    /// Resets game state, UI panels, time scale and cursor in-place without reloading the scene.
+    /// </summary>
+    public void ResetStateInPlace()
+    {
+        Time.timeScale = 1f;
+        isPaused = false;
+        if (pausePanel != null) pausePanel.SetActive(false);
+        currentState = GameState.Playing;
+        resultReason = "";
+        LockCursor();
+        UpdateUI();
+    }
+
+    /// <summary>
     /// Quits the game, exiting built executable or stopping Play Mode in Editor.
     /// </summary>
     public void QuitGame()
@@ -467,10 +632,11 @@ public class GameManager : MonoBehaviour
 #endif
     }
 
-    private void UpdateUI()
+    public void UpdateUI()
     {
         if (hudPanel != null) hudPanel.SetActive(currentState == GameState.Playing);
         if (gameOverPanel != null) gameOverPanel.SetActive(currentState == GameState.GameOver);
         if (victoryPanel != null) victoryPanel.SetActive(currentState == GameState.Victory);
+        UpdateHUD();
     }
 }

@@ -33,6 +33,18 @@ public class CardReader : MonoBehaviour
     private string statusFeedback = "";
     private float feedbackTimer = 0f;
 
+    private static CardReader instance;
+    public static CardReader Instance => instance;
+
+    public static bool IsPlayerNearby(float distance = 3.0f)
+    {
+        if (instance == null) instance = Object.FindFirstObjectByType<CardReader>();
+        if (instance == null) return false;
+        var p = GameObject.FindGameObjectWithTag("Player");
+        if (p == null) return false;
+        return Vector3.Distance(p.transform.position, instance.transform.position) <= distance;
+    }
+
     public bool IsCardInserted => isCardInserted;
     public float InteractionDistance => interactionDistance;
     public string StatusFeedback => statusFeedback;
@@ -57,6 +69,11 @@ public class CardReader : MonoBehaviour
         if (WeaponPickup.IsAnyPickupTargeted()) return ""; // Yield prompt to targeted weapon pickup
         if (isCardInserted) return "ACCESS GRANTED";
         return "[E] Insert Access Card";
+    }
+
+    void Awake()
+    {
+        instance = this;
     }
 
     void Start()

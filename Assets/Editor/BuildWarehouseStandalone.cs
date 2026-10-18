@@ -18,7 +18,30 @@ public static class BuildWarehouseStandalone
 
         string exePath = Path.Combine(buildDir, "WarehouseEscape.exe");
 
-        string[] scenes = new string[] { "Assets/Scenes/Warehouse.unity" };
+        string scenePath = "Assets/Scenes/Warehouse.unity";
+        var scene = UnityEditor.SceneManagement.EditorSceneManager.OpenScene(scenePath, UnityEditor.SceneManagement.OpenSceneMode.Single);
+        var strayVerifier = GameObject.Find("[WinLosePlayModeVerifier]");
+        bool dirty = false;
+        if (strayVerifier != null)
+        {
+            Debug.Log("[BuildWarehouseStandalone] Removing obsolete [WinLosePlayModeVerifier] from scene...");
+            Object.DestroyImmediate(strayVerifier);
+            dirty = true;
+        }
+        var strayCaptureRunner = GameObject.Find("__CaptureRunner");
+        if (strayCaptureRunner != null)
+        {
+            Object.DestroyImmediate(strayCaptureRunner);
+            dirty = true;
+        }
+        if (dirty)
+        {
+            UnityEditor.SceneManagement.EditorSceneManager.MarkSceneDirty(scene);
+            UnityEditor.SceneManagement.EditorSceneManager.SaveScene(scene);
+            AssetDatabase.SaveAssets();
+        }
+
+        string[] scenes = new string[] { scenePath };
 
         BuildPlayerOptions buildPlayerOptions = new BuildPlayerOptions();
         buildPlayerOptions.scenes = scenes;

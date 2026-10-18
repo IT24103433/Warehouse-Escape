@@ -83,7 +83,7 @@ public class DoorController : MonoBehaviour
             float distance = Vector3.Distance(player.position, closedPosition);
 
             // Press E when close to the doorway (only if active interaction is enabled)
-            if (showInteractionPrompt && distance <= interactionDistance && Input.GetKeyDown(KeyCode.E))
+            if (showInteractionPrompt && distance <= interactionDistance && Input.GetKeyDown(KeyCode.E) && !WeaponPickup.IsAnyPickupTargeted())
             {
                 ToggleDoor();
             }

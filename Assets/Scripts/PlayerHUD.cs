@@ -2,28 +2,54 @@ using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
-/// First-person HUD providing health bar and numeric readout, ammunition counters,
-/// reloading feedback, center crosshair with reactive hit-marker pulse,
-/// red damage vignette, and a selectable 720p / 1080p resolution toggle.
+/// First-person HUD providing:
+/// - Top-Left high-contrast tactical minimap showing room boundaries, corridors, and player position/facing.
+/// - Top-Left health bar with numeric readout and low-health pulsing warning immediately below the minimap without overlap.
+/// - Center crosshair with bold dark contrast outline, hidden on pause, defeat, and victory.
+/// - Bottom-Right ammunition counter, weapon name, and reloading feedback.
+/// - Center-Bottom weapon pickup instructions formatted as '[E] Swap MP5 for AK47 (30/90)' or '[E] Pick up AK47 (30/90)'.
+/// - Red damage vignette.
+/// - Selectable 720p / 1080p resolution and quality toggles.
 /// </summary>
 public class PlayerHUD : MonoBehaviour
 {
     private static PlayerHUD instance;
+    public static PlayerHUD Instance => instance;
 
     private Health playerHealth;
     private PlayerGun playerGun;
 
     // HUD Elements
+    private GameObject minimapPanelObject;
+    private RectTransform playerMarkerRt;
+    private Image minimapFloorPlanImage;
+
+    private GameObject hpPanelObject;
     private Image healthFillImage;
     private Text healthNumericText;
+    private Text healthWarningText;
+
     private Text weaponNameText;
     private Text ammoText;
     private Text reloadText;
     private Image damageVignette;
+
+    private GameObject crosshairRootObject;
     private Image crosshairHitMarker;
+
     private Text resolutionText;
     private GameObject weaponPickupPanel;
     private Text weaponPickupText;
+
+    // Minimap World Bounds (Rooms 1 through 5)
+    private const float MinWorldX = -30.0f;
+    private const float MaxWorldX = 30.0f;
+    private const float MinWorldZ = -32.0f;
+    private const float MaxWorldZ = 52.0f;
+    private const float MinimapWidth = 180.0f;
+    private const float MinimapHeight = 150.0f;
+
+    private static Sprite cachedMinimapSprite;
 
     private float hitMarkerTimer = 0f;
     private float vignetteAlpha = 0f;
@@ -33,6 +59,13 @@ public class PlayerHUD : MonoBehaviour
     private int fpsFrameCount = 0;
     private float currentFps = 60f;
     private float performanceLogTimer = 0f;
+
+    public GameObject CrosshairRoot => crosshairRootObject;
+    public GameObject MinimapPanel => minimapPanelObject;
+    public Image HealthFillImage => healthFillImage;
+    public Text HealthNumericText => healthNumericText;
+    public GameObject WeaponPickupPanel => weaponPickupPanel;
+    public Text WeaponPickupText => weaponPickupText;
 
     public static void TriggerHitMarker()
     {
@@ -77,114 +110,203 @@ public class PlayerHUD : MonoBehaviour
         if (canvas == null) canvas = Object.FindFirstObjectByType<Canvas>();
         if (canvas == null) return;
 
+        // Ensure canvas sorting and camera settings
+        canvas.sortingOrder = 500;
+        if (canvas.renderMode == RenderMode.ScreenSpaceCamera && canvas.worldCamera == null)
+        {
+            canvas.worldCamera = Camera.main;
+            canvas.planeDistance = 0.5f;
+        }
+
         Transform hudPanel = canvas.transform.Find("HUD_Panel");
         if (hudPanel == null) hudPanel = canvas.transform;
+
+        // Clean up previously created dynamic HUD objects if recreating
+        Transform existingCrosshair = hudPanel.Find("Crosshair_Center");
+        if (existingCrosshair != null) Destroy(existingCrosshair.gameObject);
+        Transform existingMinimap = hudPanel.Find("Minimap_Panel");
+        if (existingMinimap != null) Destroy(existingMinimap.gameObject);
+        Transform existingHp = hudPanel.Find("Health_Status_Panel");
+        if (existingHp != null) Destroy(existingHp.gameObject);
+        Transform existingAmmo = hudPanel.Find("Weapon_Ammo_Panel");
+        if (existingAmmo != null) Destroy(existingAmmo.gameObject);
+        Transform existingPickup = hudPanel.Find("Weapon_Pickup_Prompt_Panel");
+        if (existingPickup != null) Destroy(existingPickup.gameObject);
 
         // ========================================================
         // 1. DAMAGE VIGNETTE (Screen-edge red flash on damage)
         // ========================================================
-        GameObject vigGo = new GameObject("Damage_Vignette");
+        Transform existingVig = hudPanel.Find("Damage_Vignette");
+        if (existingVig != null) Destroy(existingVig.gameObject);
+        GameObject vigGo = new GameObject("Damage_Vignette", typeof(RectTransform), typeof(Image));
         vigGo.transform.SetParent(hudPanel, false);
-        var vigRt = vigGo.AddComponent<RectTransform>();
+        var vigRt = vigGo.GetComponent<RectTransform>();
         vigRt.anchorMin = Vector2.zero;
         vigRt.anchorMax = Vector2.one;
         vigRt.offsetMin = Vector2.zero;
         vigRt.offsetMax = Vector2.zero;
-        damageVignette = vigGo.AddComponent<Image>();
+        damageVignette = vigGo.GetComponent<Image>();
         damageVignette.color = new Color(0.85f, 0.05f, 0.05f, 0.0f);
         damageVignette.raycastTarget = false;
 
         // ========================================================
-        // 2. HEALTH STATUS PANEL (Top-Left HUD)
+        // 2. TOP-LEFT MINIMAP (Static floor plan + Moving Player Marker)
+        // Bounds: Y[-20 to -200], Width: 200, Height: 180
         // ========================================================
-        GameObject hpPanel = new GameObject("Health_Status_Panel");
+        GameObject mapPanelGo = new GameObject("Minimap_Panel", typeof(RectTransform), typeof(Image));
+        mapPanelGo.transform.SetParent(hudPanel, false);
+        var mapRt = mapPanelGo.GetComponent<RectTransform>();
+        mapRt.anchorMin = new Vector2(0f, 1f);
+        mapRt.anchorMax = new Vector2(0f, 1f);
+        mapRt.pivot = new Vector2(0f, 1f);
+        mapRt.anchoredPosition = new Vector2(24f, -20f);
+        mapRt.sizeDelta = new Vector2(200f, 180f);
+
+        var mapBgImg = mapPanelGo.GetComponent<Image>();
+        mapBgImg.color = new Color(0.06f, 0.08f, 0.12f, 0.94f);
+        minimapPanelObject = mapPanelGo;
+
+        // Header label
+        GameObject mapHeaderGo = new GameObject("Map_Title", typeof(RectTransform), typeof(Text));
+        mapHeaderGo.transform.SetParent(mapPanelGo.transform, false);
+        var mhRt = mapHeaderGo.GetComponent<RectTransform>();
+        mhRt.anchorMin = new Vector2(0f, 1f);
+        mhRt.anchorMax = new Vector2(1f, 1f);
+        mhRt.pivot = new Vector2(0.5f, 1f);
+        mhRt.anchoredPosition = new Vector2(0f, -4f);
+        mhRt.sizeDelta = new Vector2(190f, 16f);
+        var mhText = mapHeaderGo.GetComponent<Text>();
+        mhText.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+        mhText.fontSize = 10;
+        mhText.fontStyle = FontStyle.Bold;
+        mhText.alignment = TextAnchor.MiddleCenter;
+        mhText.color = new Color(0.55f, 0.70f, 0.85f, 0.90f);
+        mhText.text = "TACTICAL FLOOR PLAN";
+
+        // Floor Plan Graphic Image
+        GameObject floorPlanGo = new GameObject("Floor_Plan_Display", typeof(RectTransform), typeof(Image));
+        floorPlanGo.transform.SetParent(mapPanelGo.transform, false);
+        var fpRt = floorPlanGo.GetComponent<RectTransform>();
+        fpRt.anchorMin = new Vector2(0.5f, 0.5f);
+        fpRt.anchorMax = new Vector2(0.5f, 0.5f);
+        fpRt.pivot = new Vector2(0.5f, 0.5f);
+        fpRt.anchoredPosition = new Vector2(0f, -8f);
+        fpRt.sizeDelta = new Vector2(MinimapWidth, MinimapHeight);
+        minimapFloorPlanImage = floorPlanGo.GetComponent<Image>();
+        minimapFloorPlanImage.sprite = GetOrCreateMinimapSprite();
+        minimapFloorPlanImage.color = Color.white;
+        minimapFloorPlanImage.raycastTarget = false;
+
+        // Player Marker on Minimap: bright tactical chevron with forward sightline
+        GameObject markerGo = new GameObject("Player_Marker", typeof(RectTransform));
+        markerGo.transform.SetParent(floorPlanGo.transform, false);
+        playerMarkerRt = markerGo.GetComponent<RectTransform>();
+        playerMarkerRt.sizeDelta = new Vector2(16f, 16f);
+        playerMarkerRt.anchorMin = playerMarkerRt.anchorMax = playerMarkerRt.pivot = new Vector2(0.5f, 0.5f);
+        playerMarkerRt.anchoredPosition = Vector2.zero;
+
+        // Marker central dot (black backing + bright cyan center)
+        CreateCrosshairTick(markerGo.transform, Vector2.zero, new Vector2(8f, 8f), new Color(0f, 0f, 0f, 0.95f));
+        CreateCrosshairTick(markerGo.transform, Vector2.zero, new Vector2(5f, 5f), new Color(0.2f, 0.95f, 1.0f, 1.0f));
+
+        // Forward sightline arrow (indicates actual camera facing direction)
+        CreateCrosshairTick(markerGo.transform, new Vector2(0f, 7f), new Vector2(4f, 8f), new Color(0f, 0f, 0f, 0.95f));
+        CreateCrosshairTick(markerGo.transform, new Vector2(0f, 7f), new Vector2(2f, 6f), new Color(0.95f, 0.85f, 0.25f, 1.0f));
+
+        // ========================================================
+        // 3. HEALTH STATUS PANEL (Top-Left HUD immediately below Minimap)
+        // Bounds: Y[-208 to -260], Width: 280, Height: 52
+        // ========================================================
+        GameObject hpPanel = new GameObject("Health_Status_Panel", typeof(RectTransform), typeof(Image));
         hpPanel.transform.SetParent(hudPanel, false);
-        var hpRt = hpPanel.AddComponent<RectTransform>();
+        var hpRt = hpPanel.GetComponent<RectTransform>();
         hpRt.anchorMin = new Vector2(0f, 1f);
         hpRt.anchorMax = new Vector2(0f, 1f);
         hpRt.pivot = new Vector2(0f, 1f);
-        hpRt.anchoredPosition = new Vector2(24f, -20f);
-        hpRt.sizeDelta = new Vector2(300f, 62f);
+        hpRt.anchoredPosition = new Vector2(24f, -208f);
+        hpRt.sizeDelta = new Vector2(280f, 52f);
 
-        var hpPanelImg = hpPanel.AddComponent<Image>();
-        hpPanelImg.color = new Color(0.06f, 0.08f, 0.12f, 0.90f);
+        var hpPanelImg = hpPanel.GetComponent<Image>();
+        hpPanelImg.color = new Color(0.06f, 0.08f, 0.12f, 0.92f);
+        hpPanelObject = hpPanel;
 
         // Header label
-        GameObject hpLabelGo = new GameObject("Health_Label");
+        GameObject hpLabelGo = new GameObject("Health_Label", typeof(RectTransform), typeof(Text));
         hpLabelGo.transform.SetParent(hpPanel.transform, false);
-        var labelRt = hpLabelGo.AddComponent<RectTransform>();
-        labelRt.anchoredPosition = new Vector2(16f, -14f);
-        labelRt.sizeDelta = new Vector2(140f, 20f);
+        var labelRt = hpLabelGo.GetComponent<RectTransform>();
+        labelRt.anchoredPosition = new Vector2(14f, -12f);
+        labelRt.sizeDelta = new Vector2(130f, 18f);
         labelRt.pivot = new Vector2(0f, 0.5f);
-        var lText = hpLabelGo.AddComponent<Text>();
+        var lText = hpLabelGo.GetComponent<Text>();
         lText.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-        lText.fontSize = 11;
+        lText.fontSize = 10;
         lText.fontStyle = FontStyle.Bold;
         lText.color = new Color(0.7f, 0.75f, 0.8f);
         lText.text = "OPERATIVE VITALITY";
 
-        // Numeric HP
-        GameObject hpNumGo = new GameObject("Health_Numeric");
+        // Numeric HP & Low HP Warning
+        GameObject hpNumGo = new GameObject("Health_Numeric", typeof(RectTransform), typeof(Text));
         hpNumGo.transform.SetParent(hpPanel.transform, false);
-        var numRt = hpNumGo.AddComponent<RectTransform>();
-        numRt.anchoredPosition = new Vector2(284f, -14f);
-        numRt.sizeDelta = new Vector2(120f, 20f);
+        var numRt = hpNumGo.GetComponent<RectTransform>();
+        numRt.anchoredPosition = new Vector2(266f, -12f);
+        numRt.sizeDelta = new Vector2(140f, 18f);
         numRt.pivot = new Vector2(1f, 0.5f);
-        healthNumericText = hpNumGo.AddComponent<Text>();
+        healthNumericText = hpNumGo.GetComponent<Text>();
         healthNumericText.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-        healthNumericText.fontSize = 14;
+        healthNumericText.fontSize = 13;
         healthNumericText.fontStyle = FontStyle.Bold;
         healthNumericText.alignment = TextAnchor.MiddleRight;
+        healthNumericText.supportRichText = true;
         healthNumericText.color = Color.white;
         healthNumericText.text = "100 / 100";
 
         // Health Bar BG
-        GameObject barBgGo = new GameObject("Health_Bar_BG");
+        GameObject barBgGo = new GameObject("Health_Bar_BG", typeof(RectTransform), typeof(Image));
         barBgGo.transform.SetParent(hpPanel.transform, false);
-        var barBgRt = barBgGo.AddComponent<RectTransform>();
-        barBgRt.anchoredPosition = new Vector2(16f, -38f);
-        barBgRt.sizeDelta = new Vector2(268f, 14f);
+        var barBgRt = barBgGo.GetComponent<RectTransform>();
+        barBgRt.anchoredPosition = new Vector2(14f, -34f);
+        barBgRt.sizeDelta = new Vector2(252f, 12f);
         barBgRt.pivot = new Vector2(0f, 0.5f);
-        var barBgImg = barBgGo.AddComponent<Image>();
+        var barBgImg = barBgGo.GetComponent<Image>();
         barBgImg.color = new Color(0.18f, 0.20f, 0.24f, 1.0f);
 
         // Health Bar Fill
-        GameObject barFillGo = new GameObject("Health_Bar_Fill");
+        GameObject barFillGo = new GameObject("Health_Bar_Fill", typeof(RectTransform), typeof(Image));
         barFillGo.transform.SetParent(barBgGo.transform, false);
-        var barFillRt = barFillGo.AddComponent<RectTransform>();
+        var barFillRt = barFillGo.GetComponent<RectTransform>();
         barFillRt.anchorMin = Vector2.zero;
         barFillRt.anchorMax = Vector2.one;
         barFillRt.offsetMin = new Vector2(2f, 2f);
         barFillRt.offsetMax = new Vector2(-2f, -2f);
-        healthFillImage = barFillGo.AddComponent<Image>();
+        healthFillImage = barFillGo.GetComponent<Image>();
         healthFillImage.type = Image.Type.Filled;
         healthFillImage.fillMethod = Image.FillMethod.Horizontal;
         healthFillImage.color = new Color(0.2f, 0.85f, 0.35f);
 
         // ========================================================
-        // 3. WEAPON & AMMO PANEL (Bottom-Right HUD)
+        // 4. WEAPON & AMMO PANEL (Bottom-Right HUD)
         // ========================================================
-        GameObject ammoPanel = new GameObject("Weapon_Ammo_Panel");
+        GameObject ammoPanel = new GameObject("Weapon_Ammo_Panel", typeof(RectTransform), typeof(Image));
         ammoPanel.transform.SetParent(hudPanel, false);
-        var ammoRt = ammoPanel.AddComponent<RectTransform>();
+        var ammoRt = ammoPanel.GetComponent<RectTransform>();
         ammoRt.anchorMin = new Vector2(1f, 0f);
         ammoRt.anchorMax = new Vector2(1f, 0f);
         ammoRt.pivot = new Vector2(1f, 0f);
         ammoRt.anchoredPosition = new Vector2(-24f, 24f);
-        ammoRt.sizeDelta = new Vector2(280f, 100f);
+        ammoRt.sizeDelta = new Vector2(280f, 96f);
 
-        var ammoPanelImg = ammoPanel.AddComponent<Image>();
-        ammoPanelImg.color = new Color(0.06f, 0.08f, 0.12f, 0.88f);
+        var ammoPanelImg = ammoPanel.GetComponent<Image>();
+        ammoPanelImg.color = new Color(0.06f, 0.08f, 0.12f, 0.90f);
 
         // Weapon Name
-        GameObject wNameGo = new GameObject("Weapon_Name");
+        GameObject wNameGo = new GameObject("Weapon_Name", typeof(RectTransform), typeof(Text));
         wNameGo.transform.SetParent(ammoPanel.transform, false);
-        var wNameRt = wNameGo.AddComponent<RectTransform>();
+        var wNameRt = wNameGo.GetComponent<RectTransform>();
         wNameRt.anchorMin = wNameRt.anchorMax = new Vector2(0f, 0.5f);
-        wNameRt.anchoredPosition = new Vector2(16f, 30f);
+        wNameRt.anchoredPosition = new Vector2(16f, 28f);
         wNameRt.sizeDelta = new Vector2(248f, 20f);
         wNameRt.pivot = new Vector2(0f, 0.5f);
-        weaponNameText = wNameGo.AddComponent<Text>();
+        weaponNameText = wNameGo.GetComponent<Text>();
         weaponNameText.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
         weaponNameText.fontSize = 12;
         weaponNameText.fontStyle = FontStyle.Bold;
@@ -192,14 +314,14 @@ public class PlayerHUD : MonoBehaviour
         weaponNameText.text = "MP5-A3 SMG";
 
         // Ammo Display
-        GameObject ammoValGo = new GameObject("Ammo_Value");
+        GameObject ammoValGo = new GameObject("Ammo_Value", typeof(RectTransform), typeof(Text));
         ammoValGo.transform.SetParent(ammoPanel.transform, false);
-        var valRt = ammoValGo.AddComponent<RectTransform>();
+        var valRt = ammoValGo.GetComponent<RectTransform>();
         valRt.anchorMin = valRt.anchorMax = new Vector2(1f, 0.5f);
-        valRt.anchoredPosition = new Vector2(-16f, 3f);
+        valRt.anchoredPosition = new Vector2(-16f, 2f);
         valRt.sizeDelta = new Vector2(248f, 28f);
         valRt.pivot = new Vector2(1f, 0.5f);
-        ammoText = ammoValGo.AddComponent<Text>();
+        ammoText = ammoValGo.GetComponent<Text>();
         ammoText.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
         ammoText.fontSize = 20;
         ammoText.fontStyle = FontStyle.Bold;
@@ -208,14 +330,14 @@ public class PlayerHUD : MonoBehaviour
         ammoText.text = "30 / 90";
 
         // Reload prompt
-        GameObject reloadGo = new GameObject("Reload_Prompt");
+        GameObject reloadGo = new GameObject("Reload_Prompt", typeof(RectTransform), typeof(Text));
         reloadGo.transform.SetParent(ammoPanel.transform, false);
-        var relRt = reloadGo.AddComponent<RectTransform>();
+        var relRt = reloadGo.GetComponent<RectTransform>();
         relRt.anchorMin = relRt.anchorMax = new Vector2(0f, 0.5f);
-        relRt.anchoredPosition = new Vector2(16f, -25f);
+        relRt.anchoredPosition = new Vector2(16f, -24f);
         relRt.sizeDelta = new Vector2(248f, 20f);
         relRt.pivot = new Vector2(0f, 0.5f);
-        reloadText = reloadGo.AddComponent<Text>();
+        reloadText = reloadGo.GetComponent<Text>();
         reloadText.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
         reloadText.fontSize = 11;
         reloadText.fontStyle = FontStyle.Bold;
@@ -223,65 +345,70 @@ public class PlayerHUD : MonoBehaviour
         reloadText.text = "";
 
         // ========================================================
-        // 4. CENTER CROSSHAIR WITH READABLE CONTRAST & HIT MARKER
+        // 5. CENTER CROSSHAIR WITH READABLE CONTRAST & HIT MARKER
+        // Screen Center (0.5, 0.5) - Bold dark border + bright core
         // ========================================================
-        GameObject crosshairRoot = new GameObject("Crosshair_Center");
+        GameObject crosshairRoot = new GameObject("Crosshair_Center", typeof(RectTransform));
         crosshairRoot.transform.SetParent(hudPanel, false);
-        var cRt = crosshairRoot.AddComponent<RectTransform>();
+        var cRt = crosshairRoot.GetComponent<RectTransform>();
         cRt.anchorMin = new Vector2(0.5f, 0.5f);
         cRt.anchorMax = new Vector2(0.5f, 0.5f);
         cRt.pivot = new Vector2(0.5f, 0.5f);
         cRt.anchoredPosition = Vector2.zero;
-        cRt.sizeDelta = new Vector2(32f, 32f);
+        cRt.sizeDelta = new Vector2(40f, 40f);
+        crosshairRootObject = crosshairRoot;
 
         // Center Aim Dot: 6x6 black outline + 3x3 bright white center
-        CreateCrosshairTick(crosshairRoot.transform, Vector2.zero, new Vector2(6f, 6f), new Color(0f, 0f, 0f, 0.90f));
-        CreateCrosshairTick(crosshairRoot.transform, Vector2.zero, new Vector2(3f, 3f), new Color(0.96f, 1f, 1f, 0.95f));
+        CreateCrosshairTick(crosshairRoot.transform, Vector2.zero, new Vector2(6f, 6f), new Color(0f, 0f, 0f, 0.95f));
+        CreateCrosshairTick(crosshairRoot.transform, Vector2.zero, new Vector2(3f, 3f), new Color(0.96f, 1f, 1f, 1.0f));
 
-        // 4 High-Contrast Ticks: Dark backing (visible against bright scenes) + Light core (visible against dark scenes)
+        // 4 High-Contrast Directional Ticks:
         // Top Tick
-        CreateCrosshairTick(crosshairRoot.transform, new Vector2(0f, 9f), new Vector2(4f, 9f), new Color(0f, 0f, 0f, 0.85f));
-        CreateCrosshairTick(crosshairRoot.transform, new Vector2(0f, 9f), new Vector2(2f, 7f), new Color(0.96f, 1f, 1f, 0.95f));
+        CreateCrosshairTick(crosshairRoot.transform, new Vector2(0f, 11f), new Vector2(4f, 12f), new Color(0f, 0f, 0f, 0.95f));
+        CreateCrosshairTick(crosshairRoot.transform, new Vector2(0f, 11f), new Vector2(2f, 10f), new Color(0.96f, 1f, 1f, 1.0f));
         // Bottom Tick
-        CreateCrosshairTick(crosshairRoot.transform, new Vector2(0f, -9f), new Vector2(4f, 9f), new Color(0f, 0f, 0f, 0.85f));
-        CreateCrosshairTick(crosshairRoot.transform, new Vector2(0f, -9f), new Vector2(2f, 7f), new Color(0.96f, 1f, 1f, 0.95f));
+        CreateCrosshairTick(crosshairRoot.transform, new Vector2(0f, -11f), new Vector2(4f, 12f), new Color(0f, 0f, 0f, 0.95f));
+        CreateCrosshairTick(crosshairRoot.transform, new Vector2(0f, -11f), new Vector2(2f, 10f), new Color(0.96f, 1f, 1f, 1.0f));
         // Left Tick
-        CreateCrosshairTick(crosshairRoot.transform, new Vector2(-9f, 0f), new Vector2(9f, 4f), new Color(0f, 0f, 0f, 0.85f));
-        CreateCrosshairTick(crosshairRoot.transform, new Vector2(-9f, 0f), new Vector2(7f, 2f), new Color(0.96f, 1f, 1f, 0.95f));
+        CreateCrosshairTick(crosshairRoot.transform, new Vector2(-11f, 0f), new Vector2(12f, 4f), new Color(0f, 0f, 0f, 0.95f));
+        CreateCrosshairTick(crosshairRoot.transform, new Vector2(-11f, 0f), new Vector2(10f, 2f), new Color(0.96f, 1f, 1f, 1.0f));
         // Right Tick
-        CreateCrosshairTick(crosshairRoot.transform, new Vector2(9f, 0f), new Vector2(9f, 4f), new Color(0f, 0f, 0f, 0.85f));
-        CreateCrosshairTick(crosshairRoot.transform, new Vector2(9f, 0f), new Vector2(7f, 2f), new Color(0.96f, 1f, 1f, 0.95f));
+        CreateCrosshairTick(crosshairRoot.transform, new Vector2(11f, 0f), new Vector2(12f, 4f), new Color(0f, 0f, 0f, 0.95f));
+        CreateCrosshairTick(crosshairRoot.transform, new Vector2(11f, 0f), new Vector2(10f, 2f), new Color(0.96f, 1f, 1f, 1.0f));
 
         // Hit marker brackets
-        GameObject hitGo = new GameObject("Crosshair_HitMarker");
+        GameObject hitGo = new GameObject("Crosshair_HitMarker", typeof(RectTransform), typeof(Image));
         hitGo.transform.SetParent(crosshairRoot.transform, false);
-        var hitRt = hitGo.AddComponent<RectTransform>();
-        hitRt.sizeDelta = new Vector2(26f, 26f);
-        crosshairHitMarker = hitGo.AddComponent<Image>();
+        var hitRt = hitGo.GetComponent<RectTransform>();
+        hitRt.sizeDelta = new Vector2(28f, 28f);
+        hitRt.anchorMin = hitRt.anchorMax = hitRt.pivot = new Vector2(0.5f, 0.5f);
+        hitRt.anchoredPosition = Vector2.zero;
+        crosshairHitMarker = hitGo.GetComponent<Image>();
         crosshairHitMarker.color = new Color(1f, 0.2f, 0.2f, 0f);
+        crosshairHitMarker.raycastTarget = false;
 
         // ========================================================
-        // 5. WEAPON PICKUP PROMPT PANEL (Lower Center Screen)
+        // 6. WEAPON PICKUP PROMPT PANEL (Lower Center Screen)
         // ========================================================
-        GameObject pickupGo = new GameObject("Weapon_Pickup_Prompt_Panel");
+        GameObject pickupGo = new GameObject("Weapon_Pickup_Prompt_Panel", typeof(RectTransform), typeof(Image));
         pickupGo.transform.SetParent(hudPanel, false);
-        var pRt = pickupGo.AddComponent<RectTransform>();
+        var pRt = pickupGo.GetComponent<RectTransform>();
         pRt.anchorMin = new Vector2(0.5f, 0f);
         pRt.anchorMax = new Vector2(0.5f, 0f);
         pRt.pivot = new Vector2(0.5f, 0f);
         pRt.anchoredPosition = new Vector2(0f, 105f);
-        pRt.sizeDelta = new Vector2(380f, 36f);
-        var pImg = pickupGo.AddComponent<Image>();
+        pRt.sizeDelta = new Vector2(400f, 36f);
+        var pImg = pickupGo.GetComponent<Image>();
         pImg.color = new Color(0.06f, 0.08f, 0.12f, 0.92f);
 
-        GameObject pTextGo = new GameObject("Pickup_Text");
+        GameObject pTextGo = new GameObject("Pickup_Text", typeof(RectTransform), typeof(Text));
         pTextGo.transform.SetParent(pickupGo.transform, false);
-        var pTextRt = pTextGo.AddComponent<RectTransform>();
+        var pTextRt = pTextGo.GetComponent<RectTransform>();
         pTextRt.anchorMin = Vector2.zero;
         pTextRt.anchorMax = Vector2.one;
         pTextRt.offsetMin = new Vector2(10f, 0f);
         pTextRt.offsetMax = new Vector2(-10f, 0f);
-        weaponPickupText = pTextGo.AddComponent<Text>();
+        weaponPickupText = pTextGo.GetComponent<Text>();
         weaponPickupText.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
         weaponPickupText.fontSize = 13;
         weaponPickupText.fontStyle = FontStyle.Bold;
@@ -292,17 +419,17 @@ public class PlayerHUD : MonoBehaviour
         weaponPickupPanel.SetActive(false);
 
         // ========================================================
-        // 6. RESOLUTION TOGGLE INDICATOR (Top-Right HUD)
+        // 7. RESOLUTION TOGGLE INDICATOR (Top-Right HUD)
         // ========================================================
-        GameObject resGo = new GameObject("Resolution_Indicator");
+        GameObject resGo = new GameObject("Resolution_Indicator", typeof(RectTransform), typeof(Text));
         resGo.transform.SetParent(hudPanel, false);
-        var resRt = resGo.AddComponent<RectTransform>();
+        var resRt = resGo.GetComponent<RectTransform>();
         resRt.anchorMin = new Vector2(1f, 1f);
         resRt.anchorMax = new Vector2(1f, 1f);
         resRt.pivot = new Vector2(1f, 1f);
         resRt.anchoredPosition = new Vector2(-24f, -24f);
         resRt.sizeDelta = new Vector2(280f, 30f);
-        resolutionText = resGo.AddComponent<Text>();
+        resolutionText = resGo.GetComponent<Text>();
         resolutionText.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
         resolutionText.fontSize = 11;
         resolutionText.fontStyle = FontStyle.Bold;
@@ -313,14 +440,149 @@ public class PlayerHUD : MonoBehaviour
 
     private static void CreateCrosshairTick(Transform parent, Vector2 pos, Vector2 size, Color color)
     {
-        GameObject tick = new GameObject("Tick");
+        GameObject tick = new GameObject("Tick", typeof(RectTransform), typeof(Image));
         tick.transform.SetParent(parent, false);
-        var rt = tick.AddComponent<RectTransform>();
+        var rt = tick.GetComponent<RectTransform>();
+        rt.anchorMin = rt.anchorMax = rt.pivot = new Vector2(0.5f, 0.5f);
         rt.anchoredPosition = pos;
         rt.sizeDelta = size;
-        var img = tick.AddComponent<Image>();
+        var img = tick.GetComponent<Image>();
         img.color = color;
         img.raycastTarget = false;
+    }
+
+    private static Sprite GetOrCreateMinimapSprite()
+    {
+        if (cachedMinimapSprite != null) return cachedMinimapSprite;
+
+        int w = 256;
+        int h = 256;
+        Texture2D tex = new Texture2D(w, h, TextureFormat.RGBA32, false);
+        tex.wrapMode = TextureWrapMode.Clamp;
+        tex.filterMode = FilterMode.Bilinear;
+
+        Color bg = new Color(0.05f, 0.07f, 0.10f, 0.95f);
+        Color grid = new Color(0.09f, 0.13f, 0.18f, 0.55f);
+        Color r1Floor = new Color(0.08f, 0.18f, 0.15f, 1.0f);
+        Color r1Wall = new Color(0.18f, 0.48f, 0.38f, 1.0f);
+        Color rFloor = new Color(0.11f, 0.17f, 0.23f, 1.0f);
+        Color rWall = new Color(0.22f, 0.48f, 0.62f, 1.0f);
+        Color r5Floor = new Color(0.18f, 0.12f, 0.15f, 1.0f);
+        Color r5Wall = new Color(0.62f, 0.28f, 0.34f, 1.0f);
+        Color exitCol = new Color(0.95f, 0.75f, 0.15f, 1.0f);
+
+        Color[] pixels = new Color[w * h];
+        for (int i = 0; i < pixels.Length; i++) pixels[i] = bg;
+
+        // Grid lines every 32 px
+        for (int y = 0; y < h; y++)
+        {
+            for (int x = 0; x < w; x++)
+            {
+                if (x % 32 == 0 || y % 32 == 0)
+                {
+                    pixels[y * w + x] = grid;
+                }
+            }
+        }
+
+        // Helper to convert world (wx, wz) to pixel (px, py)
+        System.Func<float, float, Vector2Int> w2p = (wx, wz) =>
+        {
+            int px = Mathf.Clamp(Mathf.RoundToInt(((wx - MinWorldX) / (MaxWorldX - MinWorldX)) * (w - 1)), 0, w - 1);
+            int py = Mathf.Clamp(Mathf.RoundToInt(((wz - MinWorldZ) / (MaxWorldZ - MinWorldZ)) * (h - 1)), 0, h - 1);
+            return new Vector2Int(px, py);
+        };
+
+        // Draw filled boxes with border outlines
+        System.Action<float, float, float, float, Color, Color, int> drawRoom = (x1, z1, x2, z2, fill, wall, borderWidth) =>
+        {
+            Vector2Int p1 = w2p(x1, z1);
+            Vector2Int p2 = w2p(x2, z2);
+            int minX = Mathf.Min(p1.x, p2.x);
+            int maxX = Mathf.Max(p1.x, p2.x);
+            int minY = Mathf.Min(p1.y, p2.y);
+            int maxY = Mathf.Max(p1.y, p2.y);
+
+            for (int y = minY; y <= maxY; y++)
+            {
+                for (int x = minX; x <= maxX; x++)
+                {
+                    bool isBorder = (x - minX < borderWidth || maxX - x < borderWidth ||
+                                     y - minY < borderWidth || maxY - y < borderWidth);
+                    pixels[y * w + x] = isBorder ? wall : fill;
+                }
+            }
+        };
+
+        // Helper to punch corridor openings through walls
+        System.Action<float, float, float, float, Color> drawCorridor = (x1, z1, x2, z2, fill) =>
+        {
+            Vector2Int p1 = w2p(x1, z1);
+            Vector2Int p2 = w2p(x2, z2);
+            int minX = Mathf.Min(p1.x, p2.x);
+            int maxX = Mathf.Max(p1.x, p2.x);
+            int minY = Mathf.Min(p1.y, p2.y);
+            int maxY = Mathf.Max(p1.y, p2.y);
+
+            for (int y = minY; y <= maxY; y++)
+            {
+                for (int x = minX; x <= maxX; x++)
+                {
+                    pixels[y * w + x] = fill;
+                }
+            }
+        };
+
+        // 1. Room 1: Safe Start [-6, -32] to [6, -20]
+        drawRoom(-6f, -32f, 6f, -20f, r1Floor, r1Wall, 2);
+
+        // 2. Room 2: Patrol Corridor [-11, -20] to [11, -2]
+        drawRoom(-11f, -20f, 11f, -2f, rFloor, rWall, 2);
+
+        // 3. Room 3: Search Sector [-28, -2] to [-4, 20]
+        drawRoom(-28f, -2f, -4f, 20f, rFloor, rWall, 2);
+
+        // 4. Room 4: Defensive Sector [4, -2] to [28, 20]
+        drawRoom(4f, -2f, 28f, 20f, rFloor, rWall, 2);
+
+        // 5. Room 5: Boss Hall [-14, 18] to [14, 50]
+        drawRoom(-14f, 18f, 14f, 50f, r5Floor, r5Wall, 2);
+
+        // Final Exit Doorway [ -2.5, 49.5] to [2.5, 51.5]
+        drawRoom(-2.5f, 49.5f, 2.5f, 51.5f, exitCol, exitCol, 1);
+
+        // Punch connecting corridor openings
+        // Corridor 1->2
+        drawCorridor(-2.0f, -21.0f, 2.0f, -19.0f, rFloor);
+        // Corridor A (Room 2 -> Room 3)
+        drawCorridor(-6.5f, -3.0f, -3.5f, 1.0f, rFloor);
+        drawCorridor(-7.0f, -0.5f, -3.5f, 2.0f, rFloor);
+        // Corridor B (Room 2 -> Room 4)
+        drawCorridor(3.5f, -3.0f, 6.5f, 1.0f, rFloor);
+        drawCorridor(3.5f, -0.5f, 7.0f, 2.0f, rFloor);
+        // Corridor 3->5 (Room 3 -> Room 5)
+        drawCorridor(-7.0f, 17.5f, -3.5f, 20.5f, r5Floor);
+        // Corridor 4->5 (Room 4 -> Room 5)
+        drawCorridor(3.5f, 17.5f, 7.0f, 20.5f, r5Floor);
+
+        // Border around entire texture
+        for (int i = 0; i < w; i++)
+        {
+            pixels[i] = rWall;
+            pixels[(h - 1) * w + i] = rWall;
+        }
+        for (int i = 0; i < h; i++)
+        {
+            pixels[i * w] = rWall;
+            pixels[i * w + (w - 1)] = rWall;
+        }
+
+        tex.SetPixels(pixels);
+        tex.Apply(false, true);
+
+        cachedMinimapSprite = Sprite.Create(tex, new Rect(0, 0, w, h), new Vector2(0.5f, 0.5f));
+        return cachedMinimapSprite;
     }
 
     private void HandlePlayerDamaged(int dmg, GameObject attacker)
@@ -335,9 +597,11 @@ public class PlayerHUD : MonoBehaviour
             FindPlayerReferences();
         }
 
+        UpdateMinimap();
         UpdateHealthDisplay();
         UpdateWeaponDisplay();
         UpdatePickupDisplay();
+        UpdateCrosshairVisibility();
         UpdateHitMarker();
         UpdateVignette();
 
@@ -354,6 +618,50 @@ public class PlayerHUD : MonoBehaviour
         }
 
         UpdatePerformanceTracking();
+    }
+
+    private void UpdateMinimap()
+    {
+        if (playerMarkerRt == null) return;
+
+        Transform playerTf = playerHealth != null ? playerHealth.transform : null;
+        if (playerTf == null)
+        {
+            var pObj = GameObject.FindGameObjectWithTag("Player");
+            if (pObj != null) playerTf = pObj.transform;
+        }
+
+        if (playerTf != null)
+        {
+            Vector3 pos = playerTf.position;
+            float u = Mathf.Clamp01((pos.x - MinWorldX) / (MaxWorldX - MinWorldX));
+            float v = Mathf.Clamp01((pos.z - MinWorldZ) / (MaxWorldZ - MinWorldZ));
+
+            playerMarkerRt.anchoredPosition = new Vector2(
+                (u - 0.5f) * MinimapWidth,
+                (v - 0.5f) * MinimapHeight
+            );
+
+            Camera cam = playerTf.GetComponentInChildren<Camera>();
+            float yaw = cam != null ? cam.transform.eulerAngles.y : playerTf.eulerAngles.y;
+            playerMarkerRt.localRotation = Quaternion.Euler(0f, 0f, -yaw);
+        }
+    }
+
+    private void UpdateCrosshairVisibility()
+    {
+        bool showCrosshair = (GameManager.Instance == null || 
+                             (GameManager.Instance.CurrentState == GameManager.GameState.Playing && !GameManager.Instance.IsPaused));
+
+        if (playerHealth != null && playerHealth.IsDead)
+        {
+            showCrosshair = false;
+        }
+
+        if (crosshairRootObject != null && crosshairRootObject.activeSelf != showCrosshair)
+        {
+            crosshairRootObject.SetActive(showCrosshair);
+        }
     }
 
     private void UpdatePickupDisplay()
@@ -378,19 +686,34 @@ public class PlayerHUD : MonoBehaviour
         if (playerHealth != null)
         {
             float norm = playerHealth.HealthNormalized;
+            int hp = playerHealth.CurrentHealth;
+            int maxHp = playerHealth.MaxHealth;
+
             if (healthFillImage != null)
             {
                 healthFillImage.fillAmount = norm;
                 healthFillImage.color = Color.Lerp(
-                    new Color(0.85f, 0.15f, 0.15f),
-                    new Color(0.2f, 0.85f, 0.35f),
+                    new Color(0.90f, 0.15f, 0.15f),
+                    new Color(0.20f, 0.85f, 0.35f),
                     norm
                 );
             }
 
             if (healthNumericText != null)
             {
-                healthNumericText.text = $"{playerHealth.CurrentHealth} / {playerHealth.MaxHealth}";
+                if (hp <= 30 && hp > 0)
+                {
+                    // Pulsing red warning for low health without premature defeat
+                    float pulse = Mathf.PingPong(Time.unscaledTime * 4f, 1f);
+                    Color warnCol = Color.Lerp(Color.white, new Color(1f, 0.2f, 0.2f), pulse);
+                    healthNumericText.text = $"{hp} / {maxHp}  <color=#FF2222>CRITICAL</color>";
+                    healthNumericText.color = warnCol;
+                }
+                else
+                {
+                    healthNumericText.text = $"{hp} / {maxHp}";
+                    healthNumericText.color = Color.white;
+                }
             }
         }
     }

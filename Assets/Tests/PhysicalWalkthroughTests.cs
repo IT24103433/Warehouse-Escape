@@ -1575,6 +1575,7 @@ public class PhysicalWalkthroughTests
     [UnityTest]
     public IEnumerator Test_27_WeaponSwap_CancelsPendingReload()
     {
+        fullReport.AppendLine("--- TEST 27: WEAPON SWAP CANCELS PENDING RELOAD ---");
         SceneManager.LoadScene("Warehouse");
         yield return new WaitForSeconds(0.5f);
         var gun = GameObject.FindGameObjectWithTag("Player").GetComponentInChildren<PlayerGun>();
@@ -1587,11 +1588,13 @@ public class PhysicalWalkthroughTests
         Assert.AreEqual(WeaponType.Combat_Shotgun, gun.CurrentWeaponType);
         Assert.AreEqual(2, gun.CurrentAmmo, "A cancelled MP5 reload must not refill the new weapon.");
         Assert.AreEqual(12, gun.ReserveAmmo, "A cancelled reload must not consume the new weapon's reserve.");
+        fullReport.AppendLine("[PASS] Weapon swap cancels pending reload verified!\n");
     }
 
     [UnityTest]
     public IEnumerator Test_28_WeaponHud_LabelsStayInsidePanel()
     {
+        fullReport.AppendLine("--- TEST 28: WEAPON HUD LABELS STAY INSIDE PANEL ---");
         SceneManager.LoadScene("Warehouse");
         yield return new WaitForSeconds(0.5f);
         Canvas.ForceUpdateCanvases();
@@ -1618,5 +1621,250 @@ public class PhysicalWalkthroughTests
             labels[i].GetWorldCorners(lower);
             Assert.Greater(upper[0].y, lower[1].y, "Weapon, ammo and reload labels must have separate rows.");
         }
+        fullReport.AppendLine("[PASS] Weapon HUD labels bounds verified!\n");
+    }
+
+    [UnityTest]
+    public IEnumerator Test_29_Crosshair_Centering_And_Pause_Defeat_Hiding()
+    {
+        fullReport.AppendLine("--- TEST 29: CROSSHAIR CENTERING AND PAUSE/DEFEAT HIDING ---");
+        SceneManager.LoadScene("Warehouse");
+        yield return new WaitForSeconds(0.5f);
+        Canvas.ForceUpdateCanvases();
+
+        var hud = PlayerHUD.Instance;
+        Assert.IsNotNull(hud, "[PASS] PlayerHUD instance active.");
+        var crosshair = hud.CrosshairRoot;
+        Assert.IsNotNull(crosshair, "[PASS] Crosshair_Center root exists.");
+
+        var cRt = crosshair.GetComponent<RectTransform>();
+        Assert.AreEqual(new Vector2(0.5f, 0.5f), cRt.anchorMin, "[PASS] Crosshair anchored at screen center X.");
+        Assert.AreEqual(new Vector2(0.5f, 0.5f), cRt.anchorMax, "[PASS] Crosshair anchored at screen center Y.");
+        Assert.AreEqual(Vector2.zero, cRt.anchoredPosition, "[PASS] Crosshair exact position is at screen center.");
+        Assert.IsTrue(crosshair.activeInHierarchy, "[PASS] Crosshair is visible during normal gameplay.");
+
+        // Test Pause hiding
+        GameManager.Instance.TogglePause();
+        yield return null;
+        Assert.IsTrue(GameManager.Instance.IsPaused, "[PASS] Game is paused.");
+        Assert.IsFalse(crosshair.activeSelf, "[PASS] Crosshair is hidden while paused.");
+
+        // Resume
+        GameManager.Instance.TogglePause();
+        yield return null;
+        Assert.IsFalse(GameManager.Instance.IsPaused, "[PASS] Game is resumed.");
+        Assert.IsTrue(crosshair.activeSelf, "[PASS] Crosshair is restored on resume.");
+
+        // Test Defeat hiding (move outside safe room so damage takes effect)
+        var playerObj = GameObject.FindGameObjectWithTag("Player");
+        var cc = playerObj.GetComponent<CharacterController>();
+        if (cc != null) cc.enabled = false;
+        playerObj.transform.position = new Vector3(0f, 1.08f, -14f);
+        if (cc != null) cc.enabled = true;
+        Physics.SyncTransforms();
+
+        var health = playerObj.GetComponent<Health>();
+        health.TakeDamage(100, null);
+        yield return null;
+        Assert.IsTrue(health.IsDead, "[PASS] Player is dead.");
+        Assert.IsFalse(crosshair.activeSelf, "[PASS] Crosshair is hidden on player defeat.");
+        fullReport.AppendLine("[PASS] Crosshair centering and pause/defeat hiding verified!\n");
+    }
+
+    [UnityTest]
+    public IEnumerator Test_30_Player_NonFatal_Damage_And_Death_At_Zero_Only()
+    {
+        fullReport.AppendLine("--- TEST 30: PLAYER NON-FATAL DAMAGE AND DEATH AT ZERO ONLY ---");
+        SceneManager.LoadScene("Warehouse");
+        yield return new WaitForSeconds(0.5f);
+
+        var playerObj = GameObject.FindGameObjectWithTag("Player");
+        var cc = playerObj.GetComponent<CharacterController>();
+        var health = playerObj.GetComponent<Health>();
+
+        // Move outside safe room
+        cc.enabled = false;
+        playerObj.transform.position = new Vector3(0f, 1.08f, -14f);
+        cc.enabled = true;
+        Physics.SyncTransforms();
+
+        // 1. Non-fatal damage: 25 damage -> 75 HP (must not defeat player)
+        health.TakeDamage(25, null);
+        yield return null;
+        Assert.AreEqual(75, health.CurrentHealth, "[PASS] Health reduced to 75 HP.");
+        Assert.IsFalse(health.IsDead, "[PASS] Player remains alive at 75 HP.");
+        Assert.IsFalse(GameManager.Instance.IsGameOver, "[PASS] Game Over NOT triggered above 0 HP.");
+
+        // 2. Low health state: 50 damage -> 25 HP (must show low health warning, not defeat)
+        health.TakeDamage(50, null);
+        yield return null;
+        Assert.AreEqual(25, health.CurrentHealth, "[PASS] Health reduced to 25 HP.");
+        Assert.IsFalse(health.IsDead, "[PASS] Player remains alive at 25 HP.");
+        Assert.IsFalse(GameManager.Instance.IsGameOver, "[PASS] Game Over NOT triggered at 25 HP.");
+
+        // Verify low health readout contains CRITICAL warning
+        var hud = PlayerHUD.Instance;
+        Assert.IsTrue(hud.HealthNumericText.text.Contains("CRITICAL"), "[PASS] Low health readout displays CRITICAL warning.");
+
+        // 3. Guard touch / melee attack: Deals 20 damage through Health, bringing player to 5 HP (still alive!)
+        var guardObj = GameObject.Find("Guard_Varun_Patrol");
+        var capture = guardObj.GetComponent<GuardCapture>();
+        Assert.IsNotNull(capture, "[PASS] GuardCapture component exists.");
+        // Position guard within capture range
+        guardObj.transform.position = playerObj.transform.position + Vector3.forward * 1.5f;
+        Physics.SyncTransforms();
+        bool struck = capture.CheckCapture();
+        yield return null;
+        Assert.IsTrue(struck, "[PASS] Guard attack struck player dealing melee damage.");
+        Assert.AreEqual(5, health.CurrentHealth, "[PASS] Player has 5 HP remaining.");
+        Assert.IsFalse(health.IsDead, "[PASS] Touching / approaching guard did NOT cause instant defeat.");
+
+        // 4. Fatal damage: 10 damage -> 0 HP (only now must player die)
+        health.TakeDamage(10, null);
+        yield return null;
+        Assert.AreEqual(0, health.CurrentHealth, "[PASS] Health reached 0 HP.");
+        Assert.IsTrue(health.IsDead, "[PASS] Player died only when HP reached 0.");
+        Assert.IsTrue(GameManager.Instance.IsGameOver, "[PASS] Game Over triggered exactly upon reaching 0 HP.");
+
+        // 5. Duplicate damage after death rejected
+        bool extraDamage = health.TakeDamage(20, null);
+        Assert.IsFalse(extraDamage, "[PASS] Damage rejected after death.");
+        fullReport.AppendLine("[PASS] Player non-fatal damage and death at zero verified!\n");
+    }
+
+    [UnityTest]
+    public IEnumerator Test_31_TopLeft_Minimap_And_HealthBar_NonOverlapping_Stack()
+    {
+        fullReport.AppendLine("--- TEST 31: TOP-LEFT MINIMAP AND HEALTH BAR NON-OVERLAPPING STACK ---");
+        SceneManager.LoadScene("Warehouse");
+        yield return new WaitForSeconds(0.5f);
+        Canvas.ForceUpdateCanvases();
+
+        var hud = PlayerHUD.Instance;
+        Assert.IsNotNull(hud, "[PASS] PlayerHUD active.");
+
+        var minimapPanel = hud.MinimapPanel.GetComponent<RectTransform>();
+        var hpPanel = hud.HealthFillImage.transform.parent.parent.GetComponent<RectTransform>(); // Health_Status_Panel
+        var objPanel = GameObject.Find("Objective_Panel").GetComponent<RectTransform>();
+        var helpPanel = GameObject.Find("Controls_Help_Panel").GetComponent<RectTransform>();
+
+        Assert.IsNotNull(minimapPanel, "[PASS] Minimap panel found.");
+        Assert.IsNotNull(hpPanel, "[PASS] Health panel found.");
+        Assert.IsNotNull(objPanel, "[PASS] Objective panel found.");
+        Assert.IsNotNull(helpPanel, "[PASS] Controls help panel found.");
+
+        // Verify vertical stack order and non-overlap:
+        // Minimap Top Y: -20, Bottom Y: -200
+        // Health Bar Top Y: -208, Bottom Y: -260
+        // Objective Top Y: -268, Bottom Y: -342
+        // Controls Top Y: -350, Bottom Y: -400
+        float minimapBottom = minimapPanel.anchoredPosition.y - minimapPanel.sizeDelta.y;
+        float hpTop = hpPanel.anchoredPosition.y;
+        float hpBottom = hpPanel.anchoredPosition.y - hpPanel.sizeDelta.y;
+        float objTop = objPanel.anchoredPosition.y;
+        float objBottom = objPanel.anchoredPosition.y - objPanel.sizeDelta.y;
+        float helpTop = helpPanel.anchoredPosition.y;
+
+        Assert.LessOrEqual(hpTop, minimapBottom, "[PASS] Health panel is placed below Minimap without overlap.");
+        Assert.LessOrEqual(objTop, hpBottom, "[PASS] Objective panel is placed below Health panel without overlap.");
+        Assert.LessOrEqual(helpTop, objBottom, "[PASS] Controls help panel is placed below Objective panel without overlap.");
+
+        // Verify player marker updates position during traversal
+        var playerObj = GameObject.FindGameObjectWithTag("Player");
+        var cc = playerObj.GetComponent<CharacterController>();
+        var markerRt = minimapPanel.Find("Floor_Plan_Display/Player_Marker").GetComponent<RectTransform>();
+        Assert.IsNotNull(markerRt, "[PASS] Player marker found on floor plan.");
+
+        // Initial pos in Room 1 (Z = -26)
+        yield return null;
+        Vector2 markerPos1 = markerRt.anchoredPosition;
+
+        // Move to Room 2 (Z = -10)
+        cc.enabled = false;
+        playerObj.transform.position = new Vector3(0f, 1.08f, -10f);
+        cc.enabled = true;
+        Physics.SyncTransforms();
+        yield return null;
+        Vector2 markerPos2 = markerRt.anchoredPosition;
+
+        Assert.Greater(markerPos2.y, markerPos1.y, "[PASS] Player marker moved north (+Y on minimap) when player walked north (+Z in warehouse).");
+        fullReport.AppendLine("[PASS] Top-left minimap and health bar non-overlapping stack verified!\n");
+    }
+
+    [UnityTest]
+    public IEnumerator Test_32_Distinct_Weapon_Audio_Synthesis_And_Durations()
+    {
+        fullReport.AppendLine("--- TEST 32: DISTINCT WEAPON AUDIO SYNTHESIS AND DURATIONS ---");
+        WeaponAudio.EnsureClips();
+
+        var mp5Clip = WeaponAudio.GetWeaponFireClip(WeaponType.MP5_SMG);
+        var umpClip = WeaponAudio.GetWeaponFireClip(WeaponType.UMP_SMG);
+        var ak47Clip = WeaponAudio.GetWeaponFireClip(WeaponType.AK47_Rifle);
+        var scarClip = WeaponAudio.GetWeaponFireClip(WeaponType.SCAR_Rifle);
+        var shotgunClip = WeaponAudio.GetWeaponFireClip(WeaponType.Combat_Shotgun);
+
+        Assert.IsNotNull(mp5Clip, "[PASS] MP5 fire clip generated.");
+        Assert.IsNotNull(umpClip, "[PASS] UMP fire clip generated.");
+        Assert.IsNotNull(ak47Clip, "[PASS] AK47 fire clip generated.");
+        Assert.IsNotNull(scarClip, "[PASS] SCAR fire clip generated.");
+        Assert.IsNotNull(shotgunClip, "[PASS] Shotgun fire clip generated.");
+
+        // Verify all 5 weapon clips have distinct names
+        var clipNames = new HashSet<string> { mp5Clip.name, umpClip.name, ak47Clip.name, scarClip.name, shotgunClip.name };
+        Assert.AreEqual(5, clipNames.Count, "[PASS] All 5 weapons have distinctly authored audio profiles.");
+
+        // Verify audio duration fits fire rate without lingering
+        Assert.LessOrEqual(mp5Clip.length, 0.08f, "[PASS] MP5 clip duration fits continuous 0.08s fire cadence without overlap.");
+        Assert.LessOrEqual(umpClip.length, 0.12f, "[PASS] UMP clip duration fits UMP cadence.");
+        Assert.LessOrEqual(ak47Clip.length, 0.14f, "[PASS] AK47 clip duration fits AK47 cadence.");
+        Assert.LessOrEqual(scarClip.length, 0.12f, "[PASS] SCAR clip duration fits SCAR cadence.");
+
+        // Verify reload and empty click feedback
+        var reloadClip = WeaponAudio.GetReloadClip();
+        var emptyClip = WeaponAudio.GetEmptyClickClip();
+        Assert.IsNotNull(reloadClip, "[PASS] Reload feedback clip generated.");
+        Assert.IsNotNull(emptyClip, "[PASS] Empty-magazine feedback clip generated.");
+        yield return null;
+        fullReport.AppendLine("[PASS] Distinct weapon audio synthesis and durations verified!\n");
+    }
+
+    [UnityTest]
+    public IEnumerator Test_33_Weapon_Pickup_Prompt_Formatting_And_Swap_Action()
+    {
+        fullReport.AppendLine("--- TEST 33: WEAPON PICKUP PROMPT FORMATTING AND SWAP ACTION ---");
+        SceneManager.LoadScene("Warehouse");
+        yield return new WaitForSeconds(0.5f);
+
+        var playerObj = GameObject.FindGameObjectWithTag("Player");
+        var gun = playerObj.GetComponentInChildren<PlayerGun>();
+        Assert.IsNotNull(gun, "[PASS] PlayerGun located.");
+
+        // Spawn dropped AK47 pickup in front of player
+        GameObject pickupGo = new GameObject("Test_Dropped_AK47");
+        pickupGo.transform.position = playerObj.transform.position + playerObj.transform.forward * 1.5f;
+        var pickup = pickupGo.AddComponent<WeaponPickup>();
+        pickup.Initialize(WeaponType.AK47_Rifle, 30, 60);
+
+        // Player looking at pickup
+        yield return new WaitForSeconds(0.2f);
+        string prompt = pickup.GetPrompt(gun);
+
+        // Verify clear prompt instructions with actual weapon names: "[E] Swap MP5 for AK47 (30/60)"
+        Assert.IsTrue(prompt.Contains("[E] Swap MP5 for AK47"), $"[PASS] Prompt shows exact weapon names: '{prompt}'");
+        Assert.IsTrue(prompt.Contains("30/60"), $"[PASS] Prompt shows available ammunition: '{prompt}'");
+
+        // Execute E-key swap
+        bool swapped = pickup.TrySwap(gun);
+        Assert.IsTrue(swapped, "[PASS] Weapon swap executed.");
+        Assert.AreEqual(WeaponType.AK47_Rifle, gun.CurrentWeaponType, "[PASS] Player now holds AK47.");
+        Assert.AreEqual(30, gun.CurrentAmmo, "[PASS] Player has 30 rounds loaded in AK47.");
+        Assert.AreEqual(60, gun.ReserveAmmo, "[PASS] Player has 60 reserve rounds for AK47.");
+
+        // Verify dropped weapon is now the old MP5 with original ammo
+        Assert.AreEqual(WeaponType.MP5_SMG, pickup.Type, "[PASS] Dropped pickup now holds player's old MP5.");
+
+        Object.Destroy(pickupGo);
+        yield return null;
+        fullReport.AppendLine("[PASS] Weapon pickup prompt formatting and swap action verified!\n");
     }
 }

@@ -34,14 +34,6 @@ public class PlayerGun : MonoBehaviour
     private Coroutine reloadCoroutine;
     private GameObject currentGunVisualObj;
 
-    // Procedural Audio Clips
-    private AudioClip gunshotClip;
-    private AudioClip shotgunClip;
-    private AudioClip reloadClip;
-    private AudioClip emptyClickClip;
-    private AudioClip hitConfirmClip;
-    private AudioClip pickupSwapClip;
-
     // Recoil spring state
     private Vector3 initialGunLocalPos = new Vector3(0.18f, -0.16f, 0.38f);
     private Quaternion initialGunLocalRot = Quaternion.identity;
@@ -72,7 +64,7 @@ public class PlayerGun : MonoBehaviour
         audioSource.playOnAwake = false;
         audioSource.spatialBlend = 0f; // 2D player audio
 
-        CreateProceduralAudioClips();
+        WeaponAudio.EnsureClips();
         currentWeaponData = WeaponData.CreateMP5();
         currentAmmo = currentWeaponData.magazineCapacity;
         reserveAmmo = currentWeaponData.defaultReserve;
@@ -256,7 +248,7 @@ public class PlayerGun : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.E))
             {
                 nearbyPickup.TrySwap(this);
-                PlaySound(pickupSwapClip, 0.9f);
+                PlaySound(WeaponAudio.GetWeaponSwapClip(), 0.9f);
             }
         }
     }
@@ -268,7 +260,7 @@ public class PlayerGun : MonoBehaviour
         {
             if (pickups[i] != null && pickups[i].IsPlayerLooking)
             {
-                return pickups[i].GetPrompt();
+                return pickups[i].GetPrompt(this);
             }
         }
         return "";
@@ -279,14 +271,14 @@ public class PlayerGun : MonoBehaviour
         if (isReloading) return false;
         if (playerHealth != null && playerHealth.IsDead) return false;
         if (Time.timeScale == 0f) return false;
-        if (GameManager.Instance != null && GameManager.Instance.IsGameEnded) return false;
+        if (GameManager.Instance != null && (GameManager.Instance.IsGameEnded || GameManager.Instance.IsPaused)) return false;
 
         float rate = currentWeaponData != null ? currentWeaponData.fireRate : 0.11f;
         if (Time.time - lastFireTime < rate) return false;
 
         if (currentAmmo <= 0)
         {
-            PlaySound(emptyClickClip, 0.7f);
+            PlaySound(WeaponAudio.GetEmptyClickClip(), 0.75f);
             if (reserveAmmo > 0) TryReload();
             return false;
         }
@@ -297,13 +289,14 @@ public class PlayerGun : MonoBehaviour
         if (currentWeaponData != null && currentWeaponData.isShotgun)
         {
             ExecuteShotgunShot();
-            PlaySound(shotgunClip, 0.95f);
         }
         else
         {
             ExecuteHitscanShot();
-            PlaySound(gunshotClip, 0.85f);
         }
+
+        // Play distinct acoustic profile tailored for current weapon
+        PlaySound(WeaponAudio.GetWeaponFireClip(currentWeaponType), 0.85f);
 
         ApplyRecoilAndFlash();
         return true;
@@ -435,7 +428,7 @@ public class PlayerGun : MonoBehaviour
         if (health != null && !health.IsPlayer && !health.IsDead)
         {
             health.TakeDamage(dmg, gameObject);
-            PlaySound(hitConfirmClip, 0.9f);
+            PlaySound(WeaponAudio.GetHitMarkerClip(), 0.9f);
             PlayerHUD.TriggerHitMarker();
         }
         else
@@ -498,7 +491,7 @@ public class PlayerGun : MonoBehaviour
     private IEnumerator ReloadRoutine()
     {
         isReloading = true;
-        PlaySound(reloadClip, 0.8f);
+        PlaySound(WeaponAudio.GetReloadClip(), 0.85f);
 
         if (gunVisualHolder != null)
         {
@@ -561,67 +554,5 @@ public class PlayerGun : MonoBehaviour
         {
             audioSource.PlayOneShot(clip, volume);
         }
-    }
-
-    private void CreateProceduralAudioClips()
-    {
-        gunshotClip = CreateSynthesizedClip("SMG_Gunshot", 0.13f, (t, dur) =>
-        {
-            float env = Mathf.Exp(-t * 32f);
-            float noise = (Random.value * 2f - 1f) * 0.75f;
-            float kick = Mathf.Sin(2f * Mathf.PI * (180f - t * 450f) * t) * 0.45f;
-            return (noise + kick) * env;
-        });
-
-        shotgunClip = CreateSynthesizedClip("Shotgun_Blast", 0.22f, (t, dur) =>
-        {
-            float env = Mathf.Exp(-t * 22f);
-            float noise = (Random.value * 2f - 1f) * 0.85f;
-            float boom = Mathf.Sin(2f * Mathf.PI * (120f - t * 280f) * t) * 0.60f;
-            return (noise + boom) * env;
-        });
-
-        reloadClip = CreateSynthesizedClip("Reload", 0.35f, (t, dur) =>
-        {
-            float click1 = (t > 0.05f && t < 0.12f) ? (Random.value * 2f - 1f) * Mathf.Sin((t - 0.05f) * 1200f) : 0f;
-            float click2 = (t > 0.22f && t < 0.30f) ? (Random.value * 2f - 1f) * Mathf.Sin((t - 0.22f) * 1600f) : 0f;
-            return click1 + click2;
-        });
-
-        emptyClickClip = CreateSynthesizedClip("EmptyClick", 0.05f, (t, dur) =>
-        {
-            float env = Mathf.Exp(-t * 80f);
-            return (Random.value * 2f - 1f) * env * 0.6f;
-        });
-
-        hitConfirmClip = CreateSynthesizedClip("HitMarker", 0.06f, (t, dur) =>
-        {
-            float env = Mathf.Exp(-t * 60f);
-            return Mathf.Sin(2f * Mathf.PI * 1800f * t) * env * 0.5f;
-        });
-
-        pickupSwapClip = CreateSynthesizedClip("WeaponSwap", 0.15f, (t, dur) =>
-        {
-            float env = Mathf.Exp(-t * 25f);
-            float clink = Mathf.Sin(2f * Mathf.PI * 900f * t) * 0.4f + (Random.value * 2f - 1f) * 0.3f;
-            return clink * env;
-        });
-    }
-
-    private AudioClip CreateSynthesizedClip(string name, float duration, System.Func<float, float, float> generator)
-    {
-        int sampleRate = 44100;
-        int sampleCount = Mathf.CeilToInt(sampleRate * duration);
-        float[] samples = new float[sampleCount];
-
-        for (int i = 0; i < sampleCount; i++)
-        {
-            float t = (float)i / sampleRate;
-            samples[i] = Mathf.Clamp(generator(t, duration), -1f, 1f);
-        }
-
-        AudioClip clip = AudioClip.Create(name, sampleCount, 1, sampleRate, false);
-        clip.SetData(samples, 0);
-        return clip;
     }
 }

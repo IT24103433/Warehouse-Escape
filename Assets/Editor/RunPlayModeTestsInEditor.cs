@@ -17,9 +17,16 @@ public class PlayModeTestCallbacks : ScriptableObject, ICallbacks
     {
         Debug.Log($"[TestRunnerApi] Run finished. ResultState: {result.ResultState}, PassCount: {result.PassCount}, FailCount: {result.FailCount}");
         string summary = $"TEST_RUN_FINISHED\nResultState: {result.ResultState}\nPassed: {result.PassCount}\nFailed: {result.FailCount}\nDuration: {result.Duration}\n";
-        string resultDirectory = Path.Combine(Application.dataPath, "../scratch" );
+        string resultDirectory = Path.Combine(Application.dataPath, "../scratch");
         Directory.CreateDirectory(resultDirectory);
-        TestRunnerApi.SaveResultToFile(result, Path.Combine(resultDirectory, "verification-results.xml"));
+        string persistentXml = Path.Combine(Application.persistentDataPath, "TestResults.xml");
+        if (File.Exists(persistentXml))
+        {
+            try {
+                File.Copy(persistentXml, Path.Combine(resultDirectory, "verification-results.xml"), true);
+                File.Copy(persistentXml, Path.Combine(resultDirectory, "codex-verification-results.xml"), true);
+            } catch {}
+        }
         File.WriteAllText(Path.Combine(resultDirectory, "tests_finished.flag"), summary);
     }
 
@@ -44,6 +51,7 @@ public static class RunPlayModeTestsInEditor
     [MenuItem("Warehouse/Run Physical Walkthrough Tests")]
     public static void RunAllTests()
     {
+        AssetDatabase.Refresh();
         if (EditorApplication.isCompiling)
         {
             Debug.Log("[RunPlayModeTestsInEditor] Editor is compiling. Waiting...");
@@ -97,5 +105,31 @@ public static class RunPlayModeTestsInEditor
         if (EditorApplication.isPlaying || EditorApplication.isPlayingOrWillChangePlaymode || EditorApplication.isCompiling) return;
         EditorApplication.update -= WaitForReady;
         RunAllTests();
+    }
+
+    [InitializeOnLoadMethod]
+    static void InitStateListener()
+    {
+        EditorApplication.playModeStateChanged -= OnPlayModeChanged;
+        EditorApplication.playModeStateChanged += OnPlayModeChanged;
+    }
+
+    private static void OnPlayModeChanged(PlayModeStateChange state)
+    {
+        if (state == PlayModeStateChange.EnteredEditMode)
+        {
+            string persistentXml = Path.Combine(Application.persistentDataPath, "TestResults.xml");
+            string resultDirectory = Path.Combine(Application.dataPath, "../scratch");
+            if (File.Exists(persistentXml))
+            {
+                try
+                {
+                    Directory.CreateDirectory(resultDirectory);
+                    File.Copy(persistentXml, Path.Combine(resultDirectory, "verification-results.xml"), true);
+                    File.Copy(persistentXml, Path.Combine(resultDirectory, "codex-verification-results.xml"), true);
+                }
+                catch { }
+            }
+        }
     }
 }

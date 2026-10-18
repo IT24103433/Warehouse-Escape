@@ -12,7 +12,7 @@ using UnityEngine.SceneManagement;
 /// 3. Active combat exchange in the Boss Room (firing 4 shots, muzzle light, recoil, player & boss damage).
 /// Measures average FPS, 1% low FPS, and frame-time spikes across both 720p and 1080p.
 /// Distinguishes stationary results from walkthrough results and programmatic tests from keyboard/mouse checks.
-/// </summary>
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
 public class CombatWalkthroughProfiler : MonoBehaviour
 {
     private static bool isInstantiated = false;
@@ -397,3 +397,4 @@ public class CombatWalkthroughProfiler : MonoBehaviour
                $"• Maximum Frame-Time Spike: {r.MaxSpikeMs:F1} ms";
     }
 }
+#endif

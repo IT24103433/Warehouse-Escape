@@ -14,7 +14,7 @@ using UnityEngine.Rendering.Universal;
 /// - 1920x1080 Player First-Person views through the real player camera (arms forward, legs down, stride).
 /// - 1280x720 and 1920x1080 HUD Panel verification.
 /// - Room coverage telemetry demonstrating real-time reachable coverage across assigned rooms.
-/// </summary>
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
 public class PlayModeCaptureRunner : MonoBehaviour
 {
     private struct GuardTarget
@@ -227,9 +227,10 @@ public class PlayModeCaptureRunner : MonoBehaviour
                     yield return new WaitForEndOfFrame();
                     playerCam.Render();
                     SaveRenderTexture(rt720, Path.Combine(outDir, "hud_objectives_1280x720.png"));
+                    SaveRenderTexture(rt720, Path.Combine(outDir, "gameplay_hud_minimap_crosshair_720p.png"));
                     playerCam.targetTexture = null;
                     Destroy(rt720);
-                    Debug.Log("[PlayModeCaptureRunner] Captured hud_objectives_1280x720.png with full HUD overlay");
+                    Debug.Log("[PlayModeCaptureRunner] Captured gameplay_hud_minimap_crosshair_720p.png");
 
                     // Capture at 1920x1080
                     RenderTexture rt1080 = new RenderTexture(1920, 1080, 24, RenderTextureFormat.ARGB32);
@@ -239,9 +240,82 @@ public class PlayModeCaptureRunner : MonoBehaviour
                     yield return new WaitForEndOfFrame();
                     playerCam.Render();
                     SaveRenderTexture(rt1080, Path.Combine(outDir, "hud_objectives_1920x1080.png"));
+                    SaveRenderTexture(rt1080, Path.Combine(outDir, "gameplay_hud_minimap_crosshair_1080p.png"));
+                    Debug.Log("[PlayModeCaptureRunner] Captured gameplay_hud_minimap_crosshair_1080p.png");
+
+                    // Capture Non-Fatal Damage (25 HP with CRITICAL low-health warning)
+                    var pHealth = playerObj.GetComponent<Health>();
+                    var pCc = playerObj.GetComponent<CharacterController>();
+                    if (pCc != null) pCc.enabled = false;
+                    playerObj.transform.position = new Vector3(0f, 1.08f, -14.0f); // outside safe room
+                    if (pCc != null) pCc.enabled = true;
+                    Physics.SyncTransforms();
+
+                    if (pHealth != null)
+                    {
+                        pHealth.TakeDamage(75, null); // 100 -> 25 HP
+                    }
+                    yield return null;
+                    Canvas.ForceUpdateCanvases();
+                    yield return new WaitForEndOfFrame();
+                    playerCam.Render();
+                    SaveRenderTexture(rt1080, Path.Combine(outDir, "player_health_damaged_nonfatal.png"));
+                    Debug.Log("[PlayModeCaptureRunner] Captured player_health_damaged_nonfatal.png (25 HP, CRITICAL warning)");
+
+                    // Capture Defeat at 0 HP
+                    if (pHealth != null)
+                    {
+                        pHealth.TakeDamage(25, null); // 25 -> 0 HP
+                    }
+                    yield return null;
+                    Canvas.ForceUpdateCanvases();
+                    yield return new WaitForEndOfFrame();
+                    playerCam.Render();
+                    SaveRenderTexture(rt1080, Path.Combine(outDir, "player_health_defeat_zero.png"));
+                    Debug.Log("[PlayModeCaptureRunner] Captured player_health_defeat_zero.png (0 HP, Defeat Banner)");
+
+                    // Reset and restore healthy player state in-place
+                    if (GameManager.Instance != null)
+                    {
+                        GameManager.Instance.ResetStateInPlace();
+                    }
+                    if (pHealth != null)
+                    {
+                        pHealth.ResetHealth();
+                    }
+                    yield return null;
+
+                    // Dropped Weapon Prompt & Swap Demonstration
+                    GameObject droppedAk = new GameObject("Dropped_AK47_Pickup");
+                    droppedAk.transform.position = playerObj.transform.position + playerObj.transform.forward * 1.6f + Vector3.up * 0.4f;
+                    var akPickup = droppedAk.AddComponent<WeaponPickup>();
+                    akPickup.Initialize(WeaponType.AK47_Rifle, 30, 90);
+                    if (pm != null) pm.AimAt(droppedAk.transform.position);
+                    yield return null;
+                    if (GameManager.Instance != null) GameManager.Instance.UpdateUI();
+                    Canvas.ForceUpdateCanvases();
+                    yield return new WaitForEndOfFrame();
+                    playerCam.Render();
+                    SaveRenderTexture(rt1080, Path.Combine(outDir, "dropped_weapon_pickup_prompt.png"));
+                    Debug.Log("[PlayModeCaptureRunner] Captured dropped_weapon_pickup_prompt.png");
+
+                    // Execute E-key weapon swap
+                    var pGun = playerObj.GetComponentInChildren<PlayerGun>();
+                    if (pGun != null)
+                    {
+                        akPickup.TrySwap(pGun);
+                    }
+                    yield return null;
+                    Canvas.ForceUpdateCanvases();
+                    yield return new WaitForEndOfFrame();
+                    playerCam.Render();
+                    SaveRenderTexture(rt1080, Path.Combine(outDir, "weapon_swap_success.png"));
+                    Debug.Log("[PlayModeCaptureRunner] Captured weapon_swap_success.png");
+
+                    Destroy(droppedAk);
+
                     playerCam.targetTexture = null;
                     Destroy(rt1080);
-                    Debug.Log("[PlayModeCaptureRunner] Captured hud_objectives_1920x1080.png with full HUD overlay");
 
                     canvas.renderMode = prevMode;
                     canvas.worldCamera = prevCam;
@@ -528,8 +602,8 @@ public class PlayModeCaptureRunner : MonoBehaviour
                     yield return null;
                     yield return new WaitForEndOfFrame();
                     playerCam.Render();
-                    SaveRenderTexture(rtHb, Path.Combine(outDir, "dropped_weapon_pickup_prompt.png"));
-                    Debug.Log("[PlayModeCaptureRunner] Captured dropped_weapon_pickup_prompt.png");
+                    SaveRenderTexture(rtHb, Path.Combine(outDir, "guard_dropped_weapon_closeup.png"));
+                    Debug.Log("[PlayModeCaptureRunner] Captured guard_dropped_weapon_closeup.png");
                 }
 
                 playerCam.targetTexture = null;
@@ -678,3 +752,4 @@ public class PlayModeCaptureRunner : MonoBehaviour
         Destroy(tex);
     }
 }
+#endif
