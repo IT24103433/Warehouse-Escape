@@ -166,6 +166,25 @@ outside it. Confirmed visual contact, weapon range and bullet obstruction
 all contribute to whether the guard can land a shot. Compare each gate
 individually before attributing missed damage to health or weapon balance.
 
+## Losing sight and returning to patrol
+
+While pursuing, sight loss or an out-of-room player/guard changes state to
+Investigate using the stored `lastSeenPosition`. Visible pursuit refreshes
+this memory. The investigation begins with a 2 m NavMesh sampling request
+using all areas, tries the sampled point when available, and otherwise
+submits the raw observation via `EnemyMovement.SetDestination`. That movement
+method still rejects an incomplete path. This is a separate path from the
+patrol candidate filter, with no equivalent sampled-endpoint Room 2 gate in
+`TransitionToInvestigate`.
+
+- Travel phase: allow up to 8 s and watch the movement-arrival test.
+- Scan phase after arrival: stop and sweep ±45° for the configured investigation
+  duration, which defaults to 2.5 s.
+- Reacquisition: confirmed in-room player visibility can move directly to Pursue.
+- Recovery: after timeout or scan completion, clear aim, reset perception and
+  dispatch a new patrol choice. Separate the last observation from the player's
+  hidden position when recording the test.
+
 ## End-to-end example from the waypoint dataset
 
 At origin R2_W, compare R2_E at age 13.6 s and R2_N at age 15 s.

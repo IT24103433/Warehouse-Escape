@@ -83,3 +83,7 @@ Replaced the hand-stepped order worksheet with utility comparisons, selection ev
 ## 2026-10-17 · Document UMP attack range and 120 HP balance for Room 2 guard
 
 Recorded the missing-component defaults and where to verify serialized overrides. Sight, firing eligibility, bullet obstruction and health are separate gates.
+
+## 2026-10-18 · Log chase termination and return-to-patrol recovery behavior
+
+Traced the change from visible-player tracking to the last-seen investigation. Distinguished the travel timeout from the stationary scan timer.
