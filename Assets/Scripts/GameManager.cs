@@ -143,14 +143,15 @@ public class GameManager : MonoBehaviour
 
     /// <summary>
     /// Configures the objective HUD panel styling, anchors, and contrast background
-    /// to ensure optimal readability and zero obstruction of the crosshair or interaction prompt.
+    /// to ensure optimal readability directly below the Top-Left Health status panel without overlap.
+    /// Also establishes the compact Controls Help panel.
     /// </summary>
     private void ConfigureHUDPanelStyling()
     {
         if (objectiveText != null)
         {
             objectiveText.supportRichText = true;
-            objectiveText.fontSize = 13;
+            objectiveText.fontSize = 12;
             objectiveText.lineSpacing = 1.15f;
             objectiveText.alignment = TextAnchor.UpperLeft;
             objectiveText.horizontalOverflow = HorizontalWrapMode.Wrap;
@@ -162,17 +163,17 @@ public class GameManager : MonoBehaviour
                 RectTransform panelRt = panelTransform.GetComponent<RectTransform>();
                 if (panelRt != null)
                 {
-                    // Anchor to Top-Left
+                    // Anchor to Top-Left, cleanly positioned directly below Health panel (gap at Y = -88)
                     panelRt.anchorMin = new Vector2(0f, 1f);
                     panelRt.anchorMax = new Vector2(0f, 1f);
                     panelRt.pivot = new Vector2(0f, 1f);
-                    panelRt.anchoredPosition = new Vector2(24f, -24f);
-                    panelRt.sizeDelta = new Vector2(430f, 215f);
+                    panelRt.anchoredPosition = new Vector2(24f, -88f);
+                    panelRt.sizeDelta = new Vector2(300f, 82f);
 
                     // Translucent high-contrast dark panel
                     var img = panelTransform.GetComponent<Image>();
                     if (img == null) img = panelTransform.gameObject.AddComponent<Image>();
-                    img.color = new Color(0.06f, 0.08f, 0.12f, 0.88f);
+                    img.color = new Color(0.06f, 0.08f, 0.12f, 0.90f);
                 }
 
                 RectTransform textRt = objectiveText.GetComponent<RectTransform>();
@@ -180,8 +181,41 @@ public class GameManager : MonoBehaviour
                 {
                     textRt.anchorMin = Vector2.zero;
                     textRt.anchorMax = Vector2.one;
-                    textRt.offsetMin = new Vector2(16f, 12f);
-                    textRt.offsetMax = new Vector2(-16f, -12f);
+                    textRt.offsetMin = new Vector2(12f, 8f);
+                    textRt.offsetMax = new Vector2(-12f, -8f);
+                }
+
+                // Create compact Controls Help Panel directly below Objective panel
+                Transform hudParent = panelTransform.parent;
+                if (hudParent != null && hudParent.Find("Controls_Help_Panel") == null)
+                {
+                    GameObject helpGo = new GameObject("Controls_Help_Panel");
+                    helpGo.transform.SetParent(hudParent, false);
+                    RectTransform helpRt = helpGo.AddComponent<RectTransform>();
+                    helpRt.anchorMin = new Vector2(0f, 1f);
+                    helpRt.anchorMax = new Vector2(0f, 1f);
+                    helpRt.pivot = new Vector2(0f, 1f);
+                    helpRt.anchoredPosition = new Vector2(24f, -176f);
+                    helpRt.sizeDelta = new Vector2(300f, 56f);
+
+                    var helpImg = helpGo.AddComponent<Image>();
+                    helpImg.color = new Color(0.06f, 0.08f, 0.12f, 0.90f);
+
+                    GameObject helpTextGo = new GameObject("Help_Text");
+                    helpTextGo.transform.SetParent(helpGo.transform, false);
+                    RectTransform htRt = helpTextGo.AddComponent<RectTransform>();
+                    htRt.anchorMin = Vector2.zero;
+                    htRt.anchorMax = Vector2.one;
+                    htRt.offsetMin = new Vector2(12f, 6f);
+                    htRt.offsetMax = new Vector2(-12f, -6f);
+
+                    var ht = helpTextGo.AddComponent<Text>();
+                    ht.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+                    ht.fontSize = 11;
+                    ht.supportRichText = true;
+                    ht.lineSpacing = 1.15f;
+                    ht.color = Color.white;
+                    ht.text = "<b><color=#95A5A6>CONTROLS</color></b>\n<color=#ECEFF1>[WASD] Move  •  [LMB] Fire (Continuous)\n[R] Reload  •  [E] Interact / Swap Weapon</color>";
                 }
             }
         }
@@ -251,7 +285,7 @@ public class GameManager : MonoBehaviour
     /// <summary>
     /// Updates the dynamic Canvas HUD objectives and terminal interaction prompt.
     /// Displays a prominent "Current Objective" plus single instruction, followed by
-    /// a clear progression breakdown distinguishing completed [✓], current [►], and upcoming [○].
+    /// a clear progression breakdown.
     /// </summary>
     private void UpdateHUD()
     {
@@ -267,27 +301,21 @@ public class GameManager : MonoBehaviour
             int currentStepIdx = (int)currentObjectiveStep;
             string shortInstruction = ObjectiveDescriptions[currentStepIdx];
 
-            System.Text.StringBuilder sb = new System.Text.StringBuilder();
-            sb.AppendLine("<b><color=#F39C12>CURRENT OBJECTIVE</color></b>");
-            sb.AppendLine($"<b><size=16><color=#FFFFFF>{shortInstruction}</color></size></b>");
-            sb.AppendLine("<color=#34495E>──────────────────────────────────────</color>");
-            sb.AppendLine("<b><size=11><color=#BDC3C7>MISSION CHECKLIST</color></size></b>");
-
-            for (int i = 0; i < ObjectiveDescriptions.Length; i++)
+            // Determine current sector from player coordinates
+            string sectorLabel = "ROOM 1: SAFE START";
+            Vector3 pPos = playerTransformCached != null ? playerTransformCached.position : Vector3.zero;
+            if (pPos.z < -17.5f) sectorLabel = "ROOM 1: SAFE START";
+            else if (pPos.z < -3.5f) sectorLabel = "ROOM 2: PATROL CORRIDOR";
+            else if (pPos.z < 13.0f)
             {
-                if (i < currentStepIdx)
-                {
-                    sb.AppendLine($"<color=#2ECC71>[✓] {ObjectiveDescriptions[i]}</color>");
-                }
-                else if (i == currentStepIdx)
-                {
-                    sb.AppendLine($"<color=#F1C40F><b>[►] {ObjectiveDescriptions[i]}</b></color>");
-                }
-                else
-                {
-                    sb.AppendLine($"<color=#7F8C8D>[○] {ObjectiveDescriptions[i]}</color>");
-                }
+                sectorLabel = (pPos.x < 0f) ? "ROOM 3: SEARCH SECTOR" : "ROOM 4: DEFENSE SECTOR";
             }
+            else sectorLabel = "ROOM 5: BOSS LOADING HALL";
+
+            System.Text.StringBuilder sb = new System.Text.StringBuilder();
+            sb.AppendLine($"<b><size=11><color=#F39C12>{sectorLabel}</color></size></b>");
+            sb.AppendLine($"<b><size=13><color=#FFFFFF>{shortInstruction}</color></size></b>");
+            sb.AppendLine($"<size=11><color=#BDC3C7>Progress: Step {currentStepIdx + 1} of 5</color></size>");
 
             objectiveText.text = sb.ToString();
         }
@@ -409,6 +437,7 @@ public class GameManager : MonoBehaviour
         Debug.Log("[GameManager] RestartGame invoked: Restoring time scale, resetting inventory, and reloading Warehouse scene...");
         Time.timeScale = 1f;
         AccessCard.HasKeycard = false;
+        WeaponPickup.ClearAllPickups();
         currentState = GameState.Playing;
         resultReason = "";
         currentObjectiveStep = ObjectiveStep.LeaveSafeRoom;

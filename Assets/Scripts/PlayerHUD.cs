@@ -16,11 +16,14 @@ public class PlayerHUD : MonoBehaviour
     // HUD Elements
     private Image healthFillImage;
     private Text healthNumericText;
+    private Text weaponNameText;
     private Text ammoText;
     private Text reloadText;
     private Image damageVignette;
     private Image crosshairHitMarker;
     private Text resolutionText;
+    private GameObject weaponPickupPanel;
+    private Text weaponPickupText;
 
     private float hitMarkerTimer = 0f;
     private float vignetteAlpha = 0f;
@@ -92,30 +95,30 @@ public class PlayerHUD : MonoBehaviour
         damageVignette.raycastTarget = false;
 
         // ========================================================
-        // 2. HEALTH PANEL (Bottom-Left HUD)
+        // 2. HEALTH STATUS PANEL (Top-Left HUD)
         // ========================================================
         GameObject hpPanel = new GameObject("Health_Status_Panel");
         hpPanel.transform.SetParent(hudPanel, false);
         var hpRt = hpPanel.AddComponent<RectTransform>();
-        hpRt.anchorMin = new Vector2(0f, 0f);
-        hpRt.anchorMax = new Vector2(0f, 0f);
-        hpRt.pivot = new Vector2(0f, 0f);
-        hpRt.anchoredPosition = new Vector2(24f, 24f);
-        hpRt.sizeDelta = new Vector2(280f, 75f);
+        hpRt.anchorMin = new Vector2(0f, 1f);
+        hpRt.anchorMax = new Vector2(0f, 1f);
+        hpRt.pivot = new Vector2(0f, 1f);
+        hpRt.anchoredPosition = new Vector2(24f, -20f);
+        hpRt.sizeDelta = new Vector2(300f, 62f);
 
         var hpPanelImg = hpPanel.AddComponent<Image>();
-        hpPanelImg.color = new Color(0.06f, 0.08f, 0.12f, 0.88f);
+        hpPanelImg.color = new Color(0.06f, 0.08f, 0.12f, 0.90f);
 
         // Header label
         GameObject hpLabelGo = new GameObject("Health_Label");
         hpLabelGo.transform.SetParent(hpPanel.transform, false);
         var labelRt = hpLabelGo.AddComponent<RectTransform>();
-        labelRt.anchoredPosition = new Vector2(16f, 18f);
-        labelRt.sizeDelta = new Vector2(120f, 20f);
+        labelRt.anchoredPosition = new Vector2(16f, -14f);
+        labelRt.sizeDelta = new Vector2(140f, 20f);
         labelRt.pivot = new Vector2(0f, 0.5f);
         var lText = hpLabelGo.AddComponent<Text>();
         lText.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-        lText.fontSize = 12;
+        lText.fontSize = 11;
         lText.fontStyle = FontStyle.Bold;
         lText.color = new Color(0.7f, 0.75f, 0.8f);
         lText.text = "OPERATIVE VITALITY";
@@ -124,12 +127,12 @@ public class PlayerHUD : MonoBehaviour
         GameObject hpNumGo = new GameObject("Health_Numeric");
         hpNumGo.transform.SetParent(hpPanel.transform, false);
         var numRt = hpNumGo.AddComponent<RectTransform>();
-        numRt.anchoredPosition = new Vector2(264f, 18f);
-        numRt.sizeDelta = new Vector2(110f, 20f);
+        numRt.anchoredPosition = new Vector2(284f, -14f);
+        numRt.sizeDelta = new Vector2(120f, 20f);
         numRt.pivot = new Vector2(1f, 0.5f);
         healthNumericText = hpNumGo.AddComponent<Text>();
         healthNumericText.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-        healthNumericText.fontSize = 15;
+        healthNumericText.fontSize = 14;
         healthNumericText.fontStyle = FontStyle.Bold;
         healthNumericText.alignment = TextAnchor.MiddleRight;
         healthNumericText.color = Color.white;
@@ -139,8 +142,8 @@ public class PlayerHUD : MonoBehaviour
         GameObject barBgGo = new GameObject("Health_Bar_BG");
         barBgGo.transform.SetParent(hpPanel.transform, false);
         var barBgRt = barBgGo.AddComponent<RectTransform>();
-        barBgRt.anchoredPosition = new Vector2(16f, -14f);
-        barBgRt.sizeDelta = new Vector2(248f, 16f);
+        barBgRt.anchoredPosition = new Vector2(16f, -38f);
+        barBgRt.sizeDelta = new Vector2(268f, 14f);
         barBgRt.pivot = new Vector2(0f, 0.5f);
         var barBgImg = barBgGo.AddComponent<Image>();
         barBgImg.color = new Color(0.18f, 0.20f, 0.24f, 1.0f);
@@ -168,7 +171,7 @@ public class PlayerHUD : MonoBehaviour
         ammoRt.anchorMax = new Vector2(1f, 0f);
         ammoRt.pivot = new Vector2(1f, 0f);
         ammoRt.anchoredPosition = new Vector2(-24f, 24f);
-        ammoRt.sizeDelta = new Vector2(240f, 75f);
+        ammoRt.sizeDelta = new Vector2(280f, 100f);
 
         var ammoPanelImg = ammoPanel.AddComponent<Image>();
         ammoPanelImg.color = new Color(0.06f, 0.08f, 0.12f, 0.88f);
@@ -177,22 +180,24 @@ public class PlayerHUD : MonoBehaviour
         GameObject wNameGo = new GameObject("Weapon_Name");
         wNameGo.transform.SetParent(ammoPanel.transform, false);
         var wNameRt = wNameGo.AddComponent<RectTransform>();
-        wNameRt.anchoredPosition = new Vector2(16f, 18f);
-        wNameRt.sizeDelta = new Vector2(160f, 20f);
+        wNameRt.anchorMin = wNameRt.anchorMax = new Vector2(0f, 0.5f);
+        wNameRt.anchoredPosition = new Vector2(16f, 30f);
+        wNameRt.sizeDelta = new Vector2(248f, 20f);
         wNameRt.pivot = new Vector2(0f, 0.5f);
-        var wText = wNameGo.AddComponent<Text>();
-        wText.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-        wText.fontSize = 12;
-        wText.fontStyle = FontStyle.Bold;
-        wText.color = new Color(0.92f, 0.76f, 0.26f);
-        wText.text = "TACTICAL 9MM";
+        weaponNameText = wNameGo.AddComponent<Text>();
+        weaponNameText.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+        weaponNameText.fontSize = 12;
+        weaponNameText.fontStyle = FontStyle.Bold;
+        weaponNameText.color = new Color(0.92f, 0.76f, 0.26f);
+        weaponNameText.text = "MP5-A3 SMG";
 
         // Ammo Display
         GameObject ammoValGo = new GameObject("Ammo_Value");
         ammoValGo.transform.SetParent(ammoPanel.transform, false);
         var valRt = ammoValGo.AddComponent<RectTransform>();
-        valRt.anchoredPosition = new Vector2(224f, -14f);
-        valRt.sizeDelta = new Vector2(208f, 28f);
+        valRt.anchorMin = valRt.anchorMax = new Vector2(1f, 0.5f);
+        valRt.anchoredPosition = new Vector2(-16f, 3f);
+        valRt.sizeDelta = new Vector2(248f, 28f);
         valRt.pivot = new Vector2(1f, 0.5f);
         ammoText = ammoValGo.AddComponent<Text>();
         ammoText.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
@@ -200,14 +205,15 @@ public class PlayerHUD : MonoBehaviour
         ammoText.fontStyle = FontStyle.Bold;
         ammoText.alignment = TextAnchor.MiddleRight;
         ammoText.color = Color.white;
-        ammoText.text = "12 / 36";
+        ammoText.text = "30 / 90";
 
         // Reload prompt
         GameObject reloadGo = new GameObject("Reload_Prompt");
         reloadGo.transform.SetParent(ammoPanel.transform, false);
         var relRt = reloadGo.AddComponent<RectTransform>();
-        relRt.anchoredPosition = new Vector2(16f, -14f);
-        relRt.sizeDelta = new Vector2(120f, 20f);
+        relRt.anchorMin = relRt.anchorMax = new Vector2(0f, 0.5f);
+        relRt.anchoredPosition = new Vector2(16f, -25f);
+        relRt.sizeDelta = new Vector2(248f, 20f);
         relRt.pivot = new Vector2(0f, 0.5f);
         reloadText = reloadGo.AddComponent<Text>();
         reloadText.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
@@ -217,29 +223,76 @@ public class PlayerHUD : MonoBehaviour
         reloadText.text = "";
 
         // ========================================================
-        // 4. CENTER CROSSHAIR & HIT MARKER
+        // 4. CENTER CROSSHAIR WITH READABLE CONTRAST & HIT MARKER
         // ========================================================
-        GameObject crosshairGo = new GameObject("Crosshair_Center");
-        crosshairGo.transform.SetParent(hudPanel, false);
-        var cRt = crosshairGo.AddComponent<RectTransform>();
+        GameObject crosshairRoot = new GameObject("Crosshair_Center");
+        crosshairRoot.transform.SetParent(hudPanel, false);
+        var cRt = crosshairRoot.AddComponent<RectTransform>();
         cRt.anchorMin = new Vector2(0.5f, 0.5f);
         cRt.anchorMax = new Vector2(0.5f, 0.5f);
         cRt.pivot = new Vector2(0.5f, 0.5f);
         cRt.anchoredPosition = Vector2.zero;
-        cRt.sizeDelta = new Vector2(6f, 6f);
-        var cImg = crosshairGo.AddComponent<Image>();
-        cImg.color = new Color(1f, 1f, 1f, 0.75f);
+        cRt.sizeDelta = new Vector2(32f, 32f);
+
+        // Center Aim Dot: 6x6 black outline + 3x3 bright white center
+        CreateCrosshairTick(crosshairRoot.transform, Vector2.zero, new Vector2(6f, 6f), new Color(0f, 0f, 0f, 0.90f));
+        CreateCrosshairTick(crosshairRoot.transform, Vector2.zero, new Vector2(3f, 3f), new Color(0.96f, 1f, 1f, 0.95f));
+
+        // 4 High-Contrast Ticks: Dark backing (visible against bright scenes) + Light core (visible against dark scenes)
+        // Top Tick
+        CreateCrosshairTick(crosshairRoot.transform, new Vector2(0f, 9f), new Vector2(4f, 9f), new Color(0f, 0f, 0f, 0.85f));
+        CreateCrosshairTick(crosshairRoot.transform, new Vector2(0f, 9f), new Vector2(2f, 7f), new Color(0.96f, 1f, 1f, 0.95f));
+        // Bottom Tick
+        CreateCrosshairTick(crosshairRoot.transform, new Vector2(0f, -9f), new Vector2(4f, 9f), new Color(0f, 0f, 0f, 0.85f));
+        CreateCrosshairTick(crosshairRoot.transform, new Vector2(0f, -9f), new Vector2(2f, 7f), new Color(0.96f, 1f, 1f, 0.95f));
+        // Left Tick
+        CreateCrosshairTick(crosshairRoot.transform, new Vector2(-9f, 0f), new Vector2(9f, 4f), new Color(0f, 0f, 0f, 0.85f));
+        CreateCrosshairTick(crosshairRoot.transform, new Vector2(-9f, 0f), new Vector2(7f, 2f), new Color(0.96f, 1f, 1f, 0.95f));
+        // Right Tick
+        CreateCrosshairTick(crosshairRoot.transform, new Vector2(9f, 0f), new Vector2(9f, 4f), new Color(0f, 0f, 0f, 0.85f));
+        CreateCrosshairTick(crosshairRoot.transform, new Vector2(9f, 0f), new Vector2(7f, 2f), new Color(0.96f, 1f, 1f, 0.95f));
 
         // Hit marker brackets
         GameObject hitGo = new GameObject("Crosshair_HitMarker");
-        hitGo.transform.SetParent(crosshairGo.transform, false);
+        hitGo.transform.SetParent(crosshairRoot.transform, false);
         var hitRt = hitGo.AddComponent<RectTransform>();
-        hitRt.sizeDelta = new Vector2(24f, 24f);
+        hitRt.sizeDelta = new Vector2(26f, 26f);
         crosshairHitMarker = hitGo.AddComponent<Image>();
         crosshairHitMarker.color = new Color(1f, 0.2f, 0.2f, 0f);
 
         // ========================================================
-        // 5. RESOLUTION TOGGLE INDICATOR (Top-Right HUD)
+        // 5. WEAPON PICKUP PROMPT PANEL (Lower Center Screen)
+        // ========================================================
+        GameObject pickupGo = new GameObject("Weapon_Pickup_Prompt_Panel");
+        pickupGo.transform.SetParent(hudPanel, false);
+        var pRt = pickupGo.AddComponent<RectTransform>();
+        pRt.anchorMin = new Vector2(0.5f, 0f);
+        pRt.anchorMax = new Vector2(0.5f, 0f);
+        pRt.pivot = new Vector2(0.5f, 0f);
+        pRt.anchoredPosition = new Vector2(0f, 105f);
+        pRt.sizeDelta = new Vector2(380f, 36f);
+        var pImg = pickupGo.AddComponent<Image>();
+        pImg.color = new Color(0.06f, 0.08f, 0.12f, 0.92f);
+
+        GameObject pTextGo = new GameObject("Pickup_Text");
+        pTextGo.transform.SetParent(pickupGo.transform, false);
+        var pTextRt = pTextGo.AddComponent<RectTransform>();
+        pTextRt.anchorMin = Vector2.zero;
+        pTextRt.anchorMax = Vector2.one;
+        pTextRt.offsetMin = new Vector2(10f, 0f);
+        pTextRt.offsetMax = new Vector2(-10f, 0f);
+        weaponPickupText = pTextGo.AddComponent<Text>();
+        weaponPickupText.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+        weaponPickupText.fontSize = 13;
+        weaponPickupText.fontStyle = FontStyle.Bold;
+        weaponPickupText.alignment = TextAnchor.MiddleCenter;
+        weaponPickupText.color = new Color(0.95f, 0.85f, 0.35f);
+        weaponPickupText.text = "";
+        weaponPickupPanel = pickupGo;
+        weaponPickupPanel.SetActive(false);
+
+        // ========================================================
+        // 6. RESOLUTION TOGGLE INDICATOR (Top-Right HUD)
         // ========================================================
         GameObject resGo = new GameObject("Resolution_Indicator");
         resGo.transform.SetParent(hudPanel, false);
@@ -258,6 +311,18 @@ public class PlayerHUD : MonoBehaviour
         resolutionText.text = "[F1] 720p | [F2] Q:MED | 60 FPS (16.6ms)";
     }
 
+    private static void CreateCrosshairTick(Transform parent, Vector2 pos, Vector2 size, Color color)
+    {
+        GameObject tick = new GameObject("Tick");
+        tick.transform.SetParent(parent, false);
+        var rt = tick.AddComponent<RectTransform>();
+        rt.anchoredPosition = pos;
+        rt.sizeDelta = size;
+        var img = tick.AddComponent<Image>();
+        img.color = color;
+        img.raycastTarget = false;
+    }
+
     private void HandlePlayerDamaged(int dmg, GameObject attacker)
     {
         vignetteAlpha = 0.45f;
@@ -272,6 +337,7 @@ public class PlayerHUD : MonoBehaviour
 
         UpdateHealthDisplay();
         UpdateWeaponDisplay();
+        UpdatePickupDisplay();
         UpdateHitMarker();
         UpdateVignette();
 
@@ -288,6 +354,23 @@ public class PlayerHUD : MonoBehaviour
         }
 
         UpdatePerformanceTracking();
+    }
+
+    private void UpdatePickupDisplay()
+    {
+        if (weaponPickupPanel != null && weaponPickupText != null)
+        {
+            string prompt = playerGun != null ? playerGun.GetNearbyPickupPrompt() : "";
+            if (!string.IsNullOrEmpty(prompt))
+            {
+                weaponPickupPanel.SetActive(true);
+                weaponPickupText.text = prompt;
+            }
+            else
+            {
+                weaponPickupPanel.SetActive(false);
+            }
+        }
     }
 
     private void UpdateHealthDisplay()
@@ -316,6 +399,11 @@ public class PlayerHUD : MonoBehaviour
     {
         if (playerGun != null)
         {
+            if (weaponNameText != null)
+            {
+                weaponNameText.text = playerGun.CurrentWeaponName.ToUpper();
+            }
+
             if (ammoText != null)
             {
                 ammoText.text = $"{playerGun.CurrentAmmo} / {playerGun.ReserveAmmo}";

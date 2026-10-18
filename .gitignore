@@ -104,3 +104,8 @@ InitTestScene*.unity*
 
 # Auto-generated cache in Assets folder
 /[Aa]ssets/[Ss]ceneDependencyCache*
+
+# Local diagnostics and Unity recovery copies
+/scratch/
+/Assets/_Recovery/
+/Assets/_Recovery.meta

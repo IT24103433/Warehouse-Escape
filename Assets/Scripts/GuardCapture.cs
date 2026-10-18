@@ -94,6 +94,14 @@ public class GuardCapture : MonoBehaviour
         // Attack cooldown check
         if (Time.time - lastAttackTime < attackCooldown) return false;
 
+        // Visual-only guard (Varun) rule: Rear approaches do not reveal player or trigger capture
+        var patrolAI = GetComponent<PatrolGuardAI>();
+        if (patrolAI != null)
+        {
+            if (patrolAI.CurrentState != PatrolGuardState.Pursue || !patrolAI.CanSeePlayer)
+                return false;
+        }
+
         // Proximity satisfied; now verify unobstructed physical line of sight
         if (HasUnobstructedLineOfSight())
         {

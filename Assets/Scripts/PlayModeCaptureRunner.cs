@@ -254,6 +254,7 @@ public class PlayModeCaptureRunner : MonoBehaviour
 
         // ========================================================
         // 3. CAPTURE DYNAMIC GUARD PORTRAITS, CLOSEUPS, AND FULL BODIES
+        // (Executed while all 4 guards are in pristine, living condition)
         // ========================================================
         GameObject camObj = new GameObject("PlayMode_CaptureCamera");
         Camera cam = camObj.AddComponent<Camera>();
@@ -275,8 +276,8 @@ public class PlayModeCaptureRunner : MonoBehaviour
                 "portrait_guard_varun_patrol.png",
                 "closeup_guard_varun_patrol.png",
                 "fullbody_guard_varun_patrol.png",
-                new Vector3(-5.0f, 1.08f, -15.0f),
-                Quaternion.Euler(0f, 0f, 0f),
+                new Vector3(0.0f, 1.08f, -11.5f),
+                Quaternion.Euler(0f, 180f, 0f),
                 CharacterRole.Patrol_Varun,
                 1.58f, 0.95f),
 
@@ -285,7 +286,7 @@ public class PlayModeCaptureRunner : MonoBehaviour
                 "portrait_guard_sanjeevsaran_search.png",
                 "closeup_guard_sanjeevsaran_search.png",
                 "fullbody_guard_sanjeevsaran_search.png",
-                new Vector3(-12.0f, 1.08f, 2.0f),
+                new Vector3(-12.0f, 1.08f, 6.0f),
                 Quaternion.Euler(0f, 180f, 0f),
                 CharacterRole.Search_Sanjeevsaran,
                 1.58f, 0.95f),
@@ -295,7 +296,7 @@ public class PlayModeCaptureRunner : MonoBehaviour
                 "portrait_guard_aqqil_defensive.png",
                 "closeup_guard_aqqil_defensive.png",
                 "fullbody_guard_aqqil_defensive.png",
-                new Vector3(16.0f, 1.08f, 8.0f),
+                new Vector3(12.0f, 1.08f, 5.0f),
                 Quaternion.Euler(0f, 180f, 0f),
                 CharacterRole.Defensive_Aqqil,
                 1.58f, 0.95f),
@@ -305,8 +306,8 @@ public class PlayModeCaptureRunner : MonoBehaviour
                 "portrait_guard_jadavan_boss.png",
                 "closeup_guard_jadavan_boss.png",
                 "fullbody_guard_jadavan_boss.png",
-                new Vector3(0.0f, 1.08f, 23.0f),
-                Quaternion.Euler(0f, 0f, 0f),
+                new Vector3(0.0f, 1.08f, 26.0f),
+                Quaternion.Euler(0f, 180f, 0f),
                 CharacterRole.Boss_Jadavan,
                 1.80f, 1.05f)
         };
@@ -326,14 +327,45 @@ public class PlayModeCaptureRunner : MonoBehaviour
                 continue;
             }
 
+            // Temporarily freeze AI locomotion so presentation framing remains rock-solid
+            var pAI = guardObj.GetComponent<PatrolGuardAI>();
+            var sAI = guardObj.GetComponent<SearchGuardAI>();
+            var dAI = guardObj.GetComponent<DefensiveGuardAI>();
+            var fAI = guardObj.GetComponent<FlankingGuardAI>();
+            var em = guardObj.GetComponent<EnemyMovement>();
+            var gp = guardObj.GetComponent<GuardPatrol>();
             var agent = guardObj.GetComponent<UnityEngine.AI.NavMeshAgent>();
-            if (agent != null) agent.enabled = false;
 
-            // Place guard securely at canonical post facing into open room aisle
-            guardObj.transform.position = gt.spawnPos;
+            if (pAI != null) pAI.enabled = false;
+            if (sAI != null) sAI.enabled = false;
+            if (dAI != null) dAI.enabled = false;
+            if (fAI != null) fAI.enabled = false;
+            if (em != null) em.enabled = false;
+            if (gp != null) gp.enabled = false;
+
+            if (agent != null && agent.enabled && agent.isOnNavMesh)
+            {
+                agent.Warp(gt.spawnPos);
+            }
+            else
+            {
+                guardObj.transform.position = gt.spawnPos;
+            }
+            if (agent != null) agent.enabled = false;
             guardObj.transform.rotation = gt.spawnRot;
 
-            // Ensure visuals and weapon are rendered
+            // Ensure pristine living health and upright posture
+            var health = guardObj.GetComponent<Health>();
+            if (health != null) health.ResetHealth();
+
+            Transform visuals = guardObj.transform.Find("Character_Visuals");
+            if (visuals != null)
+            {
+                visuals.localRotation = Quaternion.identity;
+                visuals.localPosition = (gt.role == CharacterRole.Boss_Jadavan) ? new Vector3(0f, -1.08f / 1.15f, 0f) : new Vector3(0f, -1.08f, 0f);
+            }
+            Physics.SyncTransforms();
+
             HumanoidMeshBuilder.EnsureRuntimeVisuals(guardObj.transform, gt.role);
             var gs = guardObj.GetComponent<GuardShooting>();
             if (gs != null) gs.AttachWeaponToHand();
@@ -342,9 +374,11 @@ public class PlayModeCaptureRunner : MonoBehaviour
             Vector3 guardFwd = guardObj.transform.forward;
             Vector3 guardRight = guardObj.transform.right;
 
-            Vector3 headWorld = new Vector3(guardPos.x, gt.headWorldY, guardPos.z);
-            Vector3 chestWorld = new Vector3(guardPos.x, gt.headWorldY - 0.33f, guardPos.z);
-            Vector3 centerWorld = new Vector3(guardPos.x, gt.bodyWorldY, guardPos.z);
+            Transform headTr = guardObj.transform.Find("Character_Visuals/Pelvis/Spine/Neck/Head");
+            Vector3 headWorld = headTr != null ? headTr.position : new Vector3(guardPos.x, gt.headWorldY, guardPos.z);
+            Vector3 eyeLevel = headWorld - Vector3.up * 0.04f;
+            Vector3 chestWorld = headWorld - Vector3.up * 0.35f;
+            Vector3 centerWorld = guardPos + Vector3.up * (gt.role == CharacterRole.Boss_Jadavan ? 1.05f : 0.90f);
 
             // ----------------------------------------------------
             // A. Studio Portrait at 2048x2048 with 3-Point Lighting
@@ -352,38 +386,38 @@ public class PlayModeCaptureRunner : MonoBehaviour
             GameObject keyLightObj = new GameObject("Portrait_KeyLight");
             Light keyLight = keyLightObj.AddComponent<Light>();
             keyLight.type = LightType.Spot;
-            keyLight.color = new Color(1.0f, 0.94f, 0.88f);
-            keyLight.intensity = 2.4f;
+            keyLight.color = new Color(1.0f, 0.96f, 0.92f);
+            keyLight.intensity = 2.2f;
             keyLight.range = 8.0f;
             keyLight.spotAngle = 65f;
-            keyLightObj.transform.position = headWorld + guardFwd * 1.4f + guardRight * 0.8f + Vector3.up * 0.5f;
-            keyLightObj.transform.LookAt(headWorld);
+            keyLightObj.transform.position = eyeLevel + guardFwd * 1.1f + guardRight * 0.5f + Vector3.up * 0.20f;
+            keyLightObj.transform.LookAt(eyeLevel);
 
             GameObject fillLightObj = new GameObject("Portrait_FillLight");
             Light fillLight = fillLightObj.AddComponent<Light>();
             fillLight.type = LightType.Spot;
-            fillLight.color = new Color(0.85f, 0.92f, 1.0f);
-            fillLight.intensity = 1.1f;
+            fillLight.color = new Color(0.88f, 0.93f, 1.0f);
+            fillLight.intensity = 1.2f;
             fillLight.range = 8.0f;
             fillLight.spotAngle = 75f;
-            fillLightObj.transform.position = headWorld + guardFwd * 1.4f - guardRight * 0.8f + Vector3.up * 0.2f;
-            fillLightObj.transform.LookAt(headWorld);
+            fillLightObj.transform.position = eyeLevel + guardFwd * 1.1f - guardRight * 0.5f - Vector3.up * 0.05f;
+            fillLightObj.transform.LookAt(eyeLevel);
 
             GameObject rimLightObj = new GameObject("Portrait_RimLight");
             Light rimLight = rimLightObj.AddComponent<Light>();
             rimLight.type = LightType.Spot;
-            rimLight.color = new Color(1.0f, 0.88f, 0.65f);
+            rimLight.color = new Color(1.0f, 0.90f, 0.70f);
             rimLight.intensity = 2.8f;
             rimLight.range = 6.0f;
             rimLight.spotAngle = 60f;
-            rimLightObj.transform.position = headWorld - guardFwd * 1.0f + Vector3.up * 0.6f;
-            rimLightObj.transform.LookAt(headWorld);
+            rimLightObj.transform.position = eyeLevel - guardFwd * 0.8f + Vector3.up * 0.4f;
+            rimLightObj.transform.LookAt(eyeLevel);
 
-            // Portrait Camera: in front of guard face at distance ~1.3m, FOV 34 deg
+            // Portrait Camera: tight, crisp 85mm portrait framing face, eyes, nose, mouth & headwear
             cam.targetTexture = rtPortrait;
-            cam.fieldOfView = 34f;
-            cam.transform.position = headWorld + guardFwd * 1.30f + guardRight * 0.12f;
-            cam.transform.LookAt(headWorld);
+            cam.fieldOfView = 26f;
+            cam.transform.position = eyeLevel + guardFwd * 0.90f;
+            cam.transform.LookAt(eyeLevel);
 
             yield return new WaitForEndOfFrame();
             cam.Render();
@@ -396,13 +430,12 @@ public class PlayModeCaptureRunner : MonoBehaviour
             Destroy(rimLightObj);
 
             // ----------------------------------------------------
-            // B. Gameplay Closeup & Weapon at 1920x1080 (Warehouse Context)
-            // 3/4 front angle looking at torso & armed weapon with baked warehouse lighting
+            // B. Gameplay Closeup & Armed Weapon at 1920x1080 (Warehouse Context)
             // ----------------------------------------------------
             cam.targetTexture = rtHd;
-            cam.fieldOfView = 40f;
-            cam.transform.position = chestWorld + guardFwd * 1.70f + guardRight * 0.45f;
-            cam.transform.LookAt(chestWorld + guardRight * 0.15f);
+            cam.fieldOfView = 36f;
+            cam.transform.position = chestWorld + guardFwd * 1.55f + guardRight * 0.35f + Vector3.up * 0.05f;
+            cam.transform.LookAt(chestWorld + guardRight * 0.05f);
 
             yield return new WaitForEndOfFrame();
             cam.Render();
@@ -413,8 +446,8 @@ public class PlayModeCaptureRunner : MonoBehaviour
             // C. Fullbody Capture at 1920x1080 (Grounded Boots to Hat & Weapon)
             // ----------------------------------------------------
             cam.targetTexture = rtHd;
-            cam.fieldOfView = 48f;
-            cam.transform.position = centerWorld + guardFwd * 3.3f + guardRight * 0.35f + Vector3.up * 0.15f;
+            cam.fieldOfView = 44f;
+            cam.transform.position = centerWorld + guardFwd * 3.0f + guardRight * 0.25f + Vector3.up * 0.10f;
             cam.transform.LookAt(centerWorld);
 
             yield return new WaitForEndOfFrame();
@@ -422,7 +455,86 @@ public class PlayModeCaptureRunner : MonoBehaviour
             SaveRenderTexture(rtHd, Path.Combine(outDir, gt.fullbodyFile));
             Debug.Log($"[PlayModeCaptureRunner] Captured 1920x1080 fullbody: {gt.fullbodyFile}");
 
+            // Restore AI state
+            if (pAI != null) pAI.enabled = true;
+            if (sAI != null) sAI.enabled = true;
+            if (dAI != null) dAI.enabled = true;
+            if (fAI != null) fAI.enabled = true;
+            if (em != null) em.enabled = true;
+            if (gp != null) gp.enabled = true;
             if (agent != null) agent.enabled = true;
+        }
+
+        // ========================================================
+        // 2B. CAPTURE ENEMY HEAD HEALTH BAR & DROPPED WEAPON PICKUP
+        // ========================================================
+        if (playerObj != null)
+        {
+            Camera playerCam = playerObj.GetComponentInChildren<Camera>();
+            var varunObj = GameObject.Find("Guard_Varun_Patrol");
+            if (varunObj != null && playerCam != null)
+            {
+                var pAI = varunObj.GetComponent<PatrolGuardAI>();
+                if (pAI != null) pAI.enabled = false;
+                var em = varunObj.GetComponent<EnemyMovement>();
+                if (em != null) em.enabled = false;
+                var vAgent = varunObj.GetComponent<UnityEngine.AI.NavMeshAgent>();
+                if (vAgent != null) vAgent.enabled = false;
+
+                playerObj.transform.position = new Vector3(0f, 1.08f, -14f);
+                varunObj.transform.position = new Vector3(0f, 1.08f, -10f);
+                varunObj.transform.rotation = Quaternion.Euler(0f, 180f, 0f);
+                Physics.SyncTransforms();
+
+                var pm2 = playerObj.GetComponent<PlayerMovement>();
+                if (pm2 != null) pm2.AimAt(varunObj.transform.position + Vector3.up * 1.5f);
+
+                var vHealth = varunObj.GetComponent<Health>();
+                if (vHealth != null)
+                {
+                    vHealth.ResetHealth();
+                    vHealth.TakeDamage(20, null);
+                }
+
+                RenderTexture rtHb = new RenderTexture(1920, 1080, 24, RenderTextureFormat.ARGB32);
+                rtHb.antiAliasing = 4;
+                playerCam.targetTexture = rtHb;
+                yield return null;
+                yield return new WaitForEndOfFrame();
+                playerCam.Render();
+                SaveRenderTexture(rtHb, Path.Combine(outDir, "enemy_head_health_bar_unoccluded.png"));
+                Debug.Log("[PlayModeCaptureRunner] Captured enemy_head_health_bar_unoccluded.png");
+
+                GameObject occWall = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                occWall.transform.position = new Vector3(0f, 1.5f, -12f);
+                occWall.transform.localScale = new Vector3(3f, 3f, 0.4f);
+                Physics.SyncTransforms();
+
+                yield return null;
+                yield return new WaitForEndOfFrame();
+                playerCam.Render();
+                SaveRenderTexture(rtHb, Path.Combine(outDir, "enemy_head_health_bar_occluded.png"));
+                Debug.Log("[PlayModeCaptureRunner] Captured enemy_head_health_bar_occluded.png");
+                Destroy(occWall);
+
+                if (vHealth != null) vHealth.TakeDamage(100, null);
+                yield return new WaitForSecondsRealtime(0.25f);
+
+                var pickupObj = Object.FindFirstObjectByType<WeaponPickup>();
+                if (pickupObj != null)
+                {
+                    playerObj.transform.position = pickupObj.transform.position - Vector3.forward * 1.5f;
+                    if (pm2 != null) pm2.AimAt(pickupObj.transform.position);
+                    yield return null;
+                    yield return new WaitForEndOfFrame();
+                    playerCam.Render();
+                    SaveRenderTexture(rtHb, Path.Combine(outDir, "dropped_weapon_pickup_prompt.png"));
+                    Debug.Log("[PlayModeCaptureRunner] Captured dropped_weapon_pickup_prompt.png");
+                }
+
+                playerCam.targetTexture = null;
+                Destroy(rtHb);
+            }
         }
 
         // ========================================================

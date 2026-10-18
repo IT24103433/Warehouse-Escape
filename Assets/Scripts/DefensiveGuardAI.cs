@@ -95,7 +95,7 @@ public class DefensiveGuardAI : MonoBehaviour
         if (shooting == null)
         {
             shooting = gameObject.AddComponent<GuardShooting>();
-            shooting.ConfigureRole(GuardShooting.WeaponType.Rifle, 16, 1.2f, 9f, 1, 2.5f);
+            shooting.ConfigureWeapon(WeaponType.Combat_Shotgun, 7, 1.4f, 10f, 1, 3.8f, 6);
         }
 
         if (GetComponent<EnemyHealthBar>() == null)

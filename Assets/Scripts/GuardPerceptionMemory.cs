@@ -27,6 +27,7 @@ public class GuardPerceptionMemory : MonoBehaviour
     [Range(0f, 1f)]
     [SerializeField] private float suspicionLevel = 0f;
     [SerializeField] private bool canSeePlayer = false;
+    [SerializeField] private bool visualOnlyDetection = false;
 
     [Header("Memory Tracking")]
     [SerializeField] private Vector3 lastKnownPosition;
@@ -54,6 +55,7 @@ public class GuardPerceptionMemory : MonoBehaviour
     public GuardPerceptionState PerceptionState => perceptionState;
     public float SuspicionLevel { get => suspicionLevel; set => suspicionLevel = Mathf.Clamp01(value); }
     public bool CanSeePlayer => canSeePlayer;
+    public bool VisualOnlyDetection { get => visualOnlyDetection; set => visualOnlyDetection = value; }
     public Vector3 LastKnownPosition => lastKnownPosition;
     public float LkpTimestamp => lkpTimestamp;
     public float LkpConfidence => lkpConfidence;
@@ -198,6 +200,7 @@ public class GuardPerceptionMemory : MonoBehaviour
     private void HandleSoundDisturbance(SoundDisturbance sound)
     {
         if (health != null && health.IsDead) return;
+        if (visualOnlyDetection) return; // Visual-only guards like Varun ignore all audio disturbances
 
         // Check if guard can hear this sound with distance & wall attenuation
         Vector3 eyePos = transform.position + Vector3.up * eyeHeight;
@@ -232,6 +235,7 @@ public class GuardPerceptionMemory : MonoBehaviour
     private void HandleRadioMessage(RadioMessage msg)
     {
         if (health != null && health.IsDead) return;
+        if (visualOnlyDetection) return; // Visual-only guards like Varun ignore radio alerts
         if (msg.reportingGuard == gameObject.name) return; // Ignore own broadcast
 
         // Check if the reported LKP is close enough or relevant to this guard

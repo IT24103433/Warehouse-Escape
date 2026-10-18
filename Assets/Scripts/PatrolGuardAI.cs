@@ -77,6 +77,8 @@ public class PatrolGuardAI : MonoBehaviour
 
     public PatrolGuardState CurrentState => currentState;
     public bool CanSeePlayer => canSeePlayer;
+    public Vector3 InvestigatePosition => investigatePosition;
+    public Vector3 LastSeenPosition => lastSeenPosition;
     public Transform[] Waypoints { get => waypoints; set => waypoints = value; }
     public int CurrentWaypointIndex => currentWaypointIndex;
 
@@ -100,14 +102,15 @@ public class PatrolGuardAI : MonoBehaviour
         if (shooting == null)
         {
             shooting = gameObject.AddComponent<GuardShooting>();
-            shooting.ConfigureRole(GuardShooting.WeaponType.Pistol, 12, 1.1f, 12f, 1, 3.5f);
         }
+        shooting.ConfigureWeapon(WeaponType.UMP_SMG, 14, 1.1f, 13f, 2, 2.5f);
 
         perceptionMemory = GetComponent<GuardPerceptionMemory>();
         if (perceptionMemory == null)
         {
             perceptionMemory = gameObject.AddComponent<GuardPerceptionMemory>();
         }
+        perceptionMemory.VisualOnlyDetection = true;
 
         if (GetComponent<EnemyHealthBar>() == null)
         {
@@ -231,23 +234,20 @@ public class PatrolGuardAI : MonoBehaviour
         return pos.z >= -17.8f && pos.z <= -2.0f && pos.x >= -9.0f && pos.x <= 9.0f;
     }
 
+    private Vector3 lastSeenPosition;
+
     private void HandleDisturbance(Vector3 disturbancePos)
     {
-        // Only respond to disturbances inside Room 2
-        if (IsInsideRoom(disturbancePos))
-        {
-            if (currentState == PatrolGuardState.Patrol)
-            {
-                TransitionToInvestigate(disturbancePos);
-            }
-        }
+        // First guard (Varun) is visual detection only!
+        // Footsteps, gunshots, and radio alerts do NOT independently reveal the player or trigger pursuit/investigation.
     }
 
     private void UpdatePatrolState()
     {
-        // If player spotted inside Room 2, transition to pursue immediately
+        // If player spotted inside forward FOV and unobstructed LOS inside Room 2, transition to pursue
         if (canSeePlayer && (playerTransform == null || IsInsideRoom(playerTransform.position)))
         {
+            if (playerTransform != null) lastSeenPosition = playerTransform.position;
             TransitionToPursue();
             return;
         }
@@ -330,16 +330,24 @@ public class PatrolGuardAI : MonoBehaviour
         Debug.Log($"[{gameObject.name}] State -> Pursue (Intruder detected in Room 2)");
         enemyMovement.ClearAimTarget();
         repathTimer = 0f;
+        if (playerTransform != null) lastSeenPosition = playerTransform.position;
         DispatchPursuitDestination();
     }
 
     private void UpdatePursueState()
     {
-        // When sight is lost, or either intruder or guard is outside room boundaries, resume patrol
+        // Once sight is lost or player/guard leaves Room 2, investigate ONLY the last seen position,
+        // then return to patrol. Do NOT track hidden live player coordinates!
         if (!canSeePlayer || (playerTransform != null && !IsInsideRoom(playerTransform.position)) || !IsInsideRoom(transform.position))
         {
-            TransitionToPatrol();
+            Debug.Log($"[{gameObject.name}] Sight lost or player left Room 2 -> Investigating last seen position at {lastSeenPosition:F1}");
+            TransitionToInvestigate(lastSeenPosition);
             return;
+        }
+
+        if (playerTransform != null)
+        {
+            lastSeenPosition = playerTransform.position;
         }
 
         repathTimer -= Time.deltaTime;

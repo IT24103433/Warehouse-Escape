@@ -54,6 +54,7 @@ public class CardReader : MonoBehaviour
     public string GetInteractionPrompt()
     {
         if (!IsPlayerInRange) return "";
+        if (WeaponPickup.IsAnyPickupTargeted()) return ""; // Yield prompt to targeted weapon pickup
         if (isCardInserted) return "ACCESS GRANTED";
         return "[E] Insert Access Card";
     }
@@ -88,7 +89,8 @@ public class CardReader : MonoBehaviour
 
         if (IsPlayerInRange && !isCardInserted)
         {
-            if (Input.GetKeyDown(KeyCode.E))
+            // Resolve E-key priority: if player is looking at a weapon pickup, do not activate card reader
+            if (Input.GetKeyDown(KeyCode.E) && !WeaponPickup.IsAnyPickupTargeted())
             {
                 TryInsertCard();
             }

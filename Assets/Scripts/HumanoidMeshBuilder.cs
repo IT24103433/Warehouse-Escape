@@ -31,9 +31,19 @@ public static class HumanoidMeshBuilder
     // Reusable Materials Cache
     public static Material MatSkin;
     public static Material MatSkinShade;
+    public static Material MatSkinVarun;
+    public static Material MatSkinSanjeev;
+    public static Material MatSkinAqqil;
+    public static Material MatSkinJadavan;
     public static Material MatEyeWhite;
     public static Material MatEyeIris;
+    public static Material MatEyeIrisVarun;
+    public static Material MatEyeIrisSanjeev;
+    public static Material MatEyeIrisAqqil;
     public static Material MatLips;
+    public static Material MatLipsVarun;
+    public static Material MatLipsSanjeev;
+    public static Material MatLipsAqqil;
     public static Material MatUniformNavy;
     public static Material MatUniformSlate;
     public static Material MatUniformVestSearch;
@@ -55,9 +65,21 @@ public static class HumanoidMeshBuilder
 
         MatSkin = CreateOrGetMat("Mat_Human_Skin", litShader, new Color(0.86f, 0.68f, 0.56f), 0.0f, 0.22f);
         MatSkinShade = CreateOrGetMat("Mat_Human_Skin_Shade", litShader, new Color(0.74f, 0.55f, 0.44f), 0.0f, 0.20f);
+        MatSkinVarun = CreateOrGetMat("Mat_Skin_Varun", litShader, new Color(0.85f, 0.70f, 0.58f), 0.0f, 0.22f);
+        MatSkinSanjeev = CreateOrGetMat("Mat_Skin_Sanjeev", litShader, new Color(0.72f, 0.54f, 0.42f), 0.0f, 0.20f);
+        MatSkinAqqil = CreateOrGetMat("Mat_Skin_Aqqil", litShader, new Color(0.78f, 0.60f, 0.48f), 0.0f, 0.18f);
+        MatSkinJadavan = CreateOrGetMat("Mat_Skin_Jadavan", litShader, new Color(0.68f, 0.50f, 0.38f), 0.0f, 0.24f);
+
         MatEyeWhite = CreateOrGetMat("Mat_Eye_White", litShader, new Color(0.96f, 0.96f, 0.96f), 0.0f, 0.85f);
         MatEyeIris = CreateOrGetMat("Mat_Eye_Iris", litShader, new Color(0.12f, 0.10f, 0.08f), 0.0f, 0.95f);
+        MatEyeIrisVarun = CreateOrGetMat("Mat_Eye_Iris_Varun", litShader, new Color(0.24f, 0.16f, 0.10f), 0.0f, 0.92f);
+        MatEyeIrisSanjeev = CreateOrGetMat("Mat_Eye_Iris_Sanjeev", litShader, new Color(0.12f, 0.09f, 0.07f), 0.0f, 0.95f);
+        MatEyeIrisAqqil = CreateOrGetMat("Mat_Eye_Iris_Aqqil", litShader, new Color(0.30f, 0.22f, 0.12f), 0.0f, 0.90f);
+
         MatLips = CreateOrGetMat("Mat_Lips", litShader, new Color(0.72f, 0.46f, 0.42f), 0.0f, 0.30f);
+        MatLipsVarun = CreateOrGetMat("Mat_Lips_Varun", litShader, new Color(0.72f, 0.48f, 0.44f), 0.0f, 0.30f);
+        MatLipsSanjeev = CreateOrGetMat("Mat_Lips_Sanjeev", litShader, new Color(0.60f, 0.40f, 0.36f), 0.0f, 0.28f);
+        MatLipsAqqil = CreateOrGetMat("Mat_Lips_Aqqil", litShader, new Color(0.66f, 0.44f, 0.38f), 0.0f, 0.28f);
 
         MatUniformNavy = CreateOrGetMat("Mat_Uniform_Navy", litShader, new Color(0.10f, 0.15f, 0.25f), 0.05f, 0.22f);
         MatUniformSlate = CreateOrGetMat("Mat_Uniform_Slate", litShader, new Color(0.22f, 0.25f, 0.26f), 0.08f, 0.25f);
@@ -558,20 +580,62 @@ public static class HumanoidMeshBuilder
 
     private static void BuildHeadGeometry(GameObject headObj, CharacterRole role)
     {
-        // Contoured anatomical head base
-        AttachMesh(headObj, CreateContouredHeadMesh(), MatSkin);
+        // Select distinct guard skin and iris materials for clear visual identity
+        Material skinMat = MatSkin;
+        Material irisMat = MatEyeIris;
+        Material lipsMat = MatLips;
+
+        if (role == CharacterRole.Patrol_Varun)
+        {
+            skinMat = MatSkinVarun;
+            irisMat = MatEyeIrisVarun;
+            lipsMat = MatLipsVarun;
+        }
+        else if (role == CharacterRole.Search_Sanjeevsaran)
+        {
+            skinMat = MatSkinSanjeev;
+            irisMat = MatEyeIrisSanjeev;
+            lipsMat = MatLipsSanjeev;
+        }
+        else if (role == CharacterRole.Defensive_Aqqil)
+        {
+            skinMat = MatSkinAqqil;
+            irisMat = MatEyeIrisAqqil;
+            lipsMat = MatLipsAqqil;
+        }
+        else if (role == CharacterRole.Boss_Jadavan)
+        {
+            skinMat = MatSkinJadavan;
+            irisMat = MatEyeIris;
+            lipsMat = MatLips;
+        }
+
+        // Dedicated soft warm local light illuminating face in dark warehouse corridors
+        GameObject faceLightGo = new GameObject("Face_Fill_Light");
+        faceLightGo.transform.SetParent(headObj.transform, false);
+        faceLightGo.transform.localPosition = new Vector3(0f, 0.06f, 0.36f);
+        var faceLight = faceLightGo.AddComponent<Light>();
+        faceLight.type = LightType.Point;
+        faceLight.range = 2.0f;
+        faceLight.color = new Color(1.0f, 0.94f, 0.88f);
+        faceLight.intensity = 0.65f;
+        faceLight.renderMode = LightRenderMode.ForceVertex;
+        faceLight.shadows = LightShadows.None;
+
+        // Contoured anatomical head base with role-specific skin tone
+        AttachMesh(headObj, CreateContouredHeadMesh(), skinMat);
 
         // Sculpted 3D Nose with bridge, tip, and nostrils
         GameObject noseObj = new GameObject("Nose");
         noseObj.transform.SetParent(headObj.transform, false);
         noseObj.transform.localPosition = new Vector3(0f, 0.04f, 0.098f);
-        AttachMesh(noseObj, CreateSculptedNoseMesh(0.032f, 0.048f, 0.032f), MatSkin);
+        AttachMesh(noseObj, CreateSculptedNoseMesh(0.032f, 0.048f, 0.032f), skinMat);
 
-        // Sculpted Upper and Lower Lips
+        // Sculpted Upper and Lower Lips with tone-matched shading
         GameObject mouthObj = new GameObject("Mouth");
         mouthObj.transform.SetParent(headObj.transform, false);
         mouthObj.transform.localPosition = new Vector3(0f, -0.018f, 0.085f);
-        AttachMesh(mouthObj, CreateSculptedMouthMesh(0.042f, 0.016f), MatLips);
+        AttachMesh(mouthObj, CreateSculptedMouthMesh(0.042f, 0.016f), lipsMat);
 
         // Eyebrows
         GameObject browL = new GameObject("Brow_L");
@@ -587,19 +651,19 @@ public static class HumanoidMeshBuilder
         AttachMesh(browR, CreateBoxMesh(new Vector3(0.042f, 0.010f, 0.015f), Vector3.zero), MatHairDark);
 
         // Realistic Two-Part Eyes (Sclera white + dark centered iris/pupil)
-        BuildEye(headObj, isLeft: true);
-        BuildEye(headObj, isLeft: false);
+        BuildEye(headObj, isLeft: true, irisMat);
+        BuildEye(headObj, isLeft: false, irisMat);
 
         // Contoured Anatomical Ears with outer helix rim and lobe
         GameObject earL = new GameObject("Ear_L");
         earL.transform.SetParent(headObj.transform, false);
         earL.transform.localPosition = new Vector3(-0.094f, 0.038f, 0f);
-        AttachMesh(earL, CreateSculptedEarMesh(0.022f, 0.052f, 0.032f), MatSkin);
+        AttachMesh(earL, CreateSculptedEarMesh(0.022f, 0.052f, 0.032f), skinMat);
 
         GameObject earR = new GameObject("Ear_R");
         earR.transform.SetParent(headObj.transform, false);
         earR.transform.localPosition = new Vector3(0.094f, 0.038f, 0f);
-        AttachMesh(earR, CreateSculptedEarMesh(0.022f, 0.052f, 0.032f), MatSkin);
+        AttachMesh(earR, CreateSculptedEarMesh(0.022f, 0.052f, 0.032f), skinMat);
 
         // Headgear / Hair according to role
         if (role == CharacterRole.Patrol_Varun)
@@ -684,23 +748,23 @@ public static class HumanoidMeshBuilder
         }
     }
 
-    private static void BuildEye(GameObject headObj, bool isLeft)
+    private static void BuildEye(GameObject headObj, bool isLeft, Material customIris = null)
     {
         float sign = isLeft ? -1f : 1f;
         GameObject eyeRoot = new GameObject(isLeft ? "Eye_L" : "Eye_R");
         eyeRoot.transform.SetParent(headObj.transform, false);
         eyeRoot.transform.localPosition = new Vector3(sign * 0.044f, 0.054f, 0.092f);
 
-        // Sclera (White base)
+        // Sclera (White base with sharp eye contour)
         GameObject sclera = new GameObject("Sclera");
         sclera.transform.SetParent(eyeRoot.transform, false);
-        AttachMesh(sclera, CreateBoxMesh(new Vector3(0.026f, 0.016f, 0.010f), Vector3.zero), MatEyeWhite);
+        AttachMesh(sclera, CreateBoxMesh(new Vector3(0.028f, 0.016f, 0.010f), Vector3.zero), MatEyeWhite);
 
         // Iris & Pupil (Dark centered inset)
         GameObject iris = new GameObject("Iris");
         iris.transform.SetParent(eyeRoot.transform, false);
         iris.transform.localPosition = new Vector3(0f, 0f, 0.006f);
-        AttachMesh(iris, CreateBoxMesh(new Vector3(0.014f, 0.014f, 0.004f), Vector3.zero), MatEyeIris);
+        AttachMesh(iris, CreateBoxMesh(new Vector3(0.014f, 0.014f, 0.004f), Vector3.zero), customIris != null ? customIris : MatEyeIris);
     }
 
     private static void BuildLimbSegment(

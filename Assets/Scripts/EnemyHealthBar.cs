@@ -20,6 +20,7 @@ public class EnemyHealthBar : MonoBehaviour
     private Text nameText;
     private Text hpText;
     private Transform barTransform;
+    public bool IsBarVisible => canvas != null && canvas.enabled;
 
     void Start()
     {
@@ -40,17 +41,26 @@ public class EnemyHealthBar : MonoBehaviour
 
     private void SetupWorldCanvas()
     {
+        Transform existing = transform.Find("HealthBar_Canvas");
+        if (existing != null)
+        {
+            barTransform = existing;
+            canvas = existing.GetComponent<Canvas>();
+            return;
+        }
+
         GameObject canvasGo = new GameObject("HealthBar_Canvas");
         canvasGo.transform.SetParent(transform, false);
-        canvasGo.transform.localPosition = new Vector3(0f, barHeight, 0f);
-        barTransform = canvasGo.transform;
 
         canvas = canvasGo.AddComponent<Canvas>();
         canvas.renderMode = RenderMode.WorldSpace;
         canvasGo.AddComponent<CanvasScaler>();
 
+        barTransform = canvasGo.transform;
+        barTransform.localPosition = new Vector3(0f, barHeight, 0f);
+
         var rt = canvasGo.GetComponent<RectTransform>();
-        rt.sizeDelta = new Vector3(200f, 40f);
+        rt.sizeDelta = new Vector2(200f, 40f);
         canvasGo.transform.localScale = new Vector3(0.008f, 0.008f, 0.008f);
 
         // Background
@@ -103,20 +113,37 @@ public class EnemyHealthBar : MonoBehaviour
         canvas.enabled = false;
     }
 
+    public bool DebugIsDamaged { get; private set; }
+    public bool DebugIsLookingNear { get; private set; }
+    public float DebugAngleBody { get; private set; }
+    public float DebugAngleHead { get; private set; }
+    public int DebugHitsCount { get; private set; }
+    public string DebugOccludedBy { get; private set; } = "None";
+    public string DebugExitReason { get; private set; } = "None";
+
     void LateUpdate()
     {
-        if (this == null || gameObject == null || !gameObject.activeInHierarchy) return;
+        if (this == null || gameObject == null || !gameObject.activeInHierarchy)
+        {
+            DebugExitReason = "Inactive";
+            return;
+        }
 
         if (health == null || health.IsDead || (GameManager.Instance != null && GameManager.Instance.IsGameEnded))
         {
             if (canvas != null) canvas.enabled = false;
+            DebugExitReason = "DeadOrGameEnded";
             return;
         }
 
         if (barTransform == null)
         {
             SetupWorldCanvas();
-            if (barTransform == null) return;
+            if (barTransform == null)
+            {
+                DebugExitReason = "NoBarTransform";
+                return;
+            }
         }
 
         if (playerCam == null)
@@ -124,17 +151,26 @@ public class EnemyHealthBar : MonoBehaviour
             FindPlayerCam();
         }
 
-        if (playerCam == null) return;
+        if (playerCam == null)
+        {
+            DebugExitReason = "NoPlayerCam";
+            return;
+        }
 
         Transform camT;
         try
         {
             camT = playerCam.transform;
-            if (camT == null) return;
+            if (camT == null)
+            {
+                DebugExitReason = "NoCamTransform";
+                return;
+            }
         }
         catch (System.Exception)
         {
             playerCam = null;
+            DebugExitReason = "CamException";
             return;
         }
 
@@ -147,40 +183,59 @@ public class EnemyHealthBar : MonoBehaviour
         if (dist > maxDisplayDistance)
         {
             if (canvas != null) canvas.enabled = false;
+            DebugExitReason = "TooFar";
             return;
         }
 
         // Show when relevant: damaged, or player is facing this guard
         bool isDamaged = health.CurrentHealth < health.MaxHealth;
         Vector3 camFwd = camT.forward;
-        float angleToGuard = Vector3.Angle(camFwd, (targetPos - camPos).normalized);
-        bool isLookingNear = angleToGuard < 35f;
+        Vector3 guardCenterPos = transform.position + Vector3.up * 0.4f;
+        float angleToBody = Vector3.Angle(camFwd, (guardCenterPos - camPos).normalized);
+        float angleToHead = Vector3.Angle(camFwd, (targetPos - camPos).normalized);
+        bool isLookingNear = angleToBody < 50f || angleToHead < 50f;
+
+        DebugIsDamaged = isDamaged;
+        DebugIsLookingNear = isLookingNear;
+        DebugAngleBody = angleToBody;
+        DebugAngleHead = angleToHead;
 
         if (!isDamaged && !isLookingNear)
         {
             if (canvas != null) canvas.enabled = false;
+            DebugExitReason = $"NotLookingNear(body={angleToBody:F1},head={angleToHead:F1})";
             return;
         }
 
         // STRICT LINE-OF-SIGHT CHECK: Raycast between player eye and guard head
         // Never reveal guards through walls, racks, crates, or doors!
-        Vector3 rayOrigin = camPos;
-        Vector3 rayDir = (targetPos - camPos).normalized;
-        float rayDist = dist;
+        Vector3 toGuard = guardCenterPos - camPos;
+        Vector3 rayDir = toGuard.normalized;
+        float rayDist = toGuard.magnitude;
 
-        RaycastHit hit;
-        if (Physics.Raycast(rayOrigin, rayDir, out hit, rayDist, occlusionMask, QueryTriggerInteraction.Ignore))
+        RaycastHit[] hits = Physics.RaycastAll(camPos, rayDir, rayDist, occlusionMask, QueryTriggerInteraction.Ignore);
+        System.Array.Sort(hits, (a, b) => a.distance.CompareTo(b.distance));
+        DebugHitsCount = hits.Length;
+
+        for (int i = 0; i < hits.Length; i++)
         {
-            // If the ray hits something other than this guard or guard children -> OCCLUDED!
-            if (hit.transform != transform && !hit.transform.IsChildOf(transform))
-            {
-                if (canvas != null) canvas.enabled = false;
-                return;
-            }
+            var h = hits[i];
+            // Reached this guard or its children -> clear line of sight
+            if (h.transform == transform || h.transform.IsChildOf(transform)) break;
+
+            // Ignore player's own body/controller at camera position
+            if (h.collider.CompareTag("Player") || h.transform.root == camT.root) continue;
+
+            // Intervening wall, crate, or cover obstacle -> OCCLUDED!
+            if (canvas != null) canvas.enabled = false;
+            DebugOccludedBy = h.collider.gameObject.name;
+            DebugExitReason = "OccludedBy_" + h.collider.gameObject.name;
+            return;
         }
 
         // Unoccluded and relevant -> Display and Billboard toward Player
         if (canvas != null) canvas.enabled = true;
+        DebugExitReason = "Visible";
         if (barTransform != null && camT != null)
         {
             barTransform.rotation = camT.rotation;

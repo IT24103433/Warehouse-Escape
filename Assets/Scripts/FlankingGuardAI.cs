@@ -219,7 +219,7 @@ public class FlankingGuardAI : MonoBehaviour
         if (shooting == null)
         {
             shooting = gameObject.AddComponent<GuardShooting>();
-            shooting.ConfigureRole(GuardShooting.WeaponType.BossRifle, 14, 1.2f, 16f, 3, 2.0f);
+            shooting.ConfigureWeapon(WeaponType.SCAR_Rifle, 20, 1.1f, 18f, 3, 2.0f, 1);
         }
 
         if (GetComponent<EnemyHealthBar>() == null)

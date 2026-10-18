@@ -113,7 +113,7 @@ public class SearchGuardAI : MonoBehaviour
         if (shooting == null)
         {
             shooting = gameObject.AddComponent<GuardShooting>();
-            shooting.ConfigureRole(GuardShooting.WeaponType.Pistol, 12, 1.1f, 12f, 1, 3.5f);
+            shooting.ConfigureWeapon(WeaponType.AK47_Rifle, 18, 1.3f, 16f, 3, 2.4f, 1);
         }
 
         perceptionMemory = GetComponent<GuardPerceptionMemory>();
