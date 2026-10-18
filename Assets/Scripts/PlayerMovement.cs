@@ -45,13 +45,24 @@ public class PlayerMovement : MonoBehaviour
         }
 
         // Ensure Player HUD
-        var canvas = Object.FindFirstObjectByType<Canvas>();
+        var uiCanvas = GameObject.Find("UI_Canvas");
+        Canvas canvas = uiCanvas != null ? uiCanvas.GetComponent<Canvas>() : Object.FindFirstObjectByType<Canvas>();
         if (canvas != null && canvas.GetComponentInChildren<PlayerHUD>() == null)
         {
             canvas.gameObject.AddComponent<PlayerHUD>();
         }
 
         HumanoidMeshBuilder.EnsureRuntimeVisuals(transform, CharacterRole.Player);
+
+        bool spawnAtGate = System.Linq.Enumerable.Any(System.Environment.GetCommandLineArgs(), a => a.Equals("-gate-test", System.StringComparison.OrdinalIgnoreCase));
+        if (spawnAtGate)
+        {
+            if (controller != null) controller.enabled = false;
+            transform.position = new Vector3(0f, 1.08f, 43.0f);
+            transform.rotation = Quaternion.identity;
+            if (controller != null) controller.enabled = true;
+            Physics.SyncTransforms();
+        }
 
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;

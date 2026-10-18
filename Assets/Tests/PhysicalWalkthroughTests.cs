@@ -314,7 +314,7 @@ public class PhysicalWalkthroughTests
             new Vector3(0.0f, 1.08f, 34.0f),
             new Vector3(0.0f, 1.08f, 46.5f)
         };
-        yield return WalkPathCoroutine(controller, movement, path, fullReport, "Room 5 Boss Room -> Exit Scenery Area");
+        yield return WalkPathCoroutine(controller, movement, path, fullReport, "Room 5 Boss Room -> Exit Scenery Area", defendDuringWalk: true);
 
         Assert.GreaterOrEqual(controller.transform.position.z, 30.0f, "[PASS] Player physically located in boss room exit area.");
         Assert.IsFalse(GameManager.Instance.IsGameWon, "[PASS] Being in boss room without card insertion DOES NOT trigger victory!");
@@ -647,7 +647,14 @@ public class PhysicalWalkthroughTests
         }
         if (target == null) return;
         movement.AimAt(aimPoint);
-        gun.TryShoot();
+        if (gun.CurrentAmmo == 0)
+        {
+            if (!gun.IsReloading) gun.TryReload();
+        }
+        else
+        {
+            gun.TryShoot();
+        }
     }
     private IEnumerator WalkPathCoroutine(CharacterController controller, PlayerMovement movement, List<Vector3> path, StringBuilder sb, string tag, bool checkCardAtEnd = false, bool defendDuringWalk = false)
     {
@@ -701,7 +708,7 @@ public class PhysicalWalkthroughTests
                 if (d < 0.005f)
                 {
                     stuckTime += Time.deltaTime;
-                    if (stuckTime > 2.0f)
+                    if (stuckTime > 4.5f)
                     {
                         var nearby = Physics.OverlapSphere(controller.transform.position, 1.5f);
                         foreach (var c in nearby)
@@ -1753,11 +1760,7 @@ public class PhysicalWalkthroughTests
         Assert.IsNotNull(objPanel, "[PASS] Objective panel found.");
         Assert.IsNotNull(helpPanel, "[PASS] Controls help panel found.");
 
-        // Verify vertical stack order and non-overlap:
-        // Minimap Top Y: -20, Bottom Y: -200
-        // Health Bar Top Y: -208, Bottom Y: -260
-        // Objective Top Y: -268, Bottom Y: -342
-        // Controls Top Y: -350, Bottom Y: -400
+        // 1. Panel rectangle non-overlap checks with clean gaps
         float minimapBottom = minimapPanel.anchoredPosition.y - minimapPanel.sizeDelta.y;
         float hpTop = hpPanel.anchoredPosition.y;
         float hpBottom = hpPanel.anchoredPosition.y - hpPanel.sizeDelta.y;
@@ -1765,9 +1768,86 @@ public class PhysicalWalkthroughTests
         float objBottom = objPanel.anchoredPosition.y - objPanel.sizeDelta.y;
         float helpTop = helpPanel.anchoredPosition.y;
 
-        Assert.LessOrEqual(hpTop, minimapBottom, "[PASS] Health panel is placed below Minimap without overlap.");
-        Assert.LessOrEqual(objTop, hpBottom, "[PASS] Objective panel is placed below Health panel without overlap.");
-        Assert.LessOrEqual(helpTop, objBottom, "[PASS] Controls help panel is placed below Objective panel without overlap.");
+        Assert.Less(hpTop, minimapBottom, "[PASS] Health panel is placed below Minimap with positive gap.");
+        Assert.Less(objTop, hpBottom, "[PASS] Objective panel is placed below Health panel with positive gap.");
+        Assert.Less(helpTop, objBottom, "[PASS] Controls help panel is placed below Objective panel with positive gap.");
+
+        // 2. Child Elements Bounds & Strict Containment:
+        // A. Health Bar Fill & Health Label must be strictly inside Health_Status_Panel
+        var healthBarBg = hpPanel.Find("Health_Bar_BG")?.GetComponent<RectTransform>();
+        var healthFill = hud.HealthFillImage.GetComponent<RectTransform>();
+
+        Assert.IsNotNull(healthBarBg, "[PASS] Health_Bar_BG exists.");
+        Assert.IsNotNull(healthFill, "[PASS] Health_Bar_Fill exists.");
+
+        Vector3[] hpCorners = new Vector3[4];
+        hpPanel.GetWorldCorners(hpCorners);
+        float hpWorldBottom = hpCorners[0].y;
+        float hpWorldTop = hpCorners[1].y;
+
+        Vector3[] barCorners = new Vector3[4];
+        healthBarBg.GetWorldCorners(barCorners);
+        float barWorldBottom = barCorners[0].y;
+        float barWorldTop = barCorners[1].y;
+
+        Vector3[] fillCorners = new Vector3[4];
+        healthFill.GetWorldCorners(fillCorners);
+        float fillWorldBottom = fillCorners[0].y;
+        float fillWorldTop = fillCorners[1].y;
+
+        Assert.Greater(barWorldBottom, hpWorldBottom, "[PASS] Health bar background is strictly inside Health panel (above panel bottom).");
+        Assert.Less(barWorldTop, hpWorldTop, "[PASS] Health bar background is strictly inside Health panel (below panel top).");
+        Assert.Greater(fillWorldBottom, hpWorldBottom, "[PASS] Health bar fill is strictly inside Health panel (above panel bottom).");
+
+        // B. Health Bar Fill must be strictly above Objective Panel & CURRENT OBJECTIVE text
+        Vector3[] objCorners = new Vector3[4];
+        objPanel.GetWorldCorners(objCorners);
+        float objWorldTop = objCorners[1].y;
+
+        var objTextRt = GameManager.Instance.ObjectiveText.GetComponent<RectTransform>();
+        Vector3[] textCorners = new Vector3[4];
+        objTextRt.GetWorldCorners(textCorners);
+        float textWorldTop = textCorners[1].y;
+
+        Assert.Greater(barWorldBottom, objWorldTop, "[PASS] Health bar is strictly above Objective panel.");
+        Assert.Greater(barWorldBottom, textWorldTop, "[PASS] Health bar is strictly above CURRENT OBJECTIVE text (no overlap).");
+        Assert.Greater(fillWorldBottom, textWorldTop, "[PASS] Health bar green fill is strictly above CURRENT OBJECTIVE text (no overlap).");
+
+        // C. Health Label and Objective Text child containment
+        var healthLabel = hpPanel.Find("Health_Label")?.GetComponent<RectTransform>();
+        if (healthLabel != null)
+        {
+            Vector3[] lCorners = new Vector3[4];
+            healthLabel.GetWorldCorners(lCorners);
+            Assert.GreaterOrEqual(lCorners[0].y, hpWorldBottom, "[PASS] Health label is strictly inside health panel (above bottom).");
+            Assert.LessOrEqual(lCorners[1].y, hpWorldTop, "[PASS] Health label is strictly inside health panel (below top).");
+        }
+
+        Assert.GreaterOrEqual(textCorners[0].y, objCorners[0].y, "[PASS] Objective text is strictly inside objective panel (above bottom).");
+        Assert.LessOrEqual(textCorners[1].y, objWorldTop, "[PASS] Objective text is strictly inside objective panel (below top).");
+
+        var helpText = helpPanel.Find("Help_Text")?.GetComponent<RectTransform>();
+        if (helpText != null)
+        {
+            Vector3[] hTextCorners = new Vector3[4];
+            helpText.GetWorldCorners(hTextCorners);
+            Vector3[] helpCorners = new Vector3[4];
+            helpPanel.GetWorldCorners(helpCorners);
+            Assert.GreaterOrEqual(hTextCorners[0].y, helpCorners[0].y, "[PASS] Help text is strictly inside help panel (above bottom).");
+            Assert.LessOrEqual(hTextCorners[1].y, helpCorners[1].y, "[PASS] Help text is strictly inside help panel (below top).");
+        }
+
+        // D. Clearance from Screen-Center Crosshair:
+        var crosshair = hud.CrosshairRoot;
+        if (crosshair != null)
+        {
+            Vector3[] cCorners = new Vector3[4];
+            crosshair.GetComponent<RectTransform>().GetWorldCorners(cCorners);
+            float crosshairLeftX = cCorners[0].x;
+
+            Assert.Greater(crosshairLeftX, objCorners[2].x, "[PASS] Objective panel right edge does not cover crosshair.");
+            Assert.Greater(crosshairLeftX, hpCorners[2].x, "[PASS] Health panel right edge does not cover crosshair.");
+        }
 
         // Verify player marker updates position during traversal
         var playerObj = GameObject.FindGameObjectWithTag("Player");
@@ -1866,5 +1946,97 @@ public class PhysicalWalkthroughTests
         Object.Destroy(pickupGo);
         yield return null;
         fullReport.AppendLine("[PASS] Weapon pickup prompt formatting and swap action verified!\n");
+    }
+
+    [UnityTest]
+    public IEnumerator Test_34_Visual_Crosshair_And_Instructions_Pixel_Verification()
+    {
+        fullReport.AppendLine("--- TEST 34: VISUAL CROSSHAIR AND INSTRUCTIONS PIXEL VERIFICATION ---");
+        SceneManager.LoadScene("Warehouse");
+        yield return new WaitForSeconds(0.6f);
+        Canvas.ForceUpdateCanvases();
+
+        var hud = PlayerHUD.Instance;
+        Assert.IsNotNull(hud, "[PASS] PlayerHUD instance active.");
+
+        // 1. Verify Crosshair ScreenSpaceOverlay Canvas configuration
+        var crosshairCanvas = GameObject.Find("Crosshair_Canvas")?.GetComponent<Canvas>();
+        Assert.IsNotNull(crosshairCanvas, "[PASS] Dedicated Crosshair_Canvas found.");
+        Assert.AreEqual(RenderMode.ScreenSpaceOverlay, crosshairCanvas.renderMode, "[PASS] Crosshair renders on ScreenSpaceOverlay canvas above 3D world.");
+        Assert.GreaterOrEqual(crosshairCanvas.sortingOrder, 1000, "[PASS] Crosshair sortingOrder is >= 1000 above other gameplay UI.");
+
+        var cScaler = crosshairCanvas.GetComponent<UnityEngine.UI.CanvasScaler>();
+        Assert.IsNotNull(cScaler, "[PASS] Crosshair CanvasScaler configured.");
+        Assert.AreEqual(new Vector2(1280f, 720f), cScaler.referenceResolution, "[PASS] Crosshair CanvasScaler reference resolution is 1280x720.");
+
+        // 2. Verify Crosshair elements structure & dimensions (29px footprint)
+        var crosshairRoot = hud.CrosshairRoot;
+        Assert.IsNotNull(crosshairRoot, "[PASS] Crosshair root exists.");
+        var cRt = crosshairRoot.GetComponent<RectTransform>();
+        Assert.AreEqual(new Vector2(0.5f, 0.5f), cRt.anchorMin, "[PASS] Crosshair anchored at screen center.");
+        Assert.AreEqual(new Vector2(0.5f, 0.5f), cRt.anchorMax, "[PASS] Crosshair anchored at screen center.");
+        Assert.AreEqual(Vector2.zero, cRt.anchoredPosition, "[PASS] Crosshair exactly centered.");
+
+        // 3. Verify White Ticks and Black Outlines
+        var ticks = crosshairRoot.GetComponentsInChildren<UnityEngine.UI.Image>();
+        Assert.GreaterOrEqual(ticks.Length, 10, "[PASS] Crosshair contains center dot (outline+core) and 4 directional ticks (outline+core).");
+
+        int whiteTicksCount = 0;
+        int blackOutlineCount = 0;
+        foreach (var img in ticks)
+        {
+            if (img.gameObject == crosshairRoot) continue;
+            if (img.color.r > 0.8f && img.color.g > 0.8f && img.color.b > 0.8f) whiteTicksCount++;
+            else if (img.color.r < 0.2f && img.color.g < 0.2f && img.color.b < 0.2f) blackOutlineCount++;
+        }
+        Assert.GreaterOrEqual(whiteTicksCount, 5, "[PASS] Crosshair contains 5 white tick/dot core elements.");
+        Assert.GreaterOrEqual(blackOutlineCount, 5, "[PASS] Crosshair contains 5 black high-contrast outline elements.");
+
+        // 4. Verify Objective Panel styling and readability
+        var objText = GameManager.Instance.ObjectiveText;
+        Assert.IsNotNull(objText, "[PASS] ObjectiveText found.");
+        Assert.GreaterOrEqual(objText.fontSize, 20, "[PASS] Objective text font size is >= 20px.");
+        var objPanelImg = objText.transform.parent.GetComponent<UnityEngine.UI.Image>();
+        Assert.IsNotNull(objPanelImg, "[PASS] Objective panel dark background image exists.");
+        Assert.GreaterOrEqual(objPanelImg.color.a, 0.90f, "[PASS] Objective panel background is near-opaque dark.");
+
+        // 5. Verify Controls Help Panel
+        var helpPanel = GameObject.Find("Controls_Help_Panel");
+        Assert.IsNotNull(helpPanel, "[PASS] Toggleable Controls_Help_Panel exists.");
+        var helpText = helpPanel.GetComponentInChildren<UnityEngine.UI.Text>();
+        Assert.IsNotNull(helpText, "[PASS] Controls help text component exists.");
+        Assert.GreaterOrEqual(helpText.fontSize, 16, "[PASS] Controls secondary text font size is >= 16px.");
+
+        // 6. Verify Backbuffer pixels if running in non-batchmode with graphic device
+        if (!Application.isBatchMode)
+        {
+            yield return new WaitForEndOfFrame();
+            Texture2D shot720 = ScreenCapture.CaptureScreenshotAsTexture();
+            if (shot720 != null)
+            {
+                int w = shot720.width;
+                int h = shot720.height;
+                int cx = w / 2;
+                int cy = h / 2;
+                bool foundBrightCenter = false;
+                for (int dx = -2; dx <= 2; dx++)
+                {
+                    for (int dy = -2; dy <= 2; dy++)
+                    {
+                        Color c = shot720.GetPixel(cx + dx, cy + dy);
+                        if (c.r > 0.7f && c.g > 0.7f && c.b > 0.7f)
+                        {
+                            foundBrightCenter = true;
+                            break;
+                        }
+                    }
+                    if (foundBrightCenter) break;
+                }
+                Assert.IsTrue(foundBrightCenter, "[PASS] Center dot core is brightly visible.");
+                Object.Destroy(shot720);
+            }
+        }
+
+        fullReport.AppendLine("[PASS] Visual crosshair and instructions verification completed!\n");
     }
 }

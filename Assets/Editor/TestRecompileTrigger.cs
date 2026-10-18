@@ -29,6 +29,15 @@ public static class TestRecompileTrigger
     {
         if (EditorApplication.isPlayingOrWillChangePlaymode || EditorApplication.isCompiling) return;
 
+        string triggerGate = Path.Combine(Application.dataPath, "../scratch/trigger_fix_gate.flag");
+        if (File.Exists(triggerGate))
+        {
+            File.Delete(triggerGate);
+            Debug.Log("[TestRecompileTrigger] Calling FixEscapeGateFlicker.Execute()...");
+            FixEscapeGateFlicker.Execute();
+            return;
+        }
+
         string triggerFix = Path.Combine(Application.dataPath, "../scratch/trigger_fix_room4.flag");
         if (File.Exists(triggerFix))
         {
@@ -90,6 +99,15 @@ public static class TestRecompileTrigger
             return;
         }
 
+        string triggerSetupHud = Path.Combine(Application.dataPath, "../scratch/trigger_setup_hud.flag");
+        if (File.Exists(triggerSetupHud))
+        {
+            File.Delete(triggerSetupHud);
+            Debug.Log("[TestRecompileTrigger] Calling SetupDisplayAndHUD.Execute()...");
+            SetupDisplayAndHUD.Execute();
+            return;
+        }
+
         string triggerBuild = Path.Combine(Application.dataPath, "../scratch/trigger_build.flag");
         if (File.Exists(triggerBuild))
         {
@@ -146,3 +164,4 @@ public static class TestRecompileTrigger
 // 13-Oct-26 8:58:32 PM
 
 // test trigger probe
+// touch 21:01

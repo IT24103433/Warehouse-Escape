@@ -141,6 +141,36 @@ public class GameManager : MonoBehaviour
         UpdateUI();
     }
 
+    private bool isHelpExpanded = true;
+    public bool IsHelpExpanded => isHelpExpanded;
+    private Text helpTextComponent;
+    private RectTransform helpPanelRt;
+
+    public void ToggleHelpPanel()
+    {
+        isHelpExpanded = !isHelpExpanded;
+        UpdateControlsHelpText();
+    }
+
+    private void UpdateControlsHelpText()
+    {
+        if (helpPanelRt != null)
+        {
+            helpPanelRt.sizeDelta = new Vector2(460f, isHelpExpanded ? 58f : 30f);
+        }
+        if (helpTextComponent != null)
+        {
+            if (isHelpExpanded)
+            {
+                helpTextComponent.text = "<size=16><b><color=#FFFFFF>[WASD] Move   [LMB] Fire   [R] Reload   [E] Interact</color></b></size>\n<size=14><color=#7E94A8><b>[H]</b> Toggle Help   •   <b>[ESC]</b> Pause</color></size>";
+            }
+            else
+            {
+                helpTextComponent.text = "<size=16><color=#DCE4EC><b>CONTROLS:</b> Press <color=#FFD166><b>[H]</b></color> for Keybindings</color></size>";
+            }
+        }
+    }
+
     /// <summary>
     /// Configures the objective HUD panel styling, anchors, and contrast background
     /// to ensure optimal readability directly below the Top-Left Health status panel without overlap.
@@ -151,9 +181,9 @@ public class GameManager : MonoBehaviour
         if (objectiveText != null)
         {
             objectiveText.supportRichText = true;
-            objectiveText.fontSize = 13;
+            objectiveText.fontSize = 20;
             objectiveText.lineSpacing = 1.15f;
-            objectiveText.alignment = TextAnchor.UpperLeft;
+            objectiveText.alignment = TextAnchor.MiddleLeft;
             objectiveText.horizontalOverflow = HorizontalWrapMode.Wrap;
             objectiveText.verticalOverflow = VerticalWrapMode.Overflow;
 
@@ -164,17 +194,17 @@ public class GameManager : MonoBehaviour
                 if (panelRt != null)
                 {
                     // Anchor to Top-Left, cleanly positioned directly below Health panel (which sits below Minimap)
-                    // Minimap: Y[-20 to -200], Health: Y[-208 to -260], Objectives: Y[-268 to -346]
+                    // Minimap: Y[-20 to -200]. 12px gap -> Health: Y[-212 to -274]. 12px gap -> Objectives: Y[-286 to -370]
                     panelRt.anchorMin = new Vector2(0f, 1f);
                     panelRt.anchorMax = new Vector2(0f, 1f);
                     panelRt.pivot = new Vector2(0f, 1f);
-                    panelRt.anchoredPosition = new Vector2(24f, -268f);
-                    panelRt.sizeDelta = new Vector2(300f, 78f);
+                    panelRt.anchoredPosition = new Vector2(24f, -286f);
+                    panelRt.sizeDelta = new Vector2(460f, 84f);
 
                     // Translucent high-contrast dark panel
                     var img = panelTransform.GetComponent<Image>();
                     if (img == null) img = panelTransform.gameObject.AddComponent<Image>();
-                    img.color = new Color(0.06f, 0.08f, 0.12f, 0.90f);
+                    img.color = new Color(0.04f, 0.06f, 0.09f, 0.94f);
                 }
 
                 RectTransform textRt = objectiveText.GetComponent<RectTransform>();
@@ -182,13 +212,26 @@ public class GameManager : MonoBehaviour
                 {
                     textRt.anchorMin = Vector2.zero;
                     textRt.anchorMax = Vector2.one;
-                    textRt.offsetMin = new Vector2(10f, 6f);
-                    textRt.offsetMax = new Vector2(-10f, -6f);
+                    textRt.offsetMin = new Vector2(16f, 8f);
+                    textRt.offsetMax = new Vector2(-16f, -8f);
+                }
+
+                // Ensure CanvasScaler on UI_Canvas is configured for 1280x720 baseline
+                Transform hudParent = panelTransform.parent;
+                if (hudParent != null && hudParent.parent != null)
+                {
+                    CanvasScaler scaler = hudParent.parent.GetComponent<CanvasScaler>();
+                    if (scaler != null)
+                    {
+                        scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+                        scaler.referenceResolution = new Vector2(1280f, 720f);
+                        scaler.screenMatchMode = CanvasScaler.ScreenMatchMode.MatchWidthOrHeight;
+                        scaler.matchWidthOrHeight = 0.5f;
+                    }
                 }
 
                 // Create or configure compact Controls Help Panel directly below Objective panel
-                // Controls Help: Y[-350 to -408]
-                Transform hudParent = panelTransform.parent;
+                // Objectives: Y[-286 to -370]. 12px gap -> Controls Help: Y[-382 to -440]
                 if (hudParent != null)
                 {
                     Transform existingHelp = hudParent.Find("Controls_Help_Panel");
@@ -208,12 +251,13 @@ public class GameManager : MonoBehaviour
                     helpRt.anchorMin = new Vector2(0f, 1f);
                     helpRt.anchorMax = new Vector2(0f, 1f);
                     helpRt.pivot = new Vector2(0f, 1f);
-                    helpRt.anchoredPosition = new Vector2(24f, -350f);
-                    helpRt.sizeDelta = new Vector2(300f, 58f);
+                    helpRt.anchoredPosition = new Vector2(24f, -382f);
+                    helpRt.sizeDelta = new Vector2(460f, isHelpExpanded ? 58f : 30f);
+                    helpPanelRt = helpRt;
 
                     var helpImg = helpGo.GetComponent<Image>();
                     if (helpImg == null) helpImg = helpGo.AddComponent<Image>();
-                    helpImg.color = new Color(0.06f, 0.08f, 0.12f, 0.90f);
+                    helpImg.color = new Color(0.04f, 0.06f, 0.09f, 0.94f);
 
                     Transform existingHelpText = helpGo.transform.Find("Help_Text");
                     GameObject helpTextGo;
@@ -231,17 +275,18 @@ public class GameManager : MonoBehaviour
                     if (htRt == null) htRt = helpTextGo.AddComponent<RectTransform>();
                     htRt.anchorMin = Vector2.zero;
                     htRt.anchorMax = Vector2.one;
-                    htRt.offsetMin = new Vector2(10f, 5f);
-                    htRt.offsetMax = new Vector2(-10f, -5f);
+                    htRt.offsetMin = new Vector2(14f, 5f);
+                    htRt.offsetMax = new Vector2(-14f, -5f);
 
                     var ht = helpTextGo.GetComponent<Text>();
                     if (ht == null) ht = helpTextGo.AddComponent<Text>();
                     ht.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-                    ht.fontSize = 11;
+                    ht.fontSize = 16;
                     ht.supportRichText = true;
                     ht.lineSpacing = 1.15f;
                     ht.color = Color.white;
-                    ht.text = "<b><color=#95A5A6>CONTROLS</color></b>\n<color=#ECEFF1>[WASD] Move  •  [LMB] Fire (Continuous)  •  [R] Reload\n[E] Interact / Swap Weapon  •  [ESC] Pause</color>";
+                    helpTextComponent = ht;
+                    UpdateControlsHelpText();
                 }
 
                 // Build Pause Banner Panel if not existing
@@ -301,22 +346,22 @@ public class GameManager : MonoBehaviour
                     var ipRt = interactionPromptPanel.GetComponent<RectTransform>();
                     if (ipRt != null)
                     {
-                        ipRt.anchorMin = new Vector2(0.5f, 0.28f);
-                        ipRt.anchorMax = new Vector2(0.5f, 0.28f);
+                        ipRt.anchorMin = new Vector2(0.5f, 0.22f);
+                        ipRt.anchorMax = new Vector2(0.5f, 0.22f);
                         ipRt.pivot = new Vector2(0.5f, 0.5f);
                         ipRt.anchoredPosition = Vector2.zero;
-                        ipRt.sizeDelta = new Vector2(400f, 44f);
+                        ipRt.sizeDelta = new Vector2(480f, 48f);
                     }
                     var ipImg = interactionPromptPanel.GetComponent<Image>();
                     if (ipImg == null) ipImg = interactionPromptPanel.AddComponent<Image>();
-                    ipImg.color = new Color(0.06f, 0.08f, 0.12f, 0.90f);
+                    ipImg.color = new Color(0.04f, 0.06f, 0.09f, 0.95f);
 
                     if (interactionPromptText != null)
                     {
                         interactionPromptText.alignment = TextAnchor.MiddleCenter;
-                        interactionPromptText.fontSize = 15;
+                        interactionPromptText.fontSize = 20;
                         interactionPromptText.fontStyle = FontStyle.Bold;
-                        interactionPromptText.color = new Color(1.0f, 0.90f, 0.30f);
+                        interactionPromptText.color = new Color(1.0f, 0.92f, 0.35f);
                     }
                 }
             }
@@ -357,6 +402,11 @@ public class GameManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             TogglePause();
+        }
+
+        if (Input.GetKeyDown(KeyCode.H))
+        {
+            ToggleHelpPanel();
         }
 
         if (currentState == GameState.Playing && !isPaused)
@@ -449,9 +499,9 @@ public class GameManager : MonoBehaviour
             else sectorLabel = "ROOM 5: BOSS LOADING HALL";
 
             System.Text.StringBuilder sb = new System.Text.StringBuilder();
-            sb.AppendLine($"<b><size=11><color=#F39C12>{sectorLabel}</color></size></b>");
-            sb.AppendLine($"<b><size=13><color=#FFFFFF>{shortInstruction}</color></size></b>");
-            sb.AppendLine($"<size=11><color=#BDC3C7>Progress: Step {currentStepIdx + 1} of 5</color></size>");
+            sb.AppendLine($"<size=13><color=#45AAF2><b>CURRENT OBJECTIVE:</b> {sectorLabel}</color></size>");
+            sb.AppendLine($"<size=21><b><color=#FFFFFF>{shortInstruction}</color></b></size>");
+            sb.AppendLine($"<size=13><color=#9FB3C8>Progress: Step {currentStepIdx + 1} of 5</color></size>");
 
             objectiveText.text = sb.ToString();
         }

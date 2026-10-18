@@ -616,6 +616,8 @@ public class PlayModeCaptureRunner : MonoBehaviour
         // ========================================================
         cam.targetTexture = rtHd;
 
+        string gatePrefix = File.Exists(Path.Combine(Application.dataPath, "../scratch/gate_fix_applied.flag")) ? "gate_after_" : "gate_before_";
+
         RoomView[] roomViews = new RoomView[]
         {
             new RoomView("after_room1_start.png", new Vector3(0f, 1.65f, -26.0f), new Vector3(2f, 0f, 0f), 65f),
@@ -630,7 +632,24 @@ public class PlayModeCaptureRunner : MonoBehaviour
             new RoomView("route_connector_to_room5.png", new Vector3(-3.5f, 1.65f, 18.0f), new Vector3(2f, 20f, 0f), 65f),
             new RoomView("after_room5_boss.png", new Vector3(0.0f, 1.65f, 19.5f), new Vector3(2f, 0f, 0f), 65f),
             new RoomView("room5_boss_navigation.png", new Vector3(0.0f, 1.65f, 28.0f), new Vector3(2f, 0f, 0f), 65f),
-            new RoomView("room5_card_reader_ending.png", new Vector3(0.0f, 1.50f, 44.5f), new Vector3(5f, 0f, 0f), 60f)
+            new RoomView("room5_card_reader_ending.png", new Vector3(0.0f, 1.50f, 44.5f), new Vector3(5f, 0f, 0f), 60f),
+
+            // Authentic Gate Inspection views across distances, angles, motion, and turning
+            new RoomView(gatePrefix + "dist_15m_far.png", new Vector3(0f, 1.6f, 34.0f), new Vector3(2f, 0f, 0f), 60f),
+            new RoomView(gatePrefix + "dist_8m_mid.png", new Vector3(0f, 1.6f, 42.0f), new Vector3(2f, 0f, 0f), 60f),
+            new RoomView(gatePrefix + "dist_4m_close.png", new Vector3(0f, 1.6f, 45.5f), new Vector3(3f, 0f, 0f), 60f),
+            new RoomView(gatePrefix + "dist_2m_terminal.png", new Vector3(0f, 1.3f, 47.0f), new Vector3(4f, 0f, 0f), 60f),
+            new RoomView(gatePrefix + "angle_left_30deg.png", new Vector3(-2.8f, 1.6f, 45.0f), new Vector3(2f, 25f, 0f), 60f),
+            new RoomView(gatePrefix + "angle_right_30deg.png", new Vector3(2.8f, 1.6f, 45.0f), new Vector3(2f, -25f, 0f), 60f),
+            new RoomView(gatePrefix + "move_step1_z41.png", new Vector3(0f, 1.6f, 41.0f), new Vector3(2f, 0f, 0f), 60f),
+            new RoomView(gatePrefix + "move_step2_z43.png", new Vector3(0f, 1.6f, 43.0f), new Vector3(2f, 0f, 0f), 60f),
+            new RoomView(gatePrefix + "move_step3_z45.png", new Vector3(0f, 1.6f, 45.0f), new Vector3(2f, 0f, 0f), 60f),
+            new RoomView(gatePrefix + "move_step4_z46.png", new Vector3(0f, 1.6f, 46.5f), new Vector3(2f, 0f, 0f), 60f),
+            new RoomView(gatePrefix + "turn_yaw_minus25.png", new Vector3(0f, 1.6f, 46.5f), new Vector3(2f, -25f, 0f), 60f),
+            new RoomView(gatePrefix + "turn_yaw_minus10.png", new Vector3(0f, 1.6f, 46.5f), new Vector3(2f, -10f, 0f), 60f),
+            new RoomView(gatePrefix + "turn_yaw_center.png", new Vector3(0f, 1.6f, 46.5f), new Vector3(2f, 0f, 0f), 60f),
+            new RoomView(gatePrefix + "turn_yaw_plus10.png", new Vector3(0f, 1.6f, 46.5f), new Vector3(2f, 10f, 0f), 60f),
+            new RoomView(gatePrefix + "turn_yaw_plus25.png", new Vector3(0f, 1.6f, 46.5f), new Vector3(2f, 25f, 0f), 60f)
         };
 
         foreach (var rv in roomViews)
