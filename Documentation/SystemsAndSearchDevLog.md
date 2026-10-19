@@ -83,3 +83,7 @@ Left residual belief unnormalized so total remaining mass reflects support for t
 ## 2026-10-18 — Configure search termination on exhausted evidence or timeout
 Added termination rules ending search when all candidates are inspected, residual mass drops below 0.05, or 12 s elapse.
 Ensured clean exit from search state without indefinite wandering around cleared aisles.
+
+## 2026-10-19 — Verify immediate transition from search back to chase on re-detection
+Confirmed that re-acquiring visual line-of-sight during a sweep aborts the active search and resumes pursuit.
+Updated lastKnownPlayerPosition and heading immediately upon visual re-detection.
