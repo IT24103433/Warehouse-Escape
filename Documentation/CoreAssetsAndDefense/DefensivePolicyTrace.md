@@ -1223,4 +1223,91 @@ Without hysteresis, repathing every `0.25 s` would cause visible pacing jitter.
 | `92.25 s` | `(13.47, 2.88)` | `C06` | `0.7152` | `0.7152` | `0.9717` | `1.0117` | Hold C06 (raw=C06; jitter suppressed) |
 <!-- END:SWITCHING_BONUS -->
 <!-- SECTION:PRESSURE_RETREAT -->
+## 7. Player Pressure Repositioning & Low-Health Retreat Evaluation
+
+### 7.1 Repositioning Under Automatic `MP5_SMG` Pressure
+
+During sustained close-range pushes (`PlayerGun` `MP5_SMG` at `18 dmg / 0.11 s`), two
+natural utility shifts keep `Guard_Aqqil_Defensive` from standing exposed:
+- As the player flanks past `Defensive_Barrier_Center`, `torsoClear` flips `false -> true`
+  on `C05`, dropping its `cover` term by `-0.2500` and promoting an angled barrier (`C06`/`C04`).
+- As the player closes inside `2.0 m`, `weaponRange` drops toward `0.500`, encouraging
+  the guard to step back toward `5.0 m` optimal shotgun range near `Terminal_Desk`.
+
+<!-- BLOCK:DEPRECATED_THRESHOLD_LOGS -->
+### 7.2 Experimental Low-Health Retreat Threshold Logs (Draft Evaluation)
+
+Evaluated two prototype HP-based retreat rules across `220 HP -> 10 HP` durability steps:
+- `[DRAFT-HP-01]` Hard forced `ReturnToPost` when `healthRatio <= 0.30` (`<= 66 HP`).
+- `[DRAFT-HP-02]` Blind full-cover override (`cover * 2.0`) when `healthRatio <= 0.25` (`<= 55 HP`).
+- `[DRAFT-HP-03]` Cooldown oscillation noted when guard hit `66 HP`, retreated toward desk,
+  regained LOS, and flipped states rapidly while still inside `defenseRadius = 6.0 m`.
+
+| Guard HP | `healthRatio` | `HP_Force_Retreat_30` | `HP_Cover_Bias_25` | Observed Gameplay Issue |
+| --- | --- | --- | --- | --- |
+| `220 / 220` | `1.00` | `HOLD_COVER` | `HOLD_COVER` | Normal barrier cover rotation via stateless DefenseDecisionPolicy |
+| `215 / 220` | `0.98` | `HOLD_COVER` | `HOLD_COVER` | Normal barrier cover rotation via stateless DefenseDecisionPolicy |
+| `210 / 220` | `0.95` | `HOLD_COVER` | `HOLD_COVER` | Normal barrier cover rotation via stateless DefenseDecisionPolicy |
+| `205 / 220` | `0.93` | `HOLD_COVER` | `HOLD_COVER` | Normal barrier cover rotation via stateless DefenseDecisionPolicy |
+| `200 / 220` | `0.91` | `HOLD_COVER` | `HOLD_COVER` | Normal barrier cover rotation via stateless DefenseDecisionPolicy |
+| `195 / 220` | `0.89` | `HOLD_COVER` | `HOLD_COVER` | Normal barrier cover rotation via stateless DefenseDecisionPolicy |
+| `190 / 220` | `0.86` | `HOLD_COVER` | `HOLD_COVER` | Normal barrier cover rotation via stateless DefenseDecisionPolicy |
+| `185 / 220` | `0.84` | `HOLD_COVER` | `HOLD_COVER` | Normal barrier cover rotation via stateless DefenseDecisionPolicy |
+| `180 / 220` | `0.82` | `HOLD_COVER` | `HOLD_COVER` | Normal barrier cover rotation via stateless DefenseDecisionPolicy |
+| `175 / 220` | `0.80` | `HOLD_COVER` | `HOLD_COVER` | Normal barrier cover rotation via stateless DefenseDecisionPolicy |
+| `170 / 220` | `0.77` | `HOLD_COVER` | `HOLD_COVER` | Normal barrier cover rotation via stateless DefenseDecisionPolicy |
+| `165 / 220` | `0.75` | `HOLD_COVER` | `HOLD_COVER` | Normal barrier cover rotation via stateless DefenseDecisionPolicy |
+| `160 / 220` | `0.73` | `HOLD_COVER` | `HOLD_COVER` | Normal barrier cover rotation via stateless DefenseDecisionPolicy |
+| `155 / 220` | `0.70` | `HOLD_COVER` | `HOLD_COVER` | Normal barrier cover rotation via stateless DefenseDecisionPolicy |
+| `150 / 220` | `0.68` | `HOLD_COVER` | `HOLD_COVER` | Normal barrier cover rotation via stateless DefenseDecisionPolicy |
+| `145 / 220` | `0.66` | `HOLD_COVER` | `HOLD_COVER` | Normal barrier cover rotation via stateless DefenseDecisionPolicy |
+| `140 / 220` | `0.64` | `HOLD_COVER` | `HOLD_COVER` | Normal barrier cover rotation via stateless DefenseDecisionPolicy |
+| `135 / 220` | `0.61` | `HOLD_COVER` | `HOLD_COVER` | Normal barrier cover rotation via stateless DefenseDecisionPolicy |
+| `130 / 220` | `0.59` | `HOLD_COVER` | `HOLD_COVER` | Normal barrier cover rotation via stateless DefenseDecisionPolicy |
+| `125 / 220` | `0.57` | `HOLD_COVER` | `HOLD_COVER` | Normal barrier cover rotation via stateless DefenseDecisionPolicy |
+| `120 / 220` | `0.55` | `HOLD_COVER` | `HOLD_COVER` | Normal barrier cover rotation via stateless DefenseDecisionPolicy |
+| `115 / 220` | `0.52` | `HOLD_COVER` | `HOLD_COVER` | Normal barrier cover rotation via stateless DefenseDecisionPolicy |
+| `110 / 220` | `0.50` | `HOLD_COVER` | `HOLD_COVER` | Normal barrier cover rotation via stateless DefenseDecisionPolicy |
+| `105 / 220` | `0.48` | `HOLD_COVER` | `HOLD_COVER` | Normal barrier cover rotation via stateless DefenseDecisionPolicy |
+| `100 / 220` | `0.45` | `HOLD_COVER` | `HOLD_COVER` | Normal barrier cover rotation via stateless DefenseDecisionPolicy |
+| `95 / 220` | `0.43` | `HOLD_COVER` | `HOLD_COVER` | Normal barrier cover rotation via stateless DefenseDecisionPolicy |
+| `90 / 220` | `0.41` | `HOLD_COVER` | `HOLD_COVER` | Normal barrier cover rotation via stateless DefenseDecisionPolicy |
+| `85 / 220` | `0.39` | `HOLD_COVER` | `HOLD_COVER` | Normal barrier cover rotation via stateless DefenseDecisionPolicy |
+| `80 / 220` | `0.36` | `HOLD_COVER` | `HOLD_COVER` | Normal barrier cover rotation via stateless DefenseDecisionPolicy |
+| `75 / 220` | `0.34` | `HOLD_COVER` | `HOLD_COVER` | Normal barrier cover rotation via stateless DefenseDecisionPolicy |
+| `70 / 220` | `0.32` | `HOLD_COVER` | `HOLD_COVER` | Normal barrier cover rotation via stateless DefenseDecisionPolicy |
+| `65 / 220` | `0.30` | `FORCE_RETREAT` | `HOLD_COVER` | 30% rule turned back toward desk mid-duel, exposing back to MP5 |
+| `60 / 220` | `0.27` | `FORCE_RETREAT` | `HOLD_COVER` | 30% rule turned back toward desk mid-duel, exposing back to MP5 |
+| `55 / 220` | `0.25` | `FORCE_RETREAT` | `BLIND_WALL_COVER` | Both prototypes broke combat or turned back inside defenseRadius |
+| `50 / 220` | `0.23` | `FORCE_RETREAT` | `BLIND_WALL_COVER` | Both prototypes broke combat or turned back inside defenseRadius |
+| `45 / 220` | `0.20` | `FORCE_RETREAT` | `BLIND_WALL_COVER` | Both prototypes broke combat or turned back inside defenseRadius |
+| `40 / 220` | `0.18` | `FORCE_RETREAT` | `BLIND_WALL_COVER` | Both prototypes broke combat or turned back inside defenseRadius |
+| `35 / 220` | `0.16` | `FORCE_RETREAT` | `BLIND_WALL_COVER` | Both prototypes broke combat or turned back inside defenseRadius |
+| `30 / 220` | `0.14` | `FORCE_RETREAT` | `BLIND_WALL_COVER` | Both prototypes broke combat or turned back inside defenseRadius |
+| `25 / 220` | `0.11` | `FORCE_RETREAT` | `BLIND_WALL_COVER` | Both prototypes broke combat or turned back inside defenseRadius |
+| `20 / 220` | `0.09` | `FORCE_RETREAT` | `BLIND_WALL_COVER` | Both prototypes broke combat or turned back inside defenseRadius |
+| `15 / 220` | `0.07` | `FORCE_RETREAT` | `BLIND_WALL_COVER` | Both prototypes broke combat or turned back inside defenseRadius |
+| `10 / 220` | `0.05` | `FORCE_RETREAT` | `BLIND_WALL_COVER` | Both prototypes broke combat or turned back inside defenseRadius |
+
+#### Prototype State-Oscillation Trace Below `66 HP` (`DRAFT-HP-03`)
+
+| Time | Guard HP | Prototype FSM State | Failure Observed |
+| --- | --- | --- | --- |
+| `22.0 s` | `70 HP` | `PursueIntruder` | Clean barrier defense |
+| `22.5 s` | `66 HP` | `PursueIntruder (re-acquired)` | State ping-pong inside 6.0 m perimeter; dropped shotgun burst |
+| `23.0 s` | `62 HP` | `ReturnToPost (forced)` | State ping-pong inside 6.0 m perimeter; dropped shotgun burst |
+| `23.5 s` | `58 HP` | `PursueIntruder (re-acquired)` | State ping-pong inside 6.0 m perimeter; dropped shotgun burst |
+| `24.0 s` | `54 HP` | `ReturnToPost (forced)` | State ping-pong inside 6.0 m perimeter; dropped shotgun burst |
+| `24.5 s` | `50 HP` | `PursueIntruder (re-acquired)` | State ping-pong inside 6.0 m perimeter; dropped shotgun burst |
+| `25.0 s` | `46 HP` | `ReturnToPost (forced)` | State ping-pong inside 6.0 m perimeter; dropped shotgun burst |
+| `25.5 s` | `42 HP` | `PursueIntruder (re-acquired)` | State ping-pong inside 6.0 m perimeter; dropped shotgun burst |
+| `26.0 s` | `38 HP` | `ReturnToPost (forced)` | State ping-pong inside 6.0 m perimeter; dropped shotgun burst |
+| `26.5 s` | `34 HP` | `PursueIntruder (re-acquired)` | State ping-pong inside 6.0 m perimeter; dropped shotgun burst |
+| `27.0 s` | `30 HP` | `ReturnToPost (forced)` | State ping-pong inside 6.0 m perimeter; dropped shotgun burst |
+| `27.5 s` | `26 HP` | `PursueIntruder (re-acquired)` | State ping-pong inside 6.0 m perimeter; dropped shotgun burst |
+
+- *Review Conclusion:* Both HP-threshold prototypes introduced awkward back-turning or
+  passive wall-hiding; schedule removal in favor of stateless `DefenseDecisionPolicy`.
+<!-- END:DEPRECATED_THRESHOLD_LOGS -->
+<!-- END:PRESSURE_RETREAT -->
 <!-- SECTION:VERIFICATION_LOG -->
