@@ -21,7 +21,7 @@ public enum SearchGuardState
 /// Stays strictly inside Room 3 (Search & Card A).
 /// </summary>
 [RequireComponent(typeof(EnemyMovement))]
-public class SearchGuardAI : MonoBehaviour
+public class SearchGuardAI : MonoBehaviour, IGuardPerceptionTracker
 {
     [Header("Current State")]
     [Tooltip("Current operational state.")]
@@ -169,8 +169,12 @@ public class SearchGuardAI : MonoBehaviour
         }
     }
 
+    public bool HasConfirmedVisualContact() => canSeePlayer;
+    public bool IsGuardActive() => isActiveAndEnabled && gameObject.activeInHierarchy;
+
     void OnEnable()
     {
+        GuardPerception.RegisterTracker(this);
         if (perceptionMemory != null)
         {
             perceptionMemory.OnDisturbanceDetected += HandleDisturbance;
@@ -179,6 +183,7 @@ public class SearchGuardAI : MonoBehaviour
 
     void OnDisable()
     {
+        GuardPerception.UnregisterTracker(this);
         if (perceptionMemory != null)
         {
             perceptionMemory.OnDisturbanceDetected -= HandleDisturbance;

@@ -176,7 +176,7 @@ public static class BakeAndVerifyNavMesh
             ("Guard_Varun_Patrol (Room 2)", new Vector3(-5.0f, 1.08f, -15.0f)),
             ("Guard_Sanjeevsaran_Search (Room 3)", new Vector3(-12.0f, 1.08f, 2.0f)),
             ("Guard_Aqqil_Defensive (Room 4)", new Vector3(16.0f, 1.08f, 8.0f)),
-            ("Guard_Jadavan_Boss (Room 5)", new Vector3(0.0f, 1.08f, 23.0f))
+            ("Guard_Jadavan_Boss (Room 5)", new Vector3(0.0f, 1.08f, 22.0f))
         };
 
         bool allSpawnsValid = true;
@@ -205,19 +205,31 @@ public static class BakeAndVerifyNavMesh
         {
             ("Room 1 Safe Start -> Room 2 Center", new Vector3(0f, 1.08f, -26f), new Vector3(0f, 1.08f, -14f)),
             ("Room 2 Center -> Room 3 Search (Card A)", new Vector3(0f, 1.08f, -14f), new Vector3(-18.2f, 1.08f, 14f)),
-            ("Room 2 Center -> Room 4 Defense (Card B)", new Vector3(0f, 1.08f, -14f), new Vector3(15.0f, 1.08f, 10f)),
-            ("Room 3 Search -> Room 5 Boss Entrance", new Vector3(-18.2f, 1.08f, 14f), new Vector3(0f, 1.08f, 26f)),
-            ("Room 4 Defense -> Room 5 Boss Entrance", new Vector3(15.0f, 1.08f, 10f), new Vector3(0f, 1.08f, 26f)),
-            ("Room 5 Boss Staging -> Exit Card Reader Terminal", new Vector3(0f, 1.08f, 26f), new Vector3(0f, 1.08f, 46.2f)),
-            ("Full Route A: Spawn -> Room 3 (Card A) -> Room 5 -> Exit", new Vector3(0f, 1.08f, -26f), new Vector3(0f, 1.08f, 46.2f)),
-            ("Full Route B: Spawn -> Room 4 (Card B) -> Room 5 -> Exit", new Vector3(0f, 1.08f, -26f), new Vector3(0f, 1.08f, 46.2f))
+            ("Room 2 Center -> Room 4 Defense (Card B)", new Vector3(0f, 1.08f, -14f), new Vector3(14.0f, 1.08f, 10f)),
+            ("Room 3 Search -> Room 5 West Entrance", new Vector3(-18.2f, 1.08f, 14f), new Vector3(-5.5f, 1.08f, 22f)),
+            ("Room 4 Defense -> Room 5 East Entrance", new Vector3(14.0f, 1.08f, 10f), new Vector3(5.5f, 1.08f, 22f)),
+            ("Room 5 West Route -> Detour -> Card Reader", new Vector3(-5.5f, 1.08f, 22f), new Vector3(0f, 1.08f, 46.8f)),
+            ("Room 5 East Route -> Detour -> Card Reader", new Vector3(5.5f, 1.08f, 22f), new Vector3(0f, 1.08f, 46.8f)),
+            ("Boss Left Flank: Mid Cross-Aisle West -> North Staging", new Vector3(-5.5f, 1.08f, 31f), new Vector3(0f, 1.08f, 41.5f)),
+            ("Boss Right Flank: Mid Cross-Aisle East -> North Staging", new Vector3(5.5f, 1.08f, 31f), new Vector3(0f, 1.08f, 41.5f)),
+            ("Full Route A: Spawn -> Room 3 (Card A) -> Room 5 West Route -> Card Reader", new Vector3(0f, 1.08f, -26f), new Vector3(0f, 1.08f, 46.8f)),
+            ("Full Route B: Spawn -> Room 4 (Card B) -> Room 5 East Route -> Card Reader", new Vector3(0f, 1.08f, -26f), new Vector3(0f, 1.08f, 46.8f))
         };
 
         bool allRoutesComplete = true;
         foreach (var r in testRoutes)
         {
+            NavMeshHit hStart, hEnd;
+            bool sOk = NavMesh.SamplePosition(r.start, out hStart, 2.5f, NavMesh.AllAreas);
+            bool eOk = NavMesh.SamplePosition(r.end, out hEnd, 2.5f, NavMesh.AllAreas);
+
             NavMeshPath path = new NavMeshPath();
-            bool calcOk = NavMesh.CalculatePath(r.start, r.end, NavMesh.AllAreas, path);
+            bool calcOk = false;
+            if (sOk && eOk)
+            {
+                calcOk = NavMesh.CalculatePath(hStart.position, hEnd.position, NavMesh.AllAreas, path);
+            }
+
             sb.AppendLine($"Route: '{r.routeName}':");
             sb.AppendLine($"  Status: {path.status}, Corners: {path.corners.Length}, CalcOk: {calcOk}");
 
@@ -256,8 +268,11 @@ public static class BakeAndVerifyNavMesh
         {
             Vector3 from = varunWps[i];
             Vector3 to = varunWps[(i + 1) % varunWps.Length];
+            NavMeshHit hFrom, hTo;
+            NavMesh.SamplePosition(from, out hFrom, 2.0f, NavMesh.AllAreas);
+            NavMesh.SamplePosition(to, out hTo, 2.0f, NavMesh.AllAreas);
             NavMeshPath p = new NavMeshPath();
-            NavMesh.CalculatePath(from, to, NavMesh.AllAreas, p);
+            NavMesh.CalculatePath(hFrom.position, hTo.position, NavMesh.AllAreas, p);
             if (p.status != NavMeshPathStatus.PathComplete)
             {
                 sb.AppendLine($"  [FAIL] Varun WP {i} -> {(i+1)%varunWps.Length} is {p.status}");
@@ -273,21 +288,49 @@ public static class BakeAndVerifyNavMesh
             new Vector3( 6.5f, 1.08f, 26.0f), // East flank aisle
             new Vector3(-6.5f, 1.08f, 38.0f), // West deep flank
             new Vector3( 6.5f, 1.08f, 38.0f), // East deep flank
-            new Vector3( 0.0f, 1.08f, 34.0f)  // Central combat post
+            new Vector3( 0.0f, 1.08f, 41.5f)  // North staging apron
         };
         bool bossFlankOk = true;
-        Vector3 bossSpawn = new Vector3(0.0f, 1.08f, 23.0f);
+        Vector3 bossSpawn = new Vector3(0.0f, 1.08f, 22.0f);
+        NavMeshHit hBossSpawn;
+        NavMesh.SamplePosition(bossSpawn, out hBossSpawn, 2.0f, NavMesh.AllAreas);
         foreach (var jwp in jadavanWps)
         {
+            NavMeshHit hJwp;
+            NavMesh.SamplePosition(jwp, out hJwp, 2.0f, NavMesh.AllAreas);
             NavMeshPath p = new NavMeshPath();
-            NavMesh.CalculatePath(bossSpawn, jwp, NavMesh.AllAreas, p);
+            NavMesh.CalculatePath(hBossSpawn.position, hJwp.position, NavMesh.AllAreas, p);
             if (p.status != NavMeshPathStatus.PathComplete)
             {
                 sb.AppendLine($"  [FAIL] Boss spawn -> Flank pos {jwp} is {p.status}");
                 bossFlankOk = false;
             }
         }
-        sb.AppendLine($"Jadavan Flank Maneuvers in Room 5: {(bossFlankOk ? "[PASS] All flank vectors complete" : "[FAIL]")}");
+
+        // Test Jadavan Patrol Circuit
+        Vector3[] bossCircuit = new Vector3[]
+        {
+            new Vector3( 0.0f, 1.08f, 22.0f), // South Staging
+            new Vector3( 5.5f, 1.08f, 31.0f), // East Flank Corridor
+            new Vector3( 0.0f, 1.08f, 41.5f), // North Staging Apron
+            new Vector3(-5.5f, 1.08f, 31.0f)  // West Flank Corridor
+        };
+        for (int i = 0; i < bossCircuit.Length; i++)
+        {
+            Vector3 from = bossCircuit[i];
+            Vector3 to = bossCircuit[(i + 1) % bossCircuit.Length];
+            NavMeshHit hFrom, hTo;
+            NavMesh.SamplePosition(from, out hFrom, 2.0f, NavMesh.AllAreas);
+            NavMesh.SamplePosition(to, out hTo, 2.0f, NavMesh.AllAreas);
+            NavMeshPath p = new NavMeshPath();
+            NavMesh.CalculatePath(hFrom.position, hTo.position, NavMesh.AllAreas, p);
+            if (p.status != NavMeshPathStatus.PathComplete)
+            {
+                sb.AppendLine($"  [FAIL] Boss Circuit WP {i} -> {(i+1)%bossCircuit.Length} is {p.status}");
+                bossFlankOk = false;
+            }
+        }
+        sb.AppendLine($"Jadavan Flank Maneuvers in Room 5: {(bossFlankOk ? "[PASS] All flank vectors and circuit complete" : "[FAIL]")}");
 
         // 9. Save scene
         EditorSceneManager.MarkSceneDirty(scene);

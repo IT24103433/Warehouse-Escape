@@ -16,15 +16,63 @@ public struct SoundDisturbance
     public float timestamp;
 }
 
+public interface IGuardPerceptionTracker
+{
+    bool HasConfirmedVisualContact();
+    bool IsGuardActive();
+}
+
 /// <summary>
 /// Shared perception utility for all guard AI implementations.
 /// Provides consistent, physically realistic evaluation of sight distance,
 /// horizontal field of view, obstacle occlusion through warehouse walls and shelves,
-/// sound disturbance propagation with obstacle attenuation, and dynamic suspicion mechanics.
+/// sound disturbance propagation with obstacle attenuation, dynamic suspicion mechanics,
+/// and centralized zero-allocation tracking of active guard visual contact.
 /// </summary>
 public static class GuardPerception
 {
     public static event Action<SoundDisturbance> OnSoundReported;
+
+    private static readonly System.Collections.Generic.List<IGuardPerceptionTracker> activeTrackers =
+        new System.Collections.Generic.List<IGuardPerceptionTracker>(8);
+
+    public static void RegisterTracker(IGuardPerceptionTracker tracker)
+    {
+        if (tracker != null && !activeTrackers.Contains(tracker))
+        {
+            activeTrackers.Add(tracker);
+        }
+    }
+
+    public static void UnregisterTracker(IGuardPerceptionTracker tracker)
+    {
+        if (tracker != null)
+        {
+            activeTrackers.Remove(tracker);
+        }
+    }
+
+    public static void ClearTrackers()
+    {
+        activeTrackers.Clear();
+    }
+
+    /// <summary>
+    /// Returns true if any active, living guard has confirmed visual contact with the player.
+    /// Used by the retreating health regeneration system for immediate interruption.
+    /// </summary>
+    public static bool AnyLivingGuardHasVisualContact()
+    {
+        for (int i = 0; i < activeTrackers.Count; i++)
+        {
+            var t = activeTrackers[i];
+            if (t != null && t.IsGuardActive() && t.HasConfirmedVisualContact())
+            {
+                return true;
+            }
+        }
+        return false;
+    }
 
     /// <summary>
     /// Broadcasts an audio disturbance into the environment (gunshot or footsteps).

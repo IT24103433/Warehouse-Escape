@@ -21,7 +21,7 @@ public enum PatrolGuardState
 /// and resumes patrol circuit when clear. Stays strictly inside Room 2 (Safe Room protection).
 /// </summary>
 [RequireComponent(typeof(EnemyMovement))]
-public class PatrolGuardAI : MonoBehaviour
+public class PatrolGuardAI : MonoBehaviour, IGuardPerceptionTracker
 {
     [Header("Current State")]
     [Tooltip("Current operational state.")]
@@ -161,8 +161,12 @@ public class PatrolGuardAI : MonoBehaviour
         }
     }
 
+    public bool HasConfirmedVisualContact() => canSeePlayer;
+    public bool IsGuardActive() => isActiveAndEnabled && gameObject.activeInHierarchy;
+
     void OnEnable()
     {
+        GuardPerception.RegisterTracker(this);
         if (perceptionMemory != null)
         {
             perceptionMemory.OnDisturbanceDetected += HandleDisturbance;
@@ -171,6 +175,7 @@ public class PatrolGuardAI : MonoBehaviour
 
     void OnDisable()
     {
+        GuardPerception.UnregisterTracker(this);
         if (perceptionMemory != null)
         {
             perceptionMemory.OnDisturbanceDetected -= HandleDisturbance;

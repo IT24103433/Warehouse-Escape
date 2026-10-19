@@ -27,6 +27,7 @@ public class PlayerHUD : MonoBehaviour
     private GameObject hpPanelObject;
     private Image healthFillImage;
     private Text healthNumericText;
+    private Text healthRegenText;
     private Text healthWarningText;
 
     private Text weaponNameText;
@@ -59,13 +60,20 @@ public class PlayerHUD : MonoBehaviour
     private int fpsFrameCount = 0;
     private float currentFps = 60f;
     private float performanceLogTimer = 0f;
-    private readonly System.Collections.Generic.List<float> recentFrameTimes = new System.Collections.Generic.List<float>(5000);
+    private float peakWorstGameplayFrameTime = 0f;
+    private readonly System.Collections.Generic.List<float> recentFrameTimes = new System.Collections.Generic.List<float>(50000);
+    private readonly System.Collections.Generic.List<float> periodicLogScratch = new System.Collections.Generic.List<float>(600);
+    private int excludedStartupFrames = 0;
+    private int excludedCaptureFrames = 0;
+    private int captureCooldownFrames = 0;
+    public static bool IsExplicitCaptureActive { get; set; } = false;
     [SerializeField] private float crosshairFootprint = 28f;
 
     public GameObject CrosshairRoot => crosshairRootObject;
     public GameObject MinimapPanel => minimapPanelObject;
     public Image HealthFillImage => healthFillImage;
     public Text HealthNumericText => healthNumericText;
+    public Text HealthRegenText => healthRegenText;
     public GameObject WeaponPickupPanel => weaponPickupPanel;
     public Text WeaponPickupText => weaponPickupText;
 
@@ -298,6 +306,23 @@ public class PlayerHUD : MonoBehaviour
         healthNumericText.supportRichText = true;
         healthNumericText.color = Color.white;
         healthNumericText.text = "100 / 100";
+
+        // Subtle Regeneration Indicator (anchored Top-Center inside panel)
+        GameObject regenGo = new GameObject("Health_Regen_Indicator", typeof(RectTransform), typeof(Text));
+        regenGo.transform.SetParent(hpPanel.transform, false);
+        var regenRt = regenGo.GetComponent<RectTransform>();
+        regenRt.anchorMin = new Vector2(0.5f, 1f);
+        regenRt.anchorMax = new Vector2(0.5f, 1f);
+        regenRt.pivot = new Vector2(0.5f, 1f);
+        regenRt.anchoredPosition = new Vector2(10f, -10f);
+        regenRt.sizeDelta = new Vector2(160f, 18f);
+        healthRegenText = regenGo.GetComponent<Text>();
+        healthRegenText.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+        healthRegenText.fontSize = 11;
+        healthRegenText.fontStyle = FontStyle.Bold;
+        healthRegenText.alignment = TextAnchor.MiddleCenter;
+        healthRegenText.color = new Color(0.35f, 1.0f, 0.65f, 0.95f);
+        healthRegenText.text = "";
 
         // Health Bar BG (anchored Top-Left inside panel, strictly inside Y[-34 to -50], 12px above bottom)
         GameObject barBgGo = new GameObject("Health_Bar_BG", typeof(RectTransform), typeof(Image));
@@ -626,6 +651,27 @@ public class PlayerHUD : MonoBehaviour
         // 5. Room 5: Boss Hall [-14, 18] to [14, 50]
         drawRoom(-14f, 18f, 14f, 50f, r5Floor, r5Wall, 2);
 
+        // Room 5 Harder Layout Features:
+        Color r5Obstacle = new Color(0.42f, 0.22f, 0.25f, 1.0f);
+        Color r5Barrier = new Color(0.95f, 0.45f, 0.15f, 1.0f);
+        Color r5Terminal = new Color(0.0f, 0.85f, 1.0f, 1.0f);
+
+        // Central Staggered Stack 1 (Z 24.5 to 28.0)
+        drawRoom(-1.8f, 24.5f, 1.8f, 28.0f, r5Obstacle, r5Wall, 1);
+        // Central Staggered Stack 2 (Z 34.5 to 38.0, staggered east)
+        drawRoom(-1.2f, 34.5f, 2.2f, 38.0f, r5Obstacle, r5Wall, 1);
+
+        // West Outer Racks & Cover (Z 24 to 37)
+        drawRoom(-12.0f, 24.0f, -8.5f, 37.0f, r5Obstacle, r5Wall, 1);
+        // East Outer Racks & Cover (Z 24 to 37)
+        drawRoom(8.5f, 24.0f, 12.0f, 37.0f, r5Obstacle, r5Wall, 1);
+
+        // Security Checkpoint Barrier across center (Z 43.5 to 44.5)
+        drawRoom(-2.7f, 43.5f, 2.7f, 44.5f, r5Barrier, r5Barrier, 1);
+
+        // Card Reader Terminal Marker at (0, 48)
+        drawRoom(-0.8f, 47.4f, 0.8f, 48.6f, r5Terminal, r5Terminal, 1);
+
         // Final Exit Doorway [ -2.5, 49.5] to [2.5, 51.5]
         drawRoom(-2.5f, 49.5f, 2.5f, 51.5f, exitCol, exitCol, 1);
 
@@ -813,6 +859,21 @@ public class PlayerHUD : MonoBehaviour
                     healthNumericText.color = Color.white;
                 }
             }
+
+            if (healthRegenText != null)
+            {
+                if (playerHealth != null && playerHealth.IsRegenerating)
+                {
+                    float pulse = Mathf.PingPong(Time.unscaledTime * 3f, 1f);
+                    Color regenCol = Color.Lerp(new Color(0.25f, 0.85f, 0.45f, 0.85f), new Color(0.50f, 1.0f, 0.70f, 1.0f), pulse);
+                    healthRegenText.text = "Recovering +10 HP/s";
+                    healthRegenText.color = regenCol;
+                }
+                else
+                {
+                    healthRegenText.text = "";
+                }
+            }
         }
     }
 
@@ -920,21 +981,36 @@ public class PlayerHUD : MonoBehaviour
     private void UpdatePerformanceTracking()
     {
         float dt = Time.unscaledDeltaTime;
-        // Collect settled frame times (ignoring initial 3.0s warmup and single-frame capture hitches >=0.20s)
-        if (Time.unscaledTime > 3.0f && dt < 0.20f && dt > 0.0001f)
+        if (dt <= 0.00001f) return;
+
+        // 1. Separate startup / loading warmup period
+        if (Time.unscaledTime <= 3.0f)
         {
-            if (recentFrameTimes.Count < 20000)
+            excludedStartupFrames++;
+        }
+        // 2. Explicitly marked capture operations and immediate post-capture disk I/O
+        else if (IsExplicitCaptureActive || captureCooldownFrames > 0)
+        {
+            excludedCaptureFrames++;
+            if (captureCooldownFrames > 0) captureCooldownFrames--;
+        }
+        // 3. Normal gameplay frames: ALL gameplay frames included (genuine stalls >=200ms are NOT filtered)
+        else
+        {
+            peakWorstGameplayFrameTime = Mathf.Max(peakWorstGameplayFrameTime, dt);
+            if (recentFrameTimes.Count < 50000)
             {
                 recentFrameTimes.Add(dt);
             }
             else
             {
-                recentFrameTimes[recentFrameTimes.Count % 20000] = dt;
+                recentFrameTimes[recentFrameTimes.Count % 50000] = dt;
             }
         }
 
-        // Ignore single-frame capture hitches or startup anomalies (>0.2s) from corrupting rolling average
-        if (dt < 0.20f && dt > 0.0001f)
+        // On-screen rolling FPS display (kept separate from benchmark measurements):
+        // Only ignore artificial capture operations from disrupting the visual readout
+        if (!IsExplicitCaptureActive && captureCooldownFrames == 0)
         {
             fpsFrameCount++;
             fpsUpdateTimer += dt;
@@ -954,59 +1030,77 @@ public class PlayerHUD : MonoBehaviour
             float frameTimeMs = 1000f / Mathf.Max(currentFps, 1f);
 
             float onePercentLowFps = currentFps;
-            float maxSpikeMs = frameTimeMs;
-            if (recentFrameTimes.Count >= 60)
+            float worstFrameTimeMs = peakWorstGameplayFrameTime * 1000f;
+            if (recentFrameTimes.Count >= 30)
             {
-                var sorted = new System.Collections.Generic.List<float>(recentFrameTimes);
-                sorted.Sort();
-                int idx99 = Mathf.Clamp((int)(sorted.Count * 0.99f), 0, sorted.Count - 1);
-                float ft99 = sorted[idx99];
-                if (ft99 > 0.0001f) onePercentLowFps = 1f / ft99;
-                maxSpikeMs = sorted[sorted.Count - 1] * 1000f;
+                // Reuse pre-allocated scratch list of the last <= 300 frames to compute rolling 1% low without allocating or sorting 50k items
+                periodicLogScratch.Clear();
+                int sampleCount = Mathf.Min(recentFrameTimes.Count, 300);
+                int startIdx = recentFrameTimes.Count - sampleCount;
+                for (int i = 0; i < sampleCount; i++) periodicLogScratch.Add(recentFrameTimes[startIdx + i]);
+                periodicLogScratch.Sort();
+                int idx99 = Mathf.Clamp((int)(periodicLogScratch.Count * 0.99f), 0, periodicLogScratch.Count - 1);
+                float ft99 = periodicLogScratch[idx99];
+                if (ft99 > 0.00001f) onePercentLowFps = 1f / ft99;
             }
 
             long totalMemMb = System.GC.GetTotalMemory(false) / (1024 * 1024);
             long unityAllocMb = UnityEngine.Profiling.Profiler.GetTotalAllocatedMemoryLong() / (1024 * 1024);
             long unityReservedMb = UnityEngine.Profiling.Profiler.GetTotalReservedMemoryLong() / (1024 * 1024);
 
-            Debug.Log($"[Performance Metrics] Resolution: {(is1080p ? "1080p" : "720p")} | Quality: {(isLowQuality ? "LOW" : "MED")} | Average FPS: {currentFps:F1} ({frameTimeMs:F1}ms) | 1% Low FPS: {onePercentLowFps:F1} | Max Spike: {maxSpikeMs:F1}ms | Unity Allocated: {unityAllocMb}MB | Reserved: {unityReservedMb}MB | GC Heap: {totalMemMb}MB | Sampled Frames: {recentFrameTimes.Count}");
+            Debug.Log($"[Performance Metrics] Resolution: {(is1080p ? "1080p" : "720p")} | Quality: {(isLowQuality ? "LOW" : "MED")} | Average FPS: {currentFps:F1} ({frameTimeMs:F1}ms) | 1% Low FPS: {onePercentLowFps:F1} | Worst Frame Time: {worstFrameTimeMs:F1}ms | Excluded Startup: {excludedStartupFrames} (Startup <= 3.0s) | Excluded Capture: {excludedCaptureFrames} (Explicit capture/screenshot operations) | Unity Allocated: {unityAllocMb}MB | Reserved: {unityReservedMb}MB | GC Heap: {totalMemMb}MB | Sampled Normal Frames: {recentFrameTimes.Count}");
         }
     }
 
     void OnApplicationQuit()
     {
-        if (recentFrameTimes.Count >= 60)
+        if (recentFrameTimes.Count >= 30)
         {
             var sorted = new System.Collections.Generic.List<float>(recentFrameTimes);
             sorted.Sort();
             float sumFt = 0f;
             for (int i = 0; i < sorted.Count; i++) sumFt += sorted[i];
             float avgFt = sumFt / sorted.Count;
-            float avgFps = avgFt > 0.0001f ? 1f / avgFt : 0f;
+            float avgFps = avgFt > 0.00001f ? 1f / avgFt : 0f;
             int idx99 = Mathf.Clamp((int)(sorted.Count * 0.99f), 0, sorted.Count - 1);
             float ft99 = sorted[idx99];
-            float onePercentLow = ft99 > 0.0001f ? 1f / ft99 : 0f;
-            float maxSpike = sorted[sorted.Count - 1] * 1000f;
+            float onePercentLow = ft99 > 0.00001f ? 1f / ft99 : 0f;
+            float worstFrameTimeMs = sorted[sorted.Count - 1] * 1000f;
+
+            int spikes50 = 0, spikes100 = 0, spikes200 = 0;
+            for (int i = 0; i < sorted.Count; i++)
+            {
+                float ftMs = sorted[i] * 1000f;
+                if (ftMs >= 200f) spikes200++;
+                else if (ftMs >= 100f) spikes100++;
+                else if (ftMs >= 50f) spikes50++;
+            }
 
             string summary = $"STANDALONE_BENCHMARK_SUMMARY\n" +
                              $"Resolution: {(is1080p ? "1080p (1920x1080)" : "720p (1280x720)")}\n" +
                              $"Quality: {(isLowQuality ? "LOW" : "MEDIUM")}\n" +
+                             $"Total Sampled Normal Gameplay Frames: {sorted.Count}\n" +
                              $"Total Sampled Frames: {sorted.Count}\n" +
                              $"Average FPS: {avgFps:F2}\n" +
                              $"Average Frame Time: {avgFt * 1000f:F2} ms\n" +
                              $"1% Low FPS: {onePercentLow:F2} (99th percentile frame time: {ft99 * 1000f:F2} ms)\n" +
-                             $"Max Frame Spike: {maxSpike:F2} ms\n" +
+                             $"Worst Frame Time: {worstFrameTimeMs:F2} ms\n" +
+                             $"Max Frame Spike: {worstFrameTimeMs:F2} ms\n" +
+                             $"Spikes > 50ms: {spikes50}\n" +
+                             $"Spikes > 100ms: {spikes100}\n" +
+                             $"Spikes > 200ms: {spikes200}\n" +
+                             $"Excluded Startup Frames: {excludedStartupFrames} (Reason: Initial startup/loading warmup <= 3.0s)\n" +
+                             $"Excluded Capture Frames: {excludedCaptureFrames} (Reason: Explicitly marked capture/screenshot operations)\n" +
                              $"Unity Allocated Memory: {UnityEngine.Profiling.Profiler.GetTotalAllocatedMemoryLong() / (1024 * 1024)} MB\n" +
                              $"Unity Reserved Memory: {UnityEngine.Profiling.Profiler.GetTotalReservedMemoryLong() / (1024 * 1024)} MB\n" +
-                             $"GC Total Memory: {System.GC.GetTotalMemory(false) / (1024 * 1024)} MB\n";
+                             $"GC Total Memory: {System.GC.GetTotalMemory(false) / (1024 * 1024)} MB\n" +
+                             $"Caution: This benchmark represents a short-duration test. Short runs cannot establish zero memory leaks or stutter-free performance across prolonged gameplay.\n";
 
-            string outPath = System.IO.Path.Combine(Application.dataPath, $"../scratch/standalone_benchmark_{(is1080p ? "1080p" : "720p")}.txt");
-            try
-            {
-                System.IO.File.WriteAllText(outPath, summary);
-                Debug.Log($"[PlayerHUD] Wrote performance benchmark summary to: {outPath}");
-            }
-            catch {}
+            string outPath1 = System.IO.Path.Combine(Application.dataPath, $"../scratch/standalone_benchmark_{(is1080p ? "1080p" : "720p")}.txt");
+            string outPath2 = System.IO.Path.Combine(Application.dataPath, $"../../../scratch/standalone_benchmark_{(is1080p ? "1080p" : "720p")}.txt");
+            try { System.IO.File.WriteAllText(outPath1, summary); } catch {}
+            try { System.IO.File.WriteAllText(outPath2, summary); } catch {}
+            Debug.Log($"[PlayerHUD] Wrote performance benchmark summary to: {outPath1}");
         }
     }
 
@@ -1039,6 +1133,7 @@ public class PlayerHUD : MonoBehaviour
 
     private System.Collections.IEnumerator CaptureFrameToDisk(string filename)
     {
+        IsExplicitCaptureActive = true;
         yield return new WaitForEndOfFrame();
         Texture2D shot = ScreenCapture.CaptureScreenshotAsTexture();
         if (shot != null)
@@ -1047,10 +1142,6 @@ public class PlayerHUD : MonoBehaviour
             int w = shot.width;
             int h = shot.height;
             Destroy(shot);
-
-            // Flush performance tracking window so the PNG encoding spike never corrupts the on-screen counter
-            fpsFrameCount = 0;
-            fpsUpdateTimer = 0f;
 
             string path1 = System.IO.Path.Combine(Application.dataPath, "../scratch/screenshots", filename);
             string path2 = System.IO.Path.Combine(Application.dataPath, "../../scratch/screenshots", filename);
@@ -1072,6 +1163,10 @@ public class PlayerHUD : MonoBehaviour
             saveSafe(path2);
             saveSafe(path3);
         }
+        captureCooldownFrames = 1;
+        IsExplicitCaptureActive = false;
+        fpsFrameCount = 0;
+        fpsUpdateTimer = 0f;
     }
 
     private System.Collections.IEnumerator RunNativeVerificationCaptureSequence()

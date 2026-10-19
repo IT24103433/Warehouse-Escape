@@ -19,7 +19,7 @@ public enum DefensiveGuardState
 /// then returns to its post when the player retreats beyond the defensive perimeter.
 /// </summary>
 [RequireComponent(typeof(EnemyMovement))]
-public class DefensiveGuardAI : MonoBehaviour
+public class DefensiveGuardAI : MonoBehaviour, IGuardPerceptionTracker
 {
     [Header("Current State")]
     [Tooltip("Current operational state.")]
@@ -169,6 +169,19 @@ public class DefensiveGuardAI : MonoBehaviour
     private void EnsureHumanVisualAttached()
     {
         HumanoidMeshBuilder.EnsureRuntimeVisuals(transform, CharacterRole.Defensive_Aqqil);
+    }
+
+    public bool HasConfirmedVisualContact() => canSeePlayer;
+    public bool IsGuardActive() => isActiveAndEnabled && gameObject.activeInHierarchy;
+
+    void OnEnable()
+    {
+        GuardPerception.RegisterTracker(this);
+    }
+
+    void OnDisable()
+    {
+        GuardPerception.UnregisterTracker(this);
     }
 
     void Start()

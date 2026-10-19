@@ -72,8 +72,8 @@ The game environment is constructed as five physically distinct rooms in a singl
 | **Room 2: Patrol Room** (`Room_2_Patrol`) | 16m x 14m x 5m | `(0, 0, -11)` | First agent encounter. Racking units (`Rack_Center_1`, `Rack_Center_2`), repositioned `Crates_P1` (1.50m clear aisle width), industrial point lamp (`PointLight_Room2`), dual branch exits with overhead signs `Sign_Route_A` (`(-5.0, 3.8, -4.3)`) and `Sign_Route_B` (`(5.0, 3.8, -4.3)`). | **`Guard_Varun_Patrol`** (Violet). Continuous 4-waypoint circuit around central shelving. Territorial bounds: `(0, 2, -11)`, size `(16, 6, 14)`. |
 | **Room 3: Search Room** (`Room_3_Search`) | 16m x 18m x 5m | `(-16, 0, 7)` | Branch Route A. Pallet racks (`Search_Rack_1`, `Search_Rack_2`), hiding alcove (`Search_Crates_Alcove`), keycard table (`Search_Pallet_CardTable`), industrial point lamp (`PointLight_Room3`), doorway to Corridor 3->5 (`(-6.5, 14)`). | **`Guard_Sanjeevsaran_Search`** (Gold) + **`AccessCard_Pickup_Search`** (Card A). Trigger collider expanded to `(4.0, 10.0, 6.0)` (world bounds `[-23, -19]`, `[10.8, 17.2]`), 100% physically reachable from south aisle. |
 | **Room 4: Defensive Room** (`Room_4_Defensive`)| 16m x 18m x 5m | `(16, 0, 7)` | Branch Route B. Terminal desk (`Terminal_Desk`), security console (`[Placeholder]_SecurityConsole_Terminal`), vehicle prop (`[Placeholder]_Forklift_Vehicle`), industrial point lamp (`PointLight_Room4`), doorway to Corridor 4->5 (`(7, 14)`). | **`Guard_Aqqil_Defensive`** (Cyan) + **`AccessCard_Pickup_Defensive`** (Card B). Trigger collider expanded to `(1.8, 1.2, 2.2)` at `(16.0, 1.15, 10.2)` protruding past desk, 100% physically reachable from north approach. |
-| **Room 5: Boss Room** (`Room_5_Boss`) | 22m x 24m x 5m | `(0, 0, 31)` | Final encounter. Longitudinal shelving blocks (`Flank_Rack_W`, `Flank_Rack_E`) forming a wide central thoroughfare and two genuine alternative side aisles. Dual ceiling lamps (`PointLight_Boss_South`, `PointLight_Boss_North`), overhead sign `Sign_Exit_Master`. Far north wall features the **Card Reader Terminal** (`Card_Reader_Terminal`) and scenery exit door (`Exit_Door`). | **`Guard_Jadavan_Boss`** (Crimson Boss). Reuses Jadavan's flanking AI with tuned speed and perception. Visually distinct (Crimson/Obsidian metallic material `Mat_Guard_Boss`, 1.15x scale). |
-| **Exit Scenery & Platform** | 8m x 7m x 4m | `(0, 0, 46.5)` | Closed scenery door (`Exit_Door`) at `(0, 2, 43)`, stationary blocker, and landing platform (`Exit_Platform_Floor`). | **None**. Old `EscapeTrigger` is disabled/inactive (`isEscapeTriggerActive = false`); touching the door or platform alone cannot award victory. |
+| **Room 5: Boss Room** (`Room_5_Boss`) | 22m x 24m x 5m | `(0, 0, 31)` | Final encounter. Challenging tactical layout featuring central staggered cargo stacks (`Boss_Central_Cargo_Stack_1`, `Boss_Central_Cargo_Stack_2`) that eliminate direct central entrance-to-reader sprints, dual 3.0m wide flank corridors (West at `X = -5.5`, East at `X = +5.5`), a connecting Mid Cross-Aisle (`Z = 28.5 to 33.5`) with waist-high cover barriers, and a Security Checkpoint Barrier (`Boss_Security_Checkpoint_Barrier` at `Z = 44.0`, width 3.2m) with 2.15m side clearance detour lanes leading into the terminal apron. Far north wall features the **Card Reader Terminal** (`Card_Reader_Terminal` at `(0, 0.5, 48.0)`) with a focused ceiling spotlight (`Reader_FocalSpotlight`) and scenery exit door (`Exit_Door`). | **`Guard_Jadavan_Boss`** (Crimson Boss). Reuses Jadavan's flanking AI with tuned speed and perception. Visually distinct (Crimson/Obsidian metallic material `Mat_Guard_Boss`, 1.15x scale). |
+| **Exit Scenery & Platform** | 8m x 7m x 4m | `(0, 0, 46.5)` | Closed scenery door (`Exit_Door`) at `(0, 2, 49.85)`, stationary blocker, and landing platform (`Exit_Platform_Floor`). | **None**. Old `EscapeTrigger` is disabled/inactive (`isEscapeTriggerActive = false`); touching the door or platform alone cannot award victory. |
 
 ---
 
@@ -132,7 +132,7 @@ The game environment is constructed as five physically distinct rooms in a singl
 The victory mechanism has been replaced to match the confirmed game ending:
 
 1. **Card Reader Terminal (`Card_Reader_Terminal`):**
-   - Placed at `(0.00, 0.50, 41.50)` at the far end of Room 5, facing south toward the player entrance.
+   - Placed at `(0.00, 0.50, 48.00)` on the terminal apron at the far end of Room 5, facing south toward the player entrance, illuminated by a focused ceiling spotlight (`Reader_FocalSpotlight`).
    - Built with a heavy industrial pedestal, angled status display screen, and top card reader slot.
    - Distinct emissive status materials:
      - Ready / Idle: Amber glow (`Mat_Reader_Ready`).
@@ -505,3 +505,95 @@ Tested on Windows Standalone (`Builds/WarehouseEscape_Dev/WarehouseEscape.exe`) 
   - 1% Low Framerate: **29.3 FPS**
   - Maximum Frame-Time Spike: **34.5 ms**
 - **Performance Scaling**: 720p delivers a **+60.6%** average FPS increase and keeps 1% low framerate solidly above 50 FPS.
+
+---
+
+## 14. Challenging Final Room Layout, Gate Refresh & Unfiltered Performance Verification
+
+### 14.1 Performance Measurement Corrections (`PlayerHUD.cs`)
+Prior telemetry runs previously excluded all frame intervals lasting $\ge 200\text{ ms}$, which inadvertently masked genuine gameplay frame drops and stalls. The measurement pipeline was corrected with strict empirical standards:
+- **Comprehensive Gameplay Frame Capture**: Removed the arbitrary `< 0.20s` filter from `UpdatePerformanceTracking()`. All gameplay frames—including stalls $\ge 200\text{ ms}$—are recorded in the rolling frame history (`recentFrameTimes`, capacity 50,000).
+- **Explicit Exclusions Only**:
+  - Initial startup/warmup frames (`Time.unscaledTime <= 3.0s`) are categorized as `excludedStartupFrames`.
+  - Explicit file I/O operations (automated screenshot capture flagged via `PlayerHUD.IsExplicitCaptureActive` with a 1-frame settling cooldown) are categorized as `excludedCaptureFrames`.
+- **Decoupled Display & Telemetry**: The on-screen rolling HUD framerate counter (`currentFps`, updated every 0.5s) is maintained separately from cumulative benchmark statistical metrics (Average FPS, 1% Low FPS, Worst Frame Time).
+- **Honest Telemetry Reporting**: Periodic logs and standalone exit summaries now explicitly output excluded frame counts with stated reasons, the maximum frame spike, and an explicit disclaimer stating that short runs cannot prove zero memory leaks or stutter-free performance across prolonged gameplay.
+
+### 14.2 Gate Lighting Refresh & Interactive Standalone Verification
+Following geometry adjustments to the exit gate:
+- **Bake Results**: Static lighting, light probes (280 probes), and reflection probes were refreshed (`LightingData.asset` timestamp `19-Oct-26 8:53 AM`). 3 lightmaps and 5 custom reflection probes (`ReflectionProbe-0` through `ReflectionProbe-4`) were successfully compiled and bound.
+- **Flicker-Free Gate Evidence**: Interactive standalone verification (`verify_standalone_gate_interactive.py`) physically walked and turned the player across multiple distances and angles:
+  1. `standalone_gate_1_stationary.png` (Stationary view)
+  2. `standalone_gate_2_walk_forward.png` (Walking forward towards gate)
+  3. `standalone_gate_3_walk_backward.png` (Walking backward from gate)
+  4. `standalone_gate_4_turn_left.png` (Turning left)
+  5. `standalone_gate_5_turn_right.png` (Turning right)
+  6. `standalone_gate_6_center_view.png` (Re-centered view)
+  - Zero coplanar z-fighting, shadow banding, or flickering was observed across all motion frames.
+
+### 14.3 Room 5 Challenging Tactical Overhaul
+The previously open straight central aisle allowed an unimpeded sprint directly from the Room 5 entrance to the Card Reader terminal. Room 5 was re-architected into a multi-tiered tactical combat arena:
+- **Central Sprint Elimination**:
+  - `Boss_Central_Cargo_Stack_1` (`(0.0, 1.6, 26.5)`, size `(3.6, 3.2, 3.5)`): Blocks the direct southern entry sprint immediately upon entering Room 5.
+  - `Boss_Central_Cargo_Stack_2` (`(0.5, 1.6, 36.5)`, size `(3.4, 3.2, 3.5)`): Staggered east, partitioning the central aisle.
+- **Dual Flank Corridors**:
+  - **West Flank Corridor** (`X = -5.5`, width 3.0m clear): Direct route from Room 3 (Search Sector / Card A) into Room 5.
+  - **East Flank Corridor** (`X = +5.5`, width 3.0m clear): Direct route from Room 4 (Defensive Sector / Card B) into Room 5.
+- **Mid Cross-Aisle & Tactical Cover**:
+  - Open transverse aisle at `Z = 28.5 to 33.5` connecting West and East corridors.
+  - Flanked by waist-high cover barriers `Boss_CrossAisle_Cover_W` (`(-2.6, 0.0, 31.0)`) and `Boss_CrossAisle_Cover_E` (`(2.6, 0.0, 31.0)`), allowing players to break boss line-of-sight and reload.
+- **Security Checkpoint Barrier & Detour Lanes**:
+  - `Boss_Security_Checkpoint_Barrier` (`(0.0, 1.4, 44.0)`, size `(3.2, 2.8, 0.5)`): Obstructs the direct approach to the exit platform, featuring high-contrast warning sign `RESTRICTED GATE ACCESS - CLEARANCE REQUIRED` and directional sign `[<- WEST DETOUR] [EAST DETOUR ->]`.
+  - Side detour lanes are `2.15m` wide on both flanks, providing generous clearance without narrow collision traps or snagging hazards.
+- **Discoverability & Visual Landmark**:
+  - South staging features overhead split sign `<- ROUTE WEST (STORAGE) | ROUTE EAST (DISPATCH) ->`.
+  - Terminal apron is illuminated by a dedicated ceiling spotlight `Reader_FocalSpotlight` focused squarely on `Card_Reader_Terminal` (`(0, 0.5, 48.0)`), guiding the player visually without exposing the full route prematurely.
+- **Tactical Minimap Synchronization**:
+  - `PlayerHUD.GetOrCreateMinimapSprite()` was updated to render Room 5's staggered cargo stacks, outer rack lines, security barrier, and cyan terminal marker.
+
+### 14.4 Navigation Mesh & Connectivity Verification
+- **Asset Persistence**: Canonical `NavMeshSurface` on `Warehouse_Environment` was rebaked and saved to `Assets/Scenes/Warehouse/NavMesh-Warehouse_Environment.asset` (Persistent Scene Asset) and `Assets/Resources/NavMeshData_Warehouse.asset` (Runtime BeforeSceneLoad Preloader).
+- **Verification Results**:
+  - `SpawnsValid = True`: All 4 guard spawns firmly seated on walkable NavMesh within 1.05m tolerance.
+  - `RoutesComplete = True`: All 11 sector and traversal routes verified complete:
+    - Room 1 Safe Start -> Room 2 Center (12.00m)
+    - Room 2 Center -> Room 3 Search / Card A (35.16m)
+    - Room 2 Center -> Room 4 Defense / Card B (28.76m)
+    - Room 3 Search -> Room 5 West Entrance (20.66m)
+    - Room 4 Defense -> Room 5 East Entrance (17.59m)
+    - Room 5 West Route -> Detour -> Card Reader (25.91m)
+    - Room 5 East Route -> Detour -> Card Reader (25.91m)
+    - Boss Left Flank: Mid Cross-Aisle West -> North Staging (12.07m)
+    - Boss Right Flank: Mid Cross-Aisle East -> North Staging (12.08m)
+    - Full Route A: Spawn -> Room 3 -> Room 5 West -> Card Reader (79.40m)
+    - Full Route B: Spawn -> Room 4 -> Room 5 East -> Card Reader (79.40m)
+  - `VarunCircuit = True`: Room 2 patrol circuit complete.
+  - `BossFlank = True`: All Jadavan flank vectors and 4-waypoint loading hall circuit complete.
+
+### 14.5 Full Automated Test Suite Results
+Executed all 35 PlayMode integration tests via Unity Test Runner batchmode (`Assets/Tests/PhysicalWalkthroughTests.cs`):
+- **Result: Passed | Total: 35 | Passed: 35 | Failed: 0**
+  - Tests 1-5: Room 1 safety, Route A full controller walkthrough to victory, Route B full controller walkthrough to victory, card reader rejection without keycard, boss room entrance non-victory.
+  - Tests 6-10: Player health damage & death flow, hitscan weapon firing & reload, enemy health & death, obstacle occlusion & dead-guard firing prevention, full restart restoration.
+  - Tests 11-18: Suspicion buildup & decay, wall-blocked vision/bullets, hearing & wall attenuation, expired LKP memory, search timeout, defensive leash, flanking route selection, state restoration.
+  - Tests 19-34: Real boss damage & cover protection, Varun vision-only traits, continuous cadence & reload cancel, crosshair centering & muzzle cover, weapon drops & pickup swap, pickup vs reader interaction priority, health bar occlusion, minimap & HUD bounds.
+  - Test 35: Dedicated physical verification of the harder Room 5 layout, central obstacle obstruction, security barrier obstruction, West/East flank connectivity, and cross-aisle routing.
+
+### 14.6 Sustained Standalone 60-Second Movement/Combat Benchmarks
+Executed settled 62-second continuous movement, strafing, combat firing, and reloading benchmarks on standalone build `Builds/WarehouseEscape_Dev/WarehouseEscape.exe` with all normal gameplay frames included:
+
+| Metric | 720p (1280x720, Medium Quality) | 1080p (1920x1080, Medium Quality) |
+| :--- | :--- | :--- |
+| **Total Sampled Normal Gameplay Frames** | 6,624 | 6,754 |
+| **Average FPS** | **104.42 FPS** (9.58 ms) | **106.78 FPS** (9.36 ms) |
+| **1% Low FPS** | **66.90 FPS** (14.95 ms) | **84.23 FPS** (11.87 ms) |
+| **Worst Frame Time (Spike)** | **481.06 ms** | **542.52 ms** |
+| **Excluded Startup Frames** | 1 (Startup warmup $\le 3.0\text{s}$) | 1 (Startup warmup $\le 3.0\text{s}$) |
+| **Excluded Capture Frames** | 0 (Normal gameplay) | 0 (Normal gameplay) |
+| **OS Memory Working Set (Avg / Peak)** | 314.3 MB / 315.0 MB | 389.1 MB / 389.7 MB |
+| **OS Private Bytes (Avg / Peak)** | 501.4 MB / 506.8 MB | 576.3 MB / 595.9 MB |
+| **Unity Allocated Memory** | 95 MB | 94 MB |
+| **Unity Reserved Memory** | 225 MB | 229 MB |
+| **GC Total Heap Memory** | 3 MB | 3 MB |
+| **Zero-Leak / Stutter-Free Status** | *Short test run; extended leakage cannot be definitively claimed.* | *Short test run; extended leakage cannot be definitively claimed.* |
+

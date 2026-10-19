@@ -53,7 +53,7 @@ public class FlankCandidate
 /// </summary>
 [RequireComponent(typeof(EnemyMovement))]
 [RequireComponent(typeof(GuardPatrol))]
-public class FlankingGuardAI : MonoBehaviour
+public class FlankingGuardAI : MonoBehaviour, IGuardPerceptionTracker
 {
     [Header("Current State")]
     [Tooltip("Current operational state of the guard AI.")]
@@ -234,6 +234,19 @@ public class FlankingGuardAI : MonoBehaviour
         }
 
         HumanoidMeshBuilder.EnsureRuntimeVisuals(transform, CharacterRole.Boss_Jadavan);
+    }
+
+    public bool HasConfirmedVisualContact() => canSeePlayer;
+    public bool IsGuardActive() => isActiveAndEnabled && gameObject.activeInHierarchy;
+
+    void OnEnable()
+    {
+        GuardPerception.RegisterTracker(this);
+    }
+
+    void OnDisable()
+    {
+        GuardPerception.UnregisterTracker(this);
     }
 
     void Start()

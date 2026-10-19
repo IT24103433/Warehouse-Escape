@@ -17,14 +17,31 @@ public class Health : MonoBehaviour
     [Header("State")]
     [SerializeField] private bool isDead = false;
 
+    [Header("Regeneration Settings (Player Retreat)")]
+    [SerializeField] private float regenRate = 10f; // 10 HP/second
+    [SerializeField] private float regenCooldown = 3.0f; // 3 seconds delay without damage AND no visual contact
+    [SerializeField] private bool isRegenerating = false;
+    [SerializeField] private float timeSinceLastDamage = 0f;
+    private float regenAccumulator = 0f;
+    private bool forceVisualContactForTesting = false;
+
     public int MaxHealth => maxHealth;
     public int CurrentHealth => currentHealth;
     public float HealthNormalized => maxHealth > 0 ? (float)currentHealth / maxHealth : 0f;
     public bool IsDead => isDead;
     public bool IsPlayer => isPlayer;
     public string CharacterName { get => characterName; set => characterName = value; }
+    public bool IsRegenerating => isRegenerating;
+    public float TimeSinceLastDamage => timeSinceLastDamage;
+    public float RegenRate => regenRate;
+    public float RegenCooldown => regenCooldown;
 
     public void SetIsPlayer(bool value) => isPlayer = value;
+
+    public void SetForceVisualContactForTesting(bool contact)
+    {
+        forceVisualContactForTesting = contact;
+    }
 
     public event Action<int, GameObject> OnDamaged;
     public event Action<GameObject> OnDied;
@@ -38,6 +55,85 @@ public class Health : MonoBehaviour
         }
         currentHealth = maxHealth;
         isDead = false;
+        isRegenerating = false;
+        timeSinceLastDamage = 0f;
+        regenAccumulator = 0f;
+    }
+
+    void Update()
+    {
+        if (!isPlayer || isDead) return;
+
+        // Disable regeneration during pause, defeat, and victory
+        if (GameManager.Instance != null && (GameManager.Instance.IsPaused || GameManager.Instance.IsGameEnded))
+        {
+            if (isRegenerating)
+            {
+                isRegenerating = false;
+                regenAccumulator = 0f;
+            }
+            return;
+        }
+
+        // Full health: clamp and stop regeneration
+        if (currentHealth >= maxHealth)
+        {
+            currentHealth = maxHealth;
+            if (isRegenerating)
+            {
+                isRegenerating = false;
+                regenAccumulator = 0f;
+            }
+            return;
+        }
+
+        // Evaluate visual contact with all living guards
+        bool hasVisualContact = GuardPerception.AnyLivingGuardHasVisualContact() || forceVisualContactForTesting;
+
+        // Moving backward alone must not grant healing while still under attack:
+        // Any confirmed visual contact immediately stops regeneration and resets timer
+        if (hasVisualContact)
+        {
+            if (isRegenerating)
+            {
+                isRegenerating = false;
+                regenAccumulator = 0f;
+            }
+            timeSinceLastDamage = 0f;
+            return;
+        }
+
+        // Disengaged from visual contact: increment elapsed gameplay time
+        timeSinceLastDamage += Time.deltaTime;
+
+        // Start regeneration after 3 seconds without taking damage AND when no guard has confirmed visual contact
+        if (timeSinceLastDamage >= regenCooldown)
+        {
+            isRegenerating = true;
+            regenAccumulator += regenRate * Time.deltaTime;
+
+            if (regenAccumulator >= 1.0f)
+            {
+                int hpToAdd = Mathf.FloorToInt(regenAccumulator);
+                regenAccumulator -= hpToAdd;
+                currentHealth = Mathf.Min(maxHealth, currentHealth + hpToAdd);
+
+                if (currentHealth >= maxHealth)
+                {
+                    currentHealth = maxHealth;
+                    isRegenerating = false;
+                    regenAccumulator = 0f;
+                }
+            }
+        }
+        else
+        {
+            if (isRegenerating)
+            {
+                isRegenerating = false;
+                regenAccumulator = 0f;
+            }
+        }
     }
 
     /// <summary>
@@ -60,6 +156,9 @@ public class Health : MonoBehaviour
             return false;
 
         currentHealth = Mathf.Max(0, currentHealth - damage);
+        timeSinceLastDamage = 0f;
+        isRegenerating = false;
+        regenAccumulator = 0f;
         OnDamaged?.Invoke(damage, attacker);
 
         if (currentHealth <= 0 && !isDead)
@@ -73,6 +172,8 @@ public class Health : MonoBehaviour
     private void Die(GameObject attacker)
     {
         isDead = true;
+        isRegenerating = false;
+        regenAccumulator = 0f;
         OnDied?.Invoke(attacker);
 
         if (isPlayer)
@@ -150,6 +251,10 @@ public class Health : MonoBehaviour
     {
         currentHealth = maxHealth;
         isDead = false;
+        isRegenerating = false;
+        timeSinceLastDamage = 0f;
+        regenAccumulator = 0f;
+        forceVisualContactForTesting = false;
 
         if (!isPlayer)
         {

@@ -82,6 +82,7 @@ public class PlayModeCaptureRunner : MonoBehaviour
     private IEnumerator CaptureRoutine()
     {
         Debug.Log("[PlayModeCaptureRunner] Starting authentic Play Mode visual verification capture...");
+        PlayerHUD.IsExplicitCaptureActive = true;
         Application.runInBackground = true;
         Time.timeScale = 1f;
 
@@ -633,6 +634,10 @@ public class PlayModeCaptureRunner : MonoBehaviour
             new RoomView("after_room5_boss.png", new Vector3(0.0f, 1.65f, 19.5f), new Vector3(2f, 0f, 0f), 65f),
             new RoomView("room5_boss_navigation.png", new Vector3(0.0f, 1.65f, 28.0f), new Vector3(2f, 0f, 0f), 65f),
             new RoomView("room5_card_reader_ending.png", new Vector3(0.0f, 1.50f, 44.5f), new Vector3(5f, 0f, 0f), 60f),
+            new RoomView("room5_harder_entry_split.png", new Vector3(0.0f, 1.65f, 21.0f), new Vector3(2f, 0f, 0f), 65f),
+            new RoomView("room5_harder_west_flank.png", new Vector3(-5.5f, 1.65f, 28.0f), new Vector3(2f, 0f, 0f), 65f),
+            new RoomView("room5_harder_security_barrier.png", new Vector3(0.0f, 1.65f, 41.0f), new Vector3(3f, 0f, 0f), 65f),
+            new RoomView("room5_harder_reader_detour.png", new Vector3(-2.6f, 1.65f, 45.0f), new Vector3(5f, 35f, 0f), 60f),
 
             // Authentic Gate Inspection views across distances, angles, motion, and turning
             new RoomView(gatePrefix + "dist_15m_far.png", new Vector3(0f, 1.6f, 34.0f), new Vector3(2f, 0f, 0f), 60f),
@@ -722,6 +727,8 @@ public class PlayModeCaptureRunner : MonoBehaviour
             elapsed += 0.2f;
             yield return new WaitForSecondsRealtime(0.2f);
         }
+
+        PlayerHUD.IsExplicitCaptureActive = false;
 
         System.Text.StringBuilder sb = new System.Text.StringBuilder();
         sb.AppendLine("================================================================================");
