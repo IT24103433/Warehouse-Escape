@@ -87,3 +87,7 @@ Recorded the missing-component defaults and where to verify serialized overrides
 ## 2026-10-18 · Log chase termination and return-to-patrol recovery behavior
 
 Traced the change from visible-player tracking to the last-seen investigation. Distinguished the travel timeout from the stationary scan timer.
+
+## 2026-10-19 · Document Room 2 shock pad trap placement and alarm synergy
+
+Recorded the Room 2 shock pad position, warning, trigger and sound origin. Added expected responses for a visible player, an audible alarm without sight and a bypass.

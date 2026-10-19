@@ -185,6 +185,28 @@ patrol candidate filter, with no equivalent sampled-endpoint Room 2 gate in
   dispatch a new patrol choice. Separate the last observation from the player's
   hidden position when recording the test.
 
+## Shock pad and alarm interaction
+
+`SetupWarehouseTrapsAndSquad` places `Room2_Shock` at (−4, 0, −12)
+with a configured 10 HP pulse. The scene instance keeps X/Z at (−4, −12),
+with local Y approximately 0.057, and uses a 1.6 m × 1.8 m × 1.6 m trigger.
+The scene values are 1.25 s warning, 1 s active and 5 s cooldown. The trigger
+can be bypassed. The alarm reports the pad position. The patrol's visual-only memory
+configuration still permits eligible gunshot and alarm sounds, subject to the
+sound query and attenuation. `HandleDisturbance` accepts an inside-room
+position while in Patrol or Investigate.
+
+| Situation | Investigation input | Verification |
+| --- | --- | --- |
+| Audible pad and concealed player | Pad coordinates | Observe investigation without shooting at the concealed player |
+| Audible pad during active pursuit | Existing pursuit inputs | Patrol disturbance handler does not replace active pursuit |
+| Player steps off during warning | Trap state and player health | Verify the player avoids the shock pulse |
+| Player walks around trigger | Independent movement route | Verify complete alternate approach and no trap activation |
+
+Compare alarm location, last visual position and player position as three
+separate observations. See [TrapsAndBossSquad](../TrapsAndBossSquad.md) for
+trap timing and published team verification.
+
 ## End-to-end example from the waypoint dataset
 
 At origin R2_W, compare R2_E at age 13.6 s and R2_N at age 15 s.
