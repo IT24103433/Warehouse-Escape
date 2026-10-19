@@ -29,6 +29,14 @@ public static class TestRecompileTrigger
     {
         if (EditorApplication.isPlayingOrWillChangePlaymode || EditorApplication.isCompiling) return;
 
+        string informedSettings = Path.Combine(Application.dataPath, "../scratch/trigger_informed_settings.flag");
+        if (File.Exists(informedSettings))
+        {
+            File.Delete(informedSettings);
+            ApplyInformedGuardSettings.Execute();
+            return;
+        }
+
         string triggerGate = Path.Combine(Application.dataPath, "../scratch/trigger_fix_gate.flag");
         if (File.Exists(triggerGate))
         {

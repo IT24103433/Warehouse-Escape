@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -71,6 +72,16 @@ public class DefensiveGuardAI : MonoBehaviour, IGuardPerceptionTracker
     private GuardPerceptionMemory perceptionMemory;
     private Transform playerTransform;
     private float repathTimer = 0f;
+    [SerializeField] private List<GuardDecisionCandidate> decisionCandidates = new List<GuardDecisionCandidate>();
+    private readonly Dictionary<int, float> lastInspected = new Dictionary<int, float>();
+    private Vector3 lastThreatPosition;
+    private float threatTimestamp = -100;
+    private float nextTacticalDecision;
+    private int selectedTacticalIndex = -1;
+    public IReadOnlyList<GuardDecisionCandidate> DecisionCandidates => decisionCandidates;
+    public Vector3 SelectedDecisionTarget { get; private set; }
+    public int DecisionCount { get; private set; }
+    private bool HasThreat => Time.time - threatTimestamp < 7.5f;
 
     public DefensiveGuardState CurrentState => currentState;
     public bool CanSeePlayer => canSeePlayer;
@@ -177,11 +188,13 @@ public class DefensiveGuardAI : MonoBehaviour, IGuardPerceptionTracker
     void OnEnable()
     {
         GuardPerception.RegisterTracker(this);
+        if (perceptionMemory != null) perceptionMemory.OnDisturbanceDetected += HandleDisturbance;
     }
 
     void OnDisable()
     {
         GuardPerception.UnregisterTracker(this);
+        if (perceptionMemory != null) perceptionMemory.OnDisturbanceDetected -= HandleDisturbance;
     }
 
     private Transform cachedEyeTransform;
@@ -207,9 +220,12 @@ public class DefensiveGuardAI : MonoBehaviour, IGuardPerceptionTracker
             cachedEyeTransform, cachedPlayerCamera, cachedPlayerCollider
         );
 
-        float distPlayerToPost = playerTransform != null 
-            ? Vector3.Distance(playerTransform.position, postPosition) 
-            : Mathf.Infinity;
+        if (canSeePlayer && playerTransform != null && IsInsideRoom(playerTransform.position))
+        {
+            lastThreatPosition = playerTransform.position;
+            threatTimestamp = Time.time;
+        }
+        float distPlayerToPost = HasThreat ? Vector3.Distance(lastThreatPosition, postPosition) : Mathf.Infinity;
 
         isPlayerInsideTerritory = distPlayerToPost <= defenseRadius;
 
@@ -271,16 +287,6 @@ public class DefensiveGuardAI : MonoBehaviour, IGuardPerceptionTracker
         return pos.x >= min.x && pos.x <= max.x && pos.z >= min.z && pos.z <= max.z;
     }
 
-    private static readonly Vector3[] DefensiveLocalInspections = new Vector3[]
-    {
-        new Vector3(16.0f, 1.08f,  8.0f), // Anchor post facing south entrance
-        new Vector3(18.5f, 1.08f,  8.5f), // East perimeter check
-        new Vector3(16.0f, 1.08f,  8.0f), // Return to anchor post
-        new Vector3(14.5f, 1.08f,  9.5f), // Terminal desk inspection
-        new Vector3(16.0f, 1.08f,  8.0f)  // Return to anchor post
-    };
-
-    private int localInspectionIndex = 0;
     private float inspectionWaitTimer = 2.5f;
     private bool isWaitingAtInspection = true;
     private Vector3 baseInspectionForward = Vector3.back;
@@ -305,48 +311,92 @@ public class DefensiveGuardAI : MonoBehaviour, IGuardPerceptionTracker
             {
                 isWaitingAtInspection = false;
                 enemyMovement.ClearAimTarget();
-                localInspectionIndex = (localInspectionIndex + 1) % DefensiveLocalInspections.Length;
                 DispatchInspectionPoint();
             }
             return;
         }
 
-        if (enemyMovement.HasReachedDestination(postArrivalThreshold))
+        Vector3 remaining = SelectedDecisionTarget - transform.position;
+        remaining.y = 0;
+        if (DecisionCount > 0 && (enemyMovement.HasReachedDestination(postArrivalThreshold) || remaining.sqrMagnitude <= postArrivalThreshold * postArrivalThreshold))
         {
+            if (selectedTacticalIndex >= 0) lastInspected[selectedTacticalIndex] = Time.time;
             isWaitingAtInspection = true;
-            baseInspectionForward = (localInspectionIndex == 0 || localInspectionIndex == 2 || localInspectionIndex == 4)
-                ? Vector3.back // Cover south entrance from anchor post
-                : transform.forward;
+            baseInspectionForward = HasThreat ? (lastThreatPosition - transform.position).normalized : postFacing;
             inspectionWaitTimer = 2.0f;
             enemyMovement.Stop();
             return;
         }
 
-        if (!enemyMovement.PathPending && (!enemyMovement.HasPath || enemyMovement.PathStatus == NavMeshPathStatus.PathInvalid))
+        if (!enemyMovement.PathPending && (!enemyMovement.HasPath || enemyMovement.PathStatus != NavMeshPathStatus.PathComplete))
         {
             isWaitingAtInspection = true;
             inspectionWaitTimer = 1.0f;
         }
     }
 
+    private void HandleDisturbance(Vector3 position)
+    {
+        if (canSeePlayer || !IsInsideRoom(position) || Vector3.Distance(position, postPosition) > leashDistance) return;
+        lastThreatPosition = position;
+        threatTimestamp = Time.time;
+        if (currentState == DefensiveGuardState.GuardingPost)
+        {
+            isWaitingAtInspection = false;
+            DispatchInspectionPoint();
+        }
+    }
+
     private void DispatchInspectionPoint()
     {
-        Vector3 targetPos = DefensiveLocalInspections[localInspectionIndex];
-        NavMeshHit hit;
-        if (NavMesh.SamplePosition(targetPos, out hit, 1.5f, NavMesh.AllAreas))
+        if (Time.time < nextTacticalDecision) return;
+        nextTacticalDecision = Time.time + .75f;
+        decisionCandidates.Clear();
+        DecisionCount++;
+        float best = float.NegativeInfinity;
+        int selected = -1;
+        Vector3 destination = postPosition;
+        // Anchor plus two rings: changing threat and cover determine the chosen post.
+        for (int i = 0; i < 17; i++)
         {
-            NavMeshPath path = new NavMeshPath();
-            if (NavMesh.CalculatePath(transform.position, hit.position, NavMesh.AllAreas, path) &&
-                path.status == NavMeshPathStatus.PathComplete)
+            Vector3 raw = postPosition;
+            if (i > 0)
+                raw += Quaternion.Euler(0, ((i - 1) % 8) * 45, 0) * Vector3.forward
+                    * Mathf.Min(i <= 8 ? 2.5f : 5f, Mathf.Max(.5f, leashDistance - 1));
+            var c = new GuardDecisionCandidate { position = raw, reason = "Outside room/leash or no complete path" };
+            c.reachable = IsInsideRoom(raw)
+                && GuardDecisionQueries.TryReachable(enemyMovement, raw, out c.position, out c.pathLength)
+                && IsInsideRoom(c.position) && Vector3.Distance(c.position, postPosition) <= leashDistance;
+            if (c.reachable)
             {
-                enemyMovement.SetDestination(hit.position);
-                enemyMovement.Resume();
-                return;
+                c.objective = 1 - Mathf.Clamp01(Vector3.Distance(c.position, postPosition) / Mathf.Max(1, leashDistance));
+                c.freshness = lastInspected.TryGetValue(i, out float time) ? Mathf.Clamp01((Time.time - time) / 20) : 1;
+                c.visibility = GuardDecisionQueries.Visibility(c.position, obstacleMask, transform);
+                if (HasThreat)
+                {
+                    float distance = Vector3.Distance(c.position, lastThreatPosition);
+                    // Shotgun prefers ~5m; neither touching the target nor firing from across the room.
+                    c.weaponRange = Mathf.Clamp01(1 - Mathf.Abs(distance - 5) / 6);
+                    bool torsoClear = GuardDecisionQueries.Clear(c.position + Vector3.up * .8f,
+                        lastThreatPosition + Vector3.up * .8f, obstacleMask, transform, playerTransform);
+                    bool eyesClear = GuardDecisionQueries.Clear(c.position + Vector3.up * 1.5f,
+                        lastThreatPosition + Vector3.up * 1.5f, obstacleMask, transform, playerTransform);
+                    c.cover = !torsoClear ? (eyesClear ? 1f : .5f) : 0;
+                    if (!eyesClear) c.weaponRange *= .25f;
+                }
+                c.score = DefenseDecisionPolicy.Score(c.objective, c.cover, c.weaponRange,
+                    c.visibility, c.freshness, c.pathLength, HasThreat);
+                // Small switching cost stabilises combat without a fixed waypoint circuit.
+                if (HasThreat && i == selectedTacticalIndex) c.score += .04f;
+                c.reason = HasThreat ? "Objective + cover + shotgun range - travel" : "Objective + visibility + neglect - travel";
+                if (c.score > best) { best = c.score; selected = i; destination = c.position; }
             }
+            decisionCandidates.Add(c);
         }
-
-        enemyMovement.SetDestination(targetPos);
-        enemyMovement.Resume();
+        if (selected < 0) { enemyMovement.Stop(); return; }
+        selectedTacticalIndex = selected;
+        SelectedDecisionTarget = destination;
+        if (enemyMovement.SetDestination(destination)) enemyMovement.Resume();
     }
 
     public void TransitionToPursueIntruder()
@@ -355,6 +405,7 @@ public class DefensiveGuardAI : MonoBehaviour, IGuardPerceptionTracker
         Debug.Log($"[{gameObject.name}] State -> PursueIntruder (Intruder entered defensive perimeter)");
         isWaitingAtInspection = false;
         repathTimer = 0f;
+        nextTacticalDecision = 0;
         DispatchPursuitDestination();
     }
 
@@ -389,9 +440,8 @@ public class DefensiveGuardAI : MonoBehaviour, IGuardPerceptionTracker
 
     private void DispatchPursuitDestination()
     {
-        if (playerTransform == null) return;
-        enemyMovement.SetDestination(playerTransform.position);
-        enemyMovement.Resume();
+        // Candidate generation uses only the last confirmed visual/sound observation.
+        DispatchInspectionPoint();
     }
 
     public void TransitionToReturnToPost()
@@ -435,6 +485,12 @@ public class DefensiveGuardAI : MonoBehaviour, IGuardPerceptionTracker
 
     void OnDrawGizmosSelected()
     {
+        if (DecisionCount > 0)
+        {
+            Gizmos.color = Color.magenta;
+            Gizmos.DrawWireSphere(SelectedDecisionTarget, .35f);
+            Gizmos.DrawLine(transform.position, SelectedDecisionTarget);
+        }
         Vector3 eyePos = transform.position + Vector3.up * eyeHeight;
         Gizmos.color = Color.cyan;
         Gizmos.DrawWireSphere(eyePos, sightDistance);

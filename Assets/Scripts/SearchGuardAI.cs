@@ -85,6 +85,16 @@ public class SearchGuardAI : MonoBehaviour, IGuardPerceptionTracker
     private int currentSearchCandidateIndex = 0;
     private float candidateInspectTimer = 0f;
     private bool isWaitingAtCandidate = false;
+    private readonly List<float> searchBeliefs = new List<float>();
+    private readonly List<bool> inspectedCandidates = new List<bool>();
+    [SerializeField] private List<GuardDecisionCandidate> decisionCandidates = new List<GuardDecisionCandidate>();
+    private Vector3 observedHeading, previousObservation;
+    private bool hasPreviousObservation;
+    private float nextSoundDecisionAt;
+    public IReadOnlyList<GuardDecisionCandidate> DecisionCandidates => decisionCandidates;
+    public Vector3 SelectedDecisionTarget { get; private set; }
+    public int DecisionCount { get; private set; }
+    public float RemainingBeliefMass { get; private set; } = 1;
     private Vector3 baseInspectionForward = Vector3.forward;
 
     public SearchGuardState CurrentState => currentState;
@@ -273,10 +283,16 @@ public class SearchGuardAI : MonoBehaviour, IGuardPerceptionTracker
 
     private void HandleDisturbance(Vector3 disturbancePos)
     {
+        if (canSeePlayer) return;
         if (IsInsideRoom(disturbancePos))
         {
+            // Automatic fire must not rebuild the entire belief search for every bullet.
+            if (Time.time < nextSoundDecisionAt) return;
+            nextSoundDecisionAt = Time.time + .75f;
             lastSeenPosition = disturbancePos;
-            if (currentState == SearchGuardState.Patrol)
+            observedHeading = Vector3.zero;
+            hasPreviousObservation = false;
+            if (currentState != SearchGuardState.Pursue)
             {
                 TransitionToSearch();
             }
@@ -320,7 +336,7 @@ public class SearchGuardAI : MonoBehaviour, IGuardPerceptionTracker
             return;
         }
 
-        if (!enemyMovement.PathPending && (!enemyMovement.HasPath || enemyMovement.PathStatus == NavMeshPathStatus.PathInvalid))
+        if (!enemyMovement.PathPending && (!enemyMovement.HasPath || enemyMovement.PathStatus != NavMeshPathStatus.PathComplete))
         {
             AdvanceWaypoint();
         }
@@ -365,6 +381,7 @@ public class SearchGuardAI : MonoBehaviour, IGuardPerceptionTracker
 
     public void TransitionToPursue()
     {
+        hasPreviousObservation = false;
         currentState = SearchGuardState.Pursue;
         Debug.Log($"[{gameObject.name}] State -> Pursue (Engaging intruder in Room 3)");
         enemyMovement.ClearAimTarget();
@@ -376,6 +393,14 @@ public class SearchGuardAI : MonoBehaviour, IGuardPerceptionTracker
     {
         if (canSeePlayer && (playerTransform == null || IsInsideRoom(playerTransform.position)) && IsInsideRoom(transform.position))
         {
+            if (hasPreviousObservation)
+            {
+                var displacement = playerTransform.position - previousObservation;
+                displacement.y = 0;
+                if (displacement.sqrMagnitude > .0001f) observedHeading = displacement.normalized;
+            }
+            previousObservation = playerTransform.position;
+            hasPreviousObservation = true;
             lastSeenPosition = playerTransform.position;
             repathTimer -= Time.deltaTime;
             if (repathTimer <= 0f)
@@ -417,54 +442,91 @@ public class SearchGuardAI : MonoBehaviour, IGuardPerceptionTracker
     private void GenerateSearchCandidates(Vector3 center)
     {
         searchCandidates.Clear();
-
-        // 1. Primary LKP
-        Vector3 c0 = center;
-        c0.x = Mathf.Clamp(c0.x, -22.5f, -6.5f);
-        c0.z = Mathf.Clamp(c0.z, -1.0f, 18.0f);
-        if (NavMesh.SamplePosition(c0, out NavMeshHit h0, 2.5f, NavMesh.AllAreas))
-            searchCandidates.Add(h0.position);
-        else
-            searchCandidates.Add(c0);
-
-        // 2. Flank search points around LKP (offset left and right by 3.5m)
-        Vector3[] offsets = new Vector3[]
+        searchBeliefs.Clear();
+        inspectedCandidates.Clear();
+        RemainingBeliefMass = 1;
+        center.x = Mathf.Clamp(center.x, -22.5f, -6.5f);
+        center.z = Mathf.Clamp(center.z, -1f, 18f);
+        for (int i = 0; i < 17; i++)
         {
-            new Vector3(-3.5f, 0f, 1.5f),
-            new Vector3( 3.5f, 0f, 1.5f),
-            new Vector3( 0.0f, 0f, -3.0f)
-        };
-
-        foreach (var off in offsets)
-        {
-            Vector3 raw = center + off;
-            raw.x = Mathf.Clamp(raw.x, -22.5f, -6.5f);
-            raw.z = Mathf.Clamp(raw.z, -1.0f, 18.0f);
-
-            if (NavMesh.SamplePosition(raw, out NavMeshHit hit, 3.0f, NavMesh.AllAreas))
-            {
-                NavMeshPath path = new NavMeshPath();
-                if (NavMesh.CalculatePath(transform.position, hit.position, NavMesh.AllAreas, path) &&
-                    path.status == NavMeshPathStatus.PathComplete)
-                {
-                    searchCandidates.Add(hit.position);
-                }
-            }
+            Vector3 raw = center;
+            if (i > 0) raw += Quaternion.Euler(0, ((i - 1) % 8) * 45, 0) * Vector3.forward * (i <= 8 ? 2.5f : 5f);
+            if (!IsInsideRoom(raw)) continue;
+            if (!GuardDecisionQueries.TryReachable(enemyMovement, raw, out var point, out _) || !IsInsideRoom(point)) continue;
+            bool duplicate = false;
+            foreach (var previous in searchCandidates)
+                if (Vector3.Distance(previous, point) < .75f) { duplicate = true; break; }
+            if (duplicate) continue;
+            searchCandidates.Add(point);
+            searchBeliefs.Add(SearchDecisionPolicy.Prior(point - center, observedHeading));
+            inspectedCandidates.Add(false);
         }
+        float total = 0;
+        foreach (var value in searchBeliefs) total += value;
+        for (int i = 0; i < searchBeliefs.Count; i++) searchBeliefs[i] /= Mathf.Max(.0001f, total);
     }
 
-    private void DispatchSearchCandidate(int index)
+    private bool ObservableFrom(Vector3 from, Vector3 point)
     {
-        if (searchCandidates.Count == 0 || index >= searchCandidates.Count)
+        var direction = point - from;
+        if (direction.magnitude > 6f) return false;
+        var facing = lastSeenPosition - from;
+        facing.y = 0;
+        if (facing.sqrMagnitude < .01f) facing = observedHeading.sqrMagnitude > .01f ? observedHeading : transform.forward;
+        return Vector3.Angle(facing, direction) <= fieldOfView * .5f + 45f
+            && GuardDecisionQueries.Clear(from + Vector3.up * 1.5f, point + Vector3.up * 1.5f, obstacleMask, transform, playerTransform);
+    }
+
+    private void DispatchSearchCandidate(int unusedIndex)
+    {
+        decisionCandidates.Clear();
+        DecisionCount++;
+        int selected = -1;
+        float best = float.NegativeInfinity;
+        for (int i = 0; i < searchCandidates.Count; i++)
+        {
+            var c = new GuardDecisionCandidate { position = searchCandidates[i], belief = searchBeliefs[i], reason = "Already inspected" };
+            if (!inspectedCandidates[i])
+            {
+                c.reachable = GuardDecisionQueries.TryReachable(enemyMovement, c.position, out c.position, out c.pathLength)
+                    && IsInsideRoom(c.position);
+                c.reason = "No complete path";
+                if (c.reachable)
+                {
+                    float information = searchBeliefs[i];
+                    for (int j = 0; j < searchCandidates.Count; j++)
+                        if (j != i && ObservableFrom(c.position, searchCandidates[j])) information += searchBeliefs[j];
+                    c.visibility = information;
+                    c.score = SearchDecisionPolicy.Score(information, c.pathLength);
+                    c.reason = "Observable belief / travel effort";
+                    if (c.score > best) { best = c.score; selected = i; }
+                }
+            }
+            decisionCandidates.Add(c);
+        }
+        if (selected < 0 || RemainingBeliefMass < .05f)
         {
             TransitionToPatrol();
             return;
         }
-
-        Vector3 target = searchCandidates[index];
+        currentSearchCandidateIndex = selected;
+        SelectedDecisionTarget = searchCandidates[selected];
         enemyMovement.ClearAimTarget();
-        enemyMovement.SetDestination(target);
-        enemyMovement.Resume();
+        if (enemyMovement.SetDestination(SelectedDecisionTarget)) enemyMovement.Resume();
+        else inspectedCandidates[selected] = true;
+    }
+
+    private void ApplyNegativeObservation()
+    {
+        int current = currentSearchCandidateIndex;
+        if (current < 0 || current >= searchCandidates.Count) return;
+        inspectedCandidates[current] = true;
+        for (int i = 0; i < searchCandidates.Count; i++)
+            if (i == current || ObservableFrom(transform.position, searchCandidates[i]))
+                searchBeliefs[i] = SearchDecisionPolicy.NegativeObservation(searchBeliefs[i]);
+        RemainingBeliefMass = 0;
+        foreach (var probability in searchBeliefs) RemainingBeliefMass += probability;
+        // Keep residual mass unnormalised: it represents evidence the player left the searched region.
     }
 
     private void UpdateSearchState()
@@ -499,39 +561,41 @@ public class SearchGuardAI : MonoBehaviour, IGuardPerceptionTracker
             {
                 isWaitingAtCandidate = false;
                 enemyMovement.ClearAimTarget();
-                currentSearchCandidateIndex++;
-
-                if (currentSearchCandidateIndex < searchCandidates.Count)
-                {
-                    DispatchSearchCandidate(currentSearchCandidateIndex);
-                }
-                else
-                {
-                    // Inspected all candidates without finding target
-                    TransitionToPatrol();
-                }
+                ApplyNegativeObservation();
+                DispatchSearchCandidate(0);
             }
             return;
         }
 
         // Moving to current candidate
-        if (enemyMovement.HasReachedDestination(searchArrivalThreshold))
+        Vector3 remaining = SelectedDecisionTarget - transform.position;
+        remaining.y = 0;
+        if (enemyMovement.HasReachedDestination(searchArrivalThreshold) || remaining.sqrMagnitude <= searchArrivalThreshold * searchArrivalThreshold)
         {
             isWaitingAtCandidate = true;
-            baseInspectionForward = transform.forward;
-            candidateInspectTimer = 0.85f;
+            baseInspectionForward = lastSeenPosition - transform.position;
+            baseInspectionForward.y = 0;
+            if (baseInspectionForward.sqrMagnitude < .01f) baseInspectionForward = transform.forward;
+            baseInspectionForward.Normalize();
+            candidateInspectTimer = 1.1f;
             enemyMovement.Stop();
         }
-        else if (!enemyMovement.PathPending && (!enemyMovement.HasPath || enemyMovement.PathStatus == NavMeshPathStatus.PathInvalid))
+        else if (!enemyMovement.PathPending && (!enemyMovement.HasPath || enemyMovement.PathStatus != NavMeshPathStatus.PathComplete))
         {
             // Path lost/blocked -> advance to next candidate
-            currentSearchCandidateIndex++;
-            DispatchSearchCandidate(currentSearchCandidateIndex);
+            inspectedCandidates[currentSearchCandidateIndex] = true;
+            DispatchSearchCandidate(0);
         }
     }
 
     void OnDrawGizmosSelected()
     {
+        if (DecisionCount > 0)
+        {
+            Gizmos.color = Color.magenta;
+            Gizmos.DrawWireSphere(SelectedDecisionTarget, .35f);
+            Gizmos.DrawLine(transform.position, SelectedDecisionTarget);
+        }
         Vector3 eyePos = transform.position + Vector3.up * eyeHeight;
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(eyePos, sightDistance);

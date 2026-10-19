@@ -77,6 +77,7 @@ public class PatrolGuardAI : MonoBehaviour, IGuardPerceptionTracker
     private Vector3 investigatePosition;
     private float investigateTimer = 0f;
     private bool isInvestigatingArrival = false;
+    private float investigateTravelDeadline;
 
     public PatrolGuardState CurrentState => currentState;
     public bool CanSeePlayer => canSeePlayer;
@@ -84,6 +85,12 @@ public class PatrolGuardAI : MonoBehaviour, IGuardPerceptionTracker
     public Vector3 LastSeenPosition => lastSeenPosition;
     public Transform[] Waypoints { get => waypoints; set => waypoints = value; }
     public int CurrentWaypointIndex => currentWaypointIndex;
+    [SerializeField] private List<GuardDecisionCandidate> decisionCandidates = new List<GuardDecisionCandidate>();
+    private float[] lastInspected;
+    private float nextDecisionAt;
+    public IReadOnlyList<GuardDecisionCandidate> DecisionCandidates => decisionCandidates;
+    public Vector3 SelectedDecisionTarget { get; private set; }
+    public int DecisionCount { get; private set; }
 
     void Awake()
     {
@@ -309,8 +316,11 @@ public class PatrolGuardAI : MonoBehaviour, IGuardPerceptionTracker
             return;
         }
 
-        if (enemyMovement.HasReachedDestination(arrivalThreshold))
+        Vector3 remaining = SelectedDecisionTarget - transform.position;
+        remaining.y = 0;
+        if (DecisionCount > 0 && (enemyMovement.HasReachedDestination(arrivalThreshold) || remaining.sqrMagnitude <= arrivalThreshold * arrivalThreshold))
         {
+            if (lastInspected != null) lastInspected[currentWaypointIndex] = Time.time;
             isWaiting = true;
             baseInspectionForward = transform.forward;
             // Inspection points (odd indices) pause 2.0s with scanning
@@ -319,7 +329,7 @@ public class PatrolGuardAI : MonoBehaviour, IGuardPerceptionTracker
             return;
         }
 
-        if (!enemyMovement.PathPending && (!enemyMovement.HasPath || enemyMovement.PathStatus == NavMeshPathStatus.PathInvalid))
+        if (!enemyMovement.PathPending && (!enemyMovement.HasPath || enemyMovement.PathStatus != NavMeshPathStatus.PathComplete))
         {
             AdvanceWaypoint();
         }
@@ -328,27 +338,52 @@ public class PatrolGuardAI : MonoBehaviour, IGuardPerceptionTracker
     private void AdvanceWaypoint()
     {
         if (waypoints == null || waypoints.Length == 0) return;
-        currentWaypointIndex = (currentWaypointIndex + 1) % waypoints.Length;
+        if (Time.time < nextDecisionAt) return;
         DispatchCurrentWaypoint();
     }
 
     private void DispatchCurrentWaypoint()
     {
         if (waypoints == null || waypoints.Length == 0) return;
-        Transform wp = waypoints[currentWaypointIndex];
-        if (wp != null)
+        if (lastInspected == null || lastInspected.Length != waypoints.Length)
         {
-            Vector3 targetPos = wp.position;
-            if (NavMesh.SamplePosition(targetPos, out NavMeshHit hit, 2.0f, NavMesh.AllAreas))
+            lastInspected = new float[waypoints.Length];
+            for (int i = 0; i < lastInspected.Length; i++) lastInspected[i] = Time.time - 30;
+        }
+        decisionCandidates.Clear();
+        DecisionCount++;
+        float bestScore = float.NegativeInfinity;
+        int selected = -1;
+        Vector3 destination = transform.position;
+        for (int i = 0; i < waypoints.Length; i++)
+        {
+            if (waypoints[i] == null) continue;
+            var c = new GuardDecisionCandidate { position = waypoints[i].position, reason = "No complete path" };
+            c.reachable = GuardDecisionQueries.TryReachable(enemyMovement, c.position, out c.position, out c.pathLength)
+                && IsInsideRoom(c.position);
+            if (c.reachable && (i != currentWaypointIndex || waypoints.Length == 1))
             {
-                enemyMovement.SetDestination(hit.position);
-                enemyMovement.Resume();
+                float age = Time.time - lastInspected[i];
+                c.freshness = Mathf.Clamp01(age / 30);
+                c.visibility = GuardDecisionQueries.Visibility(c.position, obstacleMask, transform);
+                c.score = PatrolDecisionPolicy.Score(age, c.visibility, c.pathLength);
+                c.reason = "Neglect + visibility - travel";
+                if (c.score > bestScore) { bestScore = c.score; selected = i; destination = c.position; }
             }
-            else
-            {
-                enemyMovement.SetDestination(targetPos);
-                enemyMovement.Resume();
-            }
+            else if (c.reachable) c.reason = "Current inspection point";
+            decisionCandidates.Add(c);
+        }
+        nextDecisionAt = Time.time + 1f;
+        if (selected >= 0 && enemyMovement.SetDestination(destination))
+        {
+            currentWaypointIndex = selected;
+            SelectedDecisionTarget = destination;
+            enemyMovement.Resume();
+        }
+        else
+        {
+            // No raw/unreachable fallback destination: retry after a bounded delay.
+            enemyMovement.Stop();
         }
     }
 
@@ -409,6 +444,7 @@ public class PatrolGuardAI : MonoBehaviour, IGuardPerceptionTracker
         investigatePosition = disturbancePos;
         investigateTimer = investigateDuration;
         isInvestigatingArrival = false;
+        investigateTravelDeadline = Time.time + 8f;
         Debug.Log($"[{gameObject.name}] State -> Investigate disturbance at {investigatePosition:F1}");
 
         if (NavMesh.SamplePosition(investigatePosition, out NavMeshHit hit, 2.0f, NavMesh.AllAreas))
@@ -432,6 +468,11 @@ public class PatrolGuardAI : MonoBehaviour, IGuardPerceptionTracker
 
         if (!isInvestigatingArrival)
         {
+            if (Time.time > investigateTravelDeadline)
+            {
+                TransitionToPatrol();
+                return;
+            }
             if (enemyMovement.HasReachedDestination(arrivalThreshold + 0.4f))
             {
                 isInvestigatingArrival = true;
@@ -457,6 +498,12 @@ public class PatrolGuardAI : MonoBehaviour, IGuardPerceptionTracker
 
     void OnDrawGizmosSelected()
     {
+        if (DecisionCount > 0)
+        {
+            Gizmos.color = Color.magenta;
+            Gizmos.DrawWireSphere(SelectedDecisionTarget, .35f);
+            Gizmos.DrawLine(transform.position, SelectedDecisionTarget);
+        }
         Vector3 eyePos = transform.position + Vector3.up * eyeHeight;
         Gizmos.color = Color.cyan;
         Gizmos.DrawWireSphere(eyePos, sightDistance);

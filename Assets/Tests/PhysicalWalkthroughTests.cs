@@ -1720,6 +1720,10 @@ public class PhysicalWalkthroughTests
         SceneManager.LoadScene("Warehouse");
         yield return new WaitForSeconds(0.5f);
 
+        // Isolate the health contract from live patrol timing and automatic attacks.
+        foreach (var shooter in Object.FindObjectsByType<GuardShooting>(FindObjectsSortMode.None)) shooter.enabled = false;
+        foreach (var melee in Object.FindObjectsByType<GuardCapture>(FindObjectsSortMode.None)) melee.enabled = false;
+
         var playerObj = GameObject.FindGameObjectWithTag("Player");
         var cc = playerObj.GetComponent<CharacterController>();
         var health = playerObj.GetComponent<Health>();
@@ -1752,9 +1756,15 @@ public class PhysicalWalkthroughTests
         var guardObj = GameObject.Find("Guard_Varun_Patrol");
         var capture = guardObj.GetComponent<GuardCapture>();
         Assert.IsNotNull(capture, "[PASS] GuardCapture component exists.");
-        // Position guard within capture range
-        guardObj.transform.position = playerObj.transform.position + Vector3.forward * 1.5f;
+        // Establish a real frontal sighting; adaptive patrol no longer guarantees facing.
+        var meleeAgent = guardObj.GetComponent<NavMeshAgent>();
+        Assert.IsTrue(meleeAgent.Warp(playerObj.transform.position + Vector3.forward * 1.5f));
+        guardObj.transform.rotation = Quaternion.LookRotation(playerObj.transform.position - guardObj.transform.position);
+        guardObj.GetComponent<PatrolGuardAI>().TransitionToPursue();
         Physics.SyncTransforms();
+        yield return null;
+        Assert.IsTrue(guardObj.GetComponent<PatrolGuardAI>().CanSeePlayer,
+            "Frontal melee fixture must establish actual visual contact.");
         bool struck = capture.CheckCapture();
         yield return null;
         Assert.IsTrue(struck, "[PASS] Guard attack struck player dealing melee damage.");

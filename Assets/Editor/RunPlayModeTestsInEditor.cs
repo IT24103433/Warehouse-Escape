@@ -19,6 +19,7 @@ public class PlayModeTestCallbacks : ScriptableObject, ICallbacks
         string summary = $"TEST_RUN_FINISHED\nResultState: {result.ResultState}\nPassed: {result.PassCount}\nFailed: {result.FailCount}\nDuration: {result.Duration}\n";
         string resultDirectory = Path.Combine(Application.dataPath, "../scratch");
         Directory.CreateDirectory(resultDirectory);
+        TestRunnerApi.SaveResultToFile(result, Path.Combine(resultDirectory, "editor-tests.xml"));
         string persistentXml = Path.Combine(Application.persistentDataPath, "TestResults.xml");
         if (File.Exists(persistentXml))
         {
@@ -69,6 +70,9 @@ public static class RunPlayModeTestsInEditor
             return;
         }
 
+        // Preserve editor work before tests load/reload scenes.
+        EditorSceneManager.SaveOpenScenes();
+
         // Clean any leftover temporary test scenes
         string[] tempScenes = Directory.GetFiles(Application.dataPath, "InitTestScene*.*");
         foreach (var s in tempScenes)
@@ -94,7 +98,9 @@ public static class RunPlayModeTestsInEditor
         var filter = new Filter()
         {
             testMode = TestMode.PlayMode,
-            groupNames = new string[] { "PhysicalWalkthroughTests" }
+            groupNames = File.Exists("scratch/test-filter.txt")
+                ? File.ReadAllText("scratch/test-filter.txt").Trim().Split(';')
+                : new string[] { "PhysicalWalkthroughTests", "InformedGuardDecisionTests" }
         };
 
         s_Api.Execute(new ExecutionSettings(filter));
