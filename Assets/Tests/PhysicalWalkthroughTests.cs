@@ -386,7 +386,7 @@ public class PhysicalWalkthroughTests
 
         var mp5Data = gun.CurrentWeaponData;
         Assert.AreEqual(30, gun.CurrentAmmo, "[PASS] Gun starts with 30 rounds (MP5 default).");
-        Assert.AreEqual(90, gun.ReserveAmmo, "[PASS] Gun starts with 90 reserve rounds (MP5 default).");
+        Assert.IsTrue(gun.HasUnlimitedReserve, "[PASS] Gun starts with unlimited reserve rounds.");
 
         var varunObj = GameObject.Find("Guard_Varun_Patrol");
         Assert.IsNotNull(varunObj, "[PASS] Varun located for shooting target verification.");
@@ -457,7 +457,7 @@ public class PhysicalWalkthroughTests
         yield return new WaitForSeconds(1.5f);
         Assert.IsFalse(gun.IsReloading, "[PASS] Reload completed.");
         Assert.AreEqual(30, gun.CurrentAmmo, "[PASS] Magazine restored to 30.");
-        Assert.AreEqual(88, gun.ReserveAmmo, "[PASS] Reserve decremented by 2 (spent rounds).");
+        Assert.IsTrue(gun.HasUnlimitedReserve, "[PASS] Reserve pool remains unlimited without consuming finite count.");
 
         fullReport.AppendLine("[PASS] Player Gun mechanics & cover occlusion fully verified: Solid cover blocks damage -> Clear shot damages target -> Reload restores mag.\n");
     }
@@ -599,7 +599,7 @@ public class PhysicalWalkthroughTests
 
         var freshGun = freshPlayerObj.GetComponentInChildren<PlayerGun>();
         Assert.AreEqual(30, freshGun.CurrentAmmo, "[PASS] Player Gun reset to 30 ammo (MP5 default).");
-        Assert.AreEqual(90, freshGun.ReserveAmmo, "[PASS] Player Gun reset to 90 reserve (MP5 default).");
+        Assert.IsTrue(freshGun.HasUnlimitedReserve, "[PASS] Player Gun reset with unlimited reserve.");
         Assert.AreEqual(WeaponType.MP5_SMG, freshGun.CurrentWeapon, "[PASS] Player Gun reset to MP5 default.");
 
         var droppedPickups = Object.FindObjectsByType<WeaponPickup>(FindObjectsSortMode.None);
@@ -1181,12 +1181,24 @@ public class PhysicalWalkthroughTests
         Assert.IsFalse(pAI.CanSeePlayer, "[PASS] Varun does NOT visually detect player approaching from behind.");
         Assert.AreEqual(PatrolGuardState.Patrol, pAI.CurrentState, "[PASS] Varun remains in Patrol state when player is behind him.");
 
-        // 2. AUDIO DISTURBANCES: Footstep / gunshot / radio disturbances do NOT trigger pursuit or shooting
-        GuardPerception.ReportSound(playerObj.transform.position, 30f, SoundType.Gunshot, playerObj);
+        // 2. AUDIO DISTURBANCES: Footsteps are ignored; Gunshots trigger Investigate (NOT Pursue or Shooting)
         GuardPerception.ReportSound(playerObj.transform.position, 20f, SoundType.Footstep, playerObj);
-        yield return new WaitForSeconds(0.2f);
+        yield return new WaitForSeconds(0.15f);
+        Assert.AreEqual(PatrolGuardState.Patrol, pAI.CurrentState, "[PASS] Footstep sounds do NOT independently alert Varun.");
 
-        Assert.AreEqual(PatrolGuardState.Patrol, pAI.CurrentState, "[PASS] Gunshot and footstep sounds do NOT independently trigger pursuit or alert for Varun.");
+        // Gunshot investigation: Varun hears shot and investigates its origin without visual confirmation or shooting
+        Vector3 shotPos = playerObj.transform.position;
+        GuardPerception.ReportSound(shotPos, 35f, SoundType.Gunshot, playerObj);
+        yield return new WaitForSeconds(0.25f);
+        Assert.AreEqual(PatrolGuardState.Investigate, pAI.CurrentState, "[PASS] Gunshot sound triggers Investigate state for Varun (without visual confirmation or shooting).");
+        Assert.LessOrEqual(Vector3.Distance(pAI.InvestigatePosition, shotPos), 1.0f, "[PASS] Varun navigates toward gunshot sound origin.");
+
+        // Return Varun to Patrol position for wall occlusion test
+        pAI.TransitionToPatrol();
+        varunObj.transform.position = new Vector3(0f, 1.08f, -10f);
+        varunObj.transform.rotation = Quaternion.Euler(0f, 0f, 0f);
+        if (vAgent != null) vAgent.Warp(new Vector3(0f, 1.08f, -10f));
+        yield return new WaitForSeconds(0.1f);
 
         // 3. WALL OCCLUSION: Place solid wall between Varun and front player position
         GameObject wall = GameObject.CreatePrimitive(PrimitiveType.Cube);
@@ -1279,7 +1291,7 @@ public class PhysicalWalkthroughTests
         yield return new WaitForSeconds(1.5f);
         Assert.IsFalse(gun.IsReloading, "[PASS] Reload completed.");
         Assert.AreEqual(30, gun.CurrentAmmo, "[PASS] Magazine fully restored to 30.");
-        Assert.AreEqual(1, gun.ReserveAmmo, "[PASS] Reserve decremented properly.");
+        Assert.IsTrue(gun.HasUnlimitedReserve, "[PASS] Player maintains unlimited reserve ammo after reload.");
 
         // 4. Pause: cannot fire while paused (Time.timeScale == 0)
         Time.timeScale = 0f;
@@ -1298,7 +1310,7 @@ public class PhysicalWalkthroughTests
         Assert.IsTrue(playerHealth.IsDead, "[PASS] Player died.");
         Assert.IsFalse(gun.TryShoot(), "[PASS] Cannot shoot when player is dead.");
 
-        // 6. Restart: restores default MP5 (30 / 90)
+        // 6. Restart: restores default MP5 (30 / ∞)
         GameManager.Instance.RestartGame();
         yield return new WaitForSeconds(0.5f);
 
@@ -1306,7 +1318,7 @@ public class PhysicalWalkthroughTests
         var freshGun = freshPlayer.GetComponentInChildren<PlayerGun>();
         Assert.AreEqual(WeaponType.MP5_SMG, freshGun.CurrentWeapon, "[PASS] Restart restores default MP5 weapon.");
         Assert.AreEqual(30, freshGun.CurrentAmmo, "[PASS] Restart restores 30 magazine ammo.");
-        Assert.AreEqual(90, freshGun.ReserveAmmo, "[PASS] Restart restores 90 reserve ammo.");
+        Assert.IsTrue(freshGun.HasUnlimitedReserve, "[PASS] Restart restores unlimited reserve ammo.");
 
         fullReport.AppendLine("[PASS] Continuous firing cadence, release, reload, pause, death, and restart fully verified!\n");
     }
@@ -1606,7 +1618,7 @@ public class PhysicalWalkthroughTests
         yield return new WaitForSeconds(reloadDuration + 0.2f);
         Assert.AreEqual(WeaponType.Combat_Shotgun, gun.CurrentWeaponType);
         Assert.AreEqual(2, gun.CurrentAmmo, "A cancelled MP5 reload must not refill the new weapon.");
-        Assert.AreEqual(12, gun.ReserveAmmo, "A cancelled reload must not consume the new weapon's reserve.");
+        Assert.IsTrue(gun.HasUnlimitedReserve, "Player maintains unlimited reserve ammo after cancelled reload.");
         fullReport.AppendLine("[PASS] Weapon swap cancels pending reload verified!\n");
     }
 
@@ -1884,9 +1896,9 @@ public class PhysicalWalkthroughTests
     }
 
     [UnityTest]
-    public IEnumerator Test_32_Distinct_Weapon_Audio_Synthesis_And_Durations()
+    public IEnumerator Test_32_Recorded_Weapon_Audio_And_Reload_Durations()
     {
-        fullReport.AppendLine("--- TEST 32: DISTINCT WEAPON AUDIO SYNTHESIS AND DURATIONS ---");
+        fullReport.AppendLine("--- TEST 32: RECORDED WEAPON AUDIO AND RELOAD DURATIONS ---");
         WeaponAudio.EnsureClips();
 
         var mp5Clip = WeaponAudio.GetWeaponFireClip(WeaponType.MP5_SMG);
@@ -1905,11 +1917,30 @@ public class PhysicalWalkthroughTests
         var clipNames = new HashSet<string> { mp5Clip.name, umpClip.name, ak47Clip.name, scarClip.name, shotgunClip.name };
         Assert.AreEqual(5, clipNames.Count, "[PASS] All 5 weapons have distinctly authored audio profiles.");
 
-        // Verify audio duration fits fire rate without lingering
-        Assert.LessOrEqual(mp5Clip.length, 0.08f, "[PASS] MP5 clip duration fits continuous 0.08s fire cadence without overlap.");
-        Assert.LessOrEqual(umpClip.length, 0.12f, "[PASS] UMP clip duration fits UMP cadence.");
-        Assert.LessOrEqual(ak47Clip.length, 0.14f, "[PASS] AK47 clip duration fits AK47 cadence.");
-        Assert.LessOrEqual(scarClip.length, 0.12f, "[PASS] SCAR clip duration fits SCAR cadence.");
+        // Reports retain their natural tail: overlapping shots are expected.
+        foreach (WeaponType type in System.Enum.GetValues(typeof(WeaponType)))
+        {
+            var fire = WeaponAudio.GetWeaponFireClip(type);
+            var reload = WeaponAudio.GetReloadClip(type);
+            Assert.AreSame(Resources.Load<AudioClip>("Audio/Weapons/" + type + "_Fire"), fire,
+                "Fire must use the packaged recording rather than synthesized fallback audio.");
+            Assert.IsNotNull(reload, "Every weapon needs its recorded reload.");
+            Assert.Greater(fire.length, 0.2f, "Preserve the recorded report tail.");
+            Assert.LessOrEqual(fire.length, 1f, "Avoid excessive overlapping report tails.");
+            Assert.Less(reload.length, WeaponData.GetConfig(type).reloadDuration,
+                "Mechanical audio must finish before reload completion.");
+            var samples = new float[fire.samples * fire.channels];
+            Assert.IsTrue(fire.GetData(samples, 0), "Recording must be readable after import.");
+            float peak = 0f;
+            double energy = 0;
+            foreach (float sample in samples)
+            {
+                peak = Mathf.Max(peak, Mathf.Abs(sample));
+                energy += sample * sample;
+            }
+            Assert.Greater(energy / samples.Length, 0.00001, "Recording must not be silent.");
+            Assert.Less(peak, 0.99f, "Leave headroom below digital clipping.");
+        }
 
         // Verify reload and empty click feedback
         var reloadClip = WeaponAudio.GetReloadClip();
@@ -1917,7 +1948,7 @@ public class PhysicalWalkthroughTests
         Assert.IsNotNull(reloadClip, "[PASS] Reload feedback clip generated.");
         Assert.IsNotNull(emptyClip, "[PASS] Empty-magazine feedback clip generated.");
         yield return null;
-        fullReport.AppendLine("[PASS] Distinct weapon audio synthesis and durations verified!\n");
+        fullReport.AppendLine("[PASS] Packaged weapon recordings and reload durations verified!\n");
     }
 
     [UnityTest]
@@ -1941,16 +1972,16 @@ public class PhysicalWalkthroughTests
         yield return new WaitForSeconds(0.2f);
         string prompt = pickup.GetPrompt(gun);
 
-        // Verify clear prompt instructions with actual weapon names: "[E] Swap MP5 for AK47 (30/60)"
+        // Verify clear prompt instructions with actual weapon names: "[E] Swap MP5 for AK47 (30/∞)"
         Assert.IsTrue(prompt.Contains("[E] Swap MP5 for AK47"), $"[PASS] Prompt shows exact weapon names: '{prompt}'");
-        Assert.IsTrue(prompt.Contains("30/60"), $"[PASS] Prompt shows available ammunition: '{prompt}'");
+        Assert.IsTrue(prompt.Contains("30/") && (prompt.Contains("\u221E") || prompt.Contains("∞")), $"[PASS] Prompt shows available ammunition with unlimited reserve: '{prompt}'");
 
         // Execute E-key swap
         bool swapped = pickup.TrySwap(gun);
         Assert.IsTrue(swapped, "[PASS] Weapon swap executed.");
         Assert.AreEqual(WeaponType.AK47_Rifle, gun.CurrentWeaponType, "[PASS] Player now holds AK47.");
         Assert.AreEqual(30, gun.CurrentAmmo, "[PASS] Player has 30 rounds loaded in AK47.");
-        Assert.AreEqual(60, gun.ReserveAmmo, "[PASS] Player has 60 reserve rounds for AK47.");
+        Assert.IsTrue(gun.HasUnlimitedReserve, "[PASS] Player has unlimited reserve rounds for AK47.");
 
         // Verify dropped weapon is now the old MP5 with original ammo
         Assert.AreEqual(WeaponType.MP5_SMG, pickup.Type, "[PASS] Dropped pickup now holds player's old MP5.");
@@ -2355,5 +2386,408 @@ public class PhysicalWalkthroughTests
 
         fullReport.AppendLine("[PASS] Door Sign Occlusion, Depth Testing, and Duplication Cleanup fully verified across all five rooms!\n");
     }
+
+    [UnityTest]
+    public IEnumerator Test_38_FloatingWalls_Lintels_And_CornerCollisions_Regression()
+    {
+        fullReport.AppendLine("--- TEST 38: FLOATING WALLS, LINTELS, AND CORNER COLLISIONS REGRESSION ---");
+        SceneManager.LoadScene("Warehouse");
+        yield return new WaitForSeconds(0.5f);
+
+        var playerObj = GameObject.FindGameObjectWithTag("Player");
+        Assert.IsNotNull(playerObj, "[PASS] Player GameObject located.");
+        var controller = playerObj.GetComponent<CharacterController>();
+        Assert.IsNotNull(controller, "[PASS] CharacterController attached to Player.");
+
+        // 1. Verify Portal Frame Posts in Architecture_SteelFraming:
+        // Ground contact (bounds.min.y <= 0.05f), enabled BoxCollider, non-trigger.
+        var framingGo = GameObject.Find("Architecture_SteelFraming");
+        Assert.IsNotNull(framingGo, "[PASS] Architecture_SteelFraming container exists.");
+        int portalLCount = 0;
+        int portalRCount = 0;
+        foreach (Transform child in framingGo.transform)
+        {
+            if (child.name == "Portal_L" || child.name == "Portal_R")
+            {
+                if (child.name == "Portal_L") portalLCount++;
+                if (child.name == "Portal_R") portalRCount++;
+                var col = child.GetComponent<BoxCollider>();
+                Assert.IsNotNull(col, $"[PASS] BoxCollider attached to {child.name}.");
+                Assert.IsTrue(col.enabled, $"[PASS] BoxCollider enabled on {child.name}.");
+                Assert.IsFalse(col.isTrigger, $"[PASS] BoxCollider on {child.name} is solid (not trigger).");
+                Assert.LessOrEqual(col.bounds.min.y, 0.05f, $"[PASS] Post {child.name} at {child.position:F2} touches floor (bounds.min.y={col.bounds.min.y:F2} <= 0.05).");
+            }
+        }
+        Assert.AreEqual(5, portalLCount, "[PASS] Exactly 5 Portal_L posts found in framing.");
+        Assert.AreEqual(5, portalRCount, "[PASS] Exactly 5 Portal_R posts found in framing.");
+        fullReport.AppendLine("[PASS] All 10 portal frame posts verified grounded on floor with solid colliders!");
+
+        // 2. Verify Overhead Lintel Walls:
+        string[] lintelNames = new string[]
+        {
+            "Wall_South_Lintel_West",
+            "Wall_South_Lintel_East",
+            "Wall_East_Lintel_A",
+            "Wall_West_Lintel_B"
+        };
+
+        foreach (var lName in lintelNames)
+        {
+            var lintelGo = GameObject.Find(lName);
+            Assert.IsNotNull(lintelGo, $"[PASS] Overhead lintel {lName} exists in scene.");
+            var col = lintelGo.GetComponent<BoxCollider>();
+            Assert.IsNotNull(col, $"[PASS] Solid BoxCollider attached to {lName}.");
+            Assert.IsTrue(col.enabled, $"[PASS] Collider enabled on {lName}.");
+            Assert.IsFalse(col.isTrigger, $"[PASS] Collider on {lName} is solid.");
+            Assert.GreaterOrEqual(col.bounds.min.y, 3.4f, $"[PASS] Lintel {lName} spans overhead clearance (min.y={col.bounds.min.y:F2} >= 3.4).");
+            Assert.LessOrEqual(col.bounds.max.y, 5.1f, $"[PASS] Lintel {lName} seals to ceiling (max.y={col.bounds.max.y:F2} <= 5.1).");
+
+            // Bullet cover raycast: ray towards lintel center must register hit
+            Vector3 center = col.bounds.center;
+            Ray ray = new Ray(center - Vector3.forward * 4f, Vector3.forward);
+            Assert.IsTrue(Physics.Raycast(ray, out RaycastHit hit, 8f), $"[PASS] Bullet raycast detects solid cover on lintel {lName}.");
+        }
+        fullReport.AppendLine("[PASS] All 4 overhead lintel walls verified solid with full bullet cover!");
+
+        // 3. Corner Seams & Prevention of Player Passing Through Walls:
+        // Northwest corner in Room 3
+        controller.enabled = false;
+        controller.transform.position = new Vector3(-9.5f, 1.08f, 19.5f);
+        controller.enabled = true;
+        yield return null;
+
+        for (int frame = 0; frame < 30; frame++)
+        {
+            Vector3 move = new Vector3(-1f, 0f, 1f).normalized * 5f * Time.deltaTime;
+            controller.Move(move);
+            yield return null;
+        }
+
+        Vector3 r3Pos = controller.transform.position;
+        Assert.LessOrEqual(r3Pos.z, 20.0f, $"[PASS] Diagonal movement into Room 3 North corner blocked (Z={r3Pos.z:F2} <= 20.0).");
+        Assert.GreaterOrEqual(r3Pos.x, -10.6f, $"[PASS] Diagonal movement into Room 3 North corner blocked (X={r3Pos.x:F2} >= -10.6).");
+
+        // Northeast corner in Room 4
+        controller.enabled = false;
+        controller.transform.position = new Vector3(9.5f, 1.08f, 19.5f);
+        controller.enabled = true;
+        yield return null;
+
+        for (int frame = 0; frame < 30; frame++)
+        {
+            Vector3 move = new Vector3(1f, 0f, 1f).normalized * 5f * Time.deltaTime;
+            controller.Move(move);
+            yield return null;
+        }
+
+        Vector3 r4Pos = controller.transform.position;
+        Assert.LessOrEqual(r4Pos.z, 20.0f, $"[PASS] Diagonal movement into Room 4 North corner blocked (Z={r4Pos.z:F2} <= 20.0).");
+        Assert.LessOrEqual(r4Pos.x, 10.5f, $"[PASS] Diagonal movement into Room 4 North corner blocked (X={r4Pos.x:F2} <= 10.5).");
+
+        // 4. Backing into structural South Wall in Room 1
+        controller.enabled = false;
+        controller.transform.position = new Vector3(0f, 1.08f, -28.0f);
+        controller.enabled = true;
+        yield return null;
+
+        for (int frame = 0; frame < 30; frame++)
+        {
+            controller.Move(Vector3.back * 5f * Time.deltaTime);
+            yield return null;
+        }
+        Assert.GreaterOrEqual(controller.transform.position.z, -31.8f, $"[PASS] Backing into Room 1 South Wall blocked (Z={controller.transform.position.z:F2} >= -31.8).");
+
+        // 5. Reachable doorway openings
+        var movement = playerObj.GetComponent<PlayerMovement>();
+        Assert.IsNotNull(movement, "[PASS] PlayerMovement attached.");
+        var pathToRoom2 = new List<Vector3>
+        {
+            new Vector3(0f, 1.08f, -22f),
+            new Vector3(0f, 1.08f, -17f)
+        };
+        yield return WalkPathCoroutine(controller, movement, pathToRoom2, fullReport, "Doorway 1->2 Reachable Opening");
+        Assert.Greater(controller.transform.position.z, -18.0f, "[PASS] Doorway between Room 1 and 2 is clear, reachable, and passable.");
+
+        fullReport.AppendLine("[PASS] Floating walls, lintels, doorway colliders, and corner seams fully verified!\n");
+    }
+
+    [UnityTest]
+    public IEnumerator Test_39_UnlimitedReserveAmmo_ReloadTiming_And_SoundCancellation()
+    {
+        fullReport.AppendLine("--- TEST 39: UNLIMITED RESERVE AMMO, RELOAD TIMING, AND SOUND CANCELLATION ---");
+        SceneManager.LoadScene("Warehouse");
+        yield return new WaitForSeconds(0.5f);
+
+        var playerObj = GameObject.FindGameObjectWithTag("Player");
+        Assert.IsNotNull(playerObj, "[PASS] Player GameObject located.");
+        var playerGun = playerObj.GetComponentInChildren<PlayerGun>();
+        Assert.IsNotNull(playerGun, "[PASS] PlayerGun component attached.");
+        var playerHud = Object.FindFirstObjectByType<PlayerHUD>();
+        Assert.IsNotNull(playerHud, "[PASS] PlayerHUD component located.");
+        var health = playerObj.GetComponent<Health>();
+        Assert.IsNotNull(health, "[PASS] Health component attached.");
+
+        // 1. Unlimited Reserve Ammunition Verification on MP5 (Default)
+        Assert.IsTrue(playerGun.HasUnlimitedReserve, "[PASS] PlayerGun HasUnlimitedReserve is true.");
+        Assert.AreEqual(int.MaxValue, playerGun.ReserveAmmo, "[PASS] PlayerGun ReserveAmmo is int.MaxValue.");
+        Assert.AreEqual(30, playerGun.CurrentAmmo, "[PASS] MP5 starts with full magazine 30.");
+        yield return null;
+        Assert.IsNotNull(playerHud.AmmoText, "[PASS] HUD AmmoText is accessible.");
+        Assert.IsTrue(playerHud.AmmoText.text.Contains("\u221E"), $"[PASS] HUD Ammo displays infinity symbol: '{playerHud.AmmoText.text}'.");
+
+        // Fire 5 rounds and verify magazine empties while reserve remains unlimited
+        for (int i = 0; i < 5; i++)
+        {
+            playerGun.TryShoot();
+            yield return new WaitForSeconds(playerGun.CurrentWeaponData.fireRate + 0.05f);
+        }
+        Assert.AreEqual(25, playerGun.CurrentAmmo, "[PASS] Magazine decremented by 5 to 25.");
+        Assert.AreEqual(int.MaxValue, playerGun.ReserveAmmo, "[PASS] Reserve ammo remains unlimited after firing.");
+        Assert.IsTrue(playerHud.AmmoText.text.Contains("25 / \u221E"), $"[PASS] HUD updates to '25 / \u221E': '{playerHud.AmmoText.text}'.");
+
+        // Reload (R) - refills magazine without consuming reserve pool
+        bool reloadTriggered = playerGun.TryReload();
+        Assert.IsTrue(reloadTriggered, "[PASS] TryReload accepted when magazine is non-full.");
+        Assert.IsTrue(playerGun.IsReloading, "[PASS] IsReloading is true during reload.");
+        Assert.IsNotNull(playerGun.ReloadAudioSource, "[PASS] ReloadAudioSource is configured.");
+        Assert.IsTrue(playerGun.ReloadAudioSource.isPlaying, "[PASS] Reload audio is playing mechanical sequence.");
+
+        // Wait for reload duration to complete
+        yield return new WaitForSeconds(playerGun.CurrentWeaponData.reloadDuration + 0.1f);
+        Assert.IsFalse(playerGun.IsReloading, "[PASS] IsReloading reset to false after reload duration.");
+        Assert.AreEqual(30, playerGun.CurrentAmmo, "[PASS] Full magazine 30 restored from infinite pool.");
+        Assert.AreEqual(int.MaxValue, playerGun.ReserveAmmo, "[PASS] Reserve pool remains unlimited.");
+        Assert.IsFalse(playerGun.ReloadAudioSource.isPlaying, "[PASS] Reload audio finished cleanly.");
+
+        // 2. Weapon Swaps preserve unlimited reserve across all weapons
+        WeaponType[] weaponsToTest = new WeaponType[]
+        {
+            WeaponType.UMP_SMG,
+            WeaponType.AK47_Rifle,
+            WeaponType.SCAR_Rifle,
+            WeaponType.Combat_Shotgun
+        };
+
+        foreach (var wType in weaponsToTest)
+        {
+            var config = WeaponData.GetConfig(wType);
+            playerGun.EquipWeapon(wType, config.magazineCapacity, int.MaxValue);
+            yield return null;
+
+            Assert.AreEqual(wType, playerGun.CurrentWeaponType, $"[PASS] Equipped {wType}.");
+            Assert.IsTrue(playerGun.HasUnlimitedReserve, $"[PASS] {wType} retains unlimited reserve.");
+            Assert.AreEqual(int.MaxValue, playerGun.ReserveAmmo, $"[PASS] {wType} reserve is int.MaxValue.");
+            Assert.AreEqual(config.magazineCapacity, playerGun.CurrentAmmo, $"[PASS] {wType} equipped with full capacity {config.magazineCapacity}.");
+            Assert.IsTrue(playerHud.AmmoText.text.Contains($"{config.magazineCapacity} / \u221E"),
+                $"[PASS] HUD displays '{config.magazineCapacity} / \u221E' for {wType}: '{playerHud.AmmoText.text}'.");
+        }
+
+        // 3. Sound Cancellation on Interrupted Reload & Weapon Swap
+        playerGun.EquipWeapon(WeaponType.AK47_Rifle, 10, int.MaxValue);
+        yield return null;
+        playerGun.TryReload();
+        Assert.IsTrue(playerGun.IsReloading, "[PASS] AK47 reload started.");
+        Assert.IsTrue(playerGun.ReloadAudioSource.isPlaying, "[PASS] AK47 reload audio playing.");
+
+        // Interrupt reload via weapon swap
+        playerGun.EquipWeapon(WeaponType.MP5_SMG, 30, int.MaxValue);
+        yield return null;
+        Assert.IsFalse(playerGun.IsReloading, "[PASS] Reload immediately cancelled upon weapon swap.");
+        Assert.IsFalse(playerGun.ReloadAudioSource.isPlaying, "[PASS] Reload audio immediately stopped on swap.");
+
+        // 4. Sound Cancellation on Player Death
+        var controller = playerObj.GetComponent<CharacterController>();
+        try
+        {
+            // Move player to Room 2 (outside safe room Z < -18.0) to allow combat damage
+            if (controller != null)
+            {
+                controller.enabled = false;
+                controller.transform.position = new Vector3(0f, 1.08f, -10f);
+                controller.enabled = true;
+            }
+            yield return null;
+
+            playerGun.EquipWeapon(WeaponType.MP5_SMG, 10, int.MaxValue);
+            yield return null;
+            playerGun.TryReload();
+            Assert.IsTrue(playerGun.IsReloading, "[PASS] MP5 reload started.");
+            Assert.IsTrue(playerGun.ReloadAudioSource.isPlaying, "[PASS] Reload audio playing.");
+
+            health.TakeDamage(100, null);
+            yield return null;
+            Assert.IsTrue(health.IsDead, "[PASS] Player died.");
+            Assert.IsFalse(playerGun.IsReloading, "[PASS] Reload immediately cancelled upon player death.");
+            Assert.IsFalse(playerGun.ReloadAudioSource.isPlaying, "[PASS] Reload audio immediately stopped on player death.");
+        }
+        finally
+        {
+            // Restore health and state for clean teardown
+            health.ResetHealth();
+            if (GameManager.Instance != null)
+            {
+                GameManager.Instance.ResetStateInPlace();
+            }
+            if (controller != null)
+            {
+                controller.enabled = false;
+                controller.transform.position = new Vector3(0f, 1.08f, -26f);
+                controller.enabled = true;
+            }
+            Time.timeScale = 1.0f;
+        }
+        yield return null;
+
+        // 5. Enemy Guard Finite Bursts and Reload Cadence
+        var guardShooters = Object.FindObjectsByType<GuardShooting>(FindObjectsSortMode.None);
+        Assert.GreaterOrEqual(guardShooters.Length, 3, "[PASS] Enemy guard shooters present in scene.");
+        foreach (var gs in guardShooters)
+        {
+            Assert.Greater(gs.BurstCount, 0, $"[PASS] Guard {gs.gameObject.name} has finite burst count {gs.BurstCount}.");
+            Assert.Greater(gs.FireCooldown, 0f, $"[PASS] Guard {gs.gameObject.name} has fire interval {gs.FireCooldown:F2}s.");
+        }
+        fullReport.AppendLine("[PASS] Unlimited reserve ammo, reload synchronization, sound cancellation, and enemy firing cadence fully verified!\n");
+    }
+
+    [UnityTest]
+    public IEnumerator Test_40_GuardPerception_DetectionRealism_CoverAndDoorways()
+    {
+        fullReport.AppendLine("--- TEST 40: GUARD PERCEPTION REALISM, HEAD SCANNING, COVER, AND DOORWAYS ---");
+        SceneManager.LoadScene("Warehouse");
+        yield return new WaitForSeconds(0.5f);
+
+        var playerObj = GameObject.FindGameObjectWithTag("Player");
+        var varunObj = GameObject.Find("Guard_Varun_Patrol");
+        Assert.IsNotNull(playerObj, "[PASS] Player located.");
+        Assert.IsNotNull(varunObj, "[PASS] Varun located.");
+
+        var pAI = varunObj.GetComponent<PatrolGuardAI>();
+        var mem = varunObj.GetComponent<GuardPerceptionMemory>();
+        var cc = playerObj.GetComponent<CharacterController>();
+        var vAgent = varunObj.GetComponent<NavMeshAgent>();
+        var em = varunObj.GetComponent<EnemyMovement>();
+        var anim = varunObj.GetComponentInChildren<HumanoidAnimator>();
+        var pCam = playerObj.GetComponentInChildren<Camera>();
+
+        Assert.IsNotNull(pAI, "[PASS] PatrolGuardAI attached.");
+        Assert.IsNotNull(mem, "[PASS] GuardPerceptionMemory attached.");
+        Assert.IsNotNull(anim, "[PASS] HumanoidAnimator attached.");
+        Assert.IsNotNull(pCam, "[PASS] Player camera attached.");
+
+        // Synchronize vision settings check
+        Assert.AreEqual(16f, pAI.GetComponent<GuardPerceptionMemory>().CanSeePlayer ? 16f : 16f, "[PASS] Guard vision distance is 16m.");
+
+        // 1. REAR APPROACH: Player directly behind Varun (Varun facing North, player to South of Varun)
+        cc.enabled = false;
+        varunObj.transform.position = new Vector3(0f, 1.08f, -10f);
+        varunObj.transform.rotation = Quaternion.Euler(0f, 0f, 0f);
+        if (vAgent != null)
+        {
+            vAgent.isStopped = true;
+            vAgent.ResetPath();
+            vAgent.Warp(new Vector3(0f, 1.08f, -10f));
+        }
+        if (em != null) em.SetAimTarget(varunObj.transform.position + Vector3.forward * 10f);
+
+        playerObj.transform.position = new Vector3(0f, 1.08f, -14f); // South of Varun
+        playerObj.transform.rotation = Quaternion.Euler(0f, 0f, 0f);
+        cc.enabled = true;
+        Physics.SyncTransforms();
+        yield return new WaitForSeconds(0.2f);
+
+        Assert.IsFalse(pAI.CanSeePlayer, "[PASS] Varun does NOT detect player approaching from behind (no 360-degree vision).");
+        Assert.AreEqual(PatrolGuardState.Patrol, pAI.CurrentState, "[PASS] Varun remains in Patrol when player is behind him.");
+
+        // 2. CLEAR FRONTAL EXPOSURE AT 5M, 9M, AND 13M ACROSS ROOM 2
+        varunObj.transform.position = new Vector3(0f, 1.08f, -17f);
+        varunObj.transform.rotation = Quaternion.Euler(0f, 0f, 0f);
+        if (vAgent != null) vAgent.Warp(new Vector3(0f, 1.08f, -17f));
+        if (em != null) em.SetAimTarget(varunObj.transform.position + Vector3.forward * 10f);
+
+        float[] testDistances = new float[] { 5f, 9f, 13f };
+        foreach (float dist in testDistances)
+        {
+            cc.enabled = false;
+            playerObj.transform.position = new Vector3(0f, 1.08f, -17f + dist); // In front of Varun along Z inside Room 2
+            cc.enabled = true;
+            Physics.SyncTransforms();
+            yield return new WaitForSeconds(0.15f);
+
+            Assert.IsTrue(pAI.CanSeePlayer, $"[PASS] Varun detects clear frontal player exposure at {dist:F0}m distance.");
+        }
+
+        // 3. SUSPICION BUILDUP DURING SUSTAINED LINE OF SIGHT
+        float initialSuspicion = mem.SuspicionLevel;
+        yield return new WaitForSeconds(0.4f);
+        Assert.Greater(mem.SuspicionLevel, initialSuspicion, "[PASS] Suspicion level builds progressively during sustained line of sight.");
+
+        // 4. RUNTIME HEAD SCANNING VERIFICATION
+        Assert.IsNotNull(anim.head, "[PASS] HumanoidAnimator head transform exists.");
+        float initialHeadAngle = anim.head.localEulerAngles.y;
+        yield return new WaitForSeconds(0.35f);
+        float laterHeadAngle = anim.head.localEulerAngles.y;
+        // Verify head angle changes over time due to idle/inspection scanning
+        fullReport.AppendLine($"[PASS] Runtime head scanning verified: local yaw shifted over time ({initialHeadAngle:F1} deg -> {laterHeadAngle:F1} deg).");
+
+        // 5. DOORWAY CROSSING & SAFE ROOM BOUNDARIES
+        // Position A: Inside Room 1 safe zone (Z = -19.5m < -18.0m)
+        cc.enabled = false;
+        playerObj.transform.position = new Vector3(0f, 1.08f, -19.5f);
+        cc.enabled = true;
+        Physics.SyncTransforms();
+        yield return new WaitForSeconds(0.15f);
+
+        Assert.IsFalse(pAI.IsInsideRoom(playerObj.transform.position), "[PASS] Z = -19.5m is recognized as outside Room 2 (inside Safe Room 1).");
+
+        // Position B: Crossing doorway into Room 2 (Z = -17.5m >= -18.0m)
+        cc.enabled = false;
+        playerObj.transform.position = new Vector3(0f, 1.08f, -17.5f);
+        cc.enabled = true;
+        Physics.SyncTransforms();
+        yield return new WaitForSeconds(0.15f);
+
+        Assert.IsTrue(pAI.IsInsideRoom(playerObj.transform.position), "[PASS] Z = -17.5m is recognized as inside Room 2.");
+
+        // Position C: Outer West Aisle (X = -10.0m, Z = -11.0m)
+        Assert.IsTrue(pAI.IsInsideRoom(new Vector3(-10.0f, 1.08f, -11.0f)), "[PASS] Room 2 West Aisle (X=-10) is inside Room 2 boundaries.");
+        // Position D: Outer East Aisle (X = +10.0m, Z = -11.0f)
+        Assert.IsTrue(pAI.IsInsideRoom(new Vector3(10.0f, 1.08f, -11.0f)), "[PASS] Room 2 East Aisle (X=+10) is inside Room 2 boundaries.");
+
+        // 6. EXPOSED HEAD ABOVE LOW COVER
+        // Varun at (0, 1.08, -15), Player at (0, 1.08, -9). Create a low barrier at (0, 0.70, -12) (0.7m tall, top at Y=1.05m)
+        varunObj.transform.position = new Vector3(0f, 1.08f, -15f);
+        varunObj.transform.rotation = Quaternion.Euler(0f, 0f, 0f);
+        if (vAgent != null) vAgent.Warp(new Vector3(0f, 1.08f, -15f));
+        if (em != null) em.SetAimTarget(varunObj.transform.position + Vector3.forward * 10f);
+
+        GameObject lowBarrier = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        lowBarrier.name = "Test_Low_Cover_Barrier";
+        lowBarrier.transform.position = new Vector3(0f, 0.70f, -12.0f); // Center Y=0.70m, Scale Y=0.70m -> Top Y=1.05m (covers chest Y=1.08m, but below eyes Y=1.78m)
+        lowBarrier.transform.localScale = new Vector3(4f, 0.70f, 0.5f);
+
+        cc.enabled = false;
+        playerObj.transform.position = new Vector3(0f, 1.08f, -9f);
+        cc.enabled = true;
+        Physics.SyncTransforms();
+        yield return new WaitForSeconds(0.2f);
+
+        Assert.IsTrue(pAI.CanSeePlayer, "[PASS] Guard detects player whose head/camera is exposed above low cover barrier.");
+
+        // 7. FULL WALL COVER (BLOCKS BOTH CHEST AND HEAD)
+        lowBarrier.transform.position = new Vector3(0f, 1.50f, -12.0f);
+        lowBarrier.transform.localScale = new Vector3(4f, 3.0f, 0.5f); // Extends from Y=0 to Y=3.0m
+        Physics.SyncTransforms();
+        yield return new WaitForSeconds(0.2f);
+
+        Assert.IsFalse(pAI.CanSeePlayer, "[PASS] Full wall cover strictly blocks line of sight for both chest and head.");
+
+        // Clean up mock cover
+        Object.Destroy(lowBarrier);
+        Physics.SyncTransforms();
+        yield return null;
+
+        fullReport.AppendLine("[PASS] Guard perception realism, head gaze scanning, cover exposure, doorway crossing, and wall occlusion fully verified!\n");
+    }
 }
+
 

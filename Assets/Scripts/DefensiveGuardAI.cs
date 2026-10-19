@@ -171,7 +171,7 @@ public class DefensiveGuardAI : MonoBehaviour, IGuardPerceptionTracker
         HumanoidMeshBuilder.EnsureRuntimeVisuals(transform, CharacterRole.Defensive_Aqqil);
     }
 
-    public bool HasConfirmedVisualContact() => canSeePlayer;
+    public bool HasConfirmedVisualContact() => canSeePlayer && (playerTransform == null || IsInsideRoom(playerTransform.position));
     public bool IsGuardActive() => isActiveAndEnabled && gameObject.activeInHierarchy;
 
     void OnEnable()
@@ -184,20 +184,27 @@ public class DefensiveGuardAI : MonoBehaviour, IGuardPerceptionTracker
         GuardPerception.UnregisterTracker(this);
     }
 
+    private Transform cachedEyeTransform;
+    private Transform cachedPlayerCamera;
+    private Collider cachedPlayerCollider;
+
     void Start()
     {
         FindPlayerReference();
+        EnsureEyeTransform();
         if (postPosition == Vector3.zero) postPosition = transform.position;
         TransitionToGuardingPost();
     }
 
     void Update()
     {
+        EnsureEyeTransform();
         if (playerTransform == null) FindPlayerReference();
 
         // 1. Evaluate perception and territory occupancy
         canSeePlayer = GuardPerception.CanSeePlayer(
-            transform, playerTransform, sightDistance, fieldOfView, eyeHeight, playerTargetHeight, obstacleMask
+            transform, playerTransform, sightDistance, fieldOfView, eyeHeight, playerTargetHeight, obstacleMask,
+            cachedEyeTransform, cachedPlayerCamera, cachedPlayerCollider
         );
 
         float distPlayerToPost = playerTransform != null 
@@ -226,7 +233,27 @@ public class DefensiveGuardAI : MonoBehaviour, IGuardPerceptionTracker
     private void FindPlayerReference()
     {
         var playerObj = GameObject.FindGameObjectWithTag("Player");
-        if (playerObj != null) playerTransform = playerObj.transform;
+        if (playerObj != null)
+        {
+            playerTransform = playerObj.transform;
+            var cam = playerObj.GetComponentInChildren<Camera>();
+            if (cam != null) cachedPlayerCamera = cam.transform;
+            cachedPlayerCollider = playerObj.GetComponent<CharacterController>();
+            if (cachedPlayerCollider == null) cachedPlayerCollider = playerObj.GetComponent<Collider>();
+        }
+    }
+
+    private void EnsureEyeTransform()
+    {
+        if (cachedEyeTransform != null) return;
+        var anim = GetComponentInChildren<HumanoidAnimator>();
+        if (anim != null && anim.head != null)
+        {
+            cachedEyeTransform = anim.head;
+            return;
+        }
+        var headObj = transform.Find("Character_Visuals/Pelvis/Spine/Neck/Head");
+        if (headObj != null) cachedEyeTransform = headObj;
     }
 
     public void SetPlayer(Transform player) => playerTransform = player;
@@ -256,6 +283,7 @@ public class DefensiveGuardAI : MonoBehaviour, IGuardPerceptionTracker
     private int localInspectionIndex = 0;
     private float inspectionWaitTimer = 2.5f;
     private bool isWaitingAtInspection = true;
+    private Vector3 baseInspectionForward = Vector3.back;
 
     private void UpdateGuardingPostState(float distPlayerToPost)
     {
@@ -269,9 +297,14 @@ public class DefensiveGuardAI : MonoBehaviour, IGuardPerceptionTracker
         if (isWaitingAtInspection)
         {
             inspectionWaitTimer -= Time.deltaTime;
+            float sweepAngle = Mathf.Sin(Time.time * 1.8f) * 28f;
+            Vector3 sweepDir = Quaternion.Euler(0f, sweepAngle, 0f) * baseInspectionForward;
+            enemyMovement.SetAimTarget(transform.position + sweepDir * 4.0f);
+
             if (inspectionWaitTimer <= 0f)
             {
                 isWaitingAtInspection = false;
+                enemyMovement.ClearAimTarget();
                 localInspectionIndex = (localInspectionIndex + 1) % DefensiveLocalInspections.Length;
                 DispatchInspectionPoint();
             }
@@ -281,6 +314,9 @@ public class DefensiveGuardAI : MonoBehaviour, IGuardPerceptionTracker
         if (enemyMovement.HasReachedDestination(postArrivalThreshold))
         {
             isWaitingAtInspection = true;
+            baseInspectionForward = (localInspectionIndex == 0 || localInspectionIndex == 2 || localInspectionIndex == 4)
+                ? Vector3.back // Cover south entrance from anchor post
+                : transform.forward;
             inspectionWaitTimer = 2.0f;
             enemyMovement.Stop();
             return;

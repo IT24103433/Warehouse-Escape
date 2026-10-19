@@ -42,7 +42,7 @@ public class PatrolGuardAI : MonoBehaviour, IGuardPerceptionTracker
 
     [Header("Perception Settings")]
     [Tooltip("Maximum sight range in meters.")]
-    [SerializeField] private float sightDistance = 11f;
+    [SerializeField] private float sightDistance = 16f;
 
     [Tooltip("Horizontal field of view angle in degrees.")]
     [SerializeField] private float fieldOfView = 90f;
@@ -66,6 +66,9 @@ public class PatrolGuardAI : MonoBehaviour, IGuardPerceptionTracker
     private EnemyMovement enemyMovement;
     private GuardPerceptionMemory perceptionMemory;
     private Transform playerTransform;
+    private Transform cachedEyeTransform;
+    private Transform cachedPlayerCamera;
+    private Collider cachedPlayerCollider;
 
     private int currentWaypointIndex = 0;
     private float waitTimer = 0f;
@@ -111,6 +114,7 @@ public class PatrolGuardAI : MonoBehaviour, IGuardPerceptionTracker
             perceptionMemory = gameObject.AddComponent<GuardPerceptionMemory>();
         }
         perceptionMemory.VisualOnlyDetection = true;
+        perceptionMemory.SyncVisionSettings(sightDistance, fieldOfView, eyeHeight, obstacleMask);
 
         if (GetComponent<EnemyHealthBar>() == null)
         {
@@ -161,7 +165,7 @@ public class PatrolGuardAI : MonoBehaviour, IGuardPerceptionTracker
         }
     }
 
-    public bool HasConfirmedVisualContact() => canSeePlayer;
+    public bool HasConfirmedVisualContact() => canSeePlayer && (playerTransform == null || IsInsideRoom(playerTransform.position));
     public bool IsGuardActive() => isActiveAndEnabled && gameObject.activeInHierarchy;
 
     void OnEnable()
@@ -185,20 +189,23 @@ public class PatrolGuardAI : MonoBehaviour, IGuardPerceptionTracker
     void Start()
     {
         FindPlayerReference();
+        EnsureEyeTransform();
         EnsureNaturalRoute();
         TransitionToPatrol();
     }
 
     void Update()
     {
+        EnsureEyeTransform();
         if (playerTransform == null)
         {
             FindPlayerReference();
         }
 
-        // Evaluate visual line of sight
+        // Evaluate visual line of sight using cached eye/gaze transform and derived player targets
         canSeePlayer = GuardPerception.CanSeePlayer(
-            transform, playerTransform, sightDistance, fieldOfView, eyeHeight, playerTargetHeight, obstacleMask
+            transform, playerTransform, sightDistance, fieldOfView, eyeHeight, playerTargetHeight, obstacleMask,
+            cachedEyeTransform, cachedPlayerCamera, cachedPlayerCollider
         );
 
         switch (currentState)
@@ -223,28 +230,53 @@ public class PatrolGuardAI : MonoBehaviour, IGuardPerceptionTracker
         if (playerObj != null)
         {
             playerTransform = playerObj.transform;
+            var cam = playerObj.GetComponentInChildren<Camera>();
+            if (cam != null) cachedPlayerCamera = cam.transform;
+            cachedPlayerCollider = playerObj.GetComponent<CharacterController>();
+            if (cachedPlayerCollider == null) cachedPlayerCollider = playerObj.GetComponent<Collider>();
         }
+    }
+
+    private void EnsureEyeTransform()
+    {
+        if (cachedEyeTransform != null) return;
+        var anim = GetComponentInChildren<HumanoidAnimator>();
+        if (anim != null && anim.head != null)
+        {
+            cachedEyeTransform = anim.head;
+            return;
+        }
+        var headObj = transform.Find("Character_Visuals/Pelvis/Spine/Neck/Head");
+        if (headObj != null) cachedEyeTransform = headObj;
     }
 
     public void SetPlayer(Transform player) => playerTransform = player;
 
     [Header("Room Boundaries")]
     [Tooltip("Encounter room boundaries. Guard stays within this area and disengages if player leaves the room.")]
-    [SerializeField] private Bounds roomBounds = new Bounds(new Vector3(0f, 2.0f, -10.5f), new Vector3(18f, 6f, 15f));
+    [SerializeField] private Bounds roomBounds = new Bounds(new Vector3(0f, 2.0f, -10.0f), new Vector3(22f, 6f, 16f));
     public Bounds RoomBounds { get => roomBounds; set => roomBounds = value; }
 
     public bool IsInsideRoom(Vector3 pos)
     {
-        // Room 2 bounds (Z: -18.0 to -2.0, X: -9.0 to +9.0)
-        return pos.z >= -17.8f && pos.z <= -2.0f && pos.x >= -9.0f && pos.x <= 9.0f;
+        // Room 2 bounds: X [-11.0 to +11.0], Z [-18.0 to -2.0].
+        // Preserves Room 1 Safe Room protection (Z < -18.0 is strictly safe and disengages guards).
+        return pos.z >= -18.0f && pos.z <= -2.0f && pos.x >= -11.0f && pos.x <= 11.0f;
     }
 
     private Vector3 lastSeenPosition;
+    private Vector3 baseInspectionForward = Vector3.forward;
 
     private void HandleDisturbance(Vector3 disturbancePos)
     {
-        // First guard (Varun) is visual detection only!
-        // Footsteps, gunshots, and radio alerts do NOT independently reveal the player or trigger pursuit/investigation.
+        // Varun investigates heard gunshots within or near Room 2
+        if (IsInsideRoom(disturbancePos))
+        {
+            if (currentState == PatrolGuardState.Patrol || currentState == PatrolGuardState.Investigate)
+            {
+                TransitionToInvestigate(disturbancePos);
+            }
+        }
     }
 
     private void UpdatePatrolState()
@@ -263,9 +295,9 @@ public class PatrolGuardAI : MonoBehaviour, IGuardPerceptionTracker
         {
             waitTimer -= Time.deltaTime;
 
-            // Perform inspection scanning (sweep facing direction left & right)
+            // Perform purposeful inspection scanning (sweep left & right relative to arrival facing)
             float sweepAngle = Mathf.Sin(Time.time * 2.2f) * 35f;
-            Vector3 sweepDir = Quaternion.Euler(0f, sweepAngle, 0f) * transform.forward;
+            Vector3 sweepDir = Quaternion.Euler(0f, sweepAngle, 0f) * baseInspectionForward;
             enemyMovement.SetAimTarget(transform.position + sweepDir * 4.0f);
 
             if (waitTimer <= 0f)
@@ -280,6 +312,7 @@ public class PatrolGuardAI : MonoBehaviour, IGuardPerceptionTracker
         if (enemyMovement.HasReachedDestination(arrivalThreshold))
         {
             isWaiting = true;
+            baseInspectionForward = transform.forward;
             // Inspection points (odd indices) pause 2.0s with scanning
             waitTimer = (currentWaypointIndex % 2 == 1) ? 2.0f : waypointWaitTime;
             enemyMovement.Stop();
@@ -402,15 +435,16 @@ public class PatrolGuardAI : MonoBehaviour, IGuardPerceptionTracker
             if (enemyMovement.HasReachedDestination(arrivalThreshold + 0.4f))
             {
                 isInvestigatingArrival = true;
+                baseInspectionForward = transform.forward;
                 enemyMovement.Stop();
             }
         }
         else
         {
-            // Scanning disturbance area
+            // Scanning disturbance area relative to arrival facing
             investigateTimer -= Time.deltaTime;
             float sweepAngle = Mathf.Sin(Time.time * 2.5f) * 45f;
-            Vector3 sweepDir = Quaternion.Euler(0f, sweepAngle, 0f) * transform.forward;
+            Vector3 sweepDir = Quaternion.Euler(0f, sweepAngle, 0f) * baseInspectionForward;
             enemyMovement.SetAimTarget(transform.position + sweepDir * 4.0f);
 
             if (investigateTimer <= 0f)

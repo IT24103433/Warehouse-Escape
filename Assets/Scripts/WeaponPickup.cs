@@ -195,13 +195,13 @@ public class WeaponPickup : MonoBehaviour
         if (playerGun != null)
         {
             string currentName = GetShortName(playerGun.CurrentWeaponType);
-            return $"[E] Swap {currentName} for {droppedName} ({currentAmmo}/{reserveAmmo})";
+            return $"[E] Swap {currentName} for {droppedName} ({currentAmmo}/\u221E)";
         }
-        return $"[E] Pick up {droppedName} ({currentAmmo}/{reserveAmmo})";
+        return $"[E] Pick up {droppedName} ({currentAmmo}/\u221E)";
     }
 
     /// <summary>
-    /// Executes swap with player. Player receives this weapon and drops their current weapon here.
+    /// Executes swap with player. Player receives this weapon with unlimited reserve and drops their current weapon here.
     /// </summary>
     public bool TrySwap(PlayerGun playerGun)
     {
@@ -211,12 +211,12 @@ public class WeaponPickup : MonoBehaviour
         int oldCurrentAmmo = playerGun.CurrentAmmo;
         int oldReserveAmmo = playerGun.ReserveAmmo;
 
-        // Equip new weapon onto player
-        playerGun.EquipWeapon(weaponType, currentAmmo, reserveAmmo);
+        // Equip new weapon onto player with unlimited reserve
+        playerGun.EquipWeapon(weaponType, currentAmmo, int.MaxValue);
 
         // Update this pickup with the old player weapon
         Initialize(oldPlayerWeapon, oldCurrentAmmo, oldReserveAmmo);
-        Debug.Log($"[WeaponPickup] Swapped to {weaponType}. Dropped {oldPlayerWeapon} with {oldCurrentAmmo}/{oldReserveAmmo}.");
+        Debug.Log($"[WeaponPickup] Swapped to {weaponType}. Dropped {oldPlayerWeapon} with {oldCurrentAmmo}/\u221E.");
         return true;
     }
 

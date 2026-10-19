@@ -125,7 +125,10 @@ public class CardReader : MonoBehaviour
         if (AccessCard.HasKeycard)
         {
             isCardInserted = true;
-            statusFeedback = "Access Granted! Evacuation Confirmed.";
+            string cardDesc = !string.IsNullOrEmpty(AccessCard.CollectedCardName) 
+                ? AccessCard.CollectedCardName 
+                : "Security Clearance";
+            statusFeedback = $"Access Granted! Evacuation Confirmed. [{cardDesc}]";
             feedbackTimer = feedbackDuration;
 
             if (statusIndicator != null && successMaterial != null)
@@ -133,11 +136,11 @@ public class CardReader : MonoBehaviour
                 statusIndicator.material = successMaterial;
             }
 
-            Debug.Log("[CardReader] Access card verified and accepted! Triggering victory.", this);
+            Debug.Log($"[CardReader] {cardDesc} verified and accepted! Triggering victory.", this);
 
             if (GameManager.Instance != null)
             {
-                GameManager.Instance.TriggerVictory("Warehouse Evacuation Successful! Access Card Verified.");
+                GameManager.Instance.TriggerVictory($"Warehouse Evacuation Successful! {cardDesc} Verified.");
             }
             return true;
         }

@@ -41,7 +41,7 @@ public class GuardPerceptionMemory : MonoBehaviour
     [SerializeField] private LayerMask obstacleMask = ~0;
 
     [Header("Vision Parameters")]
-    [SerializeField] private float sightDistance = 12f;
+    [SerializeField] private float sightDistance = 16f;
     [SerializeField] private float fieldOfView = 90f;
     [SerializeField] private float eyeHeight = 0.6f;
     [SerializeField] private float playerTargetHeight = 0f;
@@ -51,6 +51,9 @@ public class GuardPerceptionMemory : MonoBehaviour
     private TextMesh indicatorTextMesh;
     private GameObject indicatorObj;
     private Camera mainCamera;
+    private Transform cachedEyeTransform;
+    private Transform cachedPlayerCamera;
+    private Collider cachedPlayerCollider;
 
     public GuardPerceptionState PerceptionState => perceptionState;
     public float SuspicionLevel { get => suspicionLevel; set => suspicionLevel = Mathf.Clamp01(value); }
@@ -64,6 +67,17 @@ public class GuardPerceptionMemory : MonoBehaviour
 
     public event Action<Vector3> OnDisturbanceDetected;
     public event Action<GuardPerceptionState> OnPerceptionStateChanged;
+
+    /// <summary>
+    /// Synchronizes perception settings from the host guard AI to ensure consistent vision evaluation.
+    /// </summary>
+    public void SyncVisionSettings(float sightDist, float fov, float eyeH, LayerMask mask)
+    {
+        sightDistance = sightDist;
+        fieldOfView = fov;
+        eyeHeight = eyeH;
+        obstacleMask = mask;
+    }
 
     void Awake()
     {
@@ -86,6 +100,7 @@ public class GuardPerceptionMemory : MonoBehaviour
     void Start()
     {
         FindPlayer();
+        EnsureEyeTransform();
     }
 
     private void FindPlayer()
@@ -93,12 +108,32 @@ public class GuardPerceptionMemory : MonoBehaviour
         if (playerTransform == null)
         {
             var pObj = GameObject.FindGameObjectWithTag("Player");
-            if (pObj != null) playerTransform = pObj.transform;
+            if (pObj != null)
+            {
+                playerTransform = pObj.transform;
+                var cam = pObj.GetComponentInChildren<Camera>();
+                if (cam != null) cachedPlayerCamera = cam.transform;
+                cachedPlayerCollider = pObj.GetComponent<CharacterController>();
+                if (cachedPlayerCollider == null) cachedPlayerCollider = pObj.GetComponent<Collider>();
+            }
         }
         if (mainCamera == null)
         {
             mainCamera = Camera.main;
         }
+    }
+
+    private void EnsureEyeTransform()
+    {
+        if (cachedEyeTransform != null) return;
+        var anim = GetComponentInChildren<HumanoidAnimator>();
+        if (anim != null && anim.head != null)
+        {
+            cachedEyeTransform = anim.head;
+            return;
+        }
+        var headObj = transform.Find("Character_Visuals/Pelvis/Spine/Neck/Head");
+        if (headObj != null) cachedEyeTransform = headObj;
     }
 
     void Update()
@@ -109,15 +144,17 @@ public class GuardPerceptionMemory : MonoBehaviour
             return;
         }
 
+        EnsureEyeTransform();
         if (playerTransform == null)
         {
             FindPlayer();
             if (playerTransform == null) return;
         }
 
-        // 1. Line-of-sight evaluation
+        // 1. Line-of-sight evaluation using cached eye/gaze transform and derived player targets
         canSeePlayer = GuardPerception.CanSeePlayer(
-            transform, playerTransform, sightDistance, fieldOfView, eyeHeight, playerTargetHeight, obstacleMask
+            transform, playerTransform, sightDistance, fieldOfView, eyeHeight, playerTargetHeight, obstacleMask,
+            cachedEyeTransform, cachedPlayerCamera, cachedPlayerCollider
         );
 
         float distToPlayer = Vector3.Distance(transform.position, playerTransform.position);
@@ -197,10 +234,25 @@ public class GuardPerceptionMemory : MonoBehaviour
         }
     }
 
+    [Header("Sound Memory")]
+    [SerializeField] private Vector3 lastSoundPosition;
+    [SerializeField] private float soundTimestamp = -999f;
+    [Range(0f, 1f)]
+    [SerializeField] private float soundConfidence = 0f;
+
+    public Vector3 LastSoundPosition => lastSoundPosition;
+    public float SoundTimestamp => soundTimestamp;
+    public float SoundConfidence => soundConfidence;
+    public bool HasValidSound => soundConfidence > 0.05f && (Time.time - soundTimestamp) < memoryDuration;
+
     private void HandleSoundDisturbance(SoundDisturbance sound)
     {
         if (health != null && health.IsDead) return;
-        if (visualOnlyDetection) return; // Visual-only guards like Varun ignore all audio disturbances
+        // Ignore own gunfire to prevent self-alert endless loops
+        if (sound.source == gameObject || (sound.source != null && sound.source.transform.IsChildOf(transform))) return;
+
+        // Visual-only guards like Varun now hear gunshots, but ignore subtle footsteps
+        if (visualOnlyDetection && sound.soundType != SoundType.Gunshot) return;
 
         // Check if guard can hear this sound with distance & wall attenuation
         Vector3 eyePos = transform.position + Vector3.up * eyeHeight;
@@ -208,23 +260,39 @@ public class GuardPerceptionMemory : MonoBehaviour
         {
             if (sound.soundType == SoundType.Gunshot)
             {
-                // Gunshots provoke immediate alert & investigation
-                suspicionLevel = 1.0f;
-                lastKnownPosition = sound.position;
-                lkpTimestamp = Time.time;
-                lkpConfidence = 1.0f;
-                perceptionState = GuardPerceptionState.Alerted;
+                // Gunshots provoke suspicion & investigation of the shot location
+                // Hearing alone does NOT identify or shoot an unseen player!
+                suspicionLevel = Mathf.Max(suspicionLevel, 0.65f);
+                lastSoundPosition = sound.position;
+                soundTimestamp = Time.time;
+                soundConfidence = audibility;
 
-                Debug.Log($"[GuardPerceptionMemory] '{gameObject.name}' heard GUNSHOT at {sound.position:F1} (audibility: {audibility:F2}). Investigating!");
+                // LKP for navigation/investigation is strictly the sound origin
+                if (!canSeePlayer)
+                {
+                    lastKnownPosition = sound.position;
+                    lkpTimestamp = Time.time;
+                    lkpConfidence = audibility;
+                    perceptionState = GuardPerceptionState.Searching;
+                }
+
+                Debug.Log($"[GuardPerceptionMemory] '{gameObject.name}' heard GUNSHOT at {sound.position:F1} (audibility: {audibility:F2}). Investigating shot location!");
                 OnDisturbanceDetected?.Invoke(sound.position);
             }
-            else if (sound.soundType == SoundType.Footstep)
+            else if (sound.soundType == SoundType.Footstep && !visualOnlyDetection)
             {
-                // Running footsteps provoke suspicion
-                suspicionLevel = Mathf.Max(suspicionLevel, 0.45f);
-                lastKnownPosition = sound.position;
-                lkpTimestamp = Time.time;
-                lkpConfidence = 0.8f;
+                // Running footsteps provoke mild suspicion
+                suspicionLevel = Mathf.Max(suspicionLevel, 0.40f);
+                lastSoundPosition = sound.position;
+                soundTimestamp = Time.time;
+                soundConfidence = audibility * 0.7f;
+
+                if (!canSeePlayer)
+                {
+                    lastKnownPosition = sound.position;
+                    lkpTimestamp = Time.time;
+                    lkpConfidence = 0.55f;
+                }
 
                 Debug.Log($"[GuardPerceptionMemory] '{gameObject.name}' heard FOOTSTEPS at {sound.position:F1} (audibility: {audibility:F2}).");
                 OnDisturbanceDetected?.Invoke(sound.position);
@@ -235,20 +303,19 @@ public class GuardPerceptionMemory : MonoBehaviour
     private void HandleRadioMessage(RadioMessage msg)
     {
         if (health != null && health.IsDead) return;
-        if (visualOnlyDetection) return; // Visual-only guards like Varun ignore radio alerts
-        if (msg.reportingGuard == gameObject.name) return; // Ignore own broadcast
+        if (msg.reportingGuard == gameObject.name) return; // Ignore own broadcast to prevent endless loops
 
         // Check if the reported LKP is close enough or relevant to this guard
         float distToLkp = Vector3.Distance(transform.position, msg.lastKnownPosition);
         if (distToLkp < 35.0f && !canSeePlayer)
         {
-            // Enter heightened alertness
+            // Enter heightened alertness without instant targeting
             suspicionLevel = Mathf.Max(suspicionLevel, 0.5f);
             if (!HasValidLKP)
             {
                 lastKnownPosition = msg.lastKnownPosition;
                 lkpTimestamp = msg.timestamp;
-                lkpConfidence = 0.70f;
+                lkpConfidence = 0.65f;
             }
             Debug.Log($"[GuardPerceptionMemory] '{gameObject.name}' received radio dispatch from '{msg.reportingGuard}'. Heightened alert.");
         }

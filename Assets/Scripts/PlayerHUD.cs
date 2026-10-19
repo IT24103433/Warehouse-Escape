@@ -76,6 +76,8 @@ public class PlayerHUD : MonoBehaviour
     public Text HealthRegenText => healthRegenText;
     public GameObject WeaponPickupPanel => weaponPickupPanel;
     public Text WeaponPickupText => weaponPickupText;
+    public Text AmmoText => ammoText;
+    public Text ReloadText => reloadText;
 
     public float CrosshairSize
     {
@@ -116,8 +118,19 @@ public class PlayerHUD : MonoBehaviour
             playerHealth.OnDamaged += HandlePlayerDamaged;
         }
 
-        // Default target is 720p as requested
-        SetResolution(false);
+        // Default target is 720p as requested, unless started with 1080p parameters
+        bool startAt1080p = false;
+        string[] cmdArgs = System.Environment.GetCommandLineArgs();
+        for (int i = 0; i < cmdArgs.Length; i++)
+        {
+            if (cmdArgs[i].IndexOf("1080", System.StringComparison.OrdinalIgnoreCase) >= 0)
+            {
+                startAt1080p = true;
+                break;
+            }
+        }
+        if (Screen.width >= 1600) startAt1080p = true;
+        SetResolution(startAt1080p);
 
         CheckForVerificationTrigger();
     }
@@ -888,7 +901,7 @@ public class PlayerHUD : MonoBehaviour
 
             if (ammoText != null)
             {
-                ammoText.text = $"{playerGun.CurrentAmmo} / {playerGun.ReserveAmmo}";
+                ammoText.text = $"{playerGun.CurrentAmmo} / \u221E";
                 ammoText.color = playerGun.CurrentAmmo == 0 ? new Color(0.9f, 0.2f, 0.2f) : Color.white;
             }
 
@@ -899,7 +912,7 @@ public class PlayerHUD : MonoBehaviour
                     reloadText.text = "RELOADING...";
                     reloadText.color = new Color(0.95f, 0.55f, 0.15f);
                 }
-                else if (playerGun.CurrentAmmo == 0 && playerGun.ReserveAmmo > 0)
+                else if (playerGun.CurrentAmmo == 0)
                 {
                     reloadText.text = "[R] RELOAD";
                     reloadText.color = new Color(0.9f, 0.2f, 0.2f);
@@ -1071,13 +1084,13 @@ public class PlayerHUD : MonoBehaviour
             for (int i = 0; i < sorted.Count; i++)
             {
                 float ftMs = sorted[i] * 1000f;
+                if (ftMs >= 50f) spikes50++;
+                if (ftMs >= 100f) spikes100++;
                 if (ftMs >= 200f) spikes200++;
-                else if (ftMs >= 100f) spikes100++;
-                else if (ftMs >= 50f) spikes50++;
             }
 
             string summary = $"STANDALONE_BENCHMARK_SUMMARY\n" +
-                             $"Resolution: {(is1080p ? "1080p (1920x1080)" : "720p (1280x720)")}\n" +
+                             $"Resolution: {(is1080p ? "1080p" : "720p")} (Target: {(is1080p ? "1920x1080" : "1280x720")}, Actual: {Screen.width}x{Screen.height})\n" +
                              $"Quality: {(isLowQuality ? "LOW" : "MEDIUM")}\n" +
                              $"Total Sampled Normal Gameplay Frames: {sorted.Count}\n" +
                              $"Total Sampled Frames: {sorted.Count}\n" +

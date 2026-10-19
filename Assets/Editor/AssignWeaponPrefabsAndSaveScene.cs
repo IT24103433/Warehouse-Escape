@@ -8,7 +8,8 @@ public static class AssignWeaponPrefabsAndSaveScene
     [MenuItem("Warehouse/Assign Weapon Prefabs And Save")]
     public static void Execute()
     {
-        Debug.Log("[AssignWeaponPrefabsAndSaveScene] Starting weapon prefab assignment pass...");
+        Debug.Log("[AssignWeaponPrefabsAndSaveScene] Starting weapon and access card prefab assignment pass...");
+        SetupWeaponsAndAccessCards.Execute();
 
         // 1. Ensure Resources/Weapons folder exists and contains prefabs
         string resWeaponsDir = "Assets/Resources/Weapons";

@@ -29,6 +29,7 @@ public class PlayerGun : MonoBehaviour
     private Camera playerCamera;
     private Health playerHealth;
     private AudioSource audioSource;
+    private AudioSource reloadAudioSource;
     private float lastFireTime = -99f;
     private bool isReloading = false;
     private Coroutine reloadCoroutine;
@@ -46,10 +47,13 @@ public class PlayerGun : MonoBehaviour
     public int CurrentAmmo => currentAmmo;
     public int MagazineCapacity => currentWeaponData != null ? currentWeaponData.magazineCapacity : 30;
     public int ReserveAmmo => reserveAmmo;
+    public bool HasUnlimitedReserve => true;
     public bool IsReloading => isReloading;
     public bool IsFullMag => currentAmmo >= MagazineCapacity;
     public string CurrentWeaponName => currentWeaponData != null ? currentWeaponData.weaponName : "MP5-A3 SMG";
     public Transform GunTransform => gunVisualHolder;
+    public AudioSource ReloadAudioSource => reloadAudioSource;
+    public AudioSource ShootAudioSource => audioSource;
 
     void Awake()
     {
@@ -58,16 +62,27 @@ public class PlayerGun : MonoBehaviour
         if (playerCamera == null) playerCamera = Camera.main;
 
         var playerObj = GameObject.FindGameObjectWithTag("Player");
-        if (playerObj != null) playerHealth = playerObj.GetComponent<Health>();
+        if (playerObj != null)
+        {
+            playerHealth = playerObj.GetComponent<Health>();
+            if (playerHealth != null)
+            {
+                playerHealth.OnDied += _ => CancelReload();
+            }
+        }
 
         audioSource = gameObject.AddComponent<AudioSource>();
         audioSource.playOnAwake = false;
         audioSource.spatialBlend = 0f; // 2D player audio
 
+        reloadAudioSource = gameObject.AddComponent<AudioSource>();
+        reloadAudioSource.playOnAwake = false;
+        reloadAudioSource.spatialBlend = 0f;
+
         WeaponAudio.EnsureClips();
         currentWeaponData = WeaponData.CreateMP5();
         currentAmmo = currentWeaponData.magazineCapacity;
-        reserveAmmo = currentWeaponData.defaultReserve;
+        reserveAmmo = int.MaxValue; // Player has unlimited reserve ammunition
 
         SetupGunVisual();
     }
@@ -176,10 +191,28 @@ public class PlayerGun : MonoBehaviour
             if (p != null) playerHealth = p.GetComponent<Health>();
         }
 
-        // Stop all firing immediately when dead, paused, or game ended
-        if (playerHealth != null && playerHealth.IsDead) return;
-        if (Time.timeScale == 0f) return;
-        if (GameManager.Instance != null && GameManager.Instance.IsGameEnded) return;
+        // Stop all firing and cancel pending reload immediately when dead, paused, or game ended
+        if (playerHealth != null && playerHealth.IsDead)
+        {
+            CancelReload();
+            return;
+        }
+        if (Time.timeScale == 0f)
+        {
+            if (reloadAudioSource != null && reloadAudioSource.isPlaying)
+                reloadAudioSource.Pause();
+            return;
+        }
+        else
+        {
+            if (reloadAudioSource != null && !reloadAudioSource.isPlaying && isReloading)
+                reloadAudioSource.UnPause();
+        }
+        if (GameManager.Instance != null && GameManager.Instance.IsGameEnded)
+        {
+            CancelReload();
+            return;
+        }
 
         UpdateRecoilRecovery();
         HandleWeaponPickupInteraction();
@@ -481,7 +514,7 @@ public class PlayerGun : MonoBehaviour
 
     public bool TryReload()
     {
-        if (isReloading || currentAmmo >= MagazineCapacity || reserveAmmo <= 0)
+        if (isReloading || currentAmmo >= MagazineCapacity)
             return false;
 
         reloadCoroutine = StartCoroutine(ReloadRoutine());
@@ -491,7 +524,12 @@ public class PlayerGun : MonoBehaviour
     private IEnumerator ReloadRoutine()
     {
         isReloading = true;
-        PlaySound(WeaponAudio.GetReloadClip(), 0.85f);
+        if (reloadAudioSource != null)
+        {
+            reloadAudioSource.clip = WeaponAudio.GetReloadClip(currentWeaponType);
+            reloadAudioSource.volume = 0.85f;
+            reloadAudioSource.Play();
+        }
 
         if (gunVisualHolder != null)
         {
@@ -502,42 +540,69 @@ public class PlayerGun : MonoBehaviour
         float dur = currentWeaponData != null ? currentWeaponData.reloadDuration : 1.5f;
         yield return new WaitForSeconds(dur);
 
-        int needed = MagazineCapacity - currentAmmo;
-        int toLoad = Mathf.Min(needed, reserveAmmo);
-        currentAmmo += toLoad;
-        reserveAmmo -= toLoad;
+        currentAmmo = MagazineCapacity; // Refill full magazine from unlimited reserve pool
+
+        if (gunVisualHolder != null)
+        {
+            gunVisualHolder.localPosition = initialGunLocalPos;
+            gunVisualHolder.localRotation = initialGunLocalRot;
+        }
 
         isReloading = false;
         reloadCoroutine = null;
-        Debug.Log($"[PlayerGun] Reload completed: {currentAmmo} / {reserveAmmo}");
+        if (reloadAudioSource != null && reloadAudioSource.isPlaying)
+        {
+            reloadAudioSource.Stop();
+        }
+        Debug.Log($"[PlayerGun] Reload completed: {currentAmmo} / \u221E");
     }
 
-    /// <summary>
-    /// Equips a new weapon onto the player with specified ammo state.
-    /// </summary>
-    public void EquipWeapon(WeaponType type, int curAmmo, int resAmmo)
+    public void CancelReload()
     {
         if (reloadCoroutine != null)
         {
             StopCoroutine(reloadCoroutine);
             reloadCoroutine = null;
         }
+        if (reloadAudioSource != null && reloadAudioSource.isPlaying)
+        {
+            reloadAudioSource.Stop();
+        }
         isReloading = false;
+        if (gunVisualHolder != null)
+        {
+            gunVisualHolder.localPosition = initialGunLocalPos;
+            gunVisualHolder.localRotation = initialGunLocalRot;
+        }
+    }
+
+    void OnDisable()
+    {
+        CancelReload();
+    }
+
+    /// <summary>
+    /// Equips a new weapon onto the player with specified ammo state.
+    /// Player always receives unlimited reserve ammo for the equipped weapon.
+    /// </summary>
+    public void EquipWeapon(WeaponType type, int curAmmo, int resAmmo)
+    {
+        CancelReload();
         lastFireTime = -99f;
         currentWeaponType = type;
         currentWeaponData = WeaponData.GetConfig(type);
         currentAmmo = curAmmo;
-        reserveAmmo = resAmmo;
+        reserveAmmo = int.MaxValue; // Unlimited player reserve ammunition
         weaponPrefab = Resources.Load<GameObject>(currentWeaponData.prefabPath);
 
         InstantiateWeaponVisual();
-        Debug.Log($"[PlayerGun] Equipped {currentWeaponData.weaponName} with {currentAmmo} mag / {reserveAmmo} reserve.");
+        Debug.Log($"[PlayerGun] Equipped {currentWeaponData.weaponName} with {currentAmmo} mag / \u221E reserve.");
     }
 
     public void ResetGun()
     {
-        isReloading = false;
-        EquipWeapon(WeaponType.MP5_SMG, 30, 90);
+        CancelReload();
+        EquipWeapon(WeaponType.MP5_SMG, 30, int.MaxValue);
         lastFireTime = -99f;
         recoilCamPitch = 0f;
         if (gunVisualHolder != null)

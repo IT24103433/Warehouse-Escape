@@ -85,6 +85,7 @@ public class SearchGuardAI : MonoBehaviour, IGuardPerceptionTracker
     private int currentSearchCandidateIndex = 0;
     private float candidateInspectTimer = 0f;
     private bool isWaitingAtCandidate = false;
+    private Vector3 baseInspectionForward = Vector3.forward;
 
     public SearchGuardState CurrentState => currentState;
     public bool CanSeePlayer => canSeePlayer;
@@ -169,7 +170,7 @@ public class SearchGuardAI : MonoBehaviour, IGuardPerceptionTracker
         }
     }
 
-    public bool HasConfirmedVisualContact() => canSeePlayer;
+    public bool HasConfirmedVisualContact() => canSeePlayer && (playerTransform == null || IsInsideRoom(playerTransform.position));
     public bool IsGuardActive() => isActiveAndEnabled && gameObject.activeInHierarchy;
 
     void OnEnable()
@@ -190,22 +191,29 @@ public class SearchGuardAI : MonoBehaviour, IGuardPerceptionTracker
         }
     }
 
+    private Transform cachedEyeTransform;
+    private Transform cachedPlayerCamera;
+    private Collider cachedPlayerCollider;
+
     void Start()
     {
         FindPlayerReference();
+        EnsureEyeTransform();
         EnsureNaturalRoute();
         TransitionToPatrol();
     }
 
     void Update()
     {
+        EnsureEyeTransform();
         if (playerTransform == null)
         {
             FindPlayerReference();
         }
 
         canSeePlayer = GuardPerception.CanSeePlayer(
-            transform, playerTransform, sightDistance, fieldOfView, eyeHeight, playerTargetHeight, obstacleMask
+            transform, playerTransform, sightDistance, fieldOfView, eyeHeight, playerTargetHeight, obstacleMask,
+            cachedEyeTransform, cachedPlayerCamera, cachedPlayerCollider
         );
 
         switch (currentState)
@@ -230,7 +238,24 @@ public class SearchGuardAI : MonoBehaviour, IGuardPerceptionTracker
         if (playerObj != null)
         {
             playerTransform = playerObj.transform;
+            var cam = playerObj.GetComponentInChildren<Camera>();
+            if (cam != null) cachedPlayerCamera = cam.transform;
+            cachedPlayerCollider = playerObj.GetComponent<CharacterController>();
+            if (cachedPlayerCollider == null) cachedPlayerCollider = playerObj.GetComponent<Collider>();
         }
+    }
+
+    private void EnsureEyeTransform()
+    {
+        if (cachedEyeTransform != null) return;
+        var anim = GetComponentInChildren<HumanoidAnimator>();
+        if (anim != null && anim.head != null)
+        {
+            cachedEyeTransform = anim.head;
+            return;
+        }
+        var headObj = transform.Find("Character_Visuals/Pelvis/Spine/Neck/Head");
+        if (headObj != null) cachedEyeTransform = headObj;
     }
 
     public void SetPlayer(Transform player) => playerTransform = player;
@@ -272,9 +297,9 @@ public class SearchGuardAI : MonoBehaviour, IGuardPerceptionTracker
         if (isWaitingAtWaypoint)
         {
             waitTimer -= Time.deltaTime;
-            // Scan during pause
+            // Scan during pause relative to arrival facing
             float sweepAngle = Mathf.Sin(Time.time * 2.0f) * 30f;
-            Vector3 sweepDir = Quaternion.Euler(0f, sweepAngle, 0f) * transform.forward;
+            Vector3 sweepDir = Quaternion.Euler(0f, sweepAngle, 0f) * baseInspectionForward;
             enemyMovement.SetAimTarget(transform.position + sweepDir * 4.0f);
 
             if (waitTimer <= 0f)
@@ -289,6 +314,7 @@ public class SearchGuardAI : MonoBehaviour, IGuardPerceptionTracker
         if (enemyMovement.HasReachedDestination(waypointArrivalThreshold))
         {
             isWaitingAtWaypoint = true;
+            baseInspectionForward = transform.forward;
             waitTimer = (currentWaypointIndex % 2 == 1) ? 2.0f : waypointWaitTime;
             enemyMovement.Stop();
             return;
@@ -464,9 +490,9 @@ public class SearchGuardAI : MonoBehaviour, IGuardPerceptionTracker
         {
             candidateInspectTimer -= Time.deltaTime;
 
-            // Inspection sweep
+            // Inspection sweep relative to arrival facing
             float sweepAngle = Mathf.Sin(Time.time * 3f) * 45f;
-            Vector3 sweepDir = Quaternion.Euler(0f, sweepAngle, 0f) * transform.forward;
+            Vector3 sweepDir = Quaternion.Euler(0f, sweepAngle, 0f) * baseInspectionForward;
             enemyMovement.SetAimTarget(transform.position + sweepDir * 4.0f);
 
             if (candidateInspectTimer <= 0f)
@@ -492,6 +518,7 @@ public class SearchGuardAI : MonoBehaviour, IGuardPerceptionTracker
         if (enemyMovement.HasReachedDestination(searchArrivalThreshold))
         {
             isWaitingAtCandidate = true;
+            baseInspectionForward = transform.forward;
             candidateInspectTimer = 0.85f;
             enemyMovement.Stop();
         }

@@ -422,6 +422,12 @@ public class GuardShooting : MonoBehaviour
     private IEnumerator ReloadRoutine()
     {
         isReloading = true;
+        if (audioSource != null)
+        {
+            AudioClip clip = WeaponAudio.GetReloadClip(assignedWeapon);
+            audioSource.pitch = 1.0f;
+            audioSource.PlayOneShot(clip, 0.75f);
+        }
         yield return new WaitForSeconds(reloadDuration);
         burstsRemaining = magazineBursts;
         isReloading = false;
@@ -436,6 +442,10 @@ public class GuardShooting : MonoBehaviour
 
     private void HandleDeath(GameObject killer)
     {
+        if (audioSource != null && audioSource.isPlaying)
+        {
+            audioSource.Stop();
+        }
         if (hasDroppedWeapon) return;
         hasDroppedWeapon = true;
 

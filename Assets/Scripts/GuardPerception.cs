@@ -177,6 +177,10 @@ public static class GuardPerception
     /// <summary>
     /// Evaluates whether the guard has clear line of sight to the player.
     /// Checks sight distance, horizontal field of view angle, and raycast occlusion.
+    /// <summary>
+    /// Evaluates whether the guard has clear line of sight to the player.
+    /// Checks sight distance, horizontal field of view angle, and raycast occlusion.
+    /// Supports cached eye/gaze transform for animated head facing and actual player camera/collider targets.
     /// Intervening walls, shelves, crates, and doors block line of sight.
     /// </summary>
     public static bool CanSeePlayer(
@@ -186,32 +190,93 @@ public static class GuardPerception
         float fieldOfView,
         float eyeHeight,
         float playerTargetHeight,
-        LayerMask obstacleMask)
+        LayerMask obstacleMask,
+        Transform eyeTransform = null,
+        Transform playerCameraTransform = null,
+        Collider playerCollider = null)
     {
         if (guardTransform == null || playerTransform == null) return false;
 
-        Vector3 eyePos = guardTransform.position + Vector3.up * eyeHeight;
-        Vector3 targetPos = playerTransform.position + Vector3.up * playerTargetHeight;
-        Vector3 toTarget = targetPos - eyePos;
-        float dist = toTarget.magnitude;
-
-        // 1. Maximum sight distance check
-        if (dist > sightDistance) return false;
-
-        // 2. Horizontal Field of View check in horizontal plane
-        Vector3 forward = guardTransform.forward;
+        // 1. Resolve eye position and gaze forward direction:
+        // Use cached, correctly oriented eye/head transform if available; fallback to body-forward.
+        Vector3 eyePos;
+        Vector3 forward;
+        if (eyeTransform != null)
+        {
+            eyePos = eyeTransform.position;
+            forward = eyeTransform.forward;
+        }
+        else
+        {
+            eyePos = guardTransform.position + Vector3.up * eyeHeight;
+            forward = guardTransform.forward;
+        }
         forward.y = 0f;
-        Vector3 horizontalDir = toTarget;
-        horizontalDir.y = 0f;
 
-        if (forward.sqrMagnitude < 0.001f || horizontalDir.sqrMagnitude < 0.001f)
+        float distToPlayer = Vector3.Distance(guardTransform.position, playerTransform.position);
+
+        // 2. Maximum sight distance check
+        if (distToPlayer > sightDistance) return false;
+
+        // 3. Horizontal Field of View check in horizontal plane
+        Vector3 toPlayerHorizontal = playerTransform.position - guardTransform.position;
+        toPlayerHorizontal.y = 0f;
+
+        if (forward.sqrMagnitude < 0.001f || toPlayerHorizontal.sqrMagnitude < 0.001f)
             return false;
 
-        float horizontalAngle = Vector3.Angle(forward.normalized, horizontalDir.normalized);
-        if (horizontalAngle > fieldOfView * 0.5f) return false;
+        // Effective FOV: Standard 90 deg, with modest peripheral awareness (110 deg) at close quarters (< 2.5m)
+        float effectiveFov = distToPlayer < 2.5f ? Mathf.Max(fieldOfView, 110f) : fieldOfView;
+        float horizontalAngle = Vector3.Angle(forward.normalized, toPlayerHorizontal.normalized);
+        if (horizontalAngle > effectiveFov * 0.5f) return false;
 
-        // 3. Clear line-of-sight raycast against warehouse geometry
-        float startOffset = 0.55f;
+        // 4. Derive visible head/chest targets from player's actual camera and collider
+        Vector3 headTarget;
+        if (playerCameraTransform != null)
+        {
+            headTarget = playerCameraTransform.position;
+        }
+        else
+        {
+            float headOffset = playerTargetHeight > 0f ? playerTargetHeight : 0.70f;
+            headTarget = playerTransform.position + Vector3.up * headOffset;
+        }
+
+        Vector3 chestTarget;
+        if (playerCollider is CharacterController cc)
+        {
+            chestTarget = playerTransform.position + cc.center;
+        }
+        else if (playerCollider != null)
+        {
+            chestTarget = playerCollider.bounds.center;
+        }
+        else
+        {
+            chestTarget = playerTransform.position + Vector3.up * 0.10f;
+        }
+
+        // Multi-point visibility check: test both head/eyes and chest/torso
+        if (CheckRayVisibility(eyePos, headTarget, guardTransform, playerTransform, obstacleMask))
+            return true;
+
+        if (CheckRayVisibility(eyePos, chestTarget, guardTransform, playerTransform, obstacleMask))
+            return true;
+
+        // Both head and chest occluded by solid cover/walls
+        return false;
+    }
+
+    private static bool CheckRayVisibility(
+        Vector3 eyePos,
+        Vector3 targetPos,
+        Transform guardTransform,
+        Transform playerTransform,
+        LayerMask obstacleMask)
+    {
+        Vector3 toTarget = targetPos - eyePos;
+        float dist = toTarget.magnitude;
+        float startOffset = 0.40f;
         if (dist <= startOffset) return true;
 
         Vector3 rayOrigin = eyePos + toTarget.normalized * startOffset;
@@ -219,23 +284,26 @@ public static class GuardPerception
 
         Ray ray = new Ray(rayOrigin, toTarget.normalized);
         RaycastHit[] hits = Physics.RaycastAll(ray, rayDist, obstacleMask, QueryTriggerInteraction.Ignore);
+        if (hits == null || hits.Length == 0) return true; // Unobstructed
+
         Array.Sort(hits, (a, b) => a.distance.CompareTo(b.distance));
 
         foreach (var hit in hits)
         {
-            // Ignore own guard colliders
+            if (hit.collider == null) continue;
+
+            // Ignore guard's own colliders
             if (hit.transform == guardTransform || hit.transform.IsChildOf(guardTransform))
                 continue;
 
-            // First non-self hit is player -> clear line of sight
+            // First non-self object hit is the player or child of player -> clear line of sight
             if (hit.transform == playerTransform || hit.transform.IsChildOf(playerTransform) || hit.collider.CompareTag("Player"))
                 return true;
 
-            // Intervening geometry (wall, shelf, crate, door) occludes sight
+            // Intervening solid obstacle (wall, cover crate, barrier, door) blocks this ray
             return false;
         }
 
-        // Unobstructed path
         return true;
     }
 }

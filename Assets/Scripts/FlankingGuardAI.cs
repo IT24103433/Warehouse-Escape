@@ -236,7 +236,7 @@ public class FlankingGuardAI : MonoBehaviour, IGuardPerceptionTracker
         HumanoidMeshBuilder.EnsureRuntimeVisuals(transform, CharacterRole.Boss_Jadavan);
     }
 
-    public bool HasConfirmedVisualContact() => canSeePlayer;
+    public bool HasConfirmedVisualContact() => canSeePlayer && (playerTransform == null || IsInsideRoom(playerTransform.position));
     public bool IsGuardActive() => isActiveAndEnabled && gameObject.activeInHierarchy;
 
     void OnEnable()
@@ -292,6 +292,10 @@ public class FlankingGuardAI : MonoBehaviour, IGuardPerceptionTracker
         }
     }
 
+    private Transform cachedEyeTransform;
+    private Transform cachedPlayerCamera;
+    private Collider cachedPlayerCollider;
+
     /// <summary>
     /// Locates the player Transform via tag 'Player'.
     /// </summary>
@@ -301,7 +305,24 @@ public class FlankingGuardAI : MonoBehaviour, IGuardPerceptionTracker
         if (playerObj != null)
         {
             playerTransform = playerObj.transform;
+            var cam = playerObj.GetComponentInChildren<Camera>();
+            if (cam != null) cachedPlayerCamera = cam.transform;
+            cachedPlayerCollider = playerObj.GetComponent<CharacterController>();
+            if (cachedPlayerCollider == null) cachedPlayerCollider = playerObj.GetComponent<Collider>();
         }
+    }
+
+    private void EnsureEyeTransform()
+    {
+        if (cachedEyeTransform != null) return;
+        var anim = GetComponentInChildren<HumanoidAnimator>();
+        if (anim != null && anim.head != null)
+        {
+            cachedEyeTransform = anim.head;
+            return;
+        }
+        var headObj = transform.Find("Character_Visuals/Pelvis/Spine/Neck/Head");
+        if (headObj != null) cachedEyeTransform = headObj;
     }
 
     /// <summary>
@@ -318,8 +339,11 @@ public class FlankingGuardAI : MonoBehaviour, IGuardPerceptionTracker
     /// </summary>
     public bool EvaluateLineOfSight()
     {
+        EnsureEyeTransform();
+        if (playerTransform == null) FindPlayerReference();
         return GuardPerception.CanSeePlayer(
-            transform, playerTransform, sightDistance, fieldOfView, eyeHeight, playerTargetHeight, obstacleMask
+            transform, playerTransform, sightDistance, fieldOfView, eyeHeight, playerTargetHeight, obstacleMask,
+            cachedEyeTransform, cachedPlayerCamera, cachedPlayerCollider
         );
     }
 

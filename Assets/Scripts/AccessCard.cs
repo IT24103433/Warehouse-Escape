@@ -14,6 +14,19 @@ public class AccessCard : MonoBehaviour
         set => hasKeycard = value;
     }
 
+    public static string CollectedCardName { get; set; } = "";
+    public static string CollectedSector { get; set; } = "";
+
+    [Header("Card Identification")]
+    [Tooltip("Readable identity of this security access card.")]
+    [SerializeField] private string cardName = "Access Card A";
+
+    [Tooltip("Facility sector assigned to this card.")]
+    [SerializeField] private string sectorCode = "Sector 03 - Search Logistics";
+
+    [Tooltip("Security clearance level.")]
+    [SerializeField] private string clearanceLevel = "Level 3";
+
     [Header("Visual Feedback Settings")]
     [Tooltip("Bobbing oscillation speed.")]
     [SerializeField] private float bobSpeed = 3f;
@@ -28,10 +41,22 @@ public class AccessCard : MonoBehaviour
     private bool isCollected = false;
 
     public bool IsCollected => isCollected;
+    public string CardName => cardName;
+    public string SectorCode => sectorCode;
+    public string ClearanceLevel => clearanceLevel;
+
+    public void ConfigureIdentity(string name, string sector, string clearance = "Level 3")
+    {
+        cardName = name;
+        sectorCode = sector;
+        clearanceLevel = clearance;
+    }
 
     void Awake()
     {
         hasKeycard = false; // Reset static state for scene loads
+        CollectedCardName = "";
+        CollectedSector = "";
     }
 
     void Start()
@@ -65,7 +90,9 @@ public class AccessCard : MonoBehaviour
     {
         isCollected = true;
         hasKeycard = true;
-        Debug.Log("[AccessCard] Security access card collected! Exit door is now unlocked.", this);
+        CollectedCardName = cardName;
+        CollectedSector = sectorCode;
+        Debug.Log($"[AccessCard] {cardName} ({sectorCode} - {clearanceLevel}) collected! Exit terminal is now unlocked.", this);
 
         // Hide visual card mesh and disable trigger
         var renderers = GetComponentsInChildren<Renderer>();
@@ -82,6 +109,8 @@ public class AccessCard : MonoBehaviour
     {
         isCollected = false;
         hasKeycard = false;
+        CollectedCardName = "";
+        CollectedSector = "";
         transform.position = initialPosition;
 
         var renderers = GetComponentsInChildren<Renderer>();
