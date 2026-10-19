@@ -52,12 +52,18 @@ public class GuardShooting : MonoBehaviour
     private float targetVisibleDuration = 0f;
     private int burstsRemaining = 4;
     private bool hasDroppedWeapon = false;
+    private IGuardPerceptionTracker perceptionTracker;
+    private PatrolGuardAI patrolController;
 
     public WeaponType AssignedWeapon => assignedWeapon;
     public int DamagePerShot => damagePerShot;
     public int PelletCount => pelletCount;
     public int BurstCount => burstCount;
     public float FireCooldown => fireCooldown;
+    public float ReactionDelay => reactionDelay;
+    public bool HasVisualTarget => perceptionTracker != null && perceptionTracker.IsGuardActive()
+        && perceptionTracker.HasConfirmedVisualContact()
+        && (patrolController == null || patrolController.CurrentState == PatrolGuardState.Pursue);
     public bool IsAiming => targetVisibleDuration > 0.05f;
     public bool IsReloading => isReloading;
     public Transform GunTransform => gunTransform;
@@ -95,6 +101,9 @@ public class GuardShooting : MonoBehaviour
 
     void Start()
     {
+        patrolController = GetComponent<PatrolGuardAI>();
+        foreach (var behaviour in GetComponents<MonoBehaviour>())
+            if (behaviour is IGuardPerceptionTracker tracker) { perceptionTracker = tracker; break; }
         FindPlayer();
         AttachWeaponToHand();
     }
@@ -185,7 +194,7 @@ public class GuardShooting : MonoBehaviour
     void Update()
     {
         if (health != null && health.IsDead) return;
-        if (GameManager.Instance != null && GameManager.Instance.IsGameEnded) return;
+        if (GameManager.Instance != null && (GameManager.Instance.IsGameEnded || GameManager.Instance.IsPaused)) return;
 
         if (playerTransform == null)
         {
@@ -200,16 +209,11 @@ public class GuardShooting : MonoBehaviour
             return;
         }
 
-        // Special rule for First Guard (Varun): Visual detection only
-        // Must be in active pursuit state to open fire; rear/unaware states cannot shoot!
-        var patrolAI = GetComponent<PatrolGuardAI>();
-        if (patrolAI != null)
+        // Hearing supplies investigation targets; only confirmed vision permits combat.
+        if (!HasVisualTarget)
         {
-            if (patrolAI.CurrentState != PatrolGuardState.Pursue || !patrolAI.CanSeePlayer)
-            {
-                targetVisibleDuration = 0f;
-                return;
-            }
+            targetVisibleDuration = 0f;
+            return;
         }
 
         // Evaluate target distance
@@ -296,31 +300,35 @@ public class GuardShooting : MonoBehaviour
         lastShotTime = Time.time;
         burstsRemaining--;
 
-        for (int i = 0; i < burstCount; i++)
+        try
         {
-            if (health != null && health.IsDead) yield break;
-            if (GameManager.Instance != null && GameManager.Instance.IsGameEnded) yield break;
-            if (playerTransform == null || playerTransform.position.z < -18.0f) yield break;
-
-            if (HasClearLineOfSight(playerTransform.position))
+            for (int i = 0; i < burstCount; i++)
             {
-                if (assignedWeapon == WeaponType.Combat_Shotgun)
+                if (health != null && health.IsDead) yield break;
+                if (GameManager.Instance != null && GameManager.Instance.IsGameEnded) yield break;
+                if (playerTransform == null || playerTransform.position.z < -18.0f) yield break;
+
+                if (!HasVisualTarget) yield break;
+                if (HasClearLineOfSight(playerTransform.position))
                 {
-                    ExecuteShotgunShot();
+                    if (assignedWeapon == WeaponType.Combat_Shotgun)
+                    {
+                        ExecuteShotgunShot();
+                    }
+                    else
+                    {
+                        ExecuteSingleShot();
+                    }
                 }
-                else
+
+                if (burstCount > 1 && i < burstCount - 1)
                 {
-                    ExecuteSingleShot();
+                    yield return new WaitForSeconds(burstInterval);
                 }
             }
 
-            if (burstCount > 1 && i < burstCount - 1)
-            {
-                yield return new WaitForSeconds(burstInterval);
-            }
         }
-
-        isShootingBurst = false;
+        finally { isShootingBurst = false; }
     }
 
     private void ExecuteSingleShot()

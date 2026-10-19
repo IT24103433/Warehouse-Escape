@@ -105,8 +105,8 @@ public class PatrolGuardAI : MonoBehaviour, IGuardPerceptionTracker
         if (shooting == null)
         {
             shooting = gameObject.AddComponent<GuardShooting>();
+            shooting.ConfigureWeapon(WeaponType.UMP_SMG, 14, 1.1f, 13f, 2, 2.5f);
         }
-        shooting.ConfigureWeapon(WeaponType.UMP_SMG, 14, 1.1f, 13f, 2, 2.5f);
 
         perceptionMemory = GetComponent<GuardPerceptionMemory>();
         if (perceptionMemory == null)

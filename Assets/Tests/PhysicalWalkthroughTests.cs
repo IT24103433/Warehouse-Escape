@@ -540,7 +540,7 @@ public class PhysicalWalkthroughTests
         fullReport.AppendLine("  [WALL OCCLUSION] Guard line of sight strictly blocked by wall -> Player HP remains 100.");
 
         // 2. VERIFY DEAD GUARDS CANNOT FIRE
-        aqqilHealth.TakeDamage(100, null);
+        aqqilHealth.TakeDamage(aqqilHealth.MaxHealth, null);
         Assert.IsTrue(aqqilHealth.IsDead, "[PASS] Guard is dead.");
         Assert.IsFalse(aqqilShooting.enabled, "[PASS] GuardShooting disabled upon death.");
         fullReport.AppendLine("  [DEAD GUARD STATE] Guard defeated -> GuardShooting component disabled, attacks halted.");
@@ -1068,7 +1068,7 @@ public class PhysicalWalkthroughTests
 
         var bHealth = bossObj.GetComponent<Health>();
         Assert.IsNotNull(bHealth, "[PASS] Boss Health attached.");
-        Assert.AreEqual(160, bHealth.CurrentHealth, "[PASS] Boss starts at 160 HP.");
+        Assert.AreEqual(180, bHealth.CurrentHealth, "[PASS] Boss starts at 180 HP.");
 
         var gun = playerObj.GetComponentInChildren<PlayerGun>();
         Assert.IsNotNull(gun, "[PASS] PlayerGun attached.");
@@ -1413,6 +1413,17 @@ public class PhysicalWalkthroughTests
         Assert.AreEqual(WeaponType.AK47_Rifle, sanjeevShooting.AssignedWeapon, "[PASS] Sanjeevsaran assigned AK-47 Rifle.");
         Assert.AreEqual(WeaponType.Combat_Shotgun, aqqilShooting.AssignedWeapon, "[PASS] Aqqil assigned Combat Shotgun.");
         Assert.AreEqual(WeaponType.SCAR_Rifle, jadavanShooting.AssignedWeapon, "[PASS] Jadavan assigned SCAR Rifle.");
+
+        Assert.Less(varunShooting.GetComponent<Health>().MaxHealth, sanjeevShooting.GetComponent<Health>().MaxHealth,
+            "The first encounter should have less durability than the search route.");
+        Assert.Less(sanjeevShooting.GetComponent<Health>().MaxHealth, aqqilShooting.GetComponent<Health>().MaxHealth,
+            "The defensive specialist should be tougher to defeat.");
+        Assert.Less(aqqilShooting.GetComponent<Health>().MaxHealth, jadavanShooting.GetComponent<Health>().MaxHealth,
+            "The final boss should have the highest durability.");
+        Assert.Less(jadavanShooting.ReactionDelay, varunShooting.ReactionDelay,
+            "The boss should prepare to fire faster than the introductory guard.");
+        Assert.Greater(jadavanShooting.BurstCount, varunShooting.BurstCount,
+            "Boss bursts should apply more pressure while retaining reload openings.");
 
         // Assert shotgun bounded pellet count and balanced total damage
         Assert.LessOrEqual(aqqilShooting.PelletCount, 6, "[PASS] Shotgun pellet count is bounded (<= 6 pellets).");
@@ -2787,6 +2798,29 @@ public class PhysicalWalkthroughTests
         yield return null;
 
         fullReport.AppendLine("[PASS] Guard perception realism, head gaze scanning, cover exposure, doorway crossing, and wall occlusion fully verified!\n");
+    }
+
+    [UnityTest]
+    public IEnumerator Test_41_All_Guards_Investigate_Sound_Without_Blind_Fire()
+    {
+        SceneManager.LoadScene("Warehouse");
+        yield return new WaitForSeconds(.5f);
+        var player = GameObject.FindGameObjectWithTag("Player");
+        var health = player.GetComponent<Health>();
+        int hp = health.CurrentHealth;
+        foreach (var shooter in Object.FindObjectsByType<GuardShooting>(FindObjectsSortMode.None))
+        {
+            var memory = shooter.GetComponent<GuardPerceptionMemory>();
+            Assert.IsNotNull(memory, shooter.name + " needs hearing memory.");
+            GuardPerception.ReportSound(shooter.transform.position + Vector3.forward * 2f,
+                35f, SoundType.Gunshot, player);
+            yield return null;
+            Assert.IsTrue(memory.HasValidSound, shooter.name + " must remember the shot location.");
+            Assert.IsFalse(shooter.HasVisualTarget, shooter.name + " cannot identify the hidden player by sound alone.");
+            Assert.IsFalse(shooter.IsAiming, shooter.name + " must investigate rather than aim at a hidden player.");
+        }
+        yield return new WaitForSeconds(1f);
+        Assert.AreEqual(hp, health.CurrentHealth, "Sound investigation must preserve safe-room immunity.");
     }
 }
 

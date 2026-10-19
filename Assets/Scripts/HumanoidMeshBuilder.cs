@@ -616,9 +616,9 @@ public static class HumanoidMeshBuilder
         faceLightGo.transform.localPosition = new Vector3(0f, 0.06f, 0.36f);
         var faceLight = faceLightGo.AddComponent<Light>();
         faceLight.type = LightType.Point;
-        faceLight.range = 2.0f;
+        faceLight.range = 0.8f;
         faceLight.color = new Color(1.0f, 0.94f, 0.88f);
-        faceLight.intensity = 0.65f;
+        faceLight.intensity = 0.06f;
         faceLight.renderMode = LightRenderMode.ForceVertex;
         faceLight.shadows = LightShadows.None;
 
