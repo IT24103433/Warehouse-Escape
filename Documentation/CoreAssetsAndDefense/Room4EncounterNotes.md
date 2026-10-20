@@ -85,6 +85,53 @@ pursued across room boundaries, matching the Route B fairness specification.
   `UpdatePursueIntruderState` triggers `TransitionToReturnToPost()`.
 <!-- END:R4_PRESSURE_NOTES -->
 <!-- SECTION:R4_SHOTGUN_BALANCE -->
+## 5. `Combat_Shotgun` 6-Pellet Damage & 220 HP Guard Durability Balance
+
+### 5.1 Guard Health & Shotgun Parameters (`DefensiveGuardAI.Awake` & `GuardShooting.cs`)
+
+| Parameter | Configured Value | Code Location | Balance Rationale |
+| --- | --- | --- | --- |
+| Max Health | `220 HP` (`"Aqqil [Defensive]"`) | `DefensiveGuardAI.cs:102` | Toughest single-room defender (vs. `180 HP` Search/Boss) |
+| Weapon Type | `WeaponType.Combat_Shotgun` | `DefensiveGuardAI.cs:109` | Close-range Room 4 anchor weapon |
+| Pellet Damage | `12 HP` per pellet (`6` pellets) | `DefensiveGuardAI.cs:109` | `72 HP` theoretical max burst before spread/cover |
+| Fire Cooldown | `1.4 s` (`1` burst/shot) | `DefensiveGuardAI.cs:109` | Deliberate cadence allowing peek-and-cover counterplay |
+| Max Firing Range | `10.0 m` (`3.8 deg` spread) | `DefensiveGuardAI.cs:109` | Matches `sightDistance = 10 m` & `5 m` policy peak |
+| Magazine / Reload | `4` blasts / `1.4 s` reload | `GuardShooting.cs:34, 508` | Clear `1.4 s` tactical reload window to push or loot |
+| Reaction Delay | `0.35 s` aim prep | `GuardShooting.cs:28` | Prevents instant frame-0 shot on doorway peek |
+| Player Pickup Config | `12 x 6`, `0.80 s`, `8/24`, `4.5 deg`, `28 m` | `WeaponConfig.cs:97` | Higher sustained RoF & longer reach once looted |
+
+### 5.2 Distance vs. 6-Pellet Expected Damage (`3.8 deg` Guard Spread)
+
+| Engagement Distance | Typical Pellets on Target | Guard Body Damage | Player Pickup Headshot (`2x`) | Encounter Impact |
+| --- | --- | --- | --- | --- |
+| `1.0 m` | `6 / 6` | `72 HP` | `144 HP (pickup)` | Point-blank breach; full 6-pellet cluster |
+| `1.5 m` | `6 / 6` | `72 HP` | `144 HP (pickup)` | Vault over center barrier; guaranteed full spread |
+| `2.0 m` | `6 / 6` | `72 HP` | `144 HP (pickup)` | Tight barrier vault distance; severe burst |
+| `2.5 m` | `5–6 / 6` | `60–72 HP` | `120–144 HP (pickup)` | Aggressive flank; slight peripheral edge pellet variance |
+| `3.0 m` | `5 / 6` | `60 HP` | `120 HP (pickup)` | Close barrier duel; high threat |
+| `4.0 m` | `4–5 / 6` | `48–60 HP` | `96–120 HP (pickup)` | Approaching policy optimum |
+| `5.0 m` | `4 / 6` | `48 HP` | `96 HP (pickup)` | Optimal policy peak (`weaponRange = 1.000`) |
+| `6.0 m` | `3–4 / 6` | `36–48 HP` | `72–96 HP (pickup)` | Barrier-to-aisle exchange |
+| `7.0 m` | `3 / 6` | `36 HP` | `72 HP (pickup)` | Medium Room 4 spacing across barriers |
+| `8.0 m` | `2–3 / 6` | `24–36 HP` | `48–72 HP (pickup)` | Outer defensive ring engagement |
+| `8.5 m` | `2 / 6` | `24 HP` | `48 HP (pickup)` | Near Room 4 `leashDistance` (`9.0 m`) edge |
+| `9.5 m` | `1–2 / 6` | `12–24 HP` | `24–48 HP (pickup)` | Fringe deterrent near west transit aisle |
+| `10.0 m` | `1 / 6` | `12 HP` | `24 HP (pickup)` | Exact guard `maxFiringRange` (`10.0 m`) limit |
+| `12.0 m` | `0 / 6 (Guard)` | `0 HP` | `12–24 HP (pickup)` | Beyond guard `10 m` range; player pickup reaches `28 m` |
+
+### 5.3 Time-to-Kill (TTK) & Headshot Balance
+
+| Matchup | Shot Damage | Shots to Kill (`220 HP` / `100 HP`) | Time-to-Kill | Tactical Note |
+| --- | --- | --- | --- | --- |
+| Player `MP5_SMG` (Body) -> Aqqil | `18 HP` (`0.11 s`) | `13` hits | `1.32 s` | Requires 2+ peeks against barrier cover |
+| Player `MP5_SMG` (Head `2x`) -> Aqqil | `36 HP` (`0.11 s`) | `7` hits | `0.66 s` | Rewards precision headshots over `1.12 m` barrier |
+| Player `MP5_SMG` (50/50 Mixed) -> Aqqil | `27 HP` avg | `9` hits | `0.88 s` | Balanced duel duration behind barriers |
+| Aqqil `Combat_Shotgun` -> Player (`100 HP`) | `36–60 HP` (`1.4 s`) | `2–3` blasts | `1.40–2.80 s` | Punishes standing exposed; avoidable via cover/dash |
+| Player Looted `Combat_Shotgun` -> Guard (`220 HP`) | `48–96 HP` (`0.80 s`) | `3–5` blasts | `1.60–3.20 s` | High reward in Room 5 finale after clearing Route B |
+
+- **Defeat Drop (`GuardShooting.HandleDeath`):** Spawns `WeaponPickup` for `Combat_Shotgun`
+  (`8` mag / `12` reserve, `12 x 6` pellets, `24 dmg` per head pellet, `N_26P.wav` report).
+<!-- END:R4_SHOTGUN_BALANCE -->
 <!-- SECTION:R4_TRAPS_AND_CARD_B -->
 <!-- SECTION:R4_PLAYMODE_CHECK -->
 <!-- SECTION:R4_VIVA_QA -->
