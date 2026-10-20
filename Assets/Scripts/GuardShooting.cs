@@ -377,7 +377,7 @@ public class GuardShooting : MonoBehaviour
         if (audioSource != null)
         {
             AudioClip clip = WeaponAudio.GetWeaponFireClip(assignedWeapon);
-            audioSource.pitch = Random.Range(0.95f, 1.05f);
+            audioSource.pitch = assignedWeapon == WeaponType.Combat_Shotgun ? 1f : Random.Range(0.95f, 1.05f);
             audioSource.PlayOneShot(clip, 0.80f);
         }
     }
@@ -426,7 +426,7 @@ public class GuardShooting : MonoBehaviour
         if (audioSource != null)
         {
             AudioClip clip = WeaponAudio.GetWeaponFireClip(assignedWeapon);
-            audioSource.pitch = Random.Range(0.95f, 1.05f);
+            audioSource.pitch = assignedWeapon == WeaponType.Combat_Shotgun ? 1f : Random.Range(0.95f, 1.05f);
             audioSource.PlayOneShot(clip, 0.90f);
         }
     }

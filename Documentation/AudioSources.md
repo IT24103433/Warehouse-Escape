@@ -16,7 +16,7 @@ and authors' notice release the library under
 | UMP | 1911, A_42P.wav | .45 approximation, slightly slower |
 | AK-47 | AK-47, C_28P.wav | Actual AK-47 report |
 | SCAR | AR-15, D_32P.wav | Rifle approximation, slightly slower |
-| Shotgun | Mossberg Model 190, N_26P.wav | 12-gauge report, slightly slower |
+| Shotgun | Mossberg shotgun, N_26P.wav | First recorded report at original pitch/timing, 2.2-second natural tail |
 
 These are designed gameplay effects, not exact recordings of every named model.
 Stereo 96kHz/24-bit sources were mixed to mono, trimmed to a single onset,
@@ -39,3 +39,5 @@ The short hit-marker tone remains a synthesized interface cue.
 Only the edited gameplay WAV files belong in the game. Original downloads and
 the preparation script are kept in the ignored local `scratch` folder. The
 uncompressed gameplay WAV files total less than 1 MB.
+
+20 October shotgun update: `Documentation/Tools/prepare_original_shotgun.py` extracts the first report from the original downloaded recording. Only leading silence removal, mono conversion, sample-rate conversion, safe gain and an 8ms end fade are applied. No slowing, pitch shift, synthetic layer or exponential tail damping. Guard shotgun playback uses pitch 1.0. The original file contains three separate reports; the shipped clip contains only the first.

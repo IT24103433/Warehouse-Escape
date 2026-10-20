@@ -53,6 +53,7 @@ public class PlayerHUD : MonoBehaviour
     private static Sprite cachedMinimapSprite;
 
     private float hitMarkerTimer = 0f;
+    private bool headshotHit;
     private float vignetteAlpha = 0f;
     public bool Is1080p => is1080p;
     private bool is1080p = false;
@@ -96,10 +97,11 @@ public class PlayerHUD : MonoBehaviour
         }
     }
 
-    public static void TriggerHitMarker()
+    public static void TriggerHitMarker(bool headshot = false)
     {
         if (instance != null)
         {
+            if (headshot || instance.hitMarkerTimer <= 0f) instance.headshotHit = headshot;
             instance.hitMarkerTimer = 0.18f;
         }
     }
@@ -935,7 +937,7 @@ public class PlayerHUD : MonoBehaviour
             if (hitMarkerTimer > 0f)
             {
                 hitMarkerTimer -= Time.deltaTime;
-                crosshairHitMarker.color = new Color(1f, 0.2f, 0.2f, Mathf.Clamp01(hitMarkerTimer * 5f));
+                crosshairHitMarker.color = new Color(1f, headshotHit ? .85f : .2f, .2f, Mathf.Clamp01(hitMarkerTimer * 5f));
             }
             else
             {

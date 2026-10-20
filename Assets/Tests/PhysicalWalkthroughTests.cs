@@ -1958,7 +1958,7 @@ public class PhysicalWalkthroughTests
                 "Fire must use the packaged recording rather than synthesized fallback audio.");
             Assert.IsNotNull(reload, "Every weapon needs its recorded reload.");
             Assert.Greater(fire.length, 0.2f, "Preserve the recorded report tail.");
-            Assert.LessOrEqual(fire.length, 1f, "Avoid excessive overlapping report tails.");
+            Assert.LessOrEqual(fire.length, type == WeaponType.Combat_Shotgun ? 2.3f : 1f, "Keep the shotgun's natural report tail, with bounded overlap.");
             Assert.Less(reload.length, WeaponData.GetConfig(type).reloadDuration,
                 "Mechanical audio must finish before reload completion.");
             var samples = new float[fire.samples * fire.channels];
