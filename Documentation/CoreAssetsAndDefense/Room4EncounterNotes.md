@@ -74,13 +74,6 @@ pursued across room boundaries, matching the Route B fairness specification.
 - Under aggressive `MP5_SMG` pushes, Aqqil dynamically rotates across `Defensive_Barrier_West`,
   `Defensive_Barrier_Center`, and `Defensive_Barrier_East` whenever flanking turns
   `torsoClear` to `true` or pushes range inside `2 m`.
-<!-- BLOCK:R4_HP_DRAFT -->
-- *[Draft Note]* Evaluated a `<= 66 HP` (`30%`) forced retreat threshold and `<= 55 HP`
-  (`25%`) passive cover bias across `220 -> 10 HP` tests; flagged for pruning because
-  turning away inside `defenseRadius` exposed the guard's back and allowed Card B steals.
-- *[Draft Note]* Threshold state-flip at `66 HP` conflicted with `ReturnToPost -> PursueIntruder`
-  sight re-engagement inside `6.0 m` perimeter.
-<!-- END:R4_HP_DRAFT -->
 - When the player disengages beyond `9.0 m` leash or exits `Room_4_Defensive` to recover,
   `UpdatePursueIntruderState` triggers `TransitionToReturnToPost()`.
 <!-- END:R4_PRESSURE_NOTES -->

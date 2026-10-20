@@ -5,22 +5,13 @@
 **Assigned Sector:** `Room_4_Defensive` (Route B — Access Card B)
 
 <!-- BLOCK:POLICY_INTRO -->
-## 1. Scope and Design Goals
+## 1. Scope and Final Architecture
 
-The Room 4 defensive guard (`Guard_Aqqil_Defensive`) protects the Access Card B security
-terminal (`AccessCard_Pickup_Defensive`) without abandoning Room 4 to chase the player
-across the warehouse. Unlike `PatrolGuardAI` (Room 2 circuit) or `SearchGuardAI` (Room 3
-belief search), `DefensiveGuardAI` stays anchored to a defensive post, evaluates nearby
-cover and shotgun engagement range, and returns to post when the intruder disengages.
-
-### 1.1 Baseline Design Parameters
-
-- **Sight Range / FOV:** `10.0 m` / `90 deg` (`eyeHeight = 0.6 m`)
-- **Defense Perimeter:** `defenseRadius = 6.0 m` around `postPosition`
-- **Pursuit Leash:** `leashDistance = 8.5 m` (code default) / `9.0 m` (Room 4 scene)
-- **Weapon Loadout:** `WeaponType.Combat_Shotgun` (`12 dmg x 6 pellets`, `220 HP`)
-- **Policy Module:** `DefenseDecisionPolicy.Score(...)` (pure static utility scorer)
-- **Candidate Topology:** `17` points (`1` anchor + `2` concentric `8`-point rings)
+`DefensiveGuardAI` (`Room_4_Defensive`) pairs a 3-state `DefensiveGuardState` FSM
+(`GuardingPost`, `PursueIntruder`, `ReturnToPost`) with `DefenseDecisionPolicy.Score`.
+Candidate evaluation is stateless with respect to guard HP and relies solely on measurable
+world features: anchor distance, dual-ray cover, shotgun range, visibility, freshness, and
+NavMesh path length.
 <!-- END:POLICY_INTRO -->
 
 <!-- SECTION:STATE_MACHINE -->
@@ -1234,80 +1225,12 @@ natural utility shifts keep `Guard_Aqqil_Defensive` from standing exposed:
 - As the player closes inside `2.0 m`, `weaponRange` drops toward `0.500`, encouraging
   the guard to step back toward `5.0 m` optimal shotgun range near `Terminal_Desk`.
 
-<!-- BLOCK:DEPRECATED_THRESHOLD_LOGS -->
-### 7.2 Experimental Low-Health Retreat Threshold Logs (Draft Evaluation)
+### 7.2 Final Stateless Policy Confirmation
 
-Evaluated two prototype HP-based retreat rules across `220 HP -> 10 HP` durability steps:
-- `[DRAFT-HP-01]` Hard forced `ReturnToPost` when `healthRatio <= 0.30` (`<= 66 HP`).
-- `[DRAFT-HP-02]` Blind full-cover override (`cover * 2.0`) when `healthRatio <= 0.25` (`<= 55 HP`).
-- `[DRAFT-HP-03]` Cooldown oscillation noted when guard hit `66 HP`, retreated toward desk,
-  regained LOS, and flipped states rapidly while still inside `defenseRadius = 6.0 m`.
-
-| Guard HP | `healthRatio` | `HP_Force_Retreat_30` | `HP_Cover_Bias_25` | Observed Gameplay Issue |
-| --- | --- | --- | --- | --- |
-| `220 / 220` | `1.00` | `HOLD_COVER` | `HOLD_COVER` | Normal barrier cover rotation via stateless DefenseDecisionPolicy |
-| `215 / 220` | `0.98` | `HOLD_COVER` | `HOLD_COVER` | Normal barrier cover rotation via stateless DefenseDecisionPolicy |
-| `210 / 220` | `0.95` | `HOLD_COVER` | `HOLD_COVER` | Normal barrier cover rotation via stateless DefenseDecisionPolicy |
-| `205 / 220` | `0.93` | `HOLD_COVER` | `HOLD_COVER` | Normal barrier cover rotation via stateless DefenseDecisionPolicy |
-| `200 / 220` | `0.91` | `HOLD_COVER` | `HOLD_COVER` | Normal barrier cover rotation via stateless DefenseDecisionPolicy |
-| `195 / 220` | `0.89` | `HOLD_COVER` | `HOLD_COVER` | Normal barrier cover rotation via stateless DefenseDecisionPolicy |
-| `190 / 220` | `0.86` | `HOLD_COVER` | `HOLD_COVER` | Normal barrier cover rotation via stateless DefenseDecisionPolicy |
-| `185 / 220` | `0.84` | `HOLD_COVER` | `HOLD_COVER` | Normal barrier cover rotation via stateless DefenseDecisionPolicy |
-| `180 / 220` | `0.82` | `HOLD_COVER` | `HOLD_COVER` | Normal barrier cover rotation via stateless DefenseDecisionPolicy |
-| `175 / 220` | `0.80` | `HOLD_COVER` | `HOLD_COVER` | Normal barrier cover rotation via stateless DefenseDecisionPolicy |
-| `170 / 220` | `0.77` | `HOLD_COVER` | `HOLD_COVER` | Normal barrier cover rotation via stateless DefenseDecisionPolicy |
-| `165 / 220` | `0.75` | `HOLD_COVER` | `HOLD_COVER` | Normal barrier cover rotation via stateless DefenseDecisionPolicy |
-| `160 / 220` | `0.73` | `HOLD_COVER` | `HOLD_COVER` | Normal barrier cover rotation via stateless DefenseDecisionPolicy |
-| `155 / 220` | `0.70` | `HOLD_COVER` | `HOLD_COVER` | Normal barrier cover rotation via stateless DefenseDecisionPolicy |
-| `150 / 220` | `0.68` | `HOLD_COVER` | `HOLD_COVER` | Normal barrier cover rotation via stateless DefenseDecisionPolicy |
-| `145 / 220` | `0.66` | `HOLD_COVER` | `HOLD_COVER` | Normal barrier cover rotation via stateless DefenseDecisionPolicy |
-| `140 / 220` | `0.64` | `HOLD_COVER` | `HOLD_COVER` | Normal barrier cover rotation via stateless DefenseDecisionPolicy |
-| `135 / 220` | `0.61` | `HOLD_COVER` | `HOLD_COVER` | Normal barrier cover rotation via stateless DefenseDecisionPolicy |
-| `130 / 220` | `0.59` | `HOLD_COVER` | `HOLD_COVER` | Normal barrier cover rotation via stateless DefenseDecisionPolicy |
-| `125 / 220` | `0.57` | `HOLD_COVER` | `HOLD_COVER` | Normal barrier cover rotation via stateless DefenseDecisionPolicy |
-| `120 / 220` | `0.55` | `HOLD_COVER` | `HOLD_COVER` | Normal barrier cover rotation via stateless DefenseDecisionPolicy |
-| `115 / 220` | `0.52` | `HOLD_COVER` | `HOLD_COVER` | Normal barrier cover rotation via stateless DefenseDecisionPolicy |
-| `110 / 220` | `0.50` | `HOLD_COVER` | `HOLD_COVER` | Normal barrier cover rotation via stateless DefenseDecisionPolicy |
-| `105 / 220` | `0.48` | `HOLD_COVER` | `HOLD_COVER` | Normal barrier cover rotation via stateless DefenseDecisionPolicy |
-| `100 / 220` | `0.45` | `HOLD_COVER` | `HOLD_COVER` | Normal barrier cover rotation via stateless DefenseDecisionPolicy |
-| `95 / 220` | `0.43` | `HOLD_COVER` | `HOLD_COVER` | Normal barrier cover rotation via stateless DefenseDecisionPolicy |
-| `90 / 220` | `0.41` | `HOLD_COVER` | `HOLD_COVER` | Normal barrier cover rotation via stateless DefenseDecisionPolicy |
-| `85 / 220` | `0.39` | `HOLD_COVER` | `HOLD_COVER` | Normal barrier cover rotation via stateless DefenseDecisionPolicy |
-| `80 / 220` | `0.36` | `HOLD_COVER` | `HOLD_COVER` | Normal barrier cover rotation via stateless DefenseDecisionPolicy |
-| `75 / 220` | `0.34` | `HOLD_COVER` | `HOLD_COVER` | Normal barrier cover rotation via stateless DefenseDecisionPolicy |
-| `70 / 220` | `0.32` | `HOLD_COVER` | `HOLD_COVER` | Normal barrier cover rotation via stateless DefenseDecisionPolicy |
-| `65 / 220` | `0.30` | `FORCE_RETREAT` | `HOLD_COVER` | 30% rule turned back toward desk mid-duel, exposing back to MP5 |
-| `60 / 220` | `0.27` | `FORCE_RETREAT` | `HOLD_COVER` | 30% rule turned back toward desk mid-duel, exposing back to MP5 |
-| `55 / 220` | `0.25` | `FORCE_RETREAT` | `BLIND_WALL_COVER` | Both prototypes broke combat or turned back inside defenseRadius |
-| `50 / 220` | `0.23` | `FORCE_RETREAT` | `BLIND_WALL_COVER` | Both prototypes broke combat or turned back inside defenseRadius |
-| `45 / 220` | `0.20` | `FORCE_RETREAT` | `BLIND_WALL_COVER` | Both prototypes broke combat or turned back inside defenseRadius |
-| `40 / 220` | `0.18` | `FORCE_RETREAT` | `BLIND_WALL_COVER` | Both prototypes broke combat or turned back inside defenseRadius |
-| `35 / 220` | `0.16` | `FORCE_RETREAT` | `BLIND_WALL_COVER` | Both prototypes broke combat or turned back inside defenseRadius |
-| `30 / 220` | `0.14` | `FORCE_RETREAT` | `BLIND_WALL_COVER` | Both prototypes broke combat or turned back inside defenseRadius |
-| `25 / 220` | `0.11` | `FORCE_RETREAT` | `BLIND_WALL_COVER` | Both prototypes broke combat or turned back inside defenseRadius |
-| `20 / 220` | `0.09` | `FORCE_RETREAT` | `BLIND_WALL_COVER` | Both prototypes broke combat or turned back inside defenseRadius |
-| `15 / 220` | `0.07` | `FORCE_RETREAT` | `BLIND_WALL_COVER` | Both prototypes broke combat or turned back inside defenseRadius |
-| `10 / 220` | `0.05` | `FORCE_RETREAT` | `BLIND_WALL_COVER` | Both prototypes broke combat or turned back inside defenseRadius |
-
-#### Prototype State-Oscillation Trace Below `66 HP` (`DRAFT-HP-03`)
-
-| Time | Guard HP | Prototype FSM State | Failure Observed |
-| --- | --- | --- | --- |
-| `22.0 s` | `70 HP` | `PursueIntruder` | Clean barrier defense |
-| `22.5 s` | `66 HP` | `PursueIntruder (re-acquired)` | State ping-pong inside 6.0 m perimeter; dropped shotgun burst |
-| `23.0 s` | `62 HP` | `ReturnToPost (forced)` | State ping-pong inside 6.0 m perimeter; dropped shotgun burst |
-| `23.5 s` | `58 HP` | `PursueIntruder (re-acquired)` | State ping-pong inside 6.0 m perimeter; dropped shotgun burst |
-| `24.0 s` | `54 HP` | `ReturnToPost (forced)` | State ping-pong inside 6.0 m perimeter; dropped shotgun burst |
-| `24.5 s` | `50 HP` | `PursueIntruder (re-acquired)` | State ping-pong inside 6.0 m perimeter; dropped shotgun burst |
-| `25.0 s` | `46 HP` | `ReturnToPost (forced)` | State ping-pong inside 6.0 m perimeter; dropped shotgun burst |
-| `25.5 s` | `42 HP` | `PursueIntruder (re-acquired)` | State ping-pong inside 6.0 m perimeter; dropped shotgun burst |
-| `26.0 s` | `38 HP` | `ReturnToPost (forced)` | State ping-pong inside 6.0 m perimeter; dropped shotgun burst |
-| `26.5 s` | `34 HP` | `PursueIntruder (re-acquired)` | State ping-pong inside 6.0 m perimeter; dropped shotgun burst |
-| `27.0 s` | `30 HP` | `ReturnToPost (forced)` | State ping-pong inside 6.0 m perimeter; dropped shotgun burst |
-| `27.5 s` | `26 HP` | `PursueIntruder (re-acquired)` | State ping-pong inside 6.0 m perimeter; dropped shotgun burst |
-
-- *Review Conclusion:* Both HP-threshold prototypes introduced awkward back-turning or
-  passive wall-hiding; schedule removal in favor of stateless `DefenseDecisionPolicy`.
-<!-- END:DEPRECATED_THRESHOLD_LOGS -->
+- Removed all experimental HP-threshold retreat overrides (`30%` / `25%` prototype logs);
+  `DefensiveGuardAI.cs` never forces `ReturnToPost` on low health.
+- Tactical spacing under pressure emerges cleanly from `cover = 1.0` (`0.25` weight),
+  `5.0 m` `weaponRange` (`0.30` weight), and perimeter disengage (`ReturnToPost`) when the
+  player retreats beyond `leashDistance` (`9.0 m`) or exits `Room_4_Defensive`.
 <!-- END:PRESSURE_RETREAT -->
 <!-- SECTION:VERIFICATION_LOG -->
