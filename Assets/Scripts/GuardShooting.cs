@@ -54,6 +54,7 @@ public class GuardShooting : MonoBehaviour
     private bool hasDroppedWeapon = false;
     private IGuardPerceptionTracker perceptionTracker;
     private PatrolGuardAI patrolController;
+    private BossSquadMember squadMember;
 
     public WeaponType AssignedWeapon => assignedWeapon;
     public int DamagePerShot => damagePerShot;
@@ -102,6 +103,7 @@ public class GuardShooting : MonoBehaviour
     void Start()
     {
         patrolController = GetComponent<PatrolGuardAI>();
+        squadMember = GetComponent<BossSquadMember>();
         foreach (var behaviour in GetComponents<MonoBehaviour>())
             if (behaviour is IGuardPerceptionTracker tracker) { perceptionTracker = tracker; break; }
         FindPlayer();
@@ -249,6 +251,7 @@ public class GuardShooting : MonoBehaviour
         }
 
         // Firing cooldown check
+        if (squadMember != null && !squadMember.CanFireNow) return;
         if (!isShootingBurst && !isReloading && Time.time - lastShotTime >= fireCooldown)
         {
             StartCoroutine(FireBurstRoutine());
@@ -309,6 +312,7 @@ public class GuardShooting : MonoBehaviour
                 if (playerTransform == null || playerTransform.position.z < -18.0f) yield break;
 
                 if (!HasVisualTarget) yield break;
+                if (squadMember != null && !squadMember.CanFireNow) yield break;
                 if (HasClearLineOfSight(playerTransform.position))
                 {
                     if (assignedWeapon == WeaponType.Combat_Shotgun)
@@ -387,7 +391,7 @@ public class GuardShooting : MonoBehaviour
         GuardPerception.ReportSound(origin, 34f, SoundType.Gunshot, gameObject);
 
         int pellets = 6;
-        int dmgPerPellet = 7; // Total max 42 damage point blank
+        int dmgPerPellet = WeaponData.CreateShotgun().damage; // Shared player/guard pellet damage
         float pelletSpread = 4.5f;
 
         for (int p = 0; p < pellets; p++)

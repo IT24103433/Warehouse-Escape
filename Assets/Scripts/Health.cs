@@ -53,6 +53,7 @@ public class Health : MonoBehaviour
             isPlayer = true;
             characterName = "Operative";
         }
+        if (GetComponent<DamageBloodEffect>() == null) gameObject.AddComponent<DamageBloodEffect>();
         currentHealth = maxHealth;
         isDead = false;
         isRegenerating = false;

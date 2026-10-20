@@ -6,6 +6,13 @@ public class PlayerMovement : MonoBehaviour
     public float gravity = -9.81f;
     public float mouseSensitivity = 50f;
 
+    public bool IsCrouching { get; private set; }
+    public bool IsAiming { get; private set; }
+    public float jumpHeight = 1.1f;
+    private float standingHeight;
+    private Vector3 standingCenter, cameraHome;
+    private float normalFov;
+    private readonly Collider[] headroom = new Collider[32];
     private CharacterController controller;
     private Vector3 velocity;
 
@@ -27,6 +34,11 @@ public class PlayerMovement : MonoBehaviour
     {
         controller = GetComponent<CharacterController>();
         playerCamera = GetComponentInChildren<Camera>();
+
+        standingHeight = controller.height;
+        standingCenter = controller.center;
+        cameraHome = playerCamera.transform.localPosition;
+        normalFov = playerCamera.fieldOfView;
 
         // Ensure Player Health
         var health = GetComponent<Health>();
@@ -71,8 +83,16 @@ public class PlayerMovement : MonoBehaviour
     void Update()
     {
         // Stop gameplay controls when result screen is active
-        if (GameManager.Instance != null && GameManager.Instance.IsGameEnded)
+        if (Time.timeScale == 0f || (GameManager.Instance != null && GameManager.Instance.IsGameEnded) || GetComponent<Health>().IsDead)
             return;
+
+        if (Input.GetKeyDown(KeyCode.C)) SetCrouching(!IsCrouching);
+        IsAiming = Input.GetMouseButton(1);
+        playerCamera.fieldOfView = Mathf.Lerp(playerCamera.fieldOfView, IsAiming ? normalFov * .65f : normalFov, Time.deltaTime * 12f);
+        playerCamera.transform.localPosition = Vector3.Lerp(playerCamera.transform.localPosition,
+            cameraHome + (IsCrouching ? Vector3.down * (standingHeight * .45f) : Vector3.zero), Time.deltaTime * 12f);
+
+        if (Input.GetKeyDown(KeyCode.Space)) TryJump();
 
         // Movement
         float x = Input.GetAxis("Horizontal");
@@ -80,7 +100,7 @@ public class PlayerMovement : MonoBehaviour
 
         Vector3 move = transform.right * x + transform.forward * z;
 
-        controller.Move(move * speed * Time.deltaTime);
+        controller.Move(Vector3.ClampMagnitude(move, 1f) * speed * (IsCrouching ? .5f : IsAiming ? .7f : 1f) * Time.deltaTime);
 
         // Gravity
         if (controller.isGrounded && velocity.y < 0)
@@ -102,6 +122,33 @@ public class PlayerMovement : MonoBehaviour
             Quaternion.Euler(xRotation, 0f, 0f);
 
         transform.Rotate(Vector3.up * mouseX);
+    }
+
+    public bool TryJump()
+    {
+        if (!controller.isGrounded || IsCrouching || Time.timeScale == 0f || GetComponent<Health>().IsDead ||
+            (GameManager.Instance != null && GameManager.Instance.IsGameEnded)) return false;
+        velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
+        return true;
+    }
+
+    public bool SetCrouching(bool crouch)
+    {
+        if (!crouch && IsCrouching)
+        {
+            Vector3 center = transform.TransformPoint(standingCenter);
+            float radius = controller.radius * .95f;
+            float half = Mathf.Max(0f, standingHeight * .5f - controller.radius);
+            int count = Physics.OverlapCapsuleNonAlloc(center + Vector3.up * half, center - Vector3.up * half,
+                radius, headroom, ~0, QueryTriggerInteraction.Ignore);
+            for (int i = 0; i < count; i++)
+                if (!headroom[i].transform.IsChildOf(transform)) return false;
+            if (count == headroom.Length) return false;
+        }
+        IsCrouching = crouch;
+        controller.height = crouch ? standingHeight * .55f : standingHeight;
+        controller.center = standingCenter - Vector3.up * ((standingHeight - controller.height) * .5f);
+        return true;
     }
 
     /// <summary>

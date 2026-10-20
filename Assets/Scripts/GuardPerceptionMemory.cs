@@ -252,13 +252,13 @@ public class GuardPerceptionMemory : MonoBehaviour
         if (sound.source == gameObject || (sound.source != null && sound.source.transform.IsChildOf(transform))) return;
 
         // Visual-only guards like Varun now hear gunshots, but ignore subtle footsteps
-        if (visualOnlyDetection && sound.soundType != SoundType.Gunshot) return;
+        if (visualOnlyDetection && sound.soundType != SoundType.Gunshot && sound.soundType != SoundType.Alarm) return;
 
         // Check if guard can hear this sound with distance & wall attenuation
         Vector3 eyePos = transform.position + Vector3.up * eyeHeight;
         if (GuardPerception.CanHearSound(eyePos, sound, obstacleMask, out float audibility))
         {
-            if (sound.soundType == SoundType.Gunshot)
+            if (sound.soundType == SoundType.Gunshot || sound.soundType == SoundType.Alarm)
             {
                 // Gunshots provoke suspicion & investigation of the shot location
                 // Hearing alone does NOT identify or shoot an unseen player!

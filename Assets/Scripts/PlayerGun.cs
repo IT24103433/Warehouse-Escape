@@ -246,7 +246,7 @@ public class PlayerGun : MonoBehaviour
     {
         if (gunVisualHolder != null)
         {
-            gunVisualHolder.localPosition = Vector3.Lerp(gunVisualHolder.localPosition, initialGunLocalPos, Time.deltaTime * 14f);
+            gunVisualHolder.localPosition = Vector3.Lerp(gunVisualHolder.localPosition, Input.GetMouseButton(1) ? new Vector3(0f, -.10f, .30f) : initialGunLocalPos, Time.deltaTime * 14f);
             gunVisualHolder.localRotation = Quaternion.Slerp(gunVisualHolder.localRotation, initialGunLocalRot, Time.deltaTime * 14f);
         }
 

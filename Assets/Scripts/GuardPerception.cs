@@ -4,7 +4,8 @@ using UnityEngine;
 public enum SoundType
 {
     Gunshot,
-    Footstep
+    Footstep,
+    Alarm
 }
 
 public struct SoundDisturbance

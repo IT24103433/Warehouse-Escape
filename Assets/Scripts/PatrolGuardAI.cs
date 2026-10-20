@@ -105,7 +105,7 @@ public class PatrolGuardAI : MonoBehaviour, IGuardPerceptionTracker
         {
             health = gameObject.AddComponent<Health>();
             health.CharacterName = "Varun [Patrol]";
-            health.SetMaxHealth(60);
+            health.SetMaxHealth(120);
         }
 
         var shooting = GetComponent<GuardShooting>();

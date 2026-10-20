@@ -99,14 +99,14 @@ public class DefensiveGuardAI : MonoBehaviour, IGuardPerceptionTracker
         {
             health = gameObject.AddComponent<Health>();
             health.CharacterName = "Aqqil [Defensive]";
-            health.SetMaxHealth(80);
+            health.SetMaxHealth(220);
         }
 
         var shooting = GetComponent<GuardShooting>();
         if (shooting == null)
         {
             shooting = gameObject.AddComponent<GuardShooting>();
-            shooting.ConfigureWeapon(WeaponType.Combat_Shotgun, 7, 1.4f, 10f, 1, 3.8f, 6);
+            shooting.ConfigureWeapon(WeaponType.Combat_Shotgun, 12, 1.4f, 10f, 1, 3.8f, 6);
         }
 
         if (GetComponent<EnemyHealthBar>() == null)

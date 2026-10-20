@@ -5,6 +5,27 @@ using UnityEngine;
 
 public static class BuildWarehouseStandalone
 {
+    [MenuItem("Warehouse/Build Windows Release")]
+    public static void ExecuteRelease()
+    {
+        string project = Path.GetFullPath(Path.Combine(Application.dataPath, ".."));
+        string directory = Path.Combine(project, "Builds/WarehouseEscape_Windows");
+        Directory.CreateDirectory(directory);
+        var report = BuildPipeline.BuildPlayer(new BuildPlayerOptions
+        {
+            scenes = new[] { "Assets/Scenes/Warehouse.unity" },
+            locationPathName = Path.Combine(directory, "WarehouseEscape.exe"),
+            target = BuildTarget.StandaloneWindows64,
+            options = BuildOptions.None
+        });
+        string result = $"Result: {report.summary.result}\nErrors: {report.summary.totalErrors}\nWarnings: {report.summary.totalWarnings}\nSize: {report.summary.totalSize}\n";
+        Directory.CreateDirectory(Path.Combine(project, "scratch"));
+        File.WriteAllText(Path.Combine(project, "scratch/windows-release-result.txt"), result);
+        Debug.Log(result);
+        if (report.summary.result != BuildResult.Succeeded)
+            throw new System.InvalidOperationException("Windows release build failed.");
+    }
+
     [MenuItem("Warehouse/Build Windows Standalone")]
     public static void Execute()
     {

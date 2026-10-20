@@ -156,13 +156,13 @@ public class GameManager : MonoBehaviour
     {
         if (helpPanelRt != null)
         {
-            helpPanelRt.sizeDelta = new Vector2(460f, isHelpExpanded ? 58f : 30f);
+            helpPanelRt.sizeDelta = new Vector2(460f, isHelpExpanded ? 82f : 30f);
         }
         if (helpTextComponent != null)
         {
             if (isHelpExpanded)
             {
-                helpTextComponent.text = "<size=16><b><color=#FFFFFF>[WASD] Move   [LMB] Fire   [R] Reload   [E] Interact</color></b></size>\n<size=14><color=#7E94A8><b>[H]</b> Toggle Help   •   <b>[ESC]</b> Pause</color></size>";
+                helpTextComponent.text = "<size=16><b><color=#FFFFFF>[WASD] Move   [LMB] Fire   [RMB] Aim\n[Space] Jump  [C] Crouch  [R] Reload  [E] Interact</color></b></size>\n<size=14><color=#7E94A8><b>[H]</b> Toggle Help   •   <b>[ESC]</b> Pause</color></size>";
             }
             else
             {
@@ -252,7 +252,7 @@ public class GameManager : MonoBehaviour
                     helpRt.anchorMax = new Vector2(0f, 1f);
                     helpRt.pivot = new Vector2(0f, 1f);
                     helpRt.anchoredPosition = new Vector2(24f, -382f);
-                    helpRt.sizeDelta = new Vector2(460f, isHelpExpanded ? 58f : 30f);
+                    helpRt.sizeDelta = new Vector2(460f, isHelpExpanded ? 82f : 30f);
                     helpPanelRt = helpRt;
 
                     var helpImg = helpGo.GetComponent<Image>();

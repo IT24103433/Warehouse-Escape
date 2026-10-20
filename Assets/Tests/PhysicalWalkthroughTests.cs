@@ -477,16 +477,16 @@ public class PhysicalWalkthroughTests
         var healthBar = varunObj.GetComponent<EnemyHealthBar>();
         Assert.IsNotNull(healthBar, "[PASS] EnemyHealthBar attached to Guard.");
 
-        Assert.AreEqual(60, health.MaxHealth, "[PASS] Varun max health is 60.");
-        Assert.AreEqual(60, health.CurrentHealth, "[PASS] Varun starts at 60 health.");
+        Assert.AreEqual(120, health.MaxHealth, "[PASS] Varun max health is 120.");
+        Assert.AreEqual(120, health.CurrentHealth, "Varun starts at doubled health.");
 
         // Deal 25 damage
         health.TakeDamage(25, null);
-        Assert.AreEqual(35, health.CurrentHealth, "[PASS] Guard health reduced to 35.");
+        Assert.AreEqual(95, health.CurrentHealth, "Guard loses exactly 25 health.");
         Assert.IsFalse(health.IsDead, "[PASS] Guard is alive.");
 
-        // Deal fatal 35 damage
-        health.TakeDamage(35, null);
+        // Deal remaining health as fatal damage
+        health.TakeDamage(health.CurrentHealth, null);
         Assert.AreEqual(0, health.CurrentHealth, "[PASS] Guard health reached 0.");
         Assert.IsTrue(health.IsDead, "[PASS] Guard isDead marked true.");
 
@@ -621,9 +621,9 @@ public class PhysicalWalkthroughTests
                 Assert.AreEqual(g.MaxHealth, g.CurrentHealth, $"[PASS] Guard {g.gameObject.name} restored to max health.");
             }
         }
-        Assert.AreEqual(4, guardCount, "[PASS] All 4 guards restored and active.");
+        Assert.AreEqual(5, guardCount, "[PASS] All 5 guards, including both final-room bosses, restored and active.");
 
-        fullReport.AppendLine("[PASS] Full Game State Reset Confirmed: Cards, Agents (4), Reader, Player (100 HP, 12/36 Ammo), and Objectives all cleanly reset.\n");
+        fullReport.AppendLine("[PASS] Full Game State Reset Confirmed: Cards, Agents (5), Reader, Player and Objectives all cleanly reset.\n");
     }
 
     // Exercise real combat while following the route; guards retain normal health, AI and damage.
@@ -1035,7 +1035,7 @@ public class PhysicalWalkthroughTests
         Time.timeScale = 1f;
 
         // 3. Death handling
-        health.TakeDamage(100, null);
+        health.TakeDamage(health.CurrentHealth, null);
         Assert.IsTrue(health.IsDead, "[PASS] Guard isDead marked true on fatal damage.");
         Assert.IsFalse(movement.enabled, "[PASS] EnemyMovement disabled on death.");
         Assert.IsFalse(movement.Agent.enabled, "[PASS] NavMeshAgent disabled on death.");
@@ -1047,7 +1047,7 @@ public class PhysicalWalkthroughTests
         var revivedVarun = GameObject.Find("Guard_Varun_Patrol");
         var revivedHealth = revivedVarun.GetComponent<Health>();
         Assert.IsFalse(revivedHealth.IsDead, "[PASS] Guard revived on restart.");
-        Assert.AreEqual(60, revivedHealth.CurrentHealth, "[PASS] Guard health restored to max (60) on restart.");
+        Assert.AreEqual(revivedHealth.MaxHealth, revivedHealth.CurrentHealth, "Guard health fully restored on restart.");
 
         fullReport.AppendLine("  [STATE RESTORATION] NavMesh: active | Pause: safe | Death: cleanly halted | Restart: full reset.");
         fullReport.AppendLine("[PASS] Death, pause, restart, and standalone navigation verified.\n");
@@ -1068,7 +1068,18 @@ public class PhysicalWalkthroughTests
 
         var bHealth = bossObj.GetComponent<Health>();
         Assert.IsNotNull(bHealth, "[PASS] Boss Health attached.");
-        Assert.AreEqual(180, bHealth.CurrentHealth, "[PASS] Boss starts at 180 HP.");
+        Assert.AreEqual(360, bHealth.CurrentHealth, "[PASS] Boss starts at 360 HP.");
+
+        // Isolate ray/cover damage from the coordinated pair's moving combat targets.
+        foreach (var member in Object.FindObjectsByType<BossSquadMember>(FindObjectsSortMode.None))
+        {
+            member.enabled = false;
+            member.GetComponent<FlankingGuardAI>().enabled = false;
+            member.GetComponent<GuardPatrol>().enabled = false;
+            member.GetComponent<EnemyMovement>().Stop();
+        }
+        foreach (var shooter in Object.FindObjectsByType<GuardShooting>(FindObjectsSortMode.None)) shooter.enabled = false;
+        foreach (var melee in Object.FindObjectsByType<GuardCapture>(FindObjectsSortMode.None)) melee.enabled = false;
 
         var gun = playerObj.GetComponentInChildren<PlayerGun>();
         Assert.IsNotNull(gun, "[PASS] PlayerGun attached.");
@@ -1447,7 +1458,7 @@ public class PhysicalWalkthroughTests
         var varunHealth = varunObj.GetComponent<Health>();
 
         // Defeat Varun
-        varunHealth.TakeDamage(100, null);
+        varunHealth.TakeDamage(varunHealth.CurrentHealth, null);
         Assert.IsTrue(varunHealth.IsDead, "[PASS] Varun defeated.");
         yield return new WaitForSeconds(0.3f);
 
@@ -1607,7 +1618,7 @@ public class PhysicalWalkthroughTests
         Assert.IsTrue(healthBar.IsBarVisible, "[PASS] Enemy health bar reappears when line of sight is restored.");
 
         // 4. On Death: health bar disappears immediately
-        varunHealth.TakeDamage(100, null);
+        varunHealth.TakeDamage(varunHealth.CurrentHealth, null);
         yield return new WaitForSeconds(0.2f);
         Assert.IsFalse(healthBar.IsBarVisible, "[PASS] Enemy health bar disappears immediately upon death.");
 
