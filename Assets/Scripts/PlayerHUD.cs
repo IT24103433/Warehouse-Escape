@@ -54,6 +54,7 @@ public class PlayerHUD : MonoBehaviour
 
     private float hitMarkerTimer = 0f;
     private float vignetteAlpha = 0f;
+    public bool Is1080p => is1080p;
     private bool is1080p = false;
     private bool isLowQuality = false;
     private float fpsUpdateTimer = 0f;
@@ -111,6 +112,8 @@ public class PlayerHUD : MonoBehaviour
     void Start()
     {
         FindPlayerReferences();
+        QualitySettings.anisotropicFiltering = AnisotropicFiltering.Enable;
+        QualitySettings.globalTextureMipmapLimit = 0;
         BuildHUDLayout();
 
         if (playerHealth != null)
@@ -119,7 +122,7 @@ public class PlayerHUD : MonoBehaviour
         }
 
         // Default target is 720p as requested, unless started with 1080p parameters
-        bool startAt1080p = false;
+        bool startAt1080p = !Application.isEditor && PlayerPrefs.GetInt("Display1080p", 0) == 1;
         string[] cmdArgs = System.Environment.GetCommandLineArgs();
         for (int i = 0; i < cmdArgs.Length; i++)
         {
@@ -129,7 +132,7 @@ public class PlayerHUD : MonoBehaviour
                 break;
             }
         }
-        if (Screen.width >= 1600) startAt1080p = true;
+        // Default to 720p on first launch; reuse the player's explicit selection later.
         SetResolution(startAt1080p);
 
         CheckForVerificationTrigger();
@@ -965,6 +968,7 @@ public class PlayerHUD : MonoBehaviour
     public void SetResolution(bool to1080p)
     {
         is1080p = to1080p;
+        if (!Application.isEditor) { PlayerPrefs.SetInt("Display1080p", is1080p ? 1 : 0); PlayerPrefs.Save(); }
         int width = is1080p ? 1920 : 1280;
         int height = is1080p ? 1080 : 720;
         // Keep the Unity editor in its Game view; standalone players fill the monitor.

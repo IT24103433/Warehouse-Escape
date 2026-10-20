@@ -33,8 +33,8 @@ public class VisualQualityCaptureTests
         string root=Path.GetFullPath(Path.Combine(Application.dataPath,"../scratch/visual-upgrade"));
         string stage=File.Exists(root+"/stage.txt") ? File.ReadAllText(root+"/stage.txt").Trim() : "after";
         Directory.CreateDirectory(root+"/"+stage);
-        Vector3[] points={new Vector3(-3,1.08f,-28),new Vector3(0,1.08f,-16),new Vector3(-16,1.08f,2),new Vector3(16,1.08f,2),new Vector3(-5.5f,1.08f,25)};
-        Vector3[] targets={new Vector3(0,1.6f,-20),new Vector3(0,1.6f,-5),new Vector3(-16,1.6f,13),new Vector3(16,1.6f,12),new Vector3(0,1.6f,42)};
+        Vector3[] points={new Vector3(-3,1.08f,-28),new Vector3(0,1.08f,-16),new Vector3(-10,1.08f,4),new Vector3(16,1.08f,2),new Vector3(-5.5f,1.08f,25)};
+        Vector3[] targets={new Vector3(0,1.6f,-20),new Vector3(0,1.6f,-5),new Vector3(-10,1.6f,14),new Vector3(16,1.6f,12),new Vector3(0,1.6f,42)};
         var rt=new RenderTexture(1920,1080,24,RenderTextureFormat.ARGB32);
         cam.targetTexture=rt;
         try

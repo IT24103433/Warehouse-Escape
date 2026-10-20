@@ -307,14 +307,14 @@ public class GameManager : MonoBehaviour
                     pBox.transform.SetParent(pauseGo.transform, false);
                     RectTransform bRt = pBox.AddComponent<RectTransform>();
                     bRt.anchorMin = bRt.anchorMax = bRt.pivot = new Vector2(0.5f, 0.5f);
-                    bRt.sizeDelta = new Vector2(360f, 120f);
+                    bRt.sizeDelta = new Vector2(440f, 250f);
                     var bImg = pBox.AddComponent<Image>();
                     bImg.color = new Color(0.08f, 0.10f, 0.15f, 0.95f);
 
                     GameObject pTitle = new GameObject("Title");
                     pTitle.transform.SetParent(pBox.transform, false);
                     RectTransform tRt = pTitle.AddComponent<RectTransform>();
-                    tRt.anchorMin = tRt.anchorMax = new Vector2(0.5f, 0.65f);
+                    tRt.anchorMin = tRt.anchorMax = new Vector2(0.5f, 0.86f);
                     tRt.sizeDelta = new Vector2(320f, 40f);
                     var tText = pTitle.AddComponent<Text>();
                     tText.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
@@ -327,7 +327,7 @@ public class GameManager : MonoBehaviour
                     GameObject pSub = new GameObject("Subtext");
                     pSub.transform.SetParent(pBox.transform, false);
                     RectTransform sRt = pSub.AddComponent<RectTransform>();
-                    sRt.anchorMin = sRt.anchorMax = new Vector2(0.5f, 0.32f);
+                    sRt.anchorMin = sRt.anchorMax = new Vector2(0.5f, 0.72f);
                     sRt.sizeDelta = new Vector2(320f, 30f);
                     var sText = pSub.AddComponent<Text>();
                     sText.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
@@ -336,6 +336,7 @@ public class GameManager : MonoBehaviour
                     sText.color = Color.white;
                     sText.text = "Press [ESC] to Resume";
 
+                    pBox.AddComponent<PauseDisplaySettings>();
                     pausePanel = pauseGo;
                     pausePanel.SetActive(false);
                 }
