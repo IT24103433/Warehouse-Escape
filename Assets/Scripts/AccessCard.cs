@@ -45,6 +45,9 @@ public class AccessCard : MonoBehaviour
     public string SectorCode => sectorCode;
     public string ClearanceLevel => clearanceLevel;
 
+    /// <summary>
+    /// Overrides the card's readable name, assigned sector, and clearance level.
+    /// </summary>
     public void ConfigureIdentity(string name, string sector, string clearance = "Level 3")
     {
         cardName = name;
@@ -73,6 +76,9 @@ public class AccessCard : MonoBehaviour
         transform.position = initialPosition + Vector3.up * (Mathf.Sin(Time.time * bobSpeed) * bobHeight);
     }
 
+    /// <summary>
+    /// Automatically collects the keycard when the player enters its trigger volume.
+    /// </summary>
     void OnTriggerEnter(Collider other)
     {
         if (isCollected) return;

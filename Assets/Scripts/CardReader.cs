@@ -36,6 +36,9 @@ public class CardReader : MonoBehaviour
     private static CardReader instance;
     public static CardReader Instance => instance;
 
+    /// <summary>
+    /// Returns true if the player is currently within the given distance of the active CardReader.
+    /// </summary>
     public static bool IsPlayerNearby(float distance = 3.0f)
     {
         if (instance == null) instance = Object.FindFirstObjectByType<CardReader>();
@@ -63,6 +66,9 @@ public class CardReader : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Returns the contextual HUD prompt for this reader, yielding to targeted weapon pickups.
+    /// </summary>
     public string GetInteractionPrompt()
     {
         if (!IsPlayerInRange) return "";
