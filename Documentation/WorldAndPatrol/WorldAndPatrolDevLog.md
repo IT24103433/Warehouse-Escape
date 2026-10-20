@@ -91,3 +91,7 @@ Traced the change from visible-player tracking to the last-seen investigation. D
 ## 2026-10-19 · Document Room 2 shock pad trap placement and alarm synergy
 
 Recorded the Room 2 shock pad position, warning, trigger and sound origin. Added expected responses for a visible player, an audible alarm without sight and a bypass.
+
+## 2026-10-20 · Clean up legacy lighting drafts and consolidate URP bake settings
+
+Retired competing lighting mockups and followed the scene's active LightingSettings reference. Separated baked lightmaps, light probes, reflection probes and visual readability checks.

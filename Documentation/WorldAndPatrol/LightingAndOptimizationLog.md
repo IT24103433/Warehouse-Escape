@@ -24,33 +24,6 @@ Compare accent readability across the two sides of Room 2 with the same
 camera exposure. Inspect material variants through renderer state and the
 frame debugger before attributing a draw-call change to the palette.
 
-## Draft lighting studies
-
-These alternatives specify visual comparisons. Values are trial inputs for
-a disposable bake, and the scene remains the source of the active settings.
-
-| Variant | Change under study | Fixed controls | Inspect first |
-| --- | --- | --- | --- |
-| Aisle accents | Add overhead baked area fill over center crossing | Exposure, geometry, fog, camera | Shelf edges and route signs |
-| Bay accents | Move emphasis to peripheral storage | Same material assignments and camera | Cover versus barrel/corner readability |
-| Door fill | Raise light only at the north branch lips | Same built navigation | Sign legibility on west and east approaches |
-| Low atlas draft | 4 texels/m planning trial | Atlas maximum and materials | Visible cross-aisle seams |
-| Higher atlas draft | 12 texels/m planning trial | Atlas maximum and materials | Bake time and memory change |
-| Dynamic probe draft | Add a short fill sample along turn | Same baked maps | Light continuity on the moving guard |
-| Reflection draft | Compare two local probes versus one broad volume | Static lighting and metal material | Reflective transitions along the main aisle |
-| Fog comparison | Compare far signage at fixed target distances | Same exposure and probes | Route marker loss at hall merges |
-| Marking comparison | Simplify guide color accents | Same light intensities | Routes readable before crossing a doorway |
-| Geometry comparison | Compare parent prop with and without decorative trim | Same materials, camera and profiler settings | Whether added hardware earns its draw cost |
-
-Draft evidence per take:
-
-1. Store the same camera and rendering resolution for each test.
-2. Capture the south crossing toward both signs.
-3. Capture the west and east shelf ends with the guard at comparable poses.
-4. Record the active light settings asset and texture budget.
-5. Check the farthest visible portal before changing the next variable.
-6. Retain only observations that can be reproduced under the matching settings.
-
 ## Probe placement review
 
 `ApplyIGIVisualAndLightingPass` configures warehouse light probes and named
@@ -89,3 +62,26 @@ serialized collider faces at actual placement for any measured value.
 For doorway headroom compare the underside of the actual collision lintel
 against the walkable surface. Keep the height and radius checks separate.
 Actual gap measurements and scene-corner paths remain PlayMode checks.
+
+## Active bake baseline
+
+Follow the scene's `m_LightingSettings` reference to its active
+`LightingSettings` object. `Warehouse.unity` also has embedded legacy
+`m_LightmapEditorSettings` fields with differing values.
+
+| Active field | Checked-in setting | Evidence |
+| --- | --- | --- |
+| Baked static lightmaps | Enabled | Referenced scene `LightingSettings` |
+| Realtime lightmaps | Disabled | Referenced scene `LightingSettings` |
+| Bake resolution | 8 | Referenced `m_BakeResolution` |
+| Maximum lightmap size | 1024 | Referenced `m_LightmapMaxSize` |
+| Packing padding | 2 | Referenced `m_Padding` |
+| Mixed mode field | 2 | Referenced `m_MixedBakeMode` |
+| Lighting data | Linked serialized asset | `Assets/Scenes/Warehouse/LightingData.asset` |
+| Per-room baked reflection size | 256 in detail pass | `DetailWarehouseSurfaces` and the surface-detail notes |
+
+The editor lighting pass has bake inputs of its own. Record the resulting
+scene settings to reproduce a captured build. Use a fixed camera and collect
+the bake duration, lightmap count, asset footprint and close-up seams when
+evaluating a future change. Capture soft shadow continuity at shelf ends
+and make sure the two signs remain visually distinct with baked lighting.
