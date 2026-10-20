@@ -172,7 +172,14 @@ public class PatrolGuardAI : MonoBehaviour, IGuardPerceptionTracker
         }
     }
 
+    /// <summary>
+    /// Returns true when the guard has confirmed visual line of sight to the player inside Room 2.
+    /// </summary>
     public bool HasConfirmedVisualContact() => canSeePlayer && (playerTransform == null || IsInsideRoom(playerTransform.position));
+
+    /// <summary>
+    /// Returns true while this guard GameObject and AI component remain active in the hierarchy.
+    /// </summary>
     public bool IsGuardActive() => isActiveAndEnabled && gameObject.activeInHierarchy;
 
     void OnEnable()
@@ -257,6 +264,9 @@ public class PatrolGuardAI : MonoBehaviour, IGuardPerceptionTracker
         if (headObj != null) cachedEyeTransform = headObj;
     }
 
+    /// <summary>
+    /// Assigns the player transform explicitly for deterministic testing setups.
+    /// </summary>
     public void SetPlayer(Transform player) => playerTransform = player;
 
     [Header("Room Boundaries")]
@@ -264,6 +274,9 @@ public class PatrolGuardAI : MonoBehaviour, IGuardPerceptionTracker
     [SerializeField] private Bounds roomBounds = new Bounds(new Vector3(0f, 2.0f, -10.0f), new Vector3(22f, 6f, 16f));
     public Bounds RoomBounds { get => roomBounds; set => roomBounds = value; }
 
+    /// <summary>
+    /// Checks whether a position lies inside Room 2 bounds, preserving Room 1 safe-room immunity.
+    /// </summary>
     public bool IsInsideRoom(Vector3 pos)
     {
         // Room 2 bounds: X [-11.0 to +11.0], Z [-18.0 to -2.0].
@@ -387,6 +400,9 @@ public class PatrolGuardAI : MonoBehaviour, IGuardPerceptionTracker
         }
     }
 
+    /// <summary>
+    /// Transitions back to coverage-aware patrol and selects the highest-utility Room 2 waypoint.
+    /// </summary>
     public void TransitionToPatrol()
     {
         currentState = PatrolGuardState.Patrol;
@@ -397,6 +413,9 @@ public class PatrolGuardAI : MonoBehaviour, IGuardPerceptionTracker
         DispatchCurrentWaypoint();
     }
 
+    /// <summary>
+    /// Transitions into active pursuit of a visually confirmed intruder inside Room 2.
+    /// </summary>
     public void TransitionToPursue()
     {
         currentState = PatrolGuardState.Pursue;
@@ -438,6 +457,9 @@ public class PatrolGuardAI : MonoBehaviour, IGuardPerceptionTracker
         enemyMovement.Resume();
     }
 
+    /// <summary>
+    /// Transitions to investigate a disturbance or last-seen coordinate inside Room 2.
+    /// </summary>
     public void TransitionToInvestigate(Vector3 disturbancePos)
     {
         currentState = PatrolGuardState.Investigate;
