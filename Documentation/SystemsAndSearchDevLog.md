@@ -87,3 +87,7 @@ Ensured clean exit from search state without indefinite wandering around cleared
 ## 2026-10-19 — Verify immediate transition from search back to chase on re-detection
 Confirmed that re-acquiring visual line-of-sight during a sweep aborts the active search and resumes pursuit.
 Updated lastKnownPlayerPosition and heading immediately upon visual re-detection.
+
+## 2026-10-20 — Add fallback transition from failed search back to Route A patrol
+Configured fallback state recovery returning SearchGuardAI to its Route A patrol loop after search expiration.
+Cleared stale search hypotheses and heading state before resuming normal sector coverage.
