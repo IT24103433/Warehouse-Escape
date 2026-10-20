@@ -967,10 +967,20 @@ public class PlayerHUD : MonoBehaviour
         is1080p = to1080p;
         int width = is1080p ? 1920 : 1280;
         int height = is1080p ? 1080 : 720;
-        Screen.SetResolution(width, height, FullScreenMode.Windowed);
+        // Keep the Unity editor in its Game view; standalone players fill the monitor.
+        Screen.SetResolution(width, height, Application.isEditor ? FullScreenMode.Windowed : FullScreenMode.FullScreenWindow);
+        if (!Application.isEditor) StartCoroutine(LogDisplayState());
 
         UpdateResolutionText();
         Debug.Log($"[PlayerHUD] Target resolution set to {(is1080p ? "1080p (1920x1080)" : "720p (1280x720)")} | FPS: {currentFps:F1}");
+    }
+
+    private System.Collections.IEnumerator LogDisplayState()
+    {
+        // Resolution/mode changes take effect after the current frame.
+        yield return null;
+        yield return null;
+        Debug.Log($"[Display] Mode={Screen.fullScreenMode} Fullscreen={Screen.fullScreen} Size={Screen.width}x{Screen.height}");
     }
 
     public void ToggleQuality()
