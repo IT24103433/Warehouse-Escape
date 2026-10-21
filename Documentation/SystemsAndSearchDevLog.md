@@ -91,3 +91,7 @@ Updated lastKnownPlayerPosition and heading immediately upon visual re-detection
 ## 2026-10-20 — Add fallback transition from failed search back to Route A patrol
 Configured fallback state recovery returning SearchGuardAI to its Route A patrol loop after search expiration.
 Cleared stale search hypotheses and heading state before resuming normal sector coverage.
+
+## 2026-10-21 — Document Room 3 security alarm trap integration with guard hearing
+Connected Room 3 alarm trap triggers to the guard acoustic perception pipeline for rapid sector response.
+Verified alarm sound events wake SearchGuardAI into investigation without granting unfair wallhack sight.
