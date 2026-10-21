@@ -85,3 +85,46 @@ scene settings to reproduce a captured build. Use a fixed camera and collect
 the bake duration, lightmap count, asset footprint and close-up seams when
 evaluating a future change. Capture soft shadow continuity at shelf ends
 and make sure the two signs remain visually distinct with baked lighting.
+
+## Shared meshes, render submissions and colliders
+
+`DetailWarehouseSurfaces` applies beveled meshes shared by size and creates
+combined trim by room. The trim uses a shared steel material, has shadow
+casting turned off and uses blended light probes. Its components are visual.
+The existing surface-detail report records that the original gameplay
+colliders and transforms were preserved. Reuse of a mesh helps memory and
+may enable compatible batching, while actual draw submission behavior also
+depends on materials, passes, render state and Unity's batching path.
+
+| Review | Inspect | Evidence to retain |
+| --- | --- | --- |
+| Mesh reuse | Compare `sharedMesh` references for matching sizes | Renderer and shared mesh IDs |
+| Shared material | Compare references and any per-instance overrides | Shared material IDs and shader variants |
+| Combined trim | Check combined renderer count by room | Renderer count, shadow mode and bounds |
+| Frame submission | Use matching camera, scene state and resolution | Draw calls, SetPass calls and batch breakdown |
+| Collider isolation | Inspect gameplay collider shapes and trim components | Before/after collider counts and shape bounds |
+| Occlusion consistency | Compare rays at shelf and crate silhouettes | Ray endpoint, mask and hit before/after |
+| Navigation consistency | Use the same agent and sampled endpoints | Complete path, corners and arrival |
+| Performance | Measure before/after under the same build settings | CPU/GPU frame-time medians and high-percentile frames |
+
+Existing tests include
+`DisplayAndSurfaceTests.Prop_Detail_Is_Batched_And_Texture_Quality_Is_Full`.
+Read [SurfaceDetailAndDisplay](../SurfaceDetailAndDisplay.md) for the
+team's results. New frame captures were outside this documentation run.
+
+## Draft capture checklist
+
+| Capture | Intended purpose | Notes |
+| --- | --- | --- |
+| South crossing to west | Shelf silhouettes | Record both first-person and overhead camera if needed |
+| South crossing to east | Door turn | Include the outside collider corner |
+| East shelf to north | Branch legibility | Keep the guard midway across the light-probe volume |
+| West shelf to pad | Trap bypass | Include trigger debug visualization on a separate capture |
+| North facing branch A | Door clearance | Annotate raw and sampled points |
+| North facing branch B | Door clearance | Inspect the equivalent offset on the mirrored side |
+| Final hall central | Batching and cover | Count render submissions at a fixed position |
+| Final hall off-center | Flank detour | Retain complete path corners |
+| Behind cover with gaze away | Recovery | Record the time of last visual contact |
+
+The final verification record will identify available source checks and
+distinguish them from fresh replays.

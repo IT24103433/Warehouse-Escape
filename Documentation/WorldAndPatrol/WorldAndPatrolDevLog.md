@@ -95,3 +95,7 @@ Recorded the Room 2 shock pad position, warning, trigger and sound origin. Added
 ## 2026-10-20 · Clean up legacy lighting drafts and consolidate URP bake settings
 
 Retired competing lighting mockups and followed the scene's active LightingSettings reference. Separated baked lightmaps, light probes, reflection probes and visual readability checks.
+
+## 2026-10-21 · Verify shared mesh batching and prop collider optimization
+
+Checked shared bevel meshes and the combined trim construction in source. Specified measurements for render submissions and collision shape equivalence in PlayMode.
