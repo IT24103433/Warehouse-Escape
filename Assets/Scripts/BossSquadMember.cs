@@ -16,7 +16,14 @@ public class BossSquadMember : MonoBehaviour
     public int ReportsReceived { get; private set; }
     public float LastReportTime { get; private set; } = -100;
     public Vector3 LastSharedPosition { get; private set; }
+    /// <summary>
+    /// Returns true when this squad member is enabled and alive for cooperative coordination.
+    /// </summary>
     public bool Available => isActiveAndEnabled && ai != null && ai.isActiveAndEnabled && health != null && !health.IsDead;
+
+    /// <summary>
+    /// Returns the active partner squad member if one is alive, or null for solo fallback.
+    /// </summary>
     public BossSquadMember Partner
     {
         get
@@ -26,7 +33,15 @@ public class BossSquadMember : MonoBehaviour
             return null;
         }
     }
+
+    /// <summary>
+    /// Preferred lateral flank side assigned by squad slot (Left for even, Right for odd, None when solo).
+    /// </summary>
     public FlankSide PreferredSide => Partner == null ? FlankSide.None : squadSlot % 2 == 0 ? FlankSide.Left : FlankSide.Right;
+
+    /// <summary>
+    /// Returns true when this guard owns the current suppression turn or its partner is reloading or blind.
+    /// </summary>
     public bool CanFireNow
     {
         get
@@ -36,6 +51,10 @@ public class BossSquadMember : MonoBehaviour
             return OwnsSuppressionTurn(Time.time, squadSlot);
         }
     }
+
+    /// <summary>
+    /// Determines whether the given squad slot owns the active 1.3-second suppression window at clock time.
+    /// </summary>
     public static bool OwnsSuppressionTurn(float clock, int slot) => Mathf.FloorToInt(clock / 1.3f) % 2 == slot % 2;
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
@@ -67,6 +86,9 @@ public class BossSquadMember : MonoBehaviour
         ShareConfirmedObservation();
     }
 
+    /// <summary>
+    /// Broadcasts the player's confirmed position to the partner at most twice per second.
+    /// </summary>
     public bool ShareConfirmedObservation()
     {
         if (!Available || !ai.HasConfirmedVisualContact() || ai.PlayerTransform == null || Time.time < nextReportAt) return false;
@@ -80,6 +102,9 @@ public class BossSquadMember : MonoBehaviour
         return true;
     }
 
+    /// <summary>
+    /// Computes flank cost penalties for wrong-side selection (+8) and proximity to partner goal (+12).
+    /// </summary>
     public float FlankPenalty(Vector3 candidate, FlankSide side)
     {
         var partner = Partner;
