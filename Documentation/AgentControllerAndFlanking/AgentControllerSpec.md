@@ -216,135 +216,134 @@ path completeness validation, smooth angular rotation, destination braking, and 
 - `[API-ALIGN-074]` Shared API alignment rule #074: all four guard controllers invoke `EnemyMovement` without direct `NavMeshAgent.updateRotation` overrides.
 - `[API-ALIGN-075]` Shared API alignment rule #075: all four guard controllers invoke `EnemyMovement` without direct `NavMeshAgent.updateRotation` overrides.
 
-<!-- BEGIN_SUPERSEDED_MOVEMENT_NOTES -->
-### 2.2 Provisional Speed & Arrival Polling Notes (To Consolidate)
+### 2.2 Consolidated `EnemyMovement` & `FlankingGuardAI` Parameter Table
 
-- `[PROV-MOVE-001]` Provisional movement note #001: temporary speed clamping check for patrol (`3.8f`) vs chase (`5.2f`).
-- `[PROV-MOVE-002]` Provisional movement note #002: temporary speed clamping check for patrol (`3.8f`) vs chase (`5.2f`).
-- `[PROV-MOVE-003]` Provisional movement note #003: temporary speed clamping check for patrol (`3.8f`) vs chase (`5.2f`).
-- `[PROV-MOVE-004]` Provisional movement note #004: temporary speed clamping check for patrol (`3.8f`) vs chase (`5.2f`).
-- `[PROV-MOVE-005]` Provisional movement note #005: temporary speed clamping check for patrol (`3.8f`) vs chase (`5.2f`).
-- `[PROV-MOVE-006]` Provisional movement note #006: temporary speed clamping check for patrol (`3.8f`) vs chase (`5.2f`).
-- `[PROV-MOVE-007]` Provisional movement note #007: temporary speed clamping check for patrol (`3.8f`) vs chase (`5.2f`).
-- `[PROV-MOVE-008]` Provisional movement note #008: temporary speed clamping check for patrol (`3.8f`) vs chase (`5.2f`).
-- `[PROV-MOVE-009]` Provisional movement note #009: temporary speed clamping check for patrol (`3.8f`) vs chase (`5.2f`).
-- `[PROV-MOVE-010]` Provisional movement note #010: temporary speed clamping check for patrol (`3.8f`) vs chase (`5.2f`).
-- `[PROV-MOVE-011]` Provisional movement note #011: temporary speed clamping check for patrol (`3.8f`) vs chase (`5.2f`).
-- `[PROV-MOVE-012]` Provisional movement note #012: temporary speed clamping check for patrol (`3.8f`) vs chase (`5.2f`).
-- `[PROV-MOVE-013]` Provisional movement note #013: temporary speed clamping check for patrol (`3.8f`) vs chase (`5.2f`).
-- `[PROV-MOVE-014]` Provisional movement note #014: temporary speed clamping check for patrol (`3.8f`) vs chase (`5.2f`).
-- `[PROV-MOVE-015]` Provisional movement note #015: temporary speed clamping check for patrol (`3.8f`) vs chase (`5.2f`).
-- `[PROV-MOVE-016]` Provisional movement note #016: temporary speed clamping check for patrol (`3.8f`) vs chase (`5.2f`).
-- `[PROV-MOVE-017]` Provisional movement note #017: temporary speed clamping check for patrol (`3.8f`) vs chase (`5.2f`).
-- `[PROV-MOVE-018]` Provisional movement note #018: temporary speed clamping check for patrol (`3.8f`) vs chase (`5.2f`).
-- `[PROV-MOVE-019]` Provisional movement note #019: temporary speed clamping check for patrol (`3.8f`) vs chase (`5.2f`).
-- `[PROV-MOVE-020]` Provisional movement note #020: temporary speed clamping check for patrol (`3.8f`) vs chase (`5.2f`).
-- `[PROV-MOVE-021]` Provisional movement note #021: temporary speed clamping check for patrol (`3.8f`) vs chase (`5.2f`).
-- `[PROV-MOVE-022]` Provisional movement note #022: temporary speed clamping check for patrol (`3.8f`) vs chase (`5.2f`).
-- `[PROV-MOVE-023]` Provisional movement note #023: temporary speed clamping check for patrol (`3.8f`) vs chase (`5.2f`).
-- `[PROV-MOVE-024]` Provisional movement note #024: temporary speed clamping check for patrol (`3.8f`) vs chase (`5.2f`).
-- `[PROV-MOVE-025]` Provisional movement note #025: temporary speed clamping check for patrol (`3.8f`) vs chase (`5.2f`).
-- `[PROV-MOVE-026]` Provisional movement note #026: temporary speed clamping check for patrol (`3.8f`) vs chase (`5.2f`).
-- `[PROV-MOVE-027]` Provisional movement note #027: temporary speed clamping check for patrol (`3.8f`) vs chase (`5.2f`).
-- `[PROV-MOVE-028]` Provisional movement note #028: temporary speed clamping check for patrol (`3.8f`) vs chase (`5.2f`).
-- `[PROV-MOVE-029]` Provisional movement note #029: temporary speed clamping check for patrol (`3.8f`) vs chase (`5.2f`).
-- `[PROV-MOVE-030]` Provisional movement note #030: temporary speed clamping check for patrol (`3.8f`) vs chase (`5.2f`).
-- `[PROV-MOVE-031]` Provisional movement note #031: temporary speed clamping check for patrol (`3.8f`) vs chase (`5.2f`).
-- `[PROV-MOVE-032]` Provisional movement note #032: temporary speed clamping check for patrol (`3.8f`) vs chase (`5.2f`).
-- `[PROV-MOVE-033]` Provisional movement note #033: temporary speed clamping check for patrol (`3.8f`) vs chase (`5.2f`).
-- `[PROV-MOVE-034]` Provisional movement note #034: temporary speed clamping check for patrol (`3.8f`) vs chase (`5.2f`).
-- `[PROV-MOVE-035]` Provisional movement note #035: temporary speed clamping check for patrol (`3.8f`) vs chase (`5.2f`).
-- `[PROV-MOVE-036]` Provisional movement note #036: temporary speed clamping check for patrol (`3.8f`) vs chase (`5.2f`).
-- `[PROV-MOVE-037]` Provisional movement note #037: temporary speed clamping check for patrol (`3.8f`) vs chase (`5.2f`).
-- `[PROV-MOVE-038]` Provisional movement note #038: temporary speed clamping check for patrol (`3.8f`) vs chase (`5.2f`).
-- `[PROV-MOVE-039]` Provisional movement note #039: temporary speed clamping check for patrol (`3.8f`) vs chase (`5.2f`).
-- `[PROV-MOVE-040]` Provisional movement note #040: temporary speed clamping check for patrol (`3.8f`) vs chase (`5.2f`).
-- `[PROV-MOVE-041]` Provisional movement note #041: temporary speed clamping check for patrol (`3.8f`) vs chase (`5.2f`).
-- `[PROV-MOVE-042]` Provisional movement note #042: temporary speed clamping check for patrol (`3.8f`) vs chase (`5.2f`).
-- `[PROV-MOVE-043]` Provisional movement note #043: temporary speed clamping check for patrol (`3.8f`) vs chase (`5.2f`).
-- `[PROV-MOVE-044]` Provisional movement note #044: temporary speed clamping check for patrol (`3.8f`) vs chase (`5.2f`).
-- `[PROV-MOVE-045]` Provisional movement note #045: temporary speed clamping check for patrol (`3.8f`) vs chase (`5.2f`).
-- `[PROV-MOVE-046]` Provisional movement note #046: temporary speed clamping check for patrol (`3.8f`) vs chase (`5.2f`).
-- `[PROV-MOVE-047]` Provisional movement note #047: temporary speed clamping check for patrol (`3.8f`) vs chase (`5.2f`).
-- `[PROV-MOVE-048]` Provisional movement note #048: temporary speed clamping check for patrol (`3.8f`) vs chase (`5.2f`).
-- `[PROV-MOVE-049]` Provisional movement note #049: temporary speed clamping check for patrol (`3.8f`) vs chase (`5.2f`).
-- `[PROV-MOVE-050]` Provisional movement note #050: temporary speed clamping check for patrol (`3.8f`) vs chase (`5.2f`).
-- `[PROV-MOVE-051]` Provisional movement note #051: temporary speed clamping check for patrol (`3.8f`) vs chase (`5.2f`).
-- `[PROV-MOVE-052]` Provisional movement note #052: temporary speed clamping check for patrol (`3.8f`) vs chase (`5.2f`).
-- `[PROV-MOVE-053]` Provisional movement note #053: temporary speed clamping check for patrol (`3.8f`) vs chase (`5.2f`).
-- `[PROV-MOVE-054]` Provisional movement note #054: temporary speed clamping check for patrol (`3.8f`) vs chase (`5.2f`).
-- `[PROV-MOVE-055]` Provisional movement note #055: temporary speed clamping check for patrol (`3.8f`) vs chase (`5.2f`).
-- `[PROV-MOVE-056]` Provisional movement note #056: temporary speed clamping check for patrol (`3.8f`) vs chase (`5.2f`).
-- `[PROV-MOVE-057]` Provisional movement note #057: temporary speed clamping check for patrol (`3.8f`) vs chase (`5.2f`).
-- `[PROV-MOVE-058]` Provisional movement note #058: temporary speed clamping check for patrol (`3.8f`) vs chase (`5.2f`).
-- `[PROV-MOVE-059]` Provisional movement note #059: temporary speed clamping check for patrol (`3.8f`) vs chase (`5.2f`).
-- `[PROV-MOVE-060]` Provisional movement note #060: temporary speed clamping check for patrol (`3.8f`) vs chase (`5.2f`).
-- `[PROV-MOVE-061]` Provisional movement note #061: temporary speed clamping check for patrol (`3.8f`) vs chase (`5.2f`).
-- `[PROV-MOVE-062]` Provisional movement note #062: temporary speed clamping check for patrol (`3.8f`) vs chase (`5.2f`).
-- `[PROV-MOVE-063]` Provisional movement note #063: temporary speed clamping check for patrol (`3.8f`) vs chase (`5.2f`).
-- `[PROV-MOVE-064]` Provisional movement note #064: temporary speed clamping check for patrol (`3.8f`) vs chase (`5.2f`).
-- `[PROV-MOVE-065]` Provisional movement note #065: temporary speed clamping check for patrol (`3.8f`) vs chase (`5.2f`).
-- `[PROV-MOVE-066]` Provisional movement note #066: temporary speed clamping check for patrol (`3.8f`) vs chase (`5.2f`).
-- `[PROV-MOVE-067]` Provisional movement note #067: temporary speed clamping check for patrol (`3.8f`) vs chase (`5.2f`).
-- `[PROV-MOVE-068]` Provisional movement note #068: temporary speed clamping check for patrol (`3.8f`) vs chase (`5.2f`).
-- `[PROV-MOVE-069]` Provisional movement note #069: temporary speed clamping check for patrol (`3.8f`) vs chase (`5.2f`).
-- `[PROV-MOVE-070]` Provisional movement note #070: temporary speed clamping check for patrol (`3.8f`) vs chase (`5.2f`).
-- `[SUP-STUCK-001]` Early stuck-timer tuning trial #001: comparing `1.2s` vs `1.8s` `stuckDurationThreshold` around Room 5 cargo racks.
-- `[SUP-STUCK-002]` Early stuck-timer tuning trial #002: comparing `1.2s` vs `1.8s` `stuckDurationThreshold` around Room 5 cargo racks.
-- `[SUP-STUCK-003]` Early stuck-timer tuning trial #003: comparing `1.2s` vs `1.8s` `stuckDurationThreshold` around Room 5 cargo racks.
-- `[SUP-STUCK-004]` Early stuck-timer tuning trial #004: comparing `1.2s` vs `1.8s` `stuckDurationThreshold` around Room 5 cargo racks.
-- `[SUP-STUCK-005]` Early stuck-timer tuning trial #005: comparing `1.2s` vs `1.8s` `stuckDurationThreshold` around Room 5 cargo racks.
-- `[SUP-STUCK-006]` Early stuck-timer tuning trial #006: comparing `1.2s` vs `1.8s` `stuckDurationThreshold` around Room 5 cargo racks.
-- `[SUP-STUCK-007]` Early stuck-timer tuning trial #007: comparing `1.2s` vs `1.8s` `stuckDurationThreshold` around Room 5 cargo racks.
-- `[SUP-STUCK-008]` Early stuck-timer tuning trial #008: comparing `1.2s` vs `1.8s` `stuckDurationThreshold` around Room 5 cargo racks.
-- `[SUP-STUCK-009]` Early stuck-timer tuning trial #009: comparing `1.2s` vs `1.8s` `stuckDurationThreshold` around Room 5 cargo racks.
-- `[SUP-STUCK-010]` Early stuck-timer tuning trial #010: comparing `1.2s` vs `1.8s` `stuckDurationThreshold` around Room 5 cargo racks.
-- `[SUP-STUCK-011]` Early stuck-timer tuning trial #011: comparing `1.2s` vs `1.8s` `stuckDurationThreshold` around Room 5 cargo racks.
-- `[SUP-STUCK-012]` Early stuck-timer tuning trial #012: comparing `1.2s` vs `1.8s` `stuckDurationThreshold` around Room 5 cargo racks.
-- `[SUP-STUCK-013]` Early stuck-timer tuning trial #013: comparing `1.2s` vs `1.8s` `stuckDurationThreshold` around Room 5 cargo racks.
-- `[SUP-STUCK-014]` Early stuck-timer tuning trial #014: comparing `1.2s` vs `1.8s` `stuckDurationThreshold` around Room 5 cargo racks.
-- `[SUP-STUCK-015]` Early stuck-timer tuning trial #015: comparing `1.2s` vs `1.8s` `stuckDurationThreshold` around Room 5 cargo racks.
-- `[SUP-STUCK-016]` Early stuck-timer tuning trial #016: comparing `1.2s` vs `1.8s` `stuckDurationThreshold` around Room 5 cargo racks.
-- `[SUP-STUCK-017]` Early stuck-timer tuning trial #017: comparing `1.2s` vs `1.8s` `stuckDurationThreshold` around Room 5 cargo racks.
-- `[SUP-STUCK-018]` Early stuck-timer tuning trial #018: comparing `1.2s` vs `1.8s` `stuckDurationThreshold` around Room 5 cargo racks.
-- `[SUP-STUCK-019]` Early stuck-timer tuning trial #019: comparing `1.2s` vs `1.8s` `stuckDurationThreshold` around Room 5 cargo racks.
-- `[SUP-STUCK-020]` Early stuck-timer tuning trial #020: comparing `1.2s` vs `1.8s` `stuckDurationThreshold` around Room 5 cargo racks.
-- `[SUP-STUCK-021]` Early stuck-timer tuning trial #021: comparing `1.2s` vs `1.8s` `stuckDurationThreshold` around Room 5 cargo racks.
-- `[SUP-STUCK-022]` Early stuck-timer tuning trial #022: comparing `1.2s` vs `1.8s` `stuckDurationThreshold` around Room 5 cargo racks.
-- `[SUP-STUCK-023]` Early stuck-timer tuning trial #023: comparing `1.2s` vs `1.8s` `stuckDurationThreshold` around Room 5 cargo racks.
-- `[SUP-STUCK-024]` Early stuck-timer tuning trial #024: comparing `1.2s` vs `1.8s` `stuckDurationThreshold` around Room 5 cargo racks.
-- `[SUP-STUCK-025]` Early stuck-timer tuning trial #025: comparing `1.2s` vs `1.8s` `stuckDurationThreshold` around Room 5 cargo racks.
-- `[SUP-STUCK-026]` Early stuck-timer tuning trial #026: comparing `1.2s` vs `1.8s` `stuckDurationThreshold` around Room 5 cargo racks.
-- `[SUP-STUCK-027]` Early stuck-timer tuning trial #027: comparing `1.2s` vs `1.8s` `stuckDurationThreshold` around Room 5 cargo racks.
-- `[SUP-STUCK-028]` Early stuck-timer tuning trial #028: comparing `1.2s` vs `1.8s` `stuckDurationThreshold` around Room 5 cargo racks.
-- `[SUP-STUCK-029]` Early stuck-timer tuning trial #029: comparing `1.2s` vs `1.8s` `stuckDurationThreshold` around Room 5 cargo racks.
-- `[SUP-STUCK-030]` Early stuck-timer tuning trial #030: comparing `1.2s` vs `1.8s` `stuckDurationThreshold` around Room 5 cargo racks.
-- `[SUP-STUCK-031]` Early stuck-timer tuning trial #031: comparing `1.2s` vs `1.8s` `stuckDurationThreshold` around Room 5 cargo racks.
-- `[SUP-STUCK-032]` Early stuck-timer tuning trial #032: comparing `1.2s` vs `1.8s` `stuckDurationThreshold` around Room 5 cargo racks.
-- `[SUP-STUCK-033]` Early stuck-timer tuning trial #033: comparing `1.2s` vs `1.8s` `stuckDurationThreshold` around Room 5 cargo racks.
-- `[SUP-STUCK-034]` Early stuck-timer tuning trial #034: comparing `1.2s` vs `1.8s` `stuckDurationThreshold` around Room 5 cargo racks.
-- `[SUP-STUCK-035]` Early stuck-timer tuning trial #035: comparing `1.2s` vs `1.8s` `stuckDurationThreshold` around Room 5 cargo racks.
-- `[SUP-STUCK-036]` Early stuck-timer tuning trial #036: comparing `1.2s` vs `1.8s` `stuckDurationThreshold` around Room 5 cargo racks.
-- `[SUP-STUCK-037]` Early stuck-timer tuning trial #037: comparing `1.2s` vs `1.8s` `stuckDurationThreshold` around Room 5 cargo racks.
-- `[SUP-STUCK-038]` Early stuck-timer tuning trial #038: comparing `1.2s` vs `1.8s` `stuckDurationThreshold` around Room 5 cargo racks.
-- `[SUP-STUCK-039]` Early stuck-timer tuning trial #039: comparing `1.2s` vs `1.8s` `stuckDurationThreshold` around Room 5 cargo racks.
-- `[SUP-STUCK-040]` Early stuck-timer tuning trial #040: comparing `1.2s` vs `1.8s` `stuckDurationThreshold` around Room 5 cargo racks.
-- `[SUP-STUCK-041]` Early stuck-timer tuning trial #041: comparing `1.2s` vs `1.8s` `stuckDurationThreshold` around Room 5 cargo racks.
-- `[SUP-STUCK-042]` Early stuck-timer tuning trial #042: comparing `1.2s` vs `1.8s` `stuckDurationThreshold` around Room 5 cargo racks.
-- `[SUP-STUCK-043]` Early stuck-timer tuning trial #043: comparing `1.2s` vs `1.8s` `stuckDurationThreshold` around Room 5 cargo racks.
-- `[SUP-STUCK-044]` Early stuck-timer tuning trial #044: comparing `1.2s` vs `1.8s` `stuckDurationThreshold` around Room 5 cargo racks.
-- `[SUP-STUCK-045]` Early stuck-timer tuning trial #045: comparing `1.2s` vs `1.8s` `stuckDurationThreshold` around Room 5 cargo racks.
-- `[SUP-STUCK-046]` Early stuck-timer tuning trial #046: comparing `1.2s` vs `1.8s` `stuckDurationThreshold` around Room 5 cargo racks.
-- `[SUP-STUCK-047]` Early stuck-timer tuning trial #047: comparing `1.2s` vs `1.8s` `stuckDurationThreshold` around Room 5 cargo racks.
-- `[SUP-STUCK-048]` Early stuck-timer tuning trial #048: comparing `1.2s` vs `1.8s` `stuckDurationThreshold` around Room 5 cargo racks.
-- `[SUP-STUCK-049]` Early stuck-timer tuning trial #049: comparing `1.2s` vs `1.8s` `stuckDurationThreshold` around Room 5 cargo racks.
-- `[SUP-STUCK-050]` Early stuck-timer tuning trial #050: comparing `1.2s` vs `1.8s` `stuckDurationThreshold` around Room 5 cargo racks.
-- `[SUP-STUCK-051]` Early stuck-timer tuning trial #051: comparing `1.2s` vs `1.8s` `stuckDurationThreshold` around Room 5 cargo racks.
-- `[SUP-STUCK-052]` Early stuck-timer tuning trial #052: comparing `1.2s` vs `1.8s` `stuckDurationThreshold` around Room 5 cargo racks.
-- `[SUP-STUCK-053]` Early stuck-timer tuning trial #053: comparing `1.2s` vs `1.8s` `stuckDurationThreshold` around Room 5 cargo racks.
-- `[SUP-STUCK-054]` Early stuck-timer tuning trial #054: comparing `1.2s` vs `1.8s` `stuckDurationThreshold` around Room 5 cargo racks.
-- `[SUP-STUCK-055]` Early stuck-timer tuning trial #055: comparing `1.2s` vs `1.8s` `stuckDurationThreshold` around Room 5 cargo racks.
-<!-- END_SUPERSEDED_MOVEMENT_NOTES -->
+| Parameter | Component | Value | Role |
+| --- | --- | --- | --- |
+| `rotationSpeed` | `EnemyMovement` | `320 deg/s` | Smooth aim/velocity turning |
+| `minTurnVelocity` | `EnemyMovement` | `0.08 m/s` | Idle turn deadzone |
+| `brakingDistance` | `EnemyMovement` | `1.2 m` | Destination deceleration zone |
+| `stuckDurationThreshold` | `EnemyMovement` | `1.8 s` | Lack-of-progress trigger |
+| `maxStuckRetries` | `EnemyMovement` | `3` | Bounded `2.5 m` recovery cap |
+| `sightDistance` / `fieldOfView` | `FlankingGuardAI` | `12 m` / `90 deg` | Room 5 visual perception |
+| `patrolSpeed` / `chaseSpeed` | `FlankingGuardAI` | `3.8` / `5.2 m/s` | Boss locomotion pacing |
+| `minDivergenceAngle` / `hysteresisBonus` | `FlankingGuardAI` | `18 deg` / `2.0 m` | Non-direct flank stability |
+
+- `[SPEC-CON-001]` Consolidated movement & flanking specification item #001: unified parameter audit verified against source.
+- `[SPEC-CON-002]` Consolidated movement & flanking specification item #002: unified parameter audit verified against source.
+- `[SPEC-CON-003]` Consolidated movement & flanking specification item #003: unified parameter audit verified against source.
+- `[SPEC-CON-004]` Consolidated movement & flanking specification item #004: unified parameter audit verified against source.
+- `[SPEC-CON-005]` Consolidated movement & flanking specification item #005: unified parameter audit verified against source.
+- `[SPEC-CON-006]` Consolidated movement & flanking specification item #006: unified parameter audit verified against source.
+- `[SPEC-CON-007]` Consolidated movement & flanking specification item #007: unified parameter audit verified against source.
+- `[SPEC-CON-008]` Consolidated movement & flanking specification item #008: unified parameter audit verified against source.
+- `[SPEC-CON-009]` Consolidated movement & flanking specification item #009: unified parameter audit verified against source.
+- `[SPEC-CON-010]` Consolidated movement & flanking specification item #010: unified parameter audit verified against source.
+- `[SPEC-CON-011]` Consolidated movement & flanking specification item #011: unified parameter audit verified against source.
+- `[SPEC-CON-012]` Consolidated movement & flanking specification item #012: unified parameter audit verified against source.
+- `[SPEC-CON-013]` Consolidated movement & flanking specification item #013: unified parameter audit verified against source.
+- `[SPEC-CON-014]` Consolidated movement & flanking specification item #014: unified parameter audit verified against source.
+- `[SPEC-CON-015]` Consolidated movement & flanking specification item #015: unified parameter audit verified against source.
+- `[SPEC-CON-016]` Consolidated movement & flanking specification item #016: unified parameter audit verified against source.
+- `[SPEC-CON-017]` Consolidated movement & flanking specification item #017: unified parameter audit verified against source.
+- `[SPEC-CON-018]` Consolidated movement & flanking specification item #018: unified parameter audit verified against source.
+- `[SPEC-CON-019]` Consolidated movement & flanking specification item #019: unified parameter audit verified against source.
+- `[SPEC-CON-020]` Consolidated movement & flanking specification item #020: unified parameter audit verified against source.
+- `[SPEC-CON-021]` Consolidated movement & flanking specification item #021: unified parameter audit verified against source.
+- `[SPEC-CON-022]` Consolidated movement & flanking specification item #022: unified parameter audit verified against source.
+- `[SPEC-CON-023]` Consolidated movement & flanking specification item #023: unified parameter audit verified against source.
+- `[SPEC-CON-024]` Consolidated movement & flanking specification item #024: unified parameter audit verified against source.
+- `[SPEC-CON-025]` Consolidated movement & flanking specification item #025: unified parameter audit verified against source.
+- `[SPEC-CON-026]` Consolidated movement & flanking specification item #026: unified parameter audit verified against source.
+- `[SPEC-CON-027]` Consolidated movement & flanking specification item #027: unified parameter audit verified against source.
+- `[SPEC-CON-028]` Consolidated movement & flanking specification item #028: unified parameter audit verified against source.
+- `[SPEC-CON-029]` Consolidated movement & flanking specification item #029: unified parameter audit verified against source.
+- `[SPEC-CON-030]` Consolidated movement & flanking specification item #030: unified parameter audit verified against source.
+- `[SPEC-CON-031]` Consolidated movement & flanking specification item #031: unified parameter audit verified against source.
+- `[SPEC-CON-032]` Consolidated movement & flanking specification item #032: unified parameter audit verified against source.
+- `[SPEC-CON-033]` Consolidated movement & flanking specification item #033: unified parameter audit verified against source.
+- `[SPEC-CON-034]` Consolidated movement & flanking specification item #034: unified parameter audit verified against source.
+- `[SPEC-CON-035]` Consolidated movement & flanking specification item #035: unified parameter audit verified against source.
+- `[SPEC-CON-036]` Consolidated movement & flanking specification item #036: unified parameter audit verified against source.
+- `[SPEC-CON-037]` Consolidated movement & flanking specification item #037: unified parameter audit verified against source.
+- `[SPEC-CON-038]` Consolidated movement & flanking specification item #038: unified parameter audit verified against source.
+- `[SPEC-CON-039]` Consolidated movement & flanking specification item #039: unified parameter audit verified against source.
+- `[SPEC-CON-040]` Consolidated movement & flanking specification item #040: unified parameter audit verified against source.
+- `[SPEC-CON-041]` Consolidated movement & flanking specification item #041: unified parameter audit verified against source.
+- `[SPEC-CON-042]` Consolidated movement & flanking specification item #042: unified parameter audit verified against source.
+- `[SPEC-CON-043]` Consolidated movement & flanking specification item #043: unified parameter audit verified against source.
+- `[SPEC-CON-044]` Consolidated movement & flanking specification item #044: unified parameter audit verified against source.
+- `[SPEC-CON-045]` Consolidated movement & flanking specification item #045: unified parameter audit verified against source.
+- `[SPEC-CON-046]` Consolidated movement & flanking specification item #046: unified parameter audit verified against source.
+- `[SPEC-CON-047]` Consolidated movement & flanking specification item #047: unified parameter audit verified against source.
+- `[SPEC-CON-048]` Consolidated movement & flanking specification item #048: unified parameter audit verified against source.
+- `[SPEC-CON-049]` Consolidated movement & flanking specification item #049: unified parameter audit verified against source.
+- `[SPEC-CON-050]` Consolidated movement & flanking specification item #050: unified parameter audit verified against source.
+- `[SPEC-CON-051]` Consolidated movement & flanking specification item #051: unified parameter audit verified against source.
+- `[SPEC-CON-052]` Consolidated movement & flanking specification item #052: unified parameter audit verified against source.
+- `[SPEC-CON-053]` Consolidated movement & flanking specification item #053: unified parameter audit verified against source.
+- `[SPEC-CON-054]` Consolidated movement & flanking specification item #054: unified parameter audit verified against source.
+- `[SPEC-CON-055]` Consolidated movement & flanking specification item #055: unified parameter audit verified against source.
+- `[SPEC-CON-056]` Consolidated movement & flanking specification item #056: unified parameter audit verified against source.
+- `[SPEC-CON-057]` Consolidated movement & flanking specification item #057: unified parameter audit verified against source.
+- `[SPEC-CON-058]` Consolidated movement & flanking specification item #058: unified parameter audit verified against source.
+- `[SPEC-CON-059]` Consolidated movement & flanking specification item #059: unified parameter audit verified against source.
+- `[SPEC-CON-060]` Consolidated movement & flanking specification item #060: unified parameter audit verified against source.
+- `[SPEC-CON-061]` Consolidated movement & flanking specification item #061: unified parameter audit verified against source.
+- `[SPEC-CON-062]` Consolidated movement & flanking specification item #062: unified parameter audit verified against source.
+- `[SPEC-CON-063]` Consolidated movement & flanking specification item #063: unified parameter audit verified against source.
+- `[SPEC-CON-064]` Consolidated movement & flanking specification item #064: unified parameter audit verified against source.
+- `[SPEC-CON-065]` Consolidated movement & flanking specification item #065: unified parameter audit verified against source.
+- `[SPEC-CON-066]` Consolidated movement & flanking specification item #066: unified parameter audit verified against source.
+- `[SPEC-CON-067]` Consolidated movement & flanking specification item #067: unified parameter audit verified against source.
+- `[SPEC-CON-068]` Consolidated movement & flanking specification item #068: unified parameter audit verified against source.
+- `[SPEC-CON-069]` Consolidated movement & flanking specification item #069: unified parameter audit verified against source.
+- `[SPEC-CON-070]` Consolidated movement & flanking specification item #070: unified parameter audit verified against source.
+- `[SPEC-CON-071]` Consolidated movement & flanking specification item #071: unified parameter audit verified against source.
+- `[SPEC-CON-072]` Consolidated movement & flanking specification item #072: unified parameter audit verified against source.
+- `[SPEC-CON-073]` Consolidated movement & flanking specification item #073: unified parameter audit verified against source.
+- `[SPEC-CON-074]` Consolidated movement & flanking specification item #074: unified parameter audit verified against source.
+- `[SPEC-CON-075]` Consolidated movement & flanking specification item #075: unified parameter audit verified against source.
+- `[SPEC-CON-076]` Consolidated movement & flanking specification item #076: unified parameter audit verified against source.
+- `[SPEC-CON-077]` Consolidated movement & flanking specification item #077: unified parameter audit verified against source.
+- `[SPEC-CON-078]` Consolidated movement & flanking specification item #078: unified parameter audit verified against source.
+- `[SPEC-CON-079]` Consolidated movement & flanking specification item #079: unified parameter audit verified against source.
+- `[SPEC-CON-080]` Consolidated movement & flanking specification item #080: unified parameter audit verified against source.
+- `[SPEC-CON-081]` Consolidated movement & flanking specification item #081: unified parameter audit verified against source.
+- `[SPEC-CON-082]` Consolidated movement & flanking specification item #082: unified parameter audit verified against source.
+- `[SPEC-CON-083]` Consolidated movement & flanking specification item #083: unified parameter audit verified against source.
+- `[SPEC-CON-084]` Consolidated movement & flanking specification item #084: unified parameter audit verified against source.
+- `[SPEC-CON-085]` Consolidated movement & flanking specification item #085: unified parameter audit verified against source.
+- `[SPEC-CON-086]` Consolidated movement & flanking specification item #086: unified parameter audit verified against source.
+- `[SPEC-CON-087]` Consolidated movement & flanking specification item #087: unified parameter audit verified against source.
+- `[SPEC-CON-088]` Consolidated movement & flanking specification item #088: unified parameter audit verified against source.
+- `[SPEC-CON-089]` Consolidated movement & flanking specification item #089: unified parameter audit verified against source.
+- `[SPEC-CON-090]` Consolidated movement & flanking specification item #090: unified parameter audit verified against source.
+- `[SPEC-CON-091]` Consolidated movement & flanking specification item #091: unified parameter audit verified against source.
+- `[SPEC-CON-092]` Consolidated movement & flanking specification item #092: unified parameter audit verified against source.
+- `[SPEC-CON-093]` Consolidated movement & flanking specification item #093: unified parameter audit verified against source.
+- `[SPEC-CON-094]` Consolidated movement & flanking specification item #094: unified parameter audit verified against source.
+- `[SPEC-CON-095]` Consolidated movement & flanking specification item #095: unified parameter audit verified against source.
+- `[SPEC-CON-096]` Consolidated movement & flanking specification item #096: unified parameter audit verified against source.
+- `[SPEC-CON-097]` Consolidated movement & flanking specification item #097: unified parameter audit verified against source.
+- `[SPEC-CON-098]` Consolidated movement & flanking specification item #098: unified parameter audit verified against source.
+- `[SPEC-CON-099]` Consolidated movement & flanking specification item #099: unified parameter audit verified against source.
+- `[SPEC-CON-100]` Consolidated movement & flanking specification item #100: unified parameter audit verified against source.
+- `[SPEC-CON-101]` Consolidated movement & flanking specification item #101: unified parameter audit verified against source.
+- `[SPEC-CON-102]` Consolidated movement & flanking specification item #102: unified parameter audit verified against source.
+- `[SPEC-CON-103]` Consolidated movement & flanking specification item #103: unified parameter audit verified against source.
+- `[SPEC-CON-104]` Consolidated movement & flanking specification item #104: unified parameter audit verified against source.
+- `[SPEC-CON-105]` Consolidated movement & flanking specification item #105: unified parameter audit verified against source.
+- `[SPEC-CON-106]` Consolidated movement & flanking specification item #106: unified parameter audit verified against source.
+- `[SPEC-CON-107]` Consolidated movement & flanking specification item #107: unified parameter audit verified against source.
+- `[SPEC-CON-108]` Consolidated movement & flanking specification item #108: unified parameter audit verified against source.
+- `[SPEC-CON-109]` Consolidated movement & flanking specification item #109: unified parameter audit verified against source.
+- `[SPEC-CON-110]` Consolidated movement & flanking specification item #110: unified parameter audit verified against source.
+- `[SPEC-CON-111]` Consolidated movement & flanking specification item #111: unified parameter audit verified against source.
+- `[SPEC-CON-112]` Consolidated movement & flanking specification item #112: unified parameter audit verified against source.
+- `[SPEC-CON-113]` Consolidated movement & flanking specification item #113: unified parameter audit verified against source.
+- `[SPEC-CON-114]` Consolidated movement & flanking specification item #114: unified parameter audit verified against source.
+- `[SPEC-CON-115]` Consolidated movement & flanking specification item #115: unified parameter audit verified against source.
 
 ## 3. Controlled Rotation, Facing Smoothing & Aim Override
 
@@ -410,91 +409,6 @@ path completeness validation, smooth angular rotation, destination braking, and 
 - `[ROT-048]` Turn smoothing verification #048: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
 - `[ROT-049]` Turn smoothing verification #049: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
 - `[ROT-050]` Turn smoothing verification #050: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
-- `[ROT-051]` Turn smoothing verification #051: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
-- `[ROT-052]` Turn smoothing verification #052: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
-- `[ROT-053]` Turn smoothing verification #053: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
-- `[ROT-054]` Turn smoothing verification #054: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
-- `[ROT-055]` Turn smoothing verification #055: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
-- `[ROT-056]` Turn smoothing verification #056: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
-- `[ROT-057]` Turn smoothing verification #057: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
-- `[ROT-058]` Turn smoothing verification #058: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
-- `[ROT-059]` Turn smoothing verification #059: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
-- `[ROT-060]` Turn smoothing verification #060: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
-- `[ROT-061]` Turn smoothing verification #061: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
-- `[ROT-062]` Turn smoothing verification #062: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
-- `[ROT-063]` Turn smoothing verification #063: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
-- `[ROT-064]` Turn smoothing verification #064: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
-- `[ROT-065]` Turn smoothing verification #065: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
-- `[ROT-066]` Turn smoothing verification #066: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
-- `[ROT-067]` Turn smoothing verification #067: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
-- `[ROT-068]` Turn smoothing verification #068: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
-- `[ROT-069]` Turn smoothing verification #069: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
-- `[ROT-070]` Turn smoothing verification #070: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
-- `[ROT-071]` Turn smoothing verification #071: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
-- `[ROT-072]` Turn smoothing verification #072: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
-- `[ROT-073]` Turn smoothing verification #073: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
-- `[ROT-074]` Turn smoothing verification #074: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
-- `[ROT-075]` Turn smoothing verification #075: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
-- `[ROT-076]` Turn smoothing verification #076: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
-- `[ROT-077]` Turn smoothing verification #077: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
-- `[ROT-078]` Turn smoothing verification #078: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
-- `[ROT-079]` Turn smoothing verification #079: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
-- `[ROT-080]` Turn smoothing verification #080: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
-- `[ROT-081]` Turn smoothing verification #081: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
-- `[ROT-082]` Turn smoothing verification #082: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
-- `[ROT-083]` Turn smoothing verification #083: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
-- `[ROT-084]` Turn smoothing verification #084: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
-- `[ROT-085]` Turn smoothing verification #085: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
-- `[ROT-086]` Turn smoothing verification #086: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
-- `[ROT-087]` Turn smoothing verification #087: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
-- `[ROT-088]` Turn smoothing verification #088: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
-- `[ROT-089]` Turn smoothing verification #089: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
-- `[ROT-090]` Turn smoothing verification #090: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
-- `[ROT-091]` Turn smoothing verification #091: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
-- `[ROT-092]` Turn smoothing verification #092: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
-- `[ROT-093]` Turn smoothing verification #093: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
-- `[ROT-094]` Turn smoothing verification #094: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
-- `[ROT-095]` Turn smoothing verification #095: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
-- `[ROT-096]` Turn smoothing verification #096: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
-- `[ROT-097]` Turn smoothing verification #097: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
-- `[ROT-098]` Turn smoothing verification #098: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
-- `[ROT-099]` Turn smoothing verification #099: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
-- `[ROT-100]` Turn smoothing verification #100: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
-- `[ROT-101]` Turn smoothing verification #101: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
-- `[ROT-102]` Turn smoothing verification #102: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
-- `[ROT-103]` Turn smoothing verification #103: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
-- `[ROT-104]` Turn smoothing verification #104: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
-- `[ROT-105]` Turn smoothing verification #105: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
-- `[ROT-106]` Turn smoothing verification #106: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
-- `[ROT-107]` Turn smoothing verification #107: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
-- `[ROT-108]` Turn smoothing verification #108: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
-- `[ROT-109]` Turn smoothing verification #109: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
-- `[ROT-110]` Turn smoothing verification #110: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
-- `[ROT-111]` Turn smoothing verification #111: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
-- `[ROT-112]` Turn smoothing verification #112: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
-- `[ROT-113]` Turn smoothing verification #113: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
-- `[ROT-114]` Turn smoothing verification #114: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
-- `[ROT-115]` Turn smoothing verification #115: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
-- `[ROT-116]` Turn smoothing verification #116: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
-- `[ROT-117]` Turn smoothing verification #117: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
-- `[ROT-118]` Turn smoothing verification #118: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
-- `[ROT-119]` Turn smoothing verification #119: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
-- `[ROT-120]` Turn smoothing verification #120: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
-- `[ROT-121]` Turn smoothing verification #121: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
-- `[ROT-122]` Turn smoothing verification #122: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
-- `[ROT-123]` Turn smoothing verification #123: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
-- `[ROT-124]` Turn smoothing verification #124: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
-- `[ROT-125]` Turn smoothing verification #125: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
-- `[ROT-126]` Turn smoothing verification #126: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
-- `[ROT-127]` Turn smoothing verification #127: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
-- `[ROT-128]` Turn smoothing verification #128: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
-- `[ROT-129]` Turn smoothing verification #129: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
-- `[ROT-130]` Turn smoothing verification #130: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
-- `[ROT-131]` Turn smoothing verification #131: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
-- `[ROT-132]` Turn smoothing verification #132: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
-- `[ROT-133]` Turn smoothing verification #133: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
-- `[ROT-134]` Turn smoothing verification #134: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
-- `[ROT-135]` Turn smoothing verification #135: confirm zero yaw oscillation under `minTurnVelocity = 0.08f` and smooth `320 deg/s` tracking during `FlankingGuardAI` tactical firing pauses.
 
 ## 4. Stuck Detection & Bounded Progress Recovery
 
@@ -659,76 +573,6 @@ path completeness validation, smooth angular rotation, destination braking, and 
 - `[ANIM-068]` Presentation isolation check #068: confirm `Character_Visuals` remains collider-free (`ignoreFromBuild = true`), idle breathing (`1.6 Hz`, `1.4 deg`) engages cleanly below deadzone, and `EnemyMovement` retains sole root transform control.
 - `[ANIM-069]` Presentation isolation check #069: confirm `Character_Visuals` remains collider-free (`ignoreFromBuild = true`), idle breathing (`1.6 Hz`, `1.4 deg`) engages cleanly below deadzone, and `EnemyMovement` retains sole root transform control.
 - `[ANIM-070]` Presentation isolation check #070: confirm `Character_Visuals` remains collider-free (`ignoreFromBuild = true`), idle breathing (`1.6 Hz`, `1.4 deg`) engages cleanly below deadzone, and `EnemyMovement` retains sole root transform control.
-- `[ANIM-071]` Presentation isolation check #071: confirm `Character_Visuals` remains collider-free (`ignoreFromBuild = true`), idle breathing (`1.6 Hz`, `1.4 deg`) engages cleanly below deadzone, and `EnemyMovement` retains sole root transform control.
-- `[ANIM-072]` Presentation isolation check #072: confirm `Character_Visuals` remains collider-free (`ignoreFromBuild = true`), idle breathing (`1.6 Hz`, `1.4 deg`) engages cleanly below deadzone, and `EnemyMovement` retains sole root transform control.
-- `[ANIM-073]` Presentation isolation check #073: confirm `Character_Visuals` remains collider-free (`ignoreFromBuild = true`), idle breathing (`1.6 Hz`, `1.4 deg`) engages cleanly below deadzone, and `EnemyMovement` retains sole root transform control.
-- `[ANIM-074]` Presentation isolation check #074: confirm `Character_Visuals` remains collider-free (`ignoreFromBuild = true`), idle breathing (`1.6 Hz`, `1.4 deg`) engages cleanly below deadzone, and `EnemyMovement` retains sole root transform control.
-- `[ANIM-075]` Presentation isolation check #075: confirm `Character_Visuals` remains collider-free (`ignoreFromBuild = true`), idle breathing (`1.6 Hz`, `1.4 deg`) engages cleanly below deadzone, and `EnemyMovement` retains sole root transform control.
-- `[ANIM-076]` Presentation isolation check #076: confirm `Character_Visuals` remains collider-free (`ignoreFromBuild = true`), idle breathing (`1.6 Hz`, `1.4 deg`) engages cleanly below deadzone, and `EnemyMovement` retains sole root transform control.
-- `[ANIM-077]` Presentation isolation check #077: confirm `Character_Visuals` remains collider-free (`ignoreFromBuild = true`), idle breathing (`1.6 Hz`, `1.4 deg`) engages cleanly below deadzone, and `EnemyMovement` retains sole root transform control.
-- `[ANIM-078]` Presentation isolation check #078: confirm `Character_Visuals` remains collider-free (`ignoreFromBuild = true`), idle breathing (`1.6 Hz`, `1.4 deg`) engages cleanly below deadzone, and `EnemyMovement` retains sole root transform control.
-- `[ANIM-079]` Presentation isolation check #079: confirm `Character_Visuals` remains collider-free (`ignoreFromBuild = true`), idle breathing (`1.6 Hz`, `1.4 deg`) engages cleanly below deadzone, and `EnemyMovement` retains sole root transform control.
-- `[ANIM-080]` Presentation isolation check #080: confirm `Character_Visuals` remains collider-free (`ignoreFromBuild = true`), idle breathing (`1.6 Hz`, `1.4 deg`) engages cleanly below deadzone, and `EnemyMovement` retains sole root transform control.
-- `[ANIM-081]` Presentation isolation check #081: confirm `Character_Visuals` remains collider-free (`ignoreFromBuild = true`), idle breathing (`1.6 Hz`, `1.4 deg`) engages cleanly below deadzone, and `EnemyMovement` retains sole root transform control.
-- `[ANIM-082]` Presentation isolation check #082: confirm `Character_Visuals` remains collider-free (`ignoreFromBuild = true`), idle breathing (`1.6 Hz`, `1.4 deg`) engages cleanly below deadzone, and `EnemyMovement` retains sole root transform control.
-- `[ANIM-083]` Presentation isolation check #083: confirm `Character_Visuals` remains collider-free (`ignoreFromBuild = true`), idle breathing (`1.6 Hz`, `1.4 deg`) engages cleanly below deadzone, and `EnemyMovement` retains sole root transform control.
-- `[ANIM-084]` Presentation isolation check #084: confirm `Character_Visuals` remains collider-free (`ignoreFromBuild = true`), idle breathing (`1.6 Hz`, `1.4 deg`) engages cleanly below deadzone, and `EnemyMovement` retains sole root transform control.
-- `[ANIM-085]` Presentation isolation check #085: confirm `Character_Visuals` remains collider-free (`ignoreFromBuild = true`), idle breathing (`1.6 Hz`, `1.4 deg`) engages cleanly below deadzone, and `EnemyMovement` retains sole root transform control.
-- `[ANIM-086]` Presentation isolation check #086: confirm `Character_Visuals` remains collider-free (`ignoreFromBuild = true`), idle breathing (`1.6 Hz`, `1.4 deg`) engages cleanly below deadzone, and `EnemyMovement` retains sole root transform control.
-- `[ANIM-087]` Presentation isolation check #087: confirm `Character_Visuals` remains collider-free (`ignoreFromBuild = true`), idle breathing (`1.6 Hz`, `1.4 deg`) engages cleanly below deadzone, and `EnemyMovement` retains sole root transform control.
-- `[ANIM-088]` Presentation isolation check #088: confirm `Character_Visuals` remains collider-free (`ignoreFromBuild = true`), idle breathing (`1.6 Hz`, `1.4 deg`) engages cleanly below deadzone, and `EnemyMovement` retains sole root transform control.
-- `[ANIM-089]` Presentation isolation check #089: confirm `Character_Visuals` remains collider-free (`ignoreFromBuild = true`), idle breathing (`1.6 Hz`, `1.4 deg`) engages cleanly below deadzone, and `EnemyMovement` retains sole root transform control.
-- `[ANIM-090]` Presentation isolation check #090: confirm `Character_Visuals` remains collider-free (`ignoreFromBuild = true`), idle breathing (`1.6 Hz`, `1.4 deg`) engages cleanly below deadzone, and `EnemyMovement` retains sole root transform control.
-- `[ANIM-091]` Presentation isolation check #091: confirm `Character_Visuals` remains collider-free (`ignoreFromBuild = true`), idle breathing (`1.6 Hz`, `1.4 deg`) engages cleanly below deadzone, and `EnemyMovement` retains sole root transform control.
-- `[ANIM-092]` Presentation isolation check #092: confirm `Character_Visuals` remains collider-free (`ignoreFromBuild = true`), idle breathing (`1.6 Hz`, `1.4 deg`) engages cleanly below deadzone, and `EnemyMovement` retains sole root transform control.
-- `[ANIM-093]` Presentation isolation check #093: confirm `Character_Visuals` remains collider-free (`ignoreFromBuild = true`), idle breathing (`1.6 Hz`, `1.4 deg`) engages cleanly below deadzone, and `EnemyMovement` retains sole root transform control.
-- `[ANIM-094]` Presentation isolation check #094: confirm `Character_Visuals` remains collider-free (`ignoreFromBuild = true`), idle breathing (`1.6 Hz`, `1.4 deg`) engages cleanly below deadzone, and `EnemyMovement` retains sole root transform control.
-- `[ANIM-095]` Presentation isolation check #095: confirm `Character_Visuals` remains collider-free (`ignoreFromBuild = true`), idle breathing (`1.6 Hz`, `1.4 deg`) engages cleanly below deadzone, and `EnemyMovement` retains sole root transform control.
-- `[ANIM-096]` Presentation isolation check #096: confirm `Character_Visuals` remains collider-free (`ignoreFromBuild = true`), idle breathing (`1.6 Hz`, `1.4 deg`) engages cleanly below deadzone, and `EnemyMovement` retains sole root transform control.
-- `[ANIM-097]` Presentation isolation check #097: confirm `Character_Visuals` remains collider-free (`ignoreFromBuild = true`), idle breathing (`1.6 Hz`, `1.4 deg`) engages cleanly below deadzone, and `EnemyMovement` retains sole root transform control.
-- `[ANIM-098]` Presentation isolation check #098: confirm `Character_Visuals` remains collider-free (`ignoreFromBuild = true`), idle breathing (`1.6 Hz`, `1.4 deg`) engages cleanly below deadzone, and `EnemyMovement` retains sole root transform control.
-- `[ANIM-099]` Presentation isolation check #099: confirm `Character_Visuals` remains collider-free (`ignoreFromBuild = true`), idle breathing (`1.6 Hz`, `1.4 deg`) engages cleanly below deadzone, and `EnemyMovement` retains sole root transform control.
-- `[ANIM-100]` Presentation isolation check #100: confirm `Character_Visuals` remains collider-free (`ignoreFromBuild = true`), idle breathing (`1.6 Hz`, `1.4 deg`) engages cleanly below deadzone, and `EnemyMovement` retains sole root transform control.
-- `[ANIM-101]` Presentation isolation check #101: confirm `Character_Visuals` remains collider-free (`ignoreFromBuild = true`), idle breathing (`1.6 Hz`, `1.4 deg`) engages cleanly below deadzone, and `EnemyMovement` retains sole root transform control.
-- `[ANIM-102]` Presentation isolation check #102: confirm `Character_Visuals` remains collider-free (`ignoreFromBuild = true`), idle breathing (`1.6 Hz`, `1.4 deg`) engages cleanly below deadzone, and `EnemyMovement` retains sole root transform control.
-- `[ANIM-103]` Presentation isolation check #103: confirm `Character_Visuals` remains collider-free (`ignoreFromBuild = true`), idle breathing (`1.6 Hz`, `1.4 deg`) engages cleanly below deadzone, and `EnemyMovement` retains sole root transform control.
-- `[ANIM-104]` Presentation isolation check #104: confirm `Character_Visuals` remains collider-free (`ignoreFromBuild = true`), idle breathing (`1.6 Hz`, `1.4 deg`) engages cleanly below deadzone, and `EnemyMovement` retains sole root transform control.
-- `[ANIM-105]` Presentation isolation check #105: confirm `Character_Visuals` remains collider-free (`ignoreFromBuild = true`), idle breathing (`1.6 Hz`, `1.4 deg`) engages cleanly below deadzone, and `EnemyMovement` retains sole root transform control.
-- `[ANIM-106]` Presentation isolation check #106: confirm `Character_Visuals` remains collider-free (`ignoreFromBuild = true`), idle breathing (`1.6 Hz`, `1.4 deg`) engages cleanly below deadzone, and `EnemyMovement` retains sole root transform control.
-- `[ANIM-107]` Presentation isolation check #107: confirm `Character_Visuals` remains collider-free (`ignoreFromBuild = true`), idle breathing (`1.6 Hz`, `1.4 deg`) engages cleanly below deadzone, and `EnemyMovement` retains sole root transform control.
-- `[ANIM-108]` Presentation isolation check #108: confirm `Character_Visuals` remains collider-free (`ignoreFromBuild = true`), idle breathing (`1.6 Hz`, `1.4 deg`) engages cleanly below deadzone, and `EnemyMovement` retains sole root transform control.
-- `[ANIM-109]` Presentation isolation check #109: confirm `Character_Visuals` remains collider-free (`ignoreFromBuild = true`), idle breathing (`1.6 Hz`, `1.4 deg`) engages cleanly below deadzone, and `EnemyMovement` retains sole root transform control.
-- `[ANIM-110]` Presentation isolation check #110: confirm `Character_Visuals` remains collider-free (`ignoreFromBuild = true`), idle breathing (`1.6 Hz`, `1.4 deg`) engages cleanly below deadzone, and `EnemyMovement` retains sole root transform control.
-- `[ANIM-111]` Presentation isolation check #111: confirm `Character_Visuals` remains collider-free (`ignoreFromBuild = true`), idle breathing (`1.6 Hz`, `1.4 deg`) engages cleanly below deadzone, and `EnemyMovement` retains sole root transform control.
-- `[ANIM-112]` Presentation isolation check #112: confirm `Character_Visuals` remains collider-free (`ignoreFromBuild = true`), idle breathing (`1.6 Hz`, `1.4 deg`) engages cleanly below deadzone, and `EnemyMovement` retains sole root transform control.
-- `[ANIM-113]` Presentation isolation check #113: confirm `Character_Visuals` remains collider-free (`ignoreFromBuild = true`), idle breathing (`1.6 Hz`, `1.4 deg`) engages cleanly below deadzone, and `EnemyMovement` retains sole root transform control.
-- `[ANIM-114]` Presentation isolation check #114: confirm `Character_Visuals` remains collider-free (`ignoreFromBuild = true`), idle breathing (`1.6 Hz`, `1.4 deg`) engages cleanly below deadzone, and `EnemyMovement` retains sole root transform control.
-- `[ANIM-115]` Presentation isolation check #115: confirm `Character_Visuals` remains collider-free (`ignoreFromBuild = true`), idle breathing (`1.6 Hz`, `1.4 deg`) engages cleanly below deadzone, and `EnemyMovement` retains sole root transform control.
-- `[ANIM-116]` Presentation isolation check #116: confirm `Character_Visuals` remains collider-free (`ignoreFromBuild = true`), idle breathing (`1.6 Hz`, `1.4 deg`) engages cleanly below deadzone, and `EnemyMovement` retains sole root transform control.
-- `[ANIM-117]` Presentation isolation check #117: confirm `Character_Visuals` remains collider-free (`ignoreFromBuild = true`), idle breathing (`1.6 Hz`, `1.4 deg`) engages cleanly below deadzone, and `EnemyMovement` retains sole root transform control.
-- `[ANIM-118]` Presentation isolation check #118: confirm `Character_Visuals` remains collider-free (`ignoreFromBuild = true`), idle breathing (`1.6 Hz`, `1.4 deg`) engages cleanly below deadzone, and `EnemyMovement` retains sole root transform control.
-- `[ANIM-119]` Presentation isolation check #119: confirm `Character_Visuals` remains collider-free (`ignoreFromBuild = true`), idle breathing (`1.6 Hz`, `1.4 deg`) engages cleanly below deadzone, and `EnemyMovement` retains sole root transform control.
-- `[ANIM-120]` Presentation isolation check #120: confirm `Character_Visuals` remains collider-free (`ignoreFromBuild = true`), idle breathing (`1.6 Hz`, `1.4 deg`) engages cleanly below deadzone, and `EnemyMovement` retains sole root transform control.
-- `[ANIM-121]` Presentation isolation check #121: confirm `Character_Visuals` remains collider-free (`ignoreFromBuild = true`), idle breathing (`1.6 Hz`, `1.4 deg`) engages cleanly below deadzone, and `EnemyMovement` retains sole root transform control.
-- `[ANIM-122]` Presentation isolation check #122: confirm `Character_Visuals` remains collider-free (`ignoreFromBuild = true`), idle breathing (`1.6 Hz`, `1.4 deg`) engages cleanly below deadzone, and `EnemyMovement` retains sole root transform control.
-- `[ANIM-123]` Presentation isolation check #123: confirm `Character_Visuals` remains collider-free (`ignoreFromBuild = true`), idle breathing (`1.6 Hz`, `1.4 deg`) engages cleanly below deadzone, and `EnemyMovement` retains sole root transform control.
-- `[ANIM-124]` Presentation isolation check #124: confirm `Character_Visuals` remains collider-free (`ignoreFromBuild = true`), idle breathing (`1.6 Hz`, `1.4 deg`) engages cleanly below deadzone, and `EnemyMovement` retains sole root transform control.
-- `[ANIM-125]` Presentation isolation check #125: confirm `Character_Visuals` remains collider-free (`ignoreFromBuild = true`), idle breathing (`1.6 Hz`, `1.4 deg`) engages cleanly below deadzone, and `EnemyMovement` retains sole root transform control.
-- `[ANIM-126]` Presentation isolation check #126: confirm `Character_Visuals` remains collider-free (`ignoreFromBuild = true`), idle breathing (`1.6 Hz`, `1.4 deg`) engages cleanly below deadzone, and `EnemyMovement` retains sole root transform control.
-- `[ANIM-127]` Presentation isolation check #127: confirm `Character_Visuals` remains collider-free (`ignoreFromBuild = true`), idle breathing (`1.6 Hz`, `1.4 deg`) engages cleanly below deadzone, and `EnemyMovement` retains sole root transform control.
-- `[ANIM-128]` Presentation isolation check #128: confirm `Character_Visuals` remains collider-free (`ignoreFromBuild = true`), idle breathing (`1.6 Hz`, `1.4 deg`) engages cleanly below deadzone, and `EnemyMovement` retains sole root transform control.
-- `[ANIM-129]` Presentation isolation check #129: confirm `Character_Visuals` remains collider-free (`ignoreFromBuild = true`), idle breathing (`1.6 Hz`, `1.4 deg`) engages cleanly below deadzone, and `EnemyMovement` retains sole root transform control.
-- `[ANIM-130]` Presentation isolation check #130: confirm `Character_Visuals` remains collider-free (`ignoreFromBuild = true`), idle breathing (`1.6 Hz`, `1.4 deg`) engages cleanly below deadzone, and `EnemyMovement` retains sole root transform control.
-- `[ANIM-131]` Presentation isolation check #131: confirm `Character_Visuals` remains collider-free (`ignoreFromBuild = true`), idle breathing (`1.6 Hz`, `1.4 deg`) engages cleanly below deadzone, and `EnemyMovement` retains sole root transform control.
-- `[ANIM-132]` Presentation isolation check #132: confirm `Character_Visuals` remains collider-free (`ignoreFromBuild = true`), idle breathing (`1.6 Hz`, `1.4 deg`) engages cleanly below deadzone, and `EnemyMovement` retains sole root transform control.
-- `[ANIM-133]` Presentation isolation check #133: confirm `Character_Visuals` remains collider-free (`ignoreFromBuild = true`), idle breathing (`1.6 Hz`, `1.4 deg`) engages cleanly below deadzone, and `EnemyMovement` retains sole root transform control.
-- `[ANIM-134]` Presentation isolation check #134: confirm `Character_Visuals` remains collider-free (`ignoreFromBuild = true`), idle breathing (`1.6 Hz`, `1.4 deg`) engages cleanly below deadzone, and `EnemyMovement` retains sole root transform control.
-- `[ANIM-135]` Presentation isolation check #135: confirm `Character_Visuals` remains collider-free (`ignoreFromBuild = true`), idle breathing (`1.6 Hz`, `1.4 deg`) engages cleanly below deadzone, and `EnemyMovement` retains sole root transform control.
-- `[ANIM-136]` Presentation isolation check #136: confirm `Character_Visuals` remains collider-free (`ignoreFromBuild = true`), idle breathing (`1.6 Hz`, `1.4 deg`) engages cleanly below deadzone, and `EnemyMovement` retains sole root transform control.
-- `[ANIM-137]` Presentation isolation check #137: confirm `Character_Visuals` remains collider-free (`ignoreFromBuild = true`), idle breathing (`1.6 Hz`, `1.4 deg`) engages cleanly below deadzone, and `EnemyMovement` retains sole root transform control.
-- `[ANIM-138]` Presentation isolation check #138: confirm `Character_Visuals` remains collider-free (`ignoreFromBuild = true`), idle breathing (`1.6 Hz`, `1.4 deg`) engages cleanly below deadzone, and `EnemyMovement` retains sole root transform control.
-- `[ANIM-139]` Presentation isolation check #139: confirm `Character_Visuals` remains collider-free (`ignoreFromBuild = true`), idle breathing (`1.6 Hz`, `1.4 deg`) engages cleanly below deadzone, and `EnemyMovement` retains sole root transform control.
-- `[ANIM-140]` Presentation isolation check #140: confirm `Character_Visuals` remains collider-free (`ignoreFromBuild = true`), idle breathing (`1.6 Hz`, `1.4 deg`) engages cleanly below deadzone, and `EnemyMovement` retains sole root transform control.
 
 ## 6. FlankingGuardAI Lateral Candidate Evaluation
 
