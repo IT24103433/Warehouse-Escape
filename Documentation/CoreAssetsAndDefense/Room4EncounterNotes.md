@@ -126,5 +126,51 @@ pursued across room boundaries, matching the Route B fairness specification.
   (`8` mag / `12` reserve, `12 x 6` pellets, `24 dmg` per head pellet, `N_26P.wav` report).
 <!-- END:R4_SHOTGUN_BALANCE -->
 <!-- SECTION:R4_TRAPS_AND_CARD_B -->
+## 6. Room 4 Shock Pad Trap Placement & Access Card B Defense Flow
+
+### 6.1 `Room4_Shock` (`WarehouseTrap.cs` & `SetupWarehouseTrapsAndSquad.cs`)
+
+- **Exact Coordinates:** `Room4_Shock` placed at `(17.0, 0.0, 5.0)`, positioned right beside
+  `Defensive_Barrier_Center` (`16.0, 0.0, 5.0`) along the central-east lane.
+- **Telegraphed Lifecycle:**
+
+| Phase | Visual Color | Duration | Damage / AI Effect |
+| --- | --- | --- | --- |
+| `Ready` | Blue plate | Until overlap | Trigger-only `BoxCollider` (`isTrigger = true`); zero NavMesh block |
+| `Warning` | Amber plate | `1.25 s` | Emits `SoundType.Alarm` (`28.0 m`) -> triggers `HandleDisturbance` |
+| `Active` | Red plate | `1.00 s` | Deals `15 HP` pulse every `0.5 s` to `Health.IsPlayer` (guards immune) |
+| `Cooldown` | Grey plate | `5.00 s` | Safe crossing until `ResetTrap()` returns to `Ready` |
+
+- **Guard Synergy:** `Room4_Shock`'s `28 m` alarm originates at `(17, 0, 5)` — only `3.16 m`
+  from Aqqil's anchor `(16, 1.08, 8)`. `HandleDisturbance` shifts Aqqil toward an east-flank
+  firing post without exposing hidden live player coordinates.
+
+### 6.2 Room 4 Cover, Alcove, Lighting & Access Card B Inventory
+
+| Object / Prop | World Coordinates | Rotation / Scale | Role in Route B Encounter |
+| --- | --- | --- | --- |
+| `Defensive_Barrier_West` | `(13.5, 0.0, 5.0)` | `0 deg`, `1.0x` | West cover anchor for player & guard |
+| `Defensive_Barrier_Center` | `(16.0, 0.0, 5.0)` | `0 deg`, `1.0x` | Central `1.12 m` half-cover (`cover = 1.0`) |
+| `Room4_Shock` | `(17.0, 0.0, 5.0)` | `0 deg`, `1.0x` | Punishes reckless center-east push; `28 m` alarm |
+| `Defensive_Barrier_East` | `(20.0, 0.0, 7.5)` | `90 deg Y`, `1.0x` | Shields east desk approach |
+| `DeadEnd_Crate_E1` | `(25.5, 0.0, 3.5)` | `0 deg`, `1.2x` | East forklift alcove crate cover |
+| `DeadEnd_Crate_E2` | `(25.5, 0.0, 5.0)` | `0 deg`, `1.0x` | Secondary crate silhouette & sight break |
+| `DeadEnd_Blender_Rack_E` | `(25.5, 0.0, 7.5)` | `0 deg`, `1.1x` | East bay vertical rack framing |
+| `DeadEnd_Partition_East` | `(24.0, 2.0, 1.5)` | `(0.4, 4.0, 5.0)` | Occludes east alcove corner |
+| `Terminal_Desk` | `(16.0, 0.5, 10.0)` | `—` | Central objective desk behind barrier line |
+| `AccessCard_Pickup_Defensive` | `(16.0, 1.15, 10.0)` | `2.5x` | Grants `Access Card B (Sector 04)`, `Level 3` |
+| `ReflectionProbe_Room4_Defensive` | `(16.0, 2.5, 9.0)` | `Box 24x8x22` | Box-projected metallic reflection probe (`128 px`) |
+| Overhead Spots (`Warm`/`Cool`) | `Y = 6.5 m` bays | `spotAngle = 115` | `12f` warm objective / `11f` cool surveillance pools |
+
+### 6.3 End-to-End Route B Objective Sequence
+
+1. Enter `Room_4_Defensive` via south doorway (`X [3.5, 6.5], Z = -2.0`).
+2. Use `Defensive_Barrier_West` / `Center` while baiting Aqqil's `1.4 s` shotgun reload.
+3. Avoid stepping onto `Room4_Shock` at `(17, 0, 5)` during lateral pushes.
+4. Collect `AccessCard_Pickup_Defensive` (`Access Card B`) at `(16.0, 1.15, 10.0)` and
+   (optionally) swap to the dropped `Combat_Shotgun` pickup.
+5. Exit north through Corridor 4->5 (`X ~ 6.5, Z = 17.5..20.0`), breaking Aqqil's `9.0 m`
+   leash if still alive, to unlock the Room 5 exit terminal.
+<!-- END:R4_TRAPS_AND_CARD_B -->
 <!-- SECTION:R4_PLAYMODE_CHECK -->
 <!-- SECTION:R4_VIVA_QA -->
