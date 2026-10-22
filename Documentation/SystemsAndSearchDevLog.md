@@ -95,3 +95,7 @@ Cleared stale search hypotheses and heading state before resuming normal sector 
 ## 2026-10-21 — Document Room 3 security alarm trap integration with guard hearing
 Connected Room 3 alarm trap triggers to the guard acoustic perception pipeline for rapid sector response.
 Verified alarm sound events wake SearchGuardAI into investigation without granting unfair wallhack sight.
+
+## 2026-10-22 — Balance Search Guard AK-47 engagement range and 180 HP durability
+Tuned Search Guard AK-47 engagement distance, burst cadence, and 180 HP durability for Route A encounters.
+Required confirmed visual contact before firing while allowing tactical flanking and retreat recovery.
