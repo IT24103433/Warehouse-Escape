@@ -99,3 +99,7 @@ Retired competing lighting mockups and followed the scene's active LightingSetti
 ## 2026-10-21 · Verify shared mesh batching and prop collider optimization
 
 Checked shared bevel meshes and the combined trim construction in source. Specified measurements for render submissions and collision shape equivalence in PlayMode.
+
+## 2026-10-22 · Test multi-path warehouse navigation for flanking guard support
+
+Added synthetic fixtures for open routes and blocked links through the final hall. Their lengths come from the documented graph, with scene-level walkthrough coverage referenced separately.

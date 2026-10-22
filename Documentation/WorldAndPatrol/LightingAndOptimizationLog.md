@@ -112,6 +112,27 @@ Existing tests include
 Read [SurfaceDetailAndDisplay](../SurfaceDetailAndDisplay.md) for the
 team's results. New frame captures were outside this documentation run.
 
+## Multi-route comparison worksheet
+
+Use the warehouse-scope fixture pairs to choose which route obstruction
+to simulate. The route graph models edge availability; PlayMode should
+use actual scene colliders and path corners.
+
+| Case | Origin / target | Runtime check |
+| --- | --- | --- |
+| West branch baseline | A_ENTRY / R5_WEST | Complete travel through search-side approach |
+| East branch baseline | B_ENTRY / R5_EAST | Complete travel through defensive-side approach |
+| West merge closed | A_MERGE / R5_WEST | Alternate compatible connection, or record disconnection |
+| East merge closed | B_MERGE / R5_EAST | Alternate compatible connection, or record disconnection |
+| Central reader leg closed | R5_CENTER / R5_READER | Inspect path corners for west/east side detour |
+| Both crossings closed | R5_WEST / R5_EAST | Confirm the remaining graph links permit a route and compare with runtime |
+
+`PhysicalWalkthroughTests` includes coverage for both card routes and
+final-room flanking detours. Use the test's exact placement and
+preconditions before comparing behavior with these independent fixture
+anchors. Room 5 guard movement can choose detours across a larger zone
+than the Room 2 patrol endpoint predicate allows.
+
 ## Draft capture checklist
 
 | Capture | Intended purpose | Notes |
