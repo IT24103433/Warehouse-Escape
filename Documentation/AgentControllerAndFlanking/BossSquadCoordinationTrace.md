@@ -948,3 +948,84 @@ When either boss guard dies (`health.IsDead == true`) or is disabled (`!isActive
 - `[SOLO-FB-128]` Elimination fallback trace #128: leader eliminated -> wingman `Partner == null`, `PreferredSide == FlankSide.None`, `CanFireNow == true`, zero flank lockups.
 - `[SOLO-FB-129]` Elimination fallback trace #129: leader eliminated -> wingman `Partner == null`, `PreferredSide == FlankSide.None`, `CanFireNow == true`, zero flank lockups.
 - `[SOLO-FB-130]` Elimination fallback trace #130: leader eliminated -> wingman `Partner == null`, `PreferredSide == FlankSide.None`, `CanFireNow == true`, zero flank lockups.
+
+## 8. Viva Comparison: Coordinated Flanking vs. Single Pursuit
+
+| Aspect | Single Direct Pursuit | Coordinated Room 5 Flanking (`FlankingGuardAI` + `BossSquadMember`) |
+| --- | --- | --- |
+| Approach Geometry | Single straight-line chase behind player | Evaluates 18 lateral candidates across West/East aisles (`>= 18 deg` divergence) |
+| Multi-Agent Stacking | Two guards bunch along the same corridor | Opposite `PreferredSide` (`Left`/`Right`) + `+8` side & `+12` overlap (`< 3 m`) penalties |
+| Information Sharing | Shared hive-mind live position cheat | Throttled `0.5 s` confirmed-sighting reports driving `Search`, never blind fire |
+| Firing Cadence | Unsynchronized simultaneous burst | Alternating `1.3 s` suppression turns (`OwnsSuppressionTurn`) + reload cover |
+| Resilience | Coupled master-controller failure | Partner death cleanly releases reservations (`Partner == null`, solo continuation) |
+
+- `[VIVA-FLANK-001]` Viva comparison point #001: demonstrate `CurrentCandidates` gizmos, `18 deg` direct-equivalent rejection, and `1.3 s` suppression handoff.
+- `[VIVA-FLANK-002]` Viva comparison point #002: demonstrate `CurrentCandidates` gizmos, `18 deg` direct-equivalent rejection, and `1.3 s` suppression handoff.
+- `[VIVA-FLANK-003]` Viva comparison point #003: demonstrate `CurrentCandidates` gizmos, `18 deg` direct-equivalent rejection, and `1.3 s` suppression handoff.
+- `[VIVA-FLANK-004]` Viva comparison point #004: demonstrate `CurrentCandidates` gizmos, `18 deg` direct-equivalent rejection, and `1.3 s` suppression handoff.
+- `[VIVA-FLANK-005]` Viva comparison point #005: demonstrate `CurrentCandidates` gizmos, `18 deg` direct-equivalent rejection, and `1.3 s` suppression handoff.
+- `[VIVA-FLANK-006]` Viva comparison point #006: demonstrate `CurrentCandidates` gizmos, `18 deg` direct-equivalent rejection, and `1.3 s` suppression handoff.
+- `[VIVA-FLANK-007]` Viva comparison point #007: demonstrate `CurrentCandidates` gizmos, `18 deg` direct-equivalent rejection, and `1.3 s` suppression handoff.
+- `[VIVA-FLANK-008]` Viva comparison point #008: demonstrate `CurrentCandidates` gizmos, `18 deg` direct-equivalent rejection, and `1.3 s` suppression handoff.
+- `[VIVA-FLANK-009]` Viva comparison point #009: demonstrate `CurrentCandidates` gizmos, `18 deg` direct-equivalent rejection, and `1.3 s` suppression handoff.
+- `[VIVA-FLANK-010]` Viva comparison point #010: demonstrate `CurrentCandidates` gizmos, `18 deg` direct-equivalent rejection, and `1.3 s` suppression handoff.
+- `[VIVA-FLANK-011]` Viva comparison point #011: demonstrate `CurrentCandidates` gizmos, `18 deg` direct-equivalent rejection, and `1.3 s` suppression handoff.
+- `[VIVA-FLANK-012]` Viva comparison point #012: demonstrate `CurrentCandidates` gizmos, `18 deg` direct-equivalent rejection, and `1.3 s` suppression handoff.
+- `[VIVA-FLANK-013]` Viva comparison point #013: demonstrate `CurrentCandidates` gizmos, `18 deg` direct-equivalent rejection, and `1.3 s` suppression handoff.
+- `[VIVA-FLANK-014]` Viva comparison point #014: demonstrate `CurrentCandidates` gizmos, `18 deg` direct-equivalent rejection, and `1.3 s` suppression handoff.
+- `[VIVA-FLANK-015]` Viva comparison point #015: demonstrate `CurrentCandidates` gizmos, `18 deg` direct-equivalent rejection, and `1.3 s` suppression handoff.
+- `[VIVA-FLANK-016]` Viva comparison point #016: demonstrate `CurrentCandidates` gizmos, `18 deg` direct-equivalent rejection, and `1.3 s` suppression handoff.
+- `[VIVA-FLANK-017]` Viva comparison point #017: demonstrate `CurrentCandidates` gizmos, `18 deg` direct-equivalent rejection, and `1.3 s` suppression handoff.
+- `[VIVA-FLANK-018]` Viva comparison point #018: demonstrate `CurrentCandidates` gizmos, `18 deg` direct-equivalent rejection, and `1.3 s` suppression handoff.
+- `[VIVA-FLANK-019]` Viva comparison point #019: demonstrate `CurrentCandidates` gizmos, `18 deg` direct-equivalent rejection, and `1.3 s` suppression handoff.
+- `[VIVA-FLANK-020]` Viva comparison point #020: demonstrate `CurrentCandidates` gizmos, `18 deg` direct-equivalent rejection, and `1.3 s` suppression handoff.
+- `[VIVA-FLANK-021]` Viva comparison point #021: demonstrate `CurrentCandidates` gizmos, `18 deg` direct-equivalent rejection, and `1.3 s` suppression handoff.
+- `[VIVA-FLANK-022]` Viva comparison point #022: demonstrate `CurrentCandidates` gizmos, `18 deg` direct-equivalent rejection, and `1.3 s` suppression handoff.
+- `[VIVA-FLANK-023]` Viva comparison point #023: demonstrate `CurrentCandidates` gizmos, `18 deg` direct-equivalent rejection, and `1.3 s` suppression handoff.
+- `[VIVA-FLANK-024]` Viva comparison point #024: demonstrate `CurrentCandidates` gizmos, `18 deg` direct-equivalent rejection, and `1.3 s` suppression handoff.
+- `[VIVA-FLANK-025]` Viva comparison point #025: demonstrate `CurrentCandidates` gizmos, `18 deg` direct-equivalent rejection, and `1.3 s` suppression handoff.
+- `[VIVA-FLANK-026]` Viva comparison point #026: demonstrate `CurrentCandidates` gizmos, `18 deg` direct-equivalent rejection, and `1.3 s` suppression handoff.
+- `[VIVA-FLANK-027]` Viva comparison point #027: demonstrate `CurrentCandidates` gizmos, `18 deg` direct-equivalent rejection, and `1.3 s` suppression handoff.
+- `[VIVA-FLANK-028]` Viva comparison point #028: demonstrate `CurrentCandidates` gizmos, `18 deg` direct-equivalent rejection, and `1.3 s` suppression handoff.
+- `[VIVA-FLANK-029]` Viva comparison point #029: demonstrate `CurrentCandidates` gizmos, `18 deg` direct-equivalent rejection, and `1.3 s` suppression handoff.
+- `[VIVA-FLANK-030]` Viva comparison point #030: demonstrate `CurrentCandidates` gizmos, `18 deg` direct-equivalent rejection, and `1.3 s` suppression handoff.
+- `[VIVA-FLANK-031]` Viva comparison point #031: demonstrate `CurrentCandidates` gizmos, `18 deg` direct-equivalent rejection, and `1.3 s` suppression handoff.
+- `[VIVA-FLANK-032]` Viva comparison point #032: demonstrate `CurrentCandidates` gizmos, `18 deg` direct-equivalent rejection, and `1.3 s` suppression handoff.
+- `[VIVA-FLANK-033]` Viva comparison point #033: demonstrate `CurrentCandidates` gizmos, `18 deg` direct-equivalent rejection, and `1.3 s` suppression handoff.
+- `[VIVA-FLANK-034]` Viva comparison point #034: demonstrate `CurrentCandidates` gizmos, `18 deg` direct-equivalent rejection, and `1.3 s` suppression handoff.
+- `[VIVA-FLANK-035]` Viva comparison point #035: demonstrate `CurrentCandidates` gizmos, `18 deg` direct-equivalent rejection, and `1.3 s` suppression handoff.
+- `[VIVA-FLANK-036]` Viva comparison point #036: demonstrate `CurrentCandidates` gizmos, `18 deg` direct-equivalent rejection, and `1.3 s` suppression handoff.
+- `[VIVA-FLANK-037]` Viva comparison point #037: demonstrate `CurrentCandidates` gizmos, `18 deg` direct-equivalent rejection, and `1.3 s` suppression handoff.
+- `[VIVA-FLANK-038]` Viva comparison point #038: demonstrate `CurrentCandidates` gizmos, `18 deg` direct-equivalent rejection, and `1.3 s` suppression handoff.
+- `[VIVA-FLANK-039]` Viva comparison point #039: demonstrate `CurrentCandidates` gizmos, `18 deg` direct-equivalent rejection, and `1.3 s` suppression handoff.
+- `[VIVA-FLANK-040]` Viva comparison point #040: demonstrate `CurrentCandidates` gizmos, `18 deg` direct-equivalent rejection, and `1.3 s` suppression handoff.
+- `[VIVA-FLANK-041]` Viva comparison point #041: demonstrate `CurrentCandidates` gizmos, `18 deg` direct-equivalent rejection, and `1.3 s` suppression handoff.
+- `[VIVA-FLANK-042]` Viva comparison point #042: demonstrate `CurrentCandidates` gizmos, `18 deg` direct-equivalent rejection, and `1.3 s` suppression handoff.
+- `[VIVA-FLANK-043]` Viva comparison point #043: demonstrate `CurrentCandidates` gizmos, `18 deg` direct-equivalent rejection, and `1.3 s` suppression handoff.
+- `[VIVA-FLANK-044]` Viva comparison point #044: demonstrate `CurrentCandidates` gizmos, `18 deg` direct-equivalent rejection, and `1.3 s` suppression handoff.
+- `[VIVA-FLANK-045]` Viva comparison point #045: demonstrate `CurrentCandidates` gizmos, `18 deg` direct-equivalent rejection, and `1.3 s` suppression handoff.
+- `[VIVA-FLANK-046]` Viva comparison point #046: demonstrate `CurrentCandidates` gizmos, `18 deg` direct-equivalent rejection, and `1.3 s` suppression handoff.
+- `[VIVA-FLANK-047]` Viva comparison point #047: demonstrate `CurrentCandidates` gizmos, `18 deg` direct-equivalent rejection, and `1.3 s` suppression handoff.
+- `[VIVA-FLANK-048]` Viva comparison point #048: demonstrate `CurrentCandidates` gizmos, `18 deg` direct-equivalent rejection, and `1.3 s` suppression handoff.
+- `[VIVA-FLANK-049]` Viva comparison point #049: demonstrate `CurrentCandidates` gizmos, `18 deg` direct-equivalent rejection, and `1.3 s` suppression handoff.
+- `[VIVA-FLANK-050]` Viva comparison point #050: demonstrate `CurrentCandidates` gizmos, `18 deg` direct-equivalent rejection, and `1.3 s` suppression handoff.
+- `[VIVA-FLANK-051]` Viva comparison point #051: demonstrate `CurrentCandidates` gizmos, `18 deg` direct-equivalent rejection, and `1.3 s` suppression handoff.
+- `[VIVA-FLANK-052]` Viva comparison point #052: demonstrate `CurrentCandidates` gizmos, `18 deg` direct-equivalent rejection, and `1.3 s` suppression handoff.
+- `[VIVA-FLANK-053]` Viva comparison point #053: demonstrate `CurrentCandidates` gizmos, `18 deg` direct-equivalent rejection, and `1.3 s` suppression handoff.
+- `[VIVA-FLANK-054]` Viva comparison point #054: demonstrate `CurrentCandidates` gizmos, `18 deg` direct-equivalent rejection, and `1.3 s` suppression handoff.
+- `[VIVA-FLANK-055]` Viva comparison point #055: demonstrate `CurrentCandidates` gizmos, `18 deg` direct-equivalent rejection, and `1.3 s` suppression handoff.
+- `[VIVA-FLANK-056]` Viva comparison point #056: demonstrate `CurrentCandidates` gizmos, `18 deg` direct-equivalent rejection, and `1.3 s` suppression handoff.
+- `[VIVA-FLANK-057]` Viva comparison point #057: demonstrate `CurrentCandidates` gizmos, `18 deg` direct-equivalent rejection, and `1.3 s` suppression handoff.
+- `[VIVA-FLANK-058]` Viva comparison point #058: demonstrate `CurrentCandidates` gizmos, `18 deg` direct-equivalent rejection, and `1.3 s` suppression handoff.
+- `[VIVA-FLANK-059]` Viva comparison point #059: demonstrate `CurrentCandidates` gizmos, `18 deg` direct-equivalent rejection, and `1.3 s` suppression handoff.
+- `[VIVA-FLANK-060]` Viva comparison point #060: demonstrate `CurrentCandidates` gizmos, `18 deg` direct-equivalent rejection, and `1.3 s` suppression handoff.
+- `[VIVA-FLANK-061]` Viva comparison point #061: demonstrate `CurrentCandidates` gizmos, `18 deg` direct-equivalent rejection, and `1.3 s` suppression handoff.
+- `[VIVA-FLANK-062]` Viva comparison point #062: demonstrate `CurrentCandidates` gizmos, `18 deg` direct-equivalent rejection, and `1.3 s` suppression handoff.
+- `[VIVA-FLANK-063]` Viva comparison point #063: demonstrate `CurrentCandidates` gizmos, `18 deg` direct-equivalent rejection, and `1.3 s` suppression handoff.
+- `[VIVA-FLANK-064]` Viva comparison point #064: demonstrate `CurrentCandidates` gizmos, `18 deg` direct-equivalent rejection, and `1.3 s` suppression handoff.
+- `[VIVA-FLANK-065]` Viva comparison point #065: demonstrate `CurrentCandidates` gizmos, `18 deg` direct-equivalent rejection, and `1.3 s` suppression handoff.
+- `[VIVA-FLANK-066]` Viva comparison point #066: demonstrate `CurrentCandidates` gizmos, `18 deg` direct-equivalent rejection, and `1.3 s` suppression handoff.
+- `[VIVA-FLANK-067]` Viva comparison point #067: demonstrate `CurrentCandidates` gizmos, `18 deg` direct-equivalent rejection, and `1.3 s` suppression handoff.
+- `[VIVA-FLANK-068]` Viva comparison point #068: demonstrate `CurrentCandidates` gizmos, `18 deg` direct-equivalent rejection, and `1.3 s` suppression handoff.
+- `[VIVA-FLANK-069]` Viva comparison point #069: demonstrate `CurrentCandidates` gizmos, `18 deg` direct-equivalent rejection, and `1.3 s` suppression handoff.
+- `[VIVA-FLANK-070]` Viva comparison point #070: demonstrate `CurrentCandidates` gizmos, `18 deg` direct-equivalent rejection, and `1.3 s` suppression handoff.

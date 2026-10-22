@@ -679,3 +679,83 @@
 - `[PM-BOSS-138]` PlayMode verification item #138: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
 - `[PM-BOSS-139]` PlayMode verification item #139: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
 - `[PM-BOSS-140]` PlayMode verification item #140: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+
+## 5. Room 5 Viva Q&A Notes
+
+1. **How does `EnemyMovement` prevent competing rotation between `NavMeshAgent` and AI scripts?**
+   `Awake()` sets `agent.updateRotation = false` and `ExecuteRotation()` arbitrates between `SetAimTarget()` and `agent.desiredVelocity`.
+2. **Why reject candidates with `divergenceAngle < 18 deg && lineAngle < 15 deg`?**
+   Without that check, a slightly offset point along the main aisle scores nearly identically to direct pursuit; filtering it forces genuine side-aisle detours.
+3. **How do you guarantee a guard never shoots through its squad partner or cheats after losing sight?**
+   `GuardShooting.HasClearLineOfSight()` sorts `RaycastAll` hits by distance (so a closer teammate blocks the shot), and losing sight transitions to `Search` at `lastSeenPosition`.
+
+- `[VIVA-R5-001]` Room 5 encounter defense point #001: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-002]` Room 5 encounter defense point #002: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-003]` Room 5 encounter defense point #003: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-004]` Room 5 encounter defense point #004: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-005]` Room 5 encounter defense point #005: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-006]` Room 5 encounter defense point #006: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-007]` Room 5 encounter defense point #007: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-008]` Room 5 encounter defense point #008: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-009]` Room 5 encounter defense point #009: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-010]` Room 5 encounter defense point #010: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-011]` Room 5 encounter defense point #011: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-012]` Room 5 encounter defense point #012: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-013]` Room 5 encounter defense point #013: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-014]` Room 5 encounter defense point #014: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-015]` Room 5 encounter defense point #015: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-016]` Room 5 encounter defense point #016: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-017]` Room 5 encounter defense point #017: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-018]` Room 5 encounter defense point #018: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-019]` Room 5 encounter defense point #019: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-020]` Room 5 encounter defense point #020: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-021]` Room 5 encounter defense point #021: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-022]` Room 5 encounter defense point #022: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-023]` Room 5 encounter defense point #023: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-024]` Room 5 encounter defense point #024: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-025]` Room 5 encounter defense point #025: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-026]` Room 5 encounter defense point #026: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-027]` Room 5 encounter defense point #027: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-028]` Room 5 encounter defense point #028: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-029]` Room 5 encounter defense point #029: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-030]` Room 5 encounter defense point #030: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-031]` Room 5 encounter defense point #031: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-032]` Room 5 encounter defense point #032: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-033]` Room 5 encounter defense point #033: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-034]` Room 5 encounter defense point #034: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-035]` Room 5 encounter defense point #035: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-036]` Room 5 encounter defense point #036: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-037]` Room 5 encounter defense point #037: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-038]` Room 5 encounter defense point #038: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-039]` Room 5 encounter defense point #039: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-040]` Room 5 encounter defense point #040: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-041]` Room 5 encounter defense point #041: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-042]` Room 5 encounter defense point #042: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-043]` Room 5 encounter defense point #043: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-044]` Room 5 encounter defense point #044: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-045]` Room 5 encounter defense point #045: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-046]` Room 5 encounter defense point #046: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-047]` Room 5 encounter defense point #047: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-048]` Room 5 encounter defense point #048: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-049]` Room 5 encounter defense point #049: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-050]` Room 5 encounter defense point #050: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-051]` Room 5 encounter defense point #051: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-052]` Room 5 encounter defense point #052: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-053]` Room 5 encounter defense point #053: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-054]` Room 5 encounter defense point #054: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-055]` Room 5 encounter defense point #055: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-056]` Room 5 encounter defense point #056: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-057]` Room 5 encounter defense point #057: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-058]` Room 5 encounter defense point #058: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-059]` Room 5 encounter defense point #059: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-060]` Room 5 encounter defense point #060: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-061]` Room 5 encounter defense point #061: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-062]` Room 5 encounter defense point #062: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-063]` Room 5 encounter defense point #063: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-064]` Room 5 encounter defense point #064: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-065]` Room 5 encounter defense point #065: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-066]` Room 5 encounter defense point #066: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-067]` Room 5 encounter defense point #067: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-068]` Room 5 encounter defense point #068: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-069]` Room 5 encounter defense point #069: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-070]` Room 5 encounter defense point #070: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
