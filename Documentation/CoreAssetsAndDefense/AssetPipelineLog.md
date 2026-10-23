@@ -363,3 +363,28 @@ masks generated in `Assets/Textures/Cinematic/` by `ApplyCinematicWarehouse.cs`.
   `bloom = 0.28`, `vignette = 0.16`, `filmGrain = 0.025`) verified without motion blur.
 <!-- END:URP_MATERIALS -->
 <!-- SECTION:ACCESS_CARD_VERIFY -->
+## 8. `Access_Card` UV Alignment & Real-Time Rendering Optimization
+
+### 8.1 `Access_Card.fbx` Dual-Route Texture & Trigger Verification
+
+- Both `AccessCard_Pickup_Search` (Route A) and `AccessCard_Pickup_Defensive` (Route B)
+  reference `Assets/Meshes/Props/Access_Card.fbx` (`164 tris`, `4 UV islands`) via
+  `SetupWeaponsAndAccessCards.cs`.
+- **UV0 Alignment Check:** Front and back planar faces map `1:1` onto `Tex_Card_A.png`
+  (`Mat_AccessCard_A`) and `Tex_Card_B.png` (`Mat_AccessCard_B`) with `Tex_Card_Normal.png`
+  adding subtle chip/magnetic-stripe relief. Both faces read upright during `90 deg/s` spin.
+- **Trigger & Bobbing Calibration:** `AccessCard.cs` oscillates `+/- 0.12 m` at `3.0 rad/s`
+  around `(16.0, 1.15, 10.0)` with `2.5x` visual scale and an enlarged trigger `BoxCollider`
+  (`4.0 x 4.0 x 4.0` in `ExpandRoom4`) so sprinting past the desk reliably registers pickup.
+
+### 8.2 URP Real-Time Rendering & Batching Audit
+
+| Metric / Pass | Configured Budget / Setting | Verification Target | Result |
+| --- | --- | --- | --- |
+| SRP Batcher | `URP/Lit` shared shaders, no per-prop `MPB` | Room 4 static props | Verified single SRP batch pass |
+| Triangle Budget (7 Assets) | `16,428 tris` combined LOD0 (`-52.2%` vs draft) | Props + Pickups + Weapons | Well under mobile/desktop frame cap |
+| Baked Lightmap (`UV1`) | `1024 px` atlas, `8 texels/m`, `2` bounces | `Warehouse_Cargo_Crate`, `Barrier`, `Rack` | Zero lightmap UV overlap warnings |
+| Reflection Probe | `128 px` box-projected `ReflectionProbe_Room4_Defensive` | Metallic racks & gunmetal | Crisp metallic floor/rack reflections |
+| Shadow Cascades | `shadowDistance = 45 m`, `shadowCascadeCount = 2` | Overhead spotlights (`12f`/`11f`) | Cuts shadow pass cost without pop-in |
+| Decorative Colliders | Disabled on `IndustrialServicePanel` & trim | `Cinematic_Visual_Details` | Zero spurious NavMesh carving |
+<!-- END:ACCESS_CARD_VERIFY -->

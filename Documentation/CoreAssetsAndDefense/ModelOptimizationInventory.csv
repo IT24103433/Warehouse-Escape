@@ -38,11 +38,11 @@ Industrial_ServicePanel_HandleAssembly,Prop_SubPart,LOD0_Production,Assets/Meshe
 Industrial_ServicePanel_Hinges_2x,Prop_SubPart,LOD0_Production,Assets/Meshes/Props/IndustrialServicePanel.fbx,132,2,"(0.00, 0.00, -0.095)",1.00,static_batch_ready,2x cylindrical barrel hinges at X = +0.43m
 Industrial_ServicePanel_Indicators_2x,Prop_SubPart,LOD0_Production,Assets/Meshes/Props/IndustrialServicePanel.fbx,96,1,"(0.00, 0.00, -0.095)",1.00,static_batch_ready,2x status lenses (Panel_Green) at X = 0.18/0.26
 Industrial_ServicePanel_CablePorts_2x,Prop_SubPart,LOD0_Production,Assets/Meshes/Props/IndustrialServicePanel.fbx,88,1,"(0.00, 0.00, -0.095)",1.00,static_batch_ready,2x top conduit collars at Z = +0.67m
-Access_Card,Objective,LOD0_Production,Assets/Meshes/Props/Access_Card.fbx,164,4,"(0.00, 0.00, 0.00)",2.50,srp_batch_ready,Pruned 520-tri & OBJ/LOD drafts (-68% tris); Center pivot for 90 deg/s Y spin; 2.5x pickup scale in Route A & B
-Access_Card_FrontFace,Objective_SubPart,LOD0_Production,Assets/Meshes/Props/Access_Card.fbx,34,1,"(0.00, 0.00, 0.00)",2.50,srp_batch_ready,Planar non-mirrored front UV0 (Tex_Card_A / Tex_Card_B)
-Access_Card_BackFace,Objective_SubPart,LOD0_Production,Assets/Meshes/Props/Access_Card.fbx,34,1,"(0.00, 0.00, 0.00)",2.50,srp_batch_ready,Planar magnetic-stripe back UV0
-Access_Card_ChamferPerimeter,Objective_SubPart,LOD0_Production,Assets/Meshes/Props/Access_Card.fbx,72,1,"(0.00, 0.00, 0.00)",2.50,srp_batch_ready,1-segment bevel perimeter trim
-Access_Card_ChipContactInset,Objective_SubPart,LOD0_Production,Assets/Meshes/Props/Access_Card.fbx,24,1,"(0.00, 0.00, 0.00)",2.50,srp_batch_ready,EMV contact pad relief quad
+Access_Card,Objective,LOD0_Production,Assets/Meshes/Props/Access_Card.fbx,164,4,"(0.00, 0.00, 0.00)",2.50,srp_batch_verified,Verified Tex_Card_A/B UV0 & Tex_Card_Normal (-68% tris); 2.5x pickup scale
+Access_Card_FrontFace,Objective_SubPart,LOD0_Production,Assets/Meshes/Props/Access_Card.fbx,34,1,"(0.00, 0.00, 0.00)",2.50,srp_batch_verified,Planar non-mirrored front UV0 (Tex_Card_A / Tex_Card_B)
+Access_Card_BackFace,Objective_SubPart,LOD0_Production,Assets/Meshes/Props/Access_Card.fbx,34,1,"(0.00, 0.00, 0.00)",2.50,srp_batch_verified,Planar magnetic-stripe back UV0
+Access_Card_ChamferPerimeter,Objective_SubPart,LOD0_Production,Assets/Meshes/Props/Access_Card.fbx,72,1,"(0.00, 0.00, 0.00)",2.50,srp_batch_verified,1-segment bevel perimeter trim
+Access_Card_ChipContactInset,Objective_SubPart,LOD0_Production,Assets/Meshes/Props/Access_Card.fbx,24,1,"(0.00, 0.00, 0.00)",2.50,srp_batch_verified,EMV contact pad relief quad
 MP5_SMG,Weapon,LOD0_Production,Assets/Meshes/Weapons/MP5_SMG.fbx,4920,38,"(0.00, -0.04, 0.08)",1.00,dynamic_srp_ready,Pruned 9840-tri & OBJ/LOD drafts (-50% tris); PlayerGun MP5-A3 SMG (18 dmg, 0.11s rate); grip pivot +Z barrel
 MP5_SMG_UpperReceiver,Weapon_SubPart,LOD0_Production,Assets/Meshes/Weapons/MP5_SMG.fbx,920,8,"(0.00, -0.04, 0.08)",1.00,dynamic_srp_ready,Stamped upper receiver + top optic rail mount
 MP5_SMG_LowerTriggerHousing,Weapon_SubPart,LOD0_Production,Assets/Meshes/Weapons/MP5_SMG.fbx,600,4,"(0.00, -0.04, 0.08)",1.00,dynamic_srp_ready,Lower trigger pack, pistol grip & fire selector
