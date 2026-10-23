@@ -103,3 +103,7 @@ Checked shared bevel meshes and the combined trim construction in source. Specif
 ## 2026-10-22 · Test multi-path warehouse navigation for flanking guard support
 
 Added synthetic fixtures for open routes and blocked links through the final hall. Their lengths come from the documented graph, with scene-level walkthrough coverage referenced separately.
+
+## 2026-10-23 · Consolidate Room 2 NavMesh dataset and remove redundant entries
+
+Folded reciprocal warehouse pairs into one row with two endpoint visibility values. Dropped current-point-only patrol samples, which are already distinguished by the trace cases.
