@@ -99,3 +99,7 @@ Verified alarm sound events wake SearchGuardAI into investigation without granti
 ## 2026-10-22 — Balance Search Guard AK-47 engagement range and 180 HP durability
 Tuned Search Guard AK-47 engagement distance, burst cadence, and 180 HP durability for Route A encounters.
 Required confirmed visual contact before firing while allowing tactical flanking and retreat recovery.
+
+## 2026-10-23 — Verify NavMesh path reachability for Room 3 search hypotheses
+Checked Room 3 NavMesh connectivity around storage racks and narrow side passages for all ring radii.
+Confirmed unreachable off-mesh samples are rejected cleanly without falling back to invalid targets.
