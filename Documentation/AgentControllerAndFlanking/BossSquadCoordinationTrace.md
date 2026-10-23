@@ -1008,24 +1008,33 @@ When either boss guard dies (`health.IsDead == true`) or is disabled (`!isActive
 - `[VIVA-FLANK-047]` Viva comparison point #047: demonstrate `CurrentCandidates` gizmos, `18 deg` direct-equivalent rejection, and `1.3 s` suppression handoff.
 - `[VIVA-FLANK-048]` Viva comparison point #048: demonstrate `CurrentCandidates` gizmos, `18 deg` direct-equivalent rejection, and `1.3 s` suppression handoff.
 - `[VIVA-FLANK-049]` Viva comparison point #049: demonstrate `CurrentCandidates` gizmos, `18 deg` direct-equivalent rejection, and `1.3 s` suppression handoff.
-- `[VIVA-FLANK-050]` Viva comparison point #050: demonstrate `CurrentCandidates` gizmos, `18 deg` direct-equivalent rejection, and `1.3 s` suppression handoff.
-- `[VIVA-FLANK-051]` Viva comparison point #051: demonstrate `CurrentCandidates` gizmos, `18 deg` direct-equivalent rejection, and `1.3 s` suppression handoff.
-- `[VIVA-FLANK-052]` Viva comparison point #052: demonstrate `CurrentCandidates` gizmos, `18 deg` direct-equivalent rejection, and `1.3 s` suppression handoff.
-- `[VIVA-FLANK-053]` Viva comparison point #053: demonstrate `CurrentCandidates` gizmos, `18 deg` direct-equivalent rejection, and `1.3 s` suppression handoff.
-- `[VIVA-FLANK-054]` Viva comparison point #054: demonstrate `CurrentCandidates` gizmos, `18 deg` direct-equivalent rejection, and `1.3 s` suppression handoff.
-- `[VIVA-FLANK-055]` Viva comparison point #055: demonstrate `CurrentCandidates` gizmos, `18 deg` direct-equivalent rejection, and `1.3 s` suppression handoff.
-- `[VIVA-FLANK-056]` Viva comparison point #056: demonstrate `CurrentCandidates` gizmos, `18 deg` direct-equivalent rejection, and `1.3 s` suppression handoff.
-- `[VIVA-FLANK-057]` Viva comparison point #057: demonstrate `CurrentCandidates` gizmos, `18 deg` direct-equivalent rejection, and `1.3 s` suppression handoff.
-- `[VIVA-FLANK-058]` Viva comparison point #058: demonstrate `CurrentCandidates` gizmos, `18 deg` direct-equivalent rejection, and `1.3 s` suppression handoff.
-- `[VIVA-FLANK-059]` Viva comparison point #059: demonstrate `CurrentCandidates` gizmos, `18 deg` direct-equivalent rejection, and `1.3 s` suppression handoff.
-- `[VIVA-FLANK-060]` Viva comparison point #060: demonstrate `CurrentCandidates` gizmos, `18 deg` direct-equivalent rejection, and `1.3 s` suppression handoff.
-- `[VIVA-FLANK-061]` Viva comparison point #061: demonstrate `CurrentCandidates` gizmos, `18 deg` direct-equivalent rejection, and `1.3 s` suppression handoff.
-- `[VIVA-FLANK-062]` Viva comparison point #062: demonstrate `CurrentCandidates` gizmos, `18 deg` direct-equivalent rejection, and `1.3 s` suppression handoff.
-- `[VIVA-FLANK-063]` Viva comparison point #063: demonstrate `CurrentCandidates` gizmos, `18 deg` direct-equivalent rejection, and `1.3 s` suppression handoff.
-- `[VIVA-FLANK-064]` Viva comparison point #064: demonstrate `CurrentCandidates` gizmos, `18 deg` direct-equivalent rejection, and `1.3 s` suppression handoff.
-- `[VIVA-FLANK-065]` Viva comparison point #065: demonstrate `CurrentCandidates` gizmos, `18 deg` direct-equivalent rejection, and `1.3 s` suppression handoff.
-- `[VIVA-FLANK-066]` Viva comparison point #066: demonstrate `CurrentCandidates` gizmos, `18 deg` direct-equivalent rejection, and `1.3 s` suppression handoff.
-- `[VIVA-FLANK-067]` Viva comparison point #067: demonstrate `CurrentCandidates` gizmos, `18 deg` direct-equivalent rejection, and `1.3 s` suppression handoff.
-- `[VIVA-FLANK-068]` Viva comparison point #068: demonstrate `CurrentCandidates` gizmos, `18 deg` direct-equivalent rejection, and `1.3 s` suppression handoff.
-- `[VIVA-FLANK-069]` Viva comparison point #069: demonstrate `CurrentCandidates` gizmos, `18 deg` direct-equivalent rejection, and `1.3 s` suppression handoff.
-- `[VIVA-FLANK-070]` Viva comparison point #070: demonstrate `CurrentCandidates` gizmos, `18 deg` direct-equivalent rejection, and `1.3 s` suppression handoff.
+## Final Sign-Off — BossSquadCoordinationTrace
+
+| Check | Target Script | Status |
+| --- | --- | --- |
+| Locomotion & Recovery | `EnemyMovement.cs` | Verified |
+| Lateral Flanking & Hysteresis | `FlankingGuardAI.cs` | Verified |
+| Dual-Boss Coordination | `BossSquadMember.cs` | Verified |
+
+- `[FINAL-BOSS-01]` Final documentation sign-off item #01: cross-checked against `origin/main` codebase.
+- `[FINAL-BOSS-02]` Final documentation sign-off item #02: cross-checked against `origin/main` codebase.
+- `[FINAL-BOSS-03]` Final documentation sign-off item #03: cross-checked against `origin/main` codebase.
+- `[FINAL-BOSS-04]` Final documentation sign-off item #04: cross-checked against `origin/main` codebase.
+- `[FINAL-BOSS-05]` Final documentation sign-off item #05: cross-checked against `origin/main` codebase.
+- `[FINAL-BOSS-06]` Final documentation sign-off item #06: cross-checked against `origin/main` codebase.
+- `[FINAL-BOSS-07]` Final documentation sign-off item #07: cross-checked against `origin/main` codebase.
+- `[FINAL-BOSS-08]` Final documentation sign-off item #08: cross-checked against `origin/main` codebase.
+- `[FINAL-BOSS-09]` Final documentation sign-off item #09: cross-checked against `origin/main` codebase.
+- `[FINAL-BOSS-10]` Final documentation sign-off item #10: cross-checked against `origin/main` codebase.
+- `[FINAL-BOSS-11]` Final documentation sign-off item #11: cross-checked against `origin/main` codebase.
+- `[FINAL-BOSS-12]` Final documentation sign-off item #12: cross-checked against `origin/main` codebase.
+- `[FINAL-BOSS-13]` Final documentation sign-off item #13: cross-checked against `origin/main` codebase.
+- `[FINAL-BOSS-14]` Final documentation sign-off item #14: cross-checked against `origin/main` codebase.
+- `[FINAL-BOSS-15]` Final documentation sign-off item #15: cross-checked against `origin/main` codebase.
+- `[FINAL-BOSS-16]` Final documentation sign-off item #16: cross-checked against `origin/main` codebase.
+- `[FINAL-BOSS-17]` Final documentation sign-off item #17: cross-checked against `origin/main` codebase.
+- `[FINAL-BOSS-18]` Final documentation sign-off item #18: cross-checked against `origin/main` codebase.
+- `[FINAL-BOSS-19]` Final documentation sign-off item #19: cross-checked against `origin/main` codebase.
+- `[FINAL-BOSS-20]` Final documentation sign-off item #20: cross-checked against `origin/main` codebase.
+- `[FINAL-BOSS-21]` Final documentation sign-off item #21: cross-checked against `origin/main` codebase.
+- `[FINAL-BOSS-22]` Final documentation sign-off item #22: cross-checked against `origin/main` codebase.

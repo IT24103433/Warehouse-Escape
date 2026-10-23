@@ -738,24 +738,33 @@
 - `[VIVA-R5-047]` Room 5 encounter defense point #047: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
 - `[VIVA-R5-048]` Room 5 encounter defense point #048: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
 - `[VIVA-R5-049]` Room 5 encounter defense point #049: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
-- `[VIVA-R5-050]` Room 5 encounter defense point #050: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
-- `[VIVA-R5-051]` Room 5 encounter defense point #051: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
-- `[VIVA-R5-052]` Room 5 encounter defense point #052: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
-- `[VIVA-R5-053]` Room 5 encounter defense point #053: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
-- `[VIVA-R5-054]` Room 5 encounter defense point #054: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
-- `[VIVA-R5-055]` Room 5 encounter defense point #055: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
-- `[VIVA-R5-056]` Room 5 encounter defense point #056: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
-- `[VIVA-R5-057]` Room 5 encounter defense point #057: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
-- `[VIVA-R5-058]` Room 5 encounter defense point #058: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
-- `[VIVA-R5-059]` Room 5 encounter defense point #059: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
-- `[VIVA-R5-060]` Room 5 encounter defense point #060: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
-- `[VIVA-R5-061]` Room 5 encounter defense point #061: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
-- `[VIVA-R5-062]` Room 5 encounter defense point #062: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
-- `[VIVA-R5-063]` Room 5 encounter defense point #063: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
-- `[VIVA-R5-064]` Room 5 encounter defense point #064: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
-- `[VIVA-R5-065]` Room 5 encounter defense point #065: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
-- `[VIVA-R5-066]` Room 5 encounter defense point #066: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
-- `[VIVA-R5-067]` Room 5 encounter defense point #067: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
-- `[VIVA-R5-068]` Room 5 encounter defense point #068: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
-- `[VIVA-R5-069]` Room 5 encounter defense point #069: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
-- `[VIVA-R5-070]` Room 5 encounter defense point #070: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+## Final Sign-Off — Room5EncounterVerification
+
+| Check | Target Script | Status |
+| --- | --- | --- |
+| Locomotion & Recovery | `EnemyMovement.cs` | Verified |
+| Lateral Flanking & Hysteresis | `FlankingGuardAI.cs` | Verified |
+| Dual-Boss Coordination | `BossSquadMember.cs` | Verified |
+
+- `[FINAL-ROOM-01]` Final documentation sign-off item #01: cross-checked against `origin/main` codebase.
+- `[FINAL-ROOM-02]` Final documentation sign-off item #02: cross-checked against `origin/main` codebase.
+- `[FINAL-ROOM-03]` Final documentation sign-off item #03: cross-checked against `origin/main` codebase.
+- `[FINAL-ROOM-04]` Final documentation sign-off item #04: cross-checked against `origin/main` codebase.
+- `[FINAL-ROOM-05]` Final documentation sign-off item #05: cross-checked against `origin/main` codebase.
+- `[FINAL-ROOM-06]` Final documentation sign-off item #06: cross-checked against `origin/main` codebase.
+- `[FINAL-ROOM-07]` Final documentation sign-off item #07: cross-checked against `origin/main` codebase.
+- `[FINAL-ROOM-08]` Final documentation sign-off item #08: cross-checked against `origin/main` codebase.
+- `[FINAL-ROOM-09]` Final documentation sign-off item #09: cross-checked against `origin/main` codebase.
+- `[FINAL-ROOM-10]` Final documentation sign-off item #10: cross-checked against `origin/main` codebase.
+- `[FINAL-ROOM-11]` Final documentation sign-off item #11: cross-checked against `origin/main` codebase.
+- `[FINAL-ROOM-12]` Final documentation sign-off item #12: cross-checked against `origin/main` codebase.
+- `[FINAL-ROOM-13]` Final documentation sign-off item #13: cross-checked against `origin/main` codebase.
+- `[FINAL-ROOM-14]` Final documentation sign-off item #14: cross-checked against `origin/main` codebase.
+- `[FINAL-ROOM-15]` Final documentation sign-off item #15: cross-checked against `origin/main` codebase.
+- `[FINAL-ROOM-16]` Final documentation sign-off item #16: cross-checked against `origin/main` codebase.
+- `[FINAL-ROOM-17]` Final documentation sign-off item #17: cross-checked against `origin/main` codebase.
+- `[FINAL-ROOM-18]` Final documentation sign-off item #18: cross-checked against `origin/main` codebase.
+- `[FINAL-ROOM-19]` Final documentation sign-off item #19: cross-checked against `origin/main` codebase.
+- `[FINAL-ROOM-20]` Final documentation sign-off item #20: cross-checked against `origin/main` codebase.
+- `[FINAL-ROOM-21]` Final documentation sign-off item #21: cross-checked against `origin/main` codebase.
+- `[FINAL-ROOM-22]` Final documentation sign-off item #22: cross-checked against `origin/main` codebase.

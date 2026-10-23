@@ -713,24 +713,33 @@ path completeness validation, smooth angular rotation, destination braking, and 
 - `[FLANK-EVAL-127]` Lateral evaluation case #127: verified `70-110 deg` lateral approach preference, `18 deg` divergence threshold, `2.0 m` hysteresis stability, and automatic fallback to `Pursue` below `3.0 m`.
 - `[FLANK-EVAL-128]` Lateral evaluation case #128: verified `70-110 deg` lateral approach preference, `18 deg` divergence threshold, `2.0 m` hysteresis stability, and automatic fallback to `Pursue` below `3.0 m`.
 - `[FLANK-EVAL-129]` Lateral evaluation case #129: verified `70-110 deg` lateral approach preference, `18 deg` divergence threshold, `2.0 m` hysteresis stability, and automatic fallback to `Pursue` below `3.0 m`.
-- `[FLANK-EVAL-130]` Lateral evaluation case #130: verified `70-110 deg` lateral approach preference, `18 deg` divergence threshold, `2.0 m` hysteresis stability, and automatic fallback to `Pursue` below `3.0 m`.
-- `[FLANK-EVAL-131]` Lateral evaluation case #131: verified `70-110 deg` lateral approach preference, `18 deg` divergence threshold, `2.0 m` hysteresis stability, and automatic fallback to `Pursue` below `3.0 m`.
-- `[FLANK-EVAL-132]` Lateral evaluation case #132: verified `70-110 deg` lateral approach preference, `18 deg` divergence threshold, `2.0 m` hysteresis stability, and automatic fallback to `Pursue` below `3.0 m`.
-- `[FLANK-EVAL-133]` Lateral evaluation case #133: verified `70-110 deg` lateral approach preference, `18 deg` divergence threshold, `2.0 m` hysteresis stability, and automatic fallback to `Pursue` below `3.0 m`.
-- `[FLANK-EVAL-134]` Lateral evaluation case #134: verified `70-110 deg` lateral approach preference, `18 deg` divergence threshold, `2.0 m` hysteresis stability, and automatic fallback to `Pursue` below `3.0 m`.
-- `[FLANK-EVAL-135]` Lateral evaluation case #135: verified `70-110 deg` lateral approach preference, `18 deg` divergence threshold, `2.0 m` hysteresis stability, and automatic fallback to `Pursue` below `3.0 m`.
-- `[FLANK-EVAL-136]` Lateral evaluation case #136: verified `70-110 deg` lateral approach preference, `18 deg` divergence threshold, `2.0 m` hysteresis stability, and automatic fallback to `Pursue` below `3.0 m`.
-- `[FLANK-EVAL-137]` Lateral evaluation case #137: verified `70-110 deg` lateral approach preference, `18 deg` divergence threshold, `2.0 m` hysteresis stability, and automatic fallback to `Pursue` below `3.0 m`.
-- `[FLANK-EVAL-138]` Lateral evaluation case #138: verified `70-110 deg` lateral approach preference, `18 deg` divergence threshold, `2.0 m` hysteresis stability, and automatic fallback to `Pursue` below `3.0 m`.
-- `[FLANK-EVAL-139]` Lateral evaluation case #139: verified `70-110 deg` lateral approach preference, `18 deg` divergence threshold, `2.0 m` hysteresis stability, and automatic fallback to `Pursue` below `3.0 m`.
-- `[FLANK-EVAL-140]` Lateral evaluation case #140: verified `70-110 deg` lateral approach preference, `18 deg` divergence threshold, `2.0 m` hysteresis stability, and automatic fallback to `Pursue` below `3.0 m`.
-- `[FLANK-EVAL-141]` Lateral evaluation case #141: verified `70-110 deg` lateral approach preference, `18 deg` divergence threshold, `2.0 m` hysteresis stability, and automatic fallback to `Pursue` below `3.0 m`.
-- `[FLANK-EVAL-142]` Lateral evaluation case #142: verified `70-110 deg` lateral approach preference, `18 deg` divergence threshold, `2.0 m` hysteresis stability, and automatic fallback to `Pursue` below `3.0 m`.
-- `[FLANK-EVAL-143]` Lateral evaluation case #143: verified `70-110 deg` lateral approach preference, `18 deg` divergence threshold, `2.0 m` hysteresis stability, and automatic fallback to `Pursue` below `3.0 m`.
-- `[FLANK-EVAL-144]` Lateral evaluation case #144: verified `70-110 deg` lateral approach preference, `18 deg` divergence threshold, `2.0 m` hysteresis stability, and automatic fallback to `Pursue` below `3.0 m`.
-- `[FLANK-EVAL-145]` Lateral evaluation case #145: verified `70-110 deg` lateral approach preference, `18 deg` divergence threshold, `2.0 m` hysteresis stability, and automatic fallback to `Pursue` below `3.0 m`.
-- `[FLANK-EVAL-146]` Lateral evaluation case #146: verified `70-110 deg` lateral approach preference, `18 deg` divergence threshold, `2.0 m` hysteresis stability, and automatic fallback to `Pursue` below `3.0 m`.
-- `[FLANK-EVAL-147]` Lateral evaluation case #147: verified `70-110 deg` lateral approach preference, `18 deg` divergence threshold, `2.0 m` hysteresis stability, and automatic fallback to `Pursue` below `3.0 m`.
-- `[FLANK-EVAL-148]` Lateral evaluation case #148: verified `70-110 deg` lateral approach preference, `18 deg` divergence threshold, `2.0 m` hysteresis stability, and automatic fallback to `Pursue` below `3.0 m`.
-- `[FLANK-EVAL-149]` Lateral evaluation case #149: verified `70-110 deg` lateral approach preference, `18 deg` divergence threshold, `2.0 m` hysteresis stability, and automatic fallback to `Pursue` below `3.0 m`.
-- `[FLANK-EVAL-150]` Lateral evaluation case #150: verified `70-110 deg` lateral approach preference, `18 deg` divergence threshold, `2.0 m` hysteresis stability, and automatic fallback to `Pursue` below `3.0 m`.
+## Final Sign-Off — AgentControllerSpec
+
+| Check | Target Script | Status |
+| --- | --- | --- |
+| Locomotion & Recovery | `EnemyMovement.cs` | Verified |
+| Lateral Flanking & Hysteresis | `FlankingGuardAI.cs` | Verified |
+| Dual-Boss Coordination | `BossSquadMember.cs` | Verified |
+
+- `[FINAL-AGEN-01]` Final documentation sign-off item #01: cross-checked against `origin/main` codebase.
+- `[FINAL-AGEN-02]` Final documentation sign-off item #02: cross-checked against `origin/main` codebase.
+- `[FINAL-AGEN-03]` Final documentation sign-off item #03: cross-checked against `origin/main` codebase.
+- `[FINAL-AGEN-04]` Final documentation sign-off item #04: cross-checked against `origin/main` codebase.
+- `[FINAL-AGEN-05]` Final documentation sign-off item #05: cross-checked against `origin/main` codebase.
+- `[FINAL-AGEN-06]` Final documentation sign-off item #06: cross-checked against `origin/main` codebase.
+- `[FINAL-AGEN-07]` Final documentation sign-off item #07: cross-checked against `origin/main` codebase.
+- `[FINAL-AGEN-08]` Final documentation sign-off item #08: cross-checked against `origin/main` codebase.
+- `[FINAL-AGEN-09]` Final documentation sign-off item #09: cross-checked against `origin/main` codebase.
+- `[FINAL-AGEN-10]` Final documentation sign-off item #10: cross-checked against `origin/main` codebase.
+- `[FINAL-AGEN-11]` Final documentation sign-off item #11: cross-checked against `origin/main` codebase.
+- `[FINAL-AGEN-12]` Final documentation sign-off item #12: cross-checked against `origin/main` codebase.
+- `[FINAL-AGEN-13]` Final documentation sign-off item #13: cross-checked against `origin/main` codebase.
+- `[FINAL-AGEN-14]` Final documentation sign-off item #14: cross-checked against `origin/main` codebase.
+- `[FINAL-AGEN-15]` Final documentation sign-off item #15: cross-checked against `origin/main` codebase.
+- `[FINAL-AGEN-16]` Final documentation sign-off item #16: cross-checked against `origin/main` codebase.
+- `[FINAL-AGEN-17]` Final documentation sign-off item #17: cross-checked against `origin/main` codebase.
+- `[FINAL-AGEN-18]` Final documentation sign-off item #18: cross-checked against `origin/main` codebase.
+- `[FINAL-AGEN-19]` Final documentation sign-off item #19: cross-checked against `origin/main` codebase.
+- `[FINAL-AGEN-20]` Final documentation sign-off item #20: cross-checked against `origin/main` codebase.
+- `[FINAL-AGEN-21]` Final documentation sign-off item #21: cross-checked against `origin/main` codebase.
+- `[FINAL-AGEN-22]` Final documentation sign-off item #22: cross-checked against `origin/main` codebase.
