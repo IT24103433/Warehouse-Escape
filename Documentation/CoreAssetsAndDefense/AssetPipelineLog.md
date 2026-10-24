@@ -23,58 +23,17 @@ material setup for the warehouse props, Route A/B keycards, and hero firearms.
 | `Combat_Shotgun` | Weapon | `Assets/Meshes/Weapons/Combat_Shotgun.fbx` | Room 4 guard weapon & pickup (`WeaponType.Combat_Shotgun`) |
 
 <!-- BLOCK:EXPORT_CHECKLIST -->
-### 1.2 Calibrated Pivot & Real-World Scale Rules (v0.2)
+### 1.2 Consolidated Blender-to-Unity Production Checklist
 
-- **Floor Props (`Crate`, `Rack`, `Barrier`):** Origin locked to bottom-center `(0, 0, 0)`
-  so `ExpandWarehouseLayout.InstantiateBlenderProp(..., new Vector3(x, 0f, z), ...)` sits
-  flush on concrete without manual `Y` offset corrections.
-- **Wall Props (`Industrial_ServicePanel`):** Origin shifted to rear wall backplane
-  `(0, 0, -0.095 m)` with Blender FBX axis `-Z` forward, `Y` up, `apply_unit_scale=True`.
-- **Pickups (`Access_Card`):** Origin locked at geometric center so `AccessCard.Update()`
-  spins cleanly around `Vector3.up` at `90 deg/s` (`2.5x` scene pickup scale).
-- **Weapons (`MP5_SMG`, `Combat_Shotgun`):** Origin placed at trigger-grip base with `+Z`
-  barrel forward and `-Y` downward grip extension.
+- [x] Unit scale normalized (`1.0 BU = 1.0 m`, `apply_unit_scale=True`, transforms applied).
+- [x] FBX axis standardized (`-Z` forward, `Y` up) across props and `generate_service_panel.py`.
+- [x] Floor prop pivots locked at bottom-center `(0, 0, 0)` (`Crate`, `Rack`, `Barrier`).
+- [x] Wall panel backplane pivot at `(0, 0, -0.095)` with zero NavMesh/physics obstacle.
+- [x] `Access_Card` center pivot (`2.5x` pickup scale); `MP5_SMG` & `Combat_Shotgun` grip pivots (`+Z` barrel).
+- [x] Controlled `BEVEL` + `WEIGHTED_NORMAL` geometry; `UV0` padding `>= 0.015`, `UV1` lightmaps.
+- [x] `URP/Lit` materials with tangent-space normal maps, packed masks, and SRP Batcher support.
 <!-- END:EXPORT_CHECKLIST -->
 
-<!-- BLOCK:DRAFT_TROUBLESHOOT -->
-### 1.3 Early Axis & Scale Troubleshooting Scratchpad (Draft)
-
-- `[SCRATCH-01]` Initial `.obj` exports from Blender appeared at `0.01x` scale in Unity until
-  FBX `Apply Scalings: FBX Units Scale` was enabled.
-- `[SCRATCH-02]` First `Warehouse_Cargo_Crate.obj` import showed rotated `X = -90 deg` transform
-  when `Apply Transform` was unchecked in Blender export dialog.
-- `[SCRATCH-03]` Early `MP5_SMG` test mesh pointed upward `+Y` inside guard hand before
-  aligning receiver barrel along `+Z` with grip pivot at origin.
-- `[SCRATCH-04]` Legacy `[Placeholder]_Guard_CharacterMesh` still active in early Room 4
-  blockout pending `DefensiveGuardAI.CleanupRoom4PlaceholdersAndCapsule()`.
-- `[SCRATCH-05]` Legacy `.mtl` sidecar files generated duplicate grey `Default-Material` assets
-  inside `Assets/Meshes/Props/`; replace with shared `Assets/Materials/Mat_*.mat` references.
-- `[SCRATCH-06]` Test whether `Generate Colliders` on import causes NavMesh gaps near wall
-  conduits and `IndustrialServicePanel.fbx`; keep import colliders OFF for wall detail.
-- `[SCRATCH-07]` `Warehouse_Steel_Rack.obj` vertex count inflated from split smooth shading
-  islands across `UV0` borders (`44` UV islands before seam consolidation).
-- `[SCRATCH-08]` Initial `Access_Card.fbx` at `1.0x` scale appeared too tiny against `Terminal_Desk`;
-  schedule `2.5x` pickup scaling in `SetupWeaponsAndAccessCards` and `ExpandWarehouseLayout`.
-- `[SCRATCH-09]` Verify `Combat_Shotgun` shell-tube clamp clipping when parented under
-  `GuardShooting` right-hand socket transform.
-- `[SCRATCH-10]` Confirm `Warehouse_Cargo_Crate` diagonal braces do not z-fight against
-  recessed plank panels when viewed from the Room 4 south doorway (`22 m` distance).
-- `[SCRATCH-11]` Audit `Warehouse_Security_Barrier` concrete chamfer normal smoothing (`35 deg`
-  threshold vs `60 deg` caused dark gradient across lower Jersey barrier taper).
-
-| Scratch Issue | Symptom Observed in Blockout | Source File | Planned Fix |
-| --- | --- | --- | --- |
-| `SCR-AXIS-01` | Crate resting on corner/center instead of floor | `Warehouse_Cargo_Crate.obj` | Move origin to bottom-center `(0,0,0)` |
-| `SCR-AXIS-02` | Rack scaled 100x too small on `.obj` drop | `Warehouse_Steel_Rack.obj` | Switch to calibrated `.fbx` with `apply_unit_scale` |
-| `SCR-AXIS-03` | Shotgun barrel skewed +25 deg in hand | `Combat_Shotgun.fbx` | Align `+Z` forward, grip origin `(0,-0.04,0.12)` |
-| `SCR-AXIS-04` | Wall panel floating 9.5 cm off wall | `IndustrialServicePanel.blend` | Shift panel pivot to rear face `Z = -0.095 m` |
-| `SCR-AXIS-05` | Barrier height ambiguous vs eye ray | `Warehouse_Security_Barrier.obj` | Calibrate height to `1.12 m` (`+0.8m` vs `+1.5m`) |
-| `SCR-AXIS-06` | Duplicate `Default-Material` on import | `Props/*.mtl` | Strip `.mtl` workflow and assign `Mat_*.mat` |
-| `SCR-AXIS-07` | Card text mirrored on rear badge face | `Access_Card.fbx` | Separate planar front/back `UV0` islands |
-| `SCR-AXIS-08` | MP5 sights clipping `0.1 m` camera near-plane | `MP5_SMG.fbx` | Calibrate grip origin `(0,-0.04,0.08)` |
-| `SCR-AXIS-09` | Rack tubular cross-braces bloating polycount | `Warehouse_Steel_Rack.blend` | Convert 16-seg tubes to 4-sided struts |
-| `SCR-AXIS-10` | Service panel bolts consuming 768 tris | `generate_service_panel.py` | Cap cylinders at 12 verts (`384 tris`) |
-<!-- END:DRAFT_TROUBLESHOOT -->
 
 <!-- SECTION:TOPOLOGY_GUIDELINES -->
 ## 2. Low-Poly Topology & Shading Guidelines
@@ -122,25 +81,6 @@ edge highlights under overhead spotlighting and baked ambient occlusion.
 | `Delete Loose / Interior` | Bottom caps & occluded overlaps | `8–15%` tris | Eliminate floor-buried & interior backface geometry |
 | `Cylinder Segment Cap` | `12` verts bolts / `16` verts barrels / `4`-sided struts | `45–60%` tris | Cut sub-part polycount without silhouette loss |
 
-<!-- BLOCK:TOPO_DRAFT_NOTES -->
-### 2.4 Legacy Topology Issues to Resolve (Draft)
-
-- `[DRAFT-TOPO-01]` Early `.obj` exports split vertices along UV seams, doubling runtime vertex count.
-- `[DRAFT-TOPO-02]` Cylindrical rack cross-braces used 16 segments per strut; convert to 4-sided tubes.
-- `[DRAFT-TOPO-03]` Service panel bolts initially used 24-vertex cylinders; reduce to 12-vertex cylinders.
-- `[DRAFT-TOPO-04]` Check crate inner plank insets for coplanar z-fighting at mip levels > 2.
-- `[DRAFT-TOPO-05]` Remove legacy `Subsurf` modifiers left disabled in early `.blend` backups.
-- `[DRAFT-TOPO-06]` Audit `Security_Barrier` base cutouts for inverted normals on inner lip.
-- `[DRAFT-TOPO-07]` Collapse stacked longitudinal loops on `Warehouse_Cargo_Crate` corner stiles.
-- `[DRAFT-TOPO-08]` Remove unseen back face of `IndustrialServicePanel` recessed interior cavity.
-- `[DRAFT-TOPO-09]` Verify `MP5_SMG` perforated handguard holes use normal/bump relief instead of boolean cutouts.
-- `[DRAFT-TOPO-10]` Simplify `Combat_Shotgun` forend ribs from 12 bevelled grooves to 6 clean loops.
-- `[DRAFT-TOPO-11]` Audit `Access_Card` perimeter chamfer so card thickness reads at `2.5x` pickup scale.
-- `[DRAFT-TOPO-12]` Replace high-poly bolted gusset brackets on `Warehouse_Steel_Rack` with stamped quads.
-- `[DRAFT-TOPO-13]` Verify `MP5_SMG` curved magazine follower recess uses baked AO rather than 3D lip.
-- `[DRAFT-TOPO-14]` Audit `Warehouse_Security_Barrier` top steel rail end-caps for zero-area degenerate tris.
-- `[DRAFT-TOPO-15]` Standardize sharp-edge crease weights before running Unity `Import Normals = Import`.
-<!-- END:TOPO_DRAFT_NOTES -->
 <!-- END:TOPOLOGY_GUIDELINES -->
 <!-- SECTION:CARGO_RACK -->
 ## 3. `Warehouse_Cargo_Crate` and `Warehouse_Steel_Rack` Base Meshes
@@ -183,20 +123,6 @@ edge highlights under overhead spotlighting and baked ambient occlusion.
 | `Steel_Rack: Deck Plates (3x)` | `1,180` | `760` | `540` | `-54.2%` | `Mat_Shelf_Level` |
 | `Steel_Rack: Braces & Feet` | `2,140` | `1,270` | `740` | `-65.4%` | `Mat_Rack_Blue` |
 
-<!-- BLOCK:DUAL_FORMAT_NOTE -->
-### 3.3 Temporary Dual-Format Export Log (To Prune)
-
-- `[TEMP-FMT-01]` Retained `.obj`/`.mtl` exports (`Warehouse_Cargo_Crate.obj`,
-  `Warehouse_Steel_Rack.obj`, `Warehouse_Security_Barrier.obj`) alongside `.fbx` while
-  testing multi-material slot assignment order in Unity.
-- `[TEMP-FMT-02]` `ExpandWarehouseLayout.cs` explicitly loads `.fbx` via `AssetDatabase.LoadAssetAtPath`.
-- `[TEMP-FMT-03]` Remove `.obj` rows from inventory once `.fbx` pivot/scale pass completes.
-- `[TEMP-FMT-04]` Legacy `.mtl` references in `Assets/Meshes/Props/` will remain untouched in
-  Unity meta tracking; documentation inventory will drop deprecated `.obj` tracking rows.
-- `[TEMP-FMT-05]` Verified `.obj` exports suffered vertex-normal splitting on UV seams (`+28%` verts)
-  compared to binary `.fbx` with `Smoothing: Face` and `WEIGHTED_NORMAL` applied.
-- `[TEMP-FMT-06]` Compared `.obj` ASCII parse time vs binary `.fbx` reimport across clean CI.
-<!-- END:DUAL_FORMAT_NOTE -->
 <!-- END:CARGO_RACK -->
 <!-- SECTION:PANEL_BARRIER -->
 ## 4. `Industrial_ServicePanel` and `Warehouse_Security_Barrier` Modelling Notes
