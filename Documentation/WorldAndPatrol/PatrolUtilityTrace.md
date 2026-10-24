@@ -207,6 +207,29 @@ Compare alarm location, last visual position and player position as three
 separate observations. See [TrapsAndBossSquad](../TrapsAndBossSquad.md) for
 trap timing and published team verification.
 
+## PlayMode verification record
+
+| Check | Evidence available | Expected observation on replay |
+| --- | --- | --- |
+| Patrol utility monotonicity | Repository test `Patrol_Changes_Priority_With_Neglect_Visibility_And_Travel` | Terms move ranking as specified with independent inputs |
+| Reject out-of-room patrol point | Repository test `Patrol_Rejects_Out_Of_Room_Candidate_And_Reports_Decision` | Valid in-room selection and rejected Room 1 candidate |
+| Safe approach and branch entrances | Repository `PhysicalWalkthroughTests` and source review | Protected south side and usable Route A and B entrances |
+| LOS loss then return | Manual replay pending | Investigate the last visible point, then return to Patrol |
+| Failed investigation approach | Manual replay pending | No complete approach and return on the travel deadline |
+| Reacquired in-room player | Manual replay pending | Investigate is immediately interrupted by Pursue |
+| Doorway turn interruption | Manual replay pending | Record bounds, destination result, path status and actual arrival |
+
+Read the repository reports for prior run results. This documentation work
+inspected tests and source and generated planning fixtures. Unity PlayMode
+was not run for this sequence.
+
+For a recovery replay, start from a selected patrol target, expose the player
+inside the room, then move behind the partition or beyond the boundary.
+Record the last visible position before the state switches. Move the hidden
+player again, compare it with `InvestigatePosition`, and collect the time
+and `DecisionCount` when fresh patrol evaluation resumes. Run a separate
+pass with visual reacquisition before the investigation scan ends.
+
 ## End-to-end example from the waypoint dataset
 
 At origin R2_W, compare R2_E at age 13.6 s and R2_N at age 15 s.

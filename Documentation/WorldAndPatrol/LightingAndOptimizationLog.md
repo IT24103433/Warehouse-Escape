@@ -133,19 +133,17 @@ preconditions before comparing behavior with these independent fixture
 anchors. Room 5 guard movement can choose detours across a larger zone
 than the Room 2 patrol endpoint predicate allows.
 
-## Draft capture checklist
+## Verification evidence to capture
 
-| Capture | Intended purpose | Notes |
+| Area | Current evidence | Still to collect on replay |
 | --- | --- | --- |
-| South crossing to west | Shelf silhouettes | Record both first-person and overhead camera if needed |
-| South crossing to east | Door turn | Include the outside collider corner |
-| East shelf to north | Branch legibility | Keep the guard midway across the light-probe volume |
-| West shelf to pad | Trap bypass | Include trigger debug visualization on a separate capture |
-| North facing branch A | Door clearance | Annotate raw and sampled points |
-| North facing branch B | Door clearance | Inspect the equivalent offset on the mirrored side |
-| Final hall central | Batching and cover | Count render submissions at a fixed position |
-| Final hall off-center | Flank detour | Retain complete path corners |
-| Behind cover with gaze away | Recovery | Record the time of last visual contact |
+| Lighting baseline | Scene and editor bake settings | Matched views through the aisles and both branches |
+| Prop batching | Mesh and renderer construction plus upstream test references | Frame debugger and profiler comparison |
+| Clearance | Build settings and ideal width arithmetic | Effective collider-face gap and paths from multiple headings |
+| Route detour | Synthetic graph and upstream route test definitions | Agent corners in the loaded scene and recovery timing |
+| Chase recovery | Script and [patrol checks](PatrolUtilityTrace.md#playmode-verification-record) | A fresh state and timestamp trace |
 
-The final verification record will identify available source checks and
-distinguish them from fresh replays.
+Review assets and test evidence against the branch base revision. A new
+profiling record should include Unity version, rendering settings, camera,
+hardware and sample length. This sequence did not perform a bake or run
+Unity profiling.

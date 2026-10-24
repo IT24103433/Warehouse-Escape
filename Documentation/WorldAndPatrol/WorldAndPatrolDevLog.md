@@ -107,3 +107,7 @@ Added synthetic fixtures for open routes and blocked links through the final hal
 ## 2026-10-23 · Consolidate Room 2 NavMesh dataset and remove redundant entries
 
 Folded reciprocal warehouse pairs into one row with two endpoint visibility values. Dropped current-point-only patrol samples, which are already distinguished by the trace cases.
+
+## 2026-10-24 · Log PlayMode verification for Room 2 patrol and chase recovery
+
+Indexed the existing patrol and route tests and wrote a manual recovery matrix with pending run status. The fixture arithmetic and the runtime checks have their own evidence fields.
