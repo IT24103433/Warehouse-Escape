@@ -103,3 +103,7 @@ Required confirmed visual contact before firing while allowing tactical flanking
 ## 2026-10-23 — Verify NavMesh path reachability for Room 3 search hypotheses
 Checked Room 3 NavMesh connectivity around storage racks and narrow side passages for all ring radii.
 Confirmed unreachable off-mesh samples are rejected cleanly without falling back to invalid targets.
+
+## 2026-10-24 — Log PlayMode verification for Access Card A pickup and reader unlock
+Verified Access Card A pickup, HUD prompt clearing, and CardReader Route A unlock in PlayMode walkthrough checks.
+Confirmed escape terminal activation triggers cleanly only after valid card authorization.
