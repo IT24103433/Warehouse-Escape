@@ -1234,3 +1234,16 @@ natural utility shifts keep `Guard_Aqqil_Defensive` from standing exposed:
   player retreats beyond `leashDistance` (`9.0 m`) or exits `Room_4_Defensive`.
 <!-- END:PRESSURE_RETREAT -->
 <!-- SECTION:VERIFICATION_LOG -->
+## 8. PlayMode & EditMode Verification Reference
+
+| Test / Editor Audit | Script Location | Verified Assertion & Coverage |
+| --- | --- | --- |
+| `Defense_Trades_Off_Cover_Range_And_Objective_Protection` | `Assets/Tests/InformedGuardDecisionTests.cs` | Protected firing post (`cover=1, range=1`) outscores exposed poor-range (`cover=0, range=0`); higher `objective` (`1` vs `0`) wins when `hasThreat=false`; shorter path (`1 m` vs `19 m`) wins |
+| `Defense_Selects_Reachable_Post_And_Respects_Leash` | `Assets/Tests/InformedGuardDecisionTests.cs` | Reports `SoundType.Gunshot` at `PostPosition`; asserts `DecisionCount > 0`, `DecisionCandidates.Count > 1`, `IsInsideRoom(SelectedDecisionTarget)`, `Distance <= LeashDistance`, `PathComplete`, and `!HasVisualTarget` |
+| `TrapAndSquadTests` | `Assets/Tests/TrapAndSquadTests.cs` | Confirms `Room4_Shock` trigger-only sensor, `1.25 s` warning before `15 HP` shock pulse, guard immunity, and `SoundType.Alarm` reporting |
+| `PhysicalWalkthroughTests` | `Assets/Tests/PhysicalWalkthroughTests.cs` | Exercises Route B traversal through `Room_4_Defensive`, `AccessCard_Pickup_Defensive` collection, and Room 5 exit unlock |
+| `FixRoom4AndSaveScene` | `Assets/Editor/FixRoom4AndSaveScene.cs` | Verifies legacy `[Placeholder]_Guard_CharacterMesh` and `Mannequin_Body` removal and active `DefensiveGuardAI` wiring |
+| `VisualQualityCaptureTests` | `Assets/Tests/VisualQualityCaptureTests.cs` | Captures `after_room4_defensive.png` & `room4_card_b_pickup.png`, verifies baked reflections and shadow budget |
+| `HeadshotAndShotgunTests` | `Assets/Tests/HeadshotAndShotgunTests.cs` | `Real_Gun_Headshots_Double_Damage_Pellets_And_Cover_Still_Blocks`: verifies `12*6*2` (`144`) shotgun headshots and cover blocking |
+| `DisplayAndSurfaceTests` | `Assets/Tests/DisplayAndSurfaceTests.cs` | `Prop_Detail_Is_Batched_And_Texture_Quality_Is_Full`: verifies prop batching and full texture quality |
+<!-- END:VERIFICATION_LOG -->

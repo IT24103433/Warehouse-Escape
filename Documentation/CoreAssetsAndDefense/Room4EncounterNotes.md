@@ -173,4 +173,25 @@ pursued across room boundaries, matching the Route B fairness specification.
    leash if still alive, to unlock the Room 5 exit terminal.
 <!-- END:R4_TRAPS_AND_CARD_B -->
 <!-- SECTION:R4_PLAYMODE_CHECK -->
+## 7. PlayMode Verification Checklist (`Room_4_Defensive`)
+
+| Check ID | Scenario | Expected & Verified Behavior | Suite / Reference |
+| --- | --- | --- | --- |
+| `R4-PM-01` | Gunshot / Alarm near `PostPosition` | `DispatchInspectionPoint` picks complete NavMesh path inside Room 4 & `<= LeashDistance` | `InformedGuardDecisionTests` |
+| `R4-PM-02` | Hidden player behind wall | `GuardShooting.HasVisualTarget` stays `false`; no firing without confirmed LOS | `InformedGuardDecisionTests` |
+| `R4-PM-03` | Cover & range tradeoff | `cover = 1, weaponRange = 1` outscores exposed `cover = 0, weaponRange = 0` | `InformedGuardDecisionTests` |
+| `R4-PM-04` | Objective proximity when idle | `objective = 1` beats `objective = 0` when `hasThreat = false` | `InformedGuardDecisionTests` |
+| `R4-PM-05` | Path-cost tradeoff | `pathLength = 1 m` beats `pathLength = 19 m` for equal tactical features | `InformedGuardDecisionTests` |
+| `R4-PM-06` | Player exits Room 4 / > 9 m leash | `UpdatePursueIntruderState` triggers `ReturnToPost`, snaps `postFacing (0, 0, -1)` at `<= 0.6 m` | `DefensiveGuardAI.cs` |
+| `R4-PM-07` | `Room4_Shock` arming | `1.25 s` amber warning -> `15 HP` active pulse; `28 m` `SoundType.Alarm` alerts Aqqil | `TrapAndSquadTests` |
+| `R4-PM-08` | Guard shock immunity | `WarehouseTrap` checks `Health.IsPlayer`; guards ignore shock pulse damage | `TrapAndSquadTests` |
+| `R4-PM-09` | Route B Card B escape | `AccessCard_Pickup_Defensive` unlocks Room 5 exit independently of Route A | `PhysicalWalkthroughTests` |
+| `R4-PM-10` | Placeholder cleanup | `[Placeholder]_Guard_CharacterMesh` & `Mannequin_Body` destroyed on Awake/Editor fix | `FixRoom4AndSaveScene` |
+| `R4-PM-11` | `220 HP` & `Combat_Shotgun` drop | Guard spawns with `220 HP`, fires `12 x 6` pellets, drops shotgun pickup on death | `DefensiveGuardAI.cs` / `GuardShooting.cs` |
+| `R4-PM-12` | Switching hysteresis (`+0.04`) | Lateral strafe across `X = 14..18` throttled at `0.75 s` with zero oscillation | `DefensiveGuardAI.cs` |
+| `R4-PM-13` | Inspector candidate telemetry | `DecisionCandidates`, `SelectedDecisionTarget`, and magenta target gizmos populate cleanly | `DefensiveGuardAI.OnDrawGizmosSelected` |
+| `R4-PM-14` | Wall-panel zero obstacle | `IndustrialServicePanel` under `Cinematic_Visual_Details` leaves corridor NavMesh intact | `ExpandWarehouseLayout.cs` |
+| `R4-PM-15` | Card B trigger radius | `4.0 x 4.0 x 4.0` pickup collider registers sprinting collection cleanly | `ExpandWarehouseLayout.cs` |
+| `R4-PM-16` | URP SRP Batcher & lighting | Room 4 lightmaps, `ReflectionProbe_Room4_Defensive`, and `ACES` tonemapping active | `VisualQualityCaptureTests` |
+<!-- END:R4_PLAYMODE_CHECK -->
 <!-- SECTION:R4_VIVA_QA -->
