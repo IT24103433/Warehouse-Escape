@@ -22,7 +22,6 @@ material setup for the warehouse props, Route A/B keycards, and hero firearms.
 | `MP5_SMG` | Weapon | `Assets/Meshes/Weapons/MP5_SMG.fbx` | Player primary SMG (`WeaponType.MP5_SMG`) |
 | `Combat_Shotgun` | Weapon | `Assets/Meshes/Weapons/Combat_Shotgun.fbx` | Room 4 guard weapon & pickup (`WeaponType.Combat_Shotgun`) |
 
-<!-- BLOCK:EXPORT_CHECKLIST -->
 ### 1.2 Consolidated Blender-to-Unity Production Checklist
 
 - [x] Unit scale normalized (`1.0 BU = 1.0 m`, `apply_unit_scale=True`, transforms applied).
@@ -32,10 +31,8 @@ material setup for the warehouse props, Route A/B keycards, and hero firearms.
 - [x] `Access_Card` center pivot (`2.5x` pickup scale); `MP5_SMG` & `Combat_Shotgun` grip pivots (`+Z` barrel).
 - [x] Controlled `BEVEL` + `WEIGHTED_NORMAL` geometry; `UV0` padding `>= 0.015`, `UV1` lightmaps.
 - [x] `URP/Lit` materials with tangent-space normal maps, packed masks, and SRP Batcher support.
-<!-- END:EXPORT_CHECKLIST -->
 
 
-<!-- SECTION:TOPOLOGY_GUIDELINES -->
 ## 2. Low-Poly Topology & Shading Guidelines
 
 All warehouse props are authored to hit real-time URP frame budgets while keeping clean
@@ -81,8 +78,6 @@ edge highlights under overhead spotlighting and baked ambient occlusion.
 | `Delete Loose / Interior` | Bottom caps & occluded overlaps | `8–15%` tris | Eliminate floor-buried & interior backface geometry |
 | `Cylinder Segment Cap` | `12` verts bolts / `16` verts barrels / `4`-sided struts | `45–60%` tris | Cut sub-part polycount without silhouette loss |
 
-<!-- END:TOPOLOGY_GUIDELINES -->
-<!-- SECTION:CARGO_RACK -->
 ## 3. `Warehouse_Cargo_Crate` and `Warehouse_Steel_Rack` Base Meshes
 
 ### 3.1 `Warehouse_Cargo_Crate` (`Assets/Meshes/Props/Warehouse_Cargo_Crate.fbx`)
@@ -123,8 +118,6 @@ edge highlights under overhead spotlighting and baked ambient occlusion.
 | `Steel_Rack: Deck Plates (3x)` | `1,180` | `760` | `540` | `-54.2%` | `Mat_Shelf_Level` |
 | `Steel_Rack: Braces & Feet` | `2,140` | `1,270` | `740` | `-65.4%` | `Mat_Rack_Blue` |
 
-<!-- END:CARGO_RACK -->
-<!-- SECTION:PANEL_BARRIER -->
 ## 4. `Industrial_ServicePanel` and `Warehouse_Security_Barrier` Modelling Notes
 
 ### 4.1 `Industrial_ServicePanel` (`Assets/Meshes/Props/IndustrialServicePanel.fbx`)
@@ -160,8 +153,6 @@ edge highlights under overhead spotlighting and baked ambient occlusion.
     yielding maximum `cover = 1.0f` while keeping shotgun sightlines clear.
 - **Topology Optimization (`1,080 tris`, `-56.1%`):** Tapered New-Jersey cross section with
   chamfered end caps and dual base forklift slots; culled hidden bottom face.
-<!-- END:PANEL_BARRIER -->
-<!-- SECTION:UV_CHECKS -->
 ## 5. UV Mapping & Texel Density Verification
 
 All prop meshes use clean, non-overlapping `UV0` layouts packed into `[0, 1]` with
@@ -208,8 +199,6 @@ Room 4 concrete walls and floor slabs.
 | `AccessCard_FrontFace` | `0.02–0.48` | `0.05–0.95` | `45%` | `Tex_Card_A.png` / `Tex_Card_B.png` badge face |
 | `AccessCard_BackFace` | `0.52–0.98` | `0.05–0.95` | `45%` | `Tex_Card_A.png` / `Tex_Card_B.png` magnetic stripe |
 | `AccessCard_Edge_Chip` | `0.02–0.98` | `0.01–0.04` | `10%` | Satin chamfer perimeter & contact pad |
-<!-- END:UV_CHECKS -->
-<!-- SECTION:WEAPONS -->
 ## 6. Weapon Source Specs: `MP5_SMG` and `Combat_Shotgun`
 
 Both hero firearms are authored in Blender with merged static receiver/barrel sub-meshes
@@ -247,8 +236,6 @@ camera mount) and `GuardShooting.cs` (third-person guard right-hand mount).
 | --- | --- | --- | --- | --- | --- |
 | `MP5_SMG` | `9,840` | `4,920` (`-50.0%`) | `8` | `(0.00, -0.04, 0.08)` | `(0.00, 0.03, 0.42)` |
 | `Combat_Shotgun` | `8,420` | `4,380` (`-48.0%`) | `7` | `(0.00, -0.04, 0.12)` | `(0.00, 0.04, 0.62)` |
-<!-- END:WEAPONS -->
-<!-- SECTION:URP_MATERIALS -->
 ## 7. Unity URP Material Configuration & Normal-Map Bevel Pass
 
 All props and weapons render via `Universal Render Pipeline/Lit` materials stored in
@@ -287,8 +274,6 @@ masks generated in `Assets/Textures/Cinematic/` by `ApplyCinematicWarehouse.cs`.
   (`sRGB = Off`) to prevent gamma-shifted inverted bevel highlights under ACES tonemapping.
 - **Global Post-Process Alignment:** `ACES` tonemapping (`postExposure = 0.65`, `contrast = 10`,
   `bloom = 0.28`, `vignette = 0.16`, `filmGrain = 0.025`) verified without motion blur.
-<!-- END:URP_MATERIALS -->
-<!-- SECTION:ACCESS_CARD_VERIFY -->
 ## 8. `Access_Card` UV Alignment & Real-Time Rendering Optimization
 
 ### 8.1 `Access_Card.fbx` Dual-Route Texture & Trigger Verification
@@ -313,4 +298,12 @@ masks generated in `Assets/Textures/Cinematic/` by `ApplyCinematicWarehouse.cs`.
 | Reflection Probe | `128 px` box-projected `ReflectionProbe_Room4_Defensive` | Metallic racks & gunmetal | Crisp metallic floor/rack reflections |
 | Shadow Cascades | `shadowDistance = 45 m`, `shadowCascadeCount = 2` | Overhead spotlights (`12f`/`11f`) | Cuts shadow pass cost without pop-in |
 | Decorative Colliders | Disabled on `IndustrialServicePanel` & trim | `Cinematic_Visual_Details` | Zero spurious NavMesh carving |
-<!-- END:ACCESS_CARD_VERIFY -->
+
+## 9. Final Cross-References & Production Summary
+
+| Artifact / Source | Purpose | Final Verified State |
+| --- | --- | --- |
+| [`ModelOptimizationInventory.csv`](ModelOptimizationInventory.csv) | Sub-part & LOD0 triangle dataset | `16,428 tris` total across `7` hero assets (`-52.2%`) |
+| [`DefensivePolicyTrace.md`](DefensivePolicyTrace.md) | 17-ring utility, cover, range & leash traces | `hasThreat` / no-threat scoring & hysteresis verified |
+| [`Room4EncounterNotes.md`](Room4EncounterNotes.md) | Room 4 layout, shotgun balance & viva Q&A | `220 HP`, `Room4_Shock`, Card B & PlayMode checks |
+| [`generate_service_panel.py`](../Tools/generate_service_panel.py) | Reproducible Blender Python cabinet mesh | `IndustrialServicePanel.fbx` (`2,340 tris`, `-Z` forward) |

@@ -18,24 +18,7 @@ equal footing with Route A (Search Sector), keeping both routes independently co
 3. **Fair Boundary & Escape Option:** Player can disengage beyond leash or flank via aisles.
 4. **Visual Readability:** Distinct uniform (`Mat_Guard_Aqqil`), lighting, and prop silhouettes.
 
-<!-- BLOCK:R4_EARLY_BLOCKOUT -->
-### 1.2 Early Room 4 Blockout Assumptions (Draft)
 
-- `[R4-DRAFT-01]` Initial room footprint tested at `16 m x 16 m` before `ExpandWarehouseLayout`
-  expanded `Room_4_Defensive` to `24 m x 22 m` (`X [4, 28], Z [-2, 20]`).
-- `[R4-DRAFT-02]` Placeholder guard capsule replaced at runtime by `HumanoidMeshBuilder`
-  (`CharacterRole.Defensive_Aqqil`) inside `DefensiveGuardAI.Awake()`.
-- `[R4-DRAFT-03]` Early blockout used primitive Unity cubes for cover prior to importing
-  `Warehouse_Security_Barrier.fbx` and `Warehouse_Cargo_Crate.fbx`.
-- `[R4-DRAFT-04]` Early `Room4_Shock` trap tested at doorway `(5, 0, 0)` before moving to
-  `(17, 0, 5)` beside `Defensive_Barrier_Center` so south entry stayed fair.
-- `[R4-DRAFT-05]` Early `leashDistance` tested at `14.0 m`, which let Aqqil chase into
-  the south doorway choke; reduced to `9.0 m` (`8.5 m` script default).
-- `[R4-DRAFT-06]` Early `Terminal_Desk` stood at `(16, 0.5, 14)` too far north behind the rack;
-  shifted to `(16, 0.5, 10)` so the three barriers shield its front arc.
-<!-- END:R4_EARLY_BLOCKOUT -->
-
-<!-- SECTION:R4_STATES_AND_LAYOUT -->
 ## 2. Room 4 Coordinate Layout & Guard Anchor
 
 | Scene Element | World Coordinates / Bounds | Source Reference |
@@ -53,8 +36,6 @@ equal footing with Route A (Search Sector), keeping both routes independently co
   `Guard_Aqqil_Defensive` anchored near `Terminal_Desk` while choosing cover behind
   `Defensive_Barrier_West/Center/East` during `PursueIntruder` (Attack) and cleanly
   disengaging via `ReturnToPost` (Retreat) when the player exits the perimeter.
-<!-- END:R4_STATES_AND_LAYOUT -->
-<!-- SECTION:R4_LEASH_NOTES -->
 ## 3. Room 4 Boundary & Leash Containment Rules
 
 | Boundary / Zone | Coordinate Span | Guard Containment Effect |
@@ -67,8 +48,6 @@ equal footing with Route A (Search Sector), keeping both routes independently co
 
 This geometry guarantees players can disengage to Room 2 or Room 5 corridor without being
 pursued across room boundaries, matching the Route B fairness specification.
-<!-- END:R4_LEASH_NOTES -->
-<!-- SECTION:R4_PRESSURE_NOTES -->
 ## 4. Repositioning Under Player Pressure
 
 - Under aggressive `MP5_SMG` pushes, Aqqil dynamically rotates across `Defensive_Barrier_West`,
@@ -76,8 +55,6 @@ pursued across room boundaries, matching the Route B fairness specification.
   `torsoClear` to `true` or pushes range inside `2 m`.
 - When the player disengages beyond `9.0 m` leash or exits `Room_4_Defensive` to recover,
   `UpdatePursueIntruderState` triggers `TransitionToReturnToPost()`.
-<!-- END:R4_PRESSURE_NOTES -->
-<!-- SECTION:R4_SHOTGUN_BALANCE -->
 ## 5. `Combat_Shotgun` 6-Pellet Damage & 220 HP Guard Durability Balance
 
 ### 5.1 Guard Health & Shotgun Parameters (`DefensiveGuardAI.Awake` & `GuardShooting.cs`)
@@ -124,8 +101,6 @@ pursued across room boundaries, matching the Route B fairness specification.
 
 - **Defeat Drop (`GuardShooting.HandleDeath`):** Spawns `WeaponPickup` for `Combat_Shotgun`
   (`8` mag / `12` reserve, `12 x 6` pellets, `24 dmg` per head pellet, `N_26P.wav` report).
-<!-- END:R4_SHOTGUN_BALANCE -->
-<!-- SECTION:R4_TRAPS_AND_CARD_B -->
 ## 6. Room 4 Shock Pad Trap Placement & Access Card B Defense Flow
 
 ### 6.1 `Room4_Shock` (`WarehouseTrap.cs` & `SetupWarehouseTrapsAndSquad.cs`)
@@ -171,8 +146,6 @@ pursued across room boundaries, matching the Route B fairness specification.
    (optionally) swap to the dropped `Combat_Shotgun` pickup.
 5. Exit north through Corridor 4->5 (`X ~ 6.5, Z = 17.5..20.0`), breaking Aqqil's `9.0 m`
    leash if still alive, to unlock the Room 5 exit terminal.
-<!-- END:R4_TRAPS_AND_CARD_B -->
-<!-- SECTION:R4_PLAYMODE_CHECK -->
 ## 7. PlayMode Verification Checklist (`Room_4_Defensive`)
 
 | Check ID | Scenario | Expected & Verified Behavior | Suite / Reference |
@@ -193,5 +166,42 @@ pursued across room boundaries, matching the Route B fairness specification.
 | `R4-PM-14` | Wall-panel zero obstacle | `IndustrialServicePanel` under `Cinematic_Visual_Details` leaves corridor NavMesh intact | `ExpandWarehouseLayout.cs` |
 | `R4-PM-15` | Card B trigger radius | `4.0 x 4.0 x 4.0` pickup collider registers sprinting collection cleanly | `ExpandWarehouseLayout.cs` |
 | `R4-PM-16` | URP SRP Batcher & lighting | Room 4 lightmaps, `ReflectionProbe_Room4_Defensive`, and `ACES` tonemapping active | `VisualQualityCaptureTests` |
-<!-- END:R4_PLAYMODE_CHECK -->
-<!-- SECTION:R4_VIVA_QA -->
+
+## 8. Viva Q&A Reference (`Room 4` & `DefensiveGuardAI`)
+
+1. **Why use a 17-point ring policy instead of direct player pursuit?**
+   Direct pursuit pulls a shotgun guard into open crossfire and away from Access Card B.
+   `DefenseDecisionPolicy` balances objective proximity (`0.30`), half-cover (`0.25`), and
+   `5 m` shotgun range (`0.30`) so Aqqil fights from behind `Warehouse_Security_Barrier` props.
+2. **How do you prevent oscillation between two nearby barriers?**
+   Candidate scoring is throttled to `0.75 s` (`nextTacticalDecision`), and the incumbent
+   `selectedTacticalIndex` receives a `+0.04f` bonus when `HasThreat` is active.
+3. **Can Aqqil shoot through walls or chase the player into Room 2?**
+   No. `GuardShooting` requires confirmed visual contact (`HasConfirmedVisualContact()`),
+   and `UpdatePursueIntruderState` triggers `ReturnToPost` if either actor leaves
+   `Room_4_Defensive` or exceeds `leashDistance` (`9.0 m`).
+4. **How does `Room4_Shock` integrate with Aqqil's defense?**
+   Stepping on `Room4_Shock` at `(17, 0, 5)` triggers a `1.25 s` warning and `28 m`
+   `SoundType.Alarm`, shifting Aqqil via `HandleDisturbance` before `15 HP` shock pulses begin.
+5. **How were the custom Blender assets optimized for Unity URP?**
+   Replaced Subdivision stacks with 1–3 segment `BEVEL` + `WEIGHTED_NORMAL`, culled bottom/interior
+   caps, standardized pivots (`(0,0,0)` floor props, `(0,0,-0.095)` wall panel), and
+   paired `URP/Lit` materials with tangent-space normal maps and SRP Batcher support.
+6. **What distinguishes Route B (`Room 4`) from Route A (`Room 3`)?**
+   Route A (`SearchGuardAI`) tests multi-hypothesis belief pursuit with an SMG, while Route B
+   (`DefensiveGuardAI`) tests close-quarters cover combat against a `220 HP` shotgun defender
+   using waist-high `1.12 m` barriers (`torsoClear=false`, `eyesClear=true`) and `Room4_Shock`.
+7. **Where are the `Room 4` barriers and traps wired in Editor automation?**
+   `ExpandWarehouseLayout.cs` places `Guard_Aqqil_Defensive` at `(16, 1.08, 8)` with `9.0 m`
+   leash, the three barriers, east alcove props, and Card B; `SetupWarehouseTrapsAndSquad.cs`
+   places `Room4_Shock` at `(17, 0, 5)`.
+8. **Why does blind full cover (`cover = 0.5`) rarely beat waist-high barriers (`cover = 1.0`)?**
+   When `!eyesClear`, `DefensiveGuardAI` multiplies `weaponRange` by `0.25f`, while waist-high
+   barriers keep `cover = 1.0` (`+0.25`) AND `eyesClear = true` (`weaponRange` up to `1.0`, `+0.30`).
+9. **How do players reliably notice and collect `AccessCard_Pickup_Defensive`?**
+   The `Access_Card.fbx` mesh sits at `(16.0, 1.15, 10.0)` with `2.5x` scale, `90 deg/s` Y spin,
+   `Mat_AccessCard_B` satin shader, warm `12f` desk spotlighting, and a `4 x 4 x 4` trigger.
+10. **How was PlayMode behavior regression-tested?**
+    `InformedGuardDecisionTests` tests both pure `DefenseDecisionPolicy.Score` tradeoffs and live
+    PlayMode NavMesh ring selection; `TrapAndSquadTests` and `PhysicalWalkthroughTests` verify
+    `Room4_Shock` timing, guard immunity, and Route B Card B Room 5 exit unlocking.

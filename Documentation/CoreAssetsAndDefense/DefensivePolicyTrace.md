@@ -4,7 +4,6 @@
 **Scripts:** `Assets/Scripts/DefensiveGuardAI.cs`, `Assets/Scripts/DefenseDecisionPolicy.cs`
 **Assigned Sector:** `Room_4_Defensive` (Route B — Access Card B)
 
-<!-- BLOCK:POLICY_INTRO -->
 ## 1. Scope and Final Architecture
 
 `DefensiveGuardAI` (`Room_4_Defensive`) pairs a 3-state `DefensiveGuardState` FSM
@@ -12,9 +11,7 @@
 Candidate evaluation is stateless with respect to guard HP and relies solely on measurable
 world features: anchor distance, dual-ray cover, shotgun range, visibility, freshness, and
 NavMesh path length.
-<!-- END:POLICY_INTRO -->
 
-<!-- SECTION:STATE_MACHINE -->
 ## 2. Attack / Guard / Retreat Decision Tree Architecture
 
 Replacing the simple direct-chase draft and static 3-waypoint circuit, `DefensiveGuardAI`
@@ -59,8 +56,6 @@ stateDiagram-v2
 - Only candidates passing `IsInsideRoom(raw)`, `GuardDecisionQueries.TryReachable`
   (`NavMeshPathStatus.PathComplete`), `IsInsideRoom(c.position)`, and `dist <= leashDistance`
   are scored; failed slots record `"Outside room/leash or no complete path"`.
-<!-- END:STATE_MACHINE -->
-<!-- SECTION:DECISION_POLICY_BASE -->
 ## 3. Anchor Proximity & Visibility Scoring (`hasThreat = false`)
 
 When no visual or sound threat has been logged within `7.5 s` (`HasThreat == false`),
@@ -559,8 +554,6 @@ return utility - 0.15f * Mathf.Clamp01(pathLength / 20f);
 | Sweep #26 (t=75s, full settle) | `C14` | `(12.46, 4.46)` | `0.444` | `0.875` | `0.950` | `5.38` | `0.6594` |
 | Sweep #26 (t=75s, full settle) | `C15` | `(11.00, 8.00)` | `0.444` | `0.875` | `0.950` | `5.56` | `0.6581` |
 | Sweep #26 (t=75s, full settle) | `C16` | `(12.46, 11.54)` | `0.444` | `0.625` | `0.950` | `5.74` | `0.5817` |
-<!-- END:DECISION_POLICY_BASE -->
-<!-- SECTION:THREAT_COVER_RANGE -->
 ## 4. Threat-Aware Cover & Useful Shotgun Range Trace (`hasThreat = true`)
 
 When `HasThreat` is true (`Time.time - threatTimestamp < 7.5f`), `DefenseDecisionPolicy.Score`
@@ -1025,8 +1018,6 @@ return utility - 0.15f * Mathf.Clamp01(pathLength / 20f);
 | Corridor 4->5 Lip (8.0, 16.5) | `C14` | `12.84` | `true` | `true` | `0.00` | `0.000` | `0.444` | `5.38` | `0.2429` |
 | Corridor 4->5 Lip (8.0, 16.5) | `C15` | `9.01` | `true` | `true` | `0.00` | `0.331` | `0.444` | `5.56` | `0.3408` |
 | Corridor 4->5 Lip (8.0, 16.5) | `C16` | `6.67` | `true` | `true` | `0.00` | `0.722` | `0.444` | `5.74` | `0.4566` |
-<!-- END:THREAT_COVER_RANGE -->
-<!-- SECTION:LEASH_BOUNDS -->
 ## 5. Pursuit Leash & Room 4 Boundary Enforcement
 
 ### 5.1 Territorial Constants
@@ -1075,8 +1066,6 @@ return utility - 0.15f * Mathf.Clamp01(pathLength / 20f);
 | `(6.5, 1.0, 21.0)` | Corridor 4->5 outside bounds | `false` | `16.10` | `skipped` | Rejected: outside `roomBounds` (`Z > 20`) |
 | `(25.5, 1.0, 7.5)` | East alcove rack edge | `true` | `9.51` | `skipped` | Rejected: exceeds `leashDistance` (`> 9.0`) |
 | `(28.5, 1.0, 8.0)` | Outside east Room 4 wall | `false` | `12.50` | `skipped` | Rejected: outside `roomBounds` (`X > 28`) |
-<!-- END:LEASH_BOUNDS -->
-<!-- SECTION:SWITCHING_BONUS -->
 ## 6. Switching Bonus & Decision Throttling (Anti-Oscillation)
 
 When a player strafes laterally across `X = 14..18` south of the concrete cover line,
@@ -1212,8 +1201,6 @@ Without hysteresis, repathing every `0.25 s` would cause visible pacing jitter.
 | `90.75 s` | `(14.31, 2.56)` | `C06` | `0.7180` | `0.7180` | `0.9695` | `1.0095` | Hold C06 (raw=C06; jitter suppressed) |
 | `91.50 s` | `(13.94, 2.72)` | `C06` | `0.7166` | `0.7166` | `0.9706` | `1.0106` | Hold C06 (raw=C06; jitter suppressed) |
 | `92.25 s` | `(13.47, 2.88)` | `C06` | `0.7152` | `0.7152` | `0.9717` | `1.0117` | Hold C06 (raw=C06; jitter suppressed) |
-<!-- END:SWITCHING_BONUS -->
-<!-- SECTION:PRESSURE_RETREAT -->
 ## 7. Player Pressure Repositioning & Low-Health Retreat Evaluation
 
 ### 7.1 Repositioning Under Automatic `MP5_SMG` Pressure
@@ -1232,8 +1219,6 @@ natural utility shifts keep `Guard_Aqqil_Defensive` from standing exposed:
 - Tactical spacing under pressure emerges cleanly from `cover = 1.0` (`0.25` weight),
   `5.0 m` `weaponRange` (`0.30` weight), and perimeter disengage (`ReturnToPost`) when the
   player retreats beyond `leashDistance` (`9.0 m`) or exits `Room_4_Defensive`.
-<!-- END:PRESSURE_RETREAT -->
-<!-- SECTION:VERIFICATION_LOG -->
 ## 8. PlayMode & EditMode Verification Reference
 
 | Test / Editor Audit | Script Location | Verified Assertion & Coverage |
@@ -1246,4 +1231,19 @@ natural utility shifts keep `Guard_Aqqil_Defensive` from standing exposed:
 | `VisualQualityCaptureTests` | `Assets/Tests/VisualQualityCaptureTests.cs` | Captures `after_room4_defensive.png` & `room4_card_b_pickup.png`, verifies baked reflections and shadow budget |
 | `HeadshotAndShotgunTests` | `Assets/Tests/HeadshotAndShotgunTests.cs` | `Real_Gun_Headshots_Double_Damage_Pellets_And_Cover_Still_Blocks`: verifies `12*6*2` (`144`) shotgun headshots and cover blocking |
 | `DisplayAndSurfaceTests` | `Assets/Tests/DisplayAndSurfaceTests.cs` | `Prop_Detail_Is_Batched_And_Texture_Quality_Is_Full`: verifies prop batching and full texture quality |
-<!-- END:VERIFICATION_LOG -->
+
+## 9. Viva Quick-Reference Summary
+
+- **Navigation Architecture:** `NavMesh` supplies complete paths (`GuardDecisionQueries.TryReachable`);
+  the authored AI contribution is 17-point ring sampling, dual-ray torso/eye cover checks,
+  `5 m` shotgun range scoring, `+0.04` switching hysteresis, and Room 4 leash enforcement.
+- **Live Inspector Debugging:** Select `Guard_Aqqil_Defensive` in Play Mode to inspect
+  `DecisionCandidates`, `SelectedDecisionTarget`, `DecisionCount`, and magenta target gizmos.
+- **Unit Tests:** `Assets/Tests/InformedGuardDecisionTests.cs` verifies cover/range/objective/path
+  tradeoffs (`DefenseDecisionPolicy.Score`) and PlayMode reachable leash selection.
+
+| Component | Responsibility | File Reference |
+| --- | --- | --- |
+| `DefenseDecisionPolicy.Score` | Stateless utility weighted sum (`hasThreat` / idle) | `Assets/Scripts/DefenseDecisionPolicy.cs` |
+| `GuardDecisionQueries` | `NavMesh.CalculatePath` + `Physics.Linecast` torso/eye rays | `Assets/Scripts/GuardDecisionCandidate.cs` |
+| `DefensiveGuardAI` | 3-state FSM, 17-point ring, `+0.04` hysteresis, `9.0 m` leash | `Assets/Scripts/DefensiveGuardAI.cs` |
