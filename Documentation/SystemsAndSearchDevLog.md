@@ -107,3 +107,7 @@ Confirmed unreachable off-mesh samples are rejected cleanly without falling back
 ## 2026-10-24 — Log PlayMode verification for Access Card A pickup and reader unlock
 Verified Access Card A pickup, HUD prompt clearing, and CardReader Route A unlock in PlayMode walkthrough checks.
 Confirmed escape terminal activation triggers cleanly only after valid card authorization.
+
+## 2026-10-25 — Review Search Guard memory decay and negative evidence edge cases
+Reviewed edge cases including rapid repeated gunfire, sound-only heading reset, and simultaneous ring occlusion.
+Confirmed negative-evidence discounting consistently shifts priority toward uninspected cover.
