@@ -230,6 +230,32 @@ player again, compare it with `InvestigatePosition`, and collect the time
 and `DecisionCount` when fresh patrol evaluation resumes. Run a separate
 pass with visual reacquisition before the investigation scan ends.
 
+## Doorway and blocked-path edge cases
+
+| Fixture change | Compare | Diagnostic |
+| --- | --- | --- |
+| Offset raw target outside room by a small amount | Raw versus sampled target | Sample can land on another side, then the room check uses sampled X/Z |
+| Point is in Room 2 but a route uses a branch | NavMesh corners versus predicate | Endpoint check alone gives no intermediate corner guarantee |
+| Agent arrives near a waypoint behind thin cover | Planar distance, remaining path and cover | Planar fallback may register inspection before walking around the divider |
+| Initial selection cannot be submitted | Last selected target and path status | Trace fields can retain earlier data until a new destination is accepted |
+| Target is the current index and all others are invalid | Reachable flag and candidate reason | With multiple configured entries, current index stays excluded |
+| Immediately reacquire on return | State timestamps and decision count | State transition can select promptly rather than through ordinary retry cadence |
+
+Use a pending path or genuine complete path as the comparison control for
+an invalid path. Record when the path was sampled relative to collider and
+NavMesh updates.
+
+## Draft viva outline
+
+1. Start by showing the Room 2 aisle diagram.
+2. List every waypoint by array index.
+3. Show east and west crossing times before introducing coverage age.
+4. Review all three state entry events.
+5. Walk through the equal-visibility arithmetic after the route examples.
+6. Show the trigger and then discuss how it affects hidden-player pursuit.
+7. Read the graphics checks from the lighting document.
+8. Mention the existing test class names and what a pending run means.
+
 ## End-to-end example from the waypoint dataset
 
 At origin R2_W, compare R2_E at age 13.6 s and R2_N at age 15 s.

@@ -111,3 +111,7 @@ Folded reciprocal warehouse pairs into one row with two endpoint visibility valu
 ## 2026-10-24 · Log PlayMode verification for Room 2 patrol and chase recovery
 
 Indexed the existing patrol and route tests and wrote a manual recovery matrix with pending run status. The fixture arithmetic and the runtime checks have their own evidence fields.
+
+## 2026-10-25 · Review edge cases for blocked NavMesh recovery and doorway turns
+
+Flagged sampled endpoints across bounds, long corner detours, failed destination submission, and the arrival check's planar-distance fallback for controlled reproduction.
