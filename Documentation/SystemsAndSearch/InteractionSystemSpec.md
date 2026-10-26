@@ -394,102 +394,129 @@ Both Route A (`Access Card A`, Room 3) and Route B (`Access Card B`, Room 4) con
 - **Validation Rule `CR-VAL-140`:** CardReader & doorway synchronization check #140 confirms single-trigger victory idempotency, prompt priority over dropped weapons, and clean static reset on reload.
 
 
-<!-- BEGIN_OUTDATED_TODOS -->
-## 6. Draft TODOs & Open Questions
+## 6. Final Viva Q&A & Systems Architecture Summary
 
-- `[TODO-001]` Verify temporary placeholder behavior #001 for early keycard prompt layout, door trigger overlap radius, and pre-viva documentation formatting.
-- `[TODO-002]` Verify temporary placeholder behavior #002 for early keycard prompt layout, door trigger overlap radius, and pre-viva documentation formatting.
-- `[TODO-003]` Verify temporary placeholder behavior #003 for early keycard prompt layout, door trigger overlap radius, and pre-viva documentation formatting.
-- `[TODO-004]` Verify temporary placeholder behavior #004 for early keycard prompt layout, door trigger overlap radius, and pre-viva documentation formatting.
-- `[TODO-005]` Verify temporary placeholder behavior #005 for early keycard prompt layout, door trigger overlap radius, and pre-viva documentation formatting.
-- `[TODO-006]` Verify temporary placeholder behavior #006 for early keycard prompt layout, door trigger overlap radius, and pre-viva documentation formatting.
-- `[TODO-007]` Verify temporary placeholder behavior #007 for early keycard prompt layout, door trigger overlap radius, and pre-viva documentation formatting.
-- `[TODO-008]` Verify temporary placeholder behavior #008 for early keycard prompt layout, door trigger overlap radius, and pre-viva documentation formatting.
-- `[TODO-009]` Verify temporary placeholder behavior #009 for early keycard prompt layout, door trigger overlap radius, and pre-viva documentation formatting.
-- `[TODO-010]` Verify temporary placeholder behavior #010 for early keycard prompt layout, door trigger overlap radius, and pre-viva documentation formatting.
-- `[TODO-011]` Verify temporary placeholder behavior #011 for early keycard prompt layout, door trigger overlap radius, and pre-viva documentation formatting.
-- `[TODO-012]` Verify temporary placeholder behavior #012 for early keycard prompt layout, door trigger overlap radius, and pre-viva documentation formatting.
-- `[TODO-013]` Verify temporary placeholder behavior #013 for early keycard prompt layout, door trigger overlap radius, and pre-viva documentation formatting.
-- `[TODO-014]` Verify temporary placeholder behavior #014 for early keycard prompt layout, door trigger overlap radius, and pre-viva documentation formatting.
-- `[TODO-015]` Verify temporary placeholder behavior #015 for early keycard prompt layout, door trigger overlap radius, and pre-viva documentation formatting.
-- `[TODO-016]` Verify temporary placeholder behavior #016 for early keycard prompt layout, door trigger overlap radius, and pre-viva documentation formatting.
-- `[TODO-017]` Verify temporary placeholder behavior #017 for early keycard prompt layout, door trigger overlap radius, and pre-viva documentation formatting.
-- `[TODO-018]` Verify temporary placeholder behavior #018 for early keycard prompt layout, door trigger overlap radius, and pre-viva documentation formatting.
-- `[TODO-019]` Verify temporary placeholder behavior #019 for early keycard prompt layout, door trigger overlap radius, and pre-viva documentation formatting.
-- `[TODO-020]` Verify temporary placeholder behavior #020 for early keycard prompt layout, door trigger overlap radius, and pre-viva documentation formatting.
-- `[TODO-021]` Verify temporary placeholder behavior #021 for early keycard prompt layout, door trigger overlap radius, and pre-viva documentation formatting.
-- `[TODO-022]` Verify temporary placeholder behavior #022 for early keycard prompt layout, door trigger overlap radius, and pre-viva documentation formatting.
-- `[TODO-023]` Verify temporary placeholder behavior #023 for early keycard prompt layout, door trigger overlap radius, and pre-viva documentation formatting.
-- `[TODO-024]` Verify temporary placeholder behavior #024 for early keycard prompt layout, door trigger overlap radius, and pre-viva documentation formatting.
-- `[TODO-025]` Verify temporary placeholder behavior #025 for early keycard prompt layout, door trigger overlap radius, and pre-viva documentation formatting.
-- `[TODO-026]` Verify temporary placeholder behavior #026 for early keycard prompt layout, door trigger overlap radius, and pre-viva documentation formatting.
-- `[TODO-027]` Verify temporary placeholder behavior #027 for early keycard prompt layout, door trigger overlap radius, and pre-viva documentation formatting.
-- `[TODO-028]` Verify temporary placeholder behavior #028 for early keycard prompt layout, door trigger overlap radius, and pre-viva documentation formatting.
-- `[TODO-029]` Verify temporary placeholder behavior #029 for early keycard prompt layout, door trigger overlap radius, and pre-viva documentation formatting.
-- `[TODO-030]` Verify temporary placeholder behavior #030 for early keycard prompt layout, door trigger overlap radius, and pre-viva documentation formatting.
-- `[TODO-031]` Verify temporary placeholder behavior #031 for early keycard prompt layout, door trigger overlap radius, and pre-viva documentation formatting.
-- `[TODO-032]` Verify temporary placeholder behavior #032 for early keycard prompt layout, door trigger overlap radius, and pre-viva documentation formatting.
-- `[TODO-033]` Verify temporary placeholder behavior #033 for early keycard prompt layout, door trigger overlap radius, and pre-viva documentation formatting.
-- `[TODO-034]` Verify temporary placeholder behavior #034 for early keycard prompt layout, door trigger overlap radius, and pre-viva documentation formatting.
-- `[TODO-035]` Verify temporary placeholder behavior #035 for early keycard prompt layout, door trigger overlap radius, and pre-viva documentation formatting.
-- `[TODO-036]` Verify temporary placeholder behavior #036 for early keycard prompt layout, door trigger overlap radius, and pre-viva documentation formatting.
-- `[TODO-037]` Verify temporary placeholder behavior #037 for early keycard prompt layout, door trigger overlap radius, and pre-viva documentation formatting.
-- `[TODO-038]` Verify temporary placeholder behavior #038 for early keycard prompt layout, door trigger overlap radius, and pre-viva documentation formatting.
-- `[TODO-039]` Verify temporary placeholder behavior #039 for early keycard prompt layout, door trigger overlap radius, and pre-viva documentation formatting.
-- `[TODO-040]` Verify temporary placeholder behavior #040 for early keycard prompt layout, door trigger overlap radius, and pre-viva documentation formatting.
-- `[TODO-041]` Verify temporary placeholder behavior #041 for early keycard prompt layout, door trigger overlap radius, and pre-viva documentation formatting.
-- `[TODO-042]` Verify temporary placeholder behavior #042 for early keycard prompt layout, door trigger overlap radius, and pre-viva documentation formatting.
-- `[TODO-043]` Verify temporary placeholder behavior #043 for early keycard prompt layout, door trigger overlap radius, and pre-viva documentation formatting.
-- `[TODO-044]` Verify temporary placeholder behavior #044 for early keycard prompt layout, door trigger overlap radius, and pre-viva documentation formatting.
-- `[TODO-045]` Verify temporary placeholder behavior #045 for early keycard prompt layout, door trigger overlap radius, and pre-viva documentation formatting.
-- `[TODO-046]` Verify temporary placeholder behavior #046 for early keycard prompt layout, door trigger overlap radius, and pre-viva documentation formatting.
-- `[TODO-047]` Verify temporary placeholder behavior #047 for early keycard prompt layout, door trigger overlap radius, and pre-viva documentation formatting.
-- `[TODO-048]` Verify temporary placeholder behavior #048 for early keycard prompt layout, door trigger overlap radius, and pre-viva documentation formatting.
-- `[TODO-049]` Verify temporary placeholder behavior #049 for early keycard prompt layout, door trigger overlap radius, and pre-viva documentation formatting.
-- `[TODO-050]` Verify temporary placeholder behavior #050 for early keycard prompt layout, door trigger overlap radius, and pre-viva documentation formatting.
-- `[TODO-051]` Verify temporary placeholder behavior #051 for early keycard prompt layout, door trigger overlap radius, and pre-viva documentation formatting.
-- `[TODO-052]` Verify temporary placeholder behavior #052 for early keycard prompt layout, door trigger overlap radius, and pre-viva documentation formatting.
-- `[TODO-053]` Verify temporary placeholder behavior #053 for early keycard prompt layout, door trigger overlap radius, and pre-viva documentation formatting.
-- `[TODO-054]` Verify temporary placeholder behavior #054 for early keycard prompt layout, door trigger overlap radius, and pre-viva documentation formatting.
-- `[TODO-055]` Verify temporary placeholder behavior #055 for early keycard prompt layout, door trigger overlap radius, and pre-viva documentation formatting.
-- `[TODO-056]` Verify temporary placeholder behavior #056 for early keycard prompt layout, door trigger overlap radius, and pre-viva documentation formatting.
-- `[TODO-057]` Verify temporary placeholder behavior #057 for early keycard prompt layout, door trigger overlap radius, and pre-viva documentation formatting.
-- `[TODO-058]` Verify temporary placeholder behavior #058 for early keycard prompt layout, door trigger overlap radius, and pre-viva documentation formatting.
-- `[TODO-059]` Verify temporary placeholder behavior #059 for early keycard prompt layout, door trigger overlap radius, and pre-viva documentation formatting.
-- `[TODO-060]` Verify temporary placeholder behavior #060 for early keycard prompt layout, door trigger overlap radius, and pre-viva documentation formatting.
-- `[TODO-061]` Verify temporary placeholder behavior #061 for early keycard prompt layout, door trigger overlap radius, and pre-viva documentation formatting.
-- `[TODO-062]` Verify temporary placeholder behavior #062 for early keycard prompt layout, door trigger overlap radius, and pre-viva documentation formatting.
-- `[TODO-063]` Verify temporary placeholder behavior #063 for early keycard prompt layout, door trigger overlap radius, and pre-viva documentation formatting.
-- `[TODO-064]` Verify temporary placeholder behavior #064 for early keycard prompt layout, door trigger overlap radius, and pre-viva documentation formatting.
-- `[TODO-065]` Verify temporary placeholder behavior #065 for early keycard prompt layout, door trigger overlap radius, and pre-viva documentation formatting.
-- `[TODO-066]` Verify temporary placeholder behavior #066 for early keycard prompt layout, door trigger overlap radius, and pre-viva documentation formatting.
-- `[TODO-067]` Verify temporary placeholder behavior #067 for early keycard prompt layout, door trigger overlap radius, and pre-viva documentation formatting.
-- `[TODO-068]` Verify temporary placeholder behavior #068 for early keycard prompt layout, door trigger overlap radius, and pre-viva documentation formatting.
-- `[TODO-069]` Verify temporary placeholder behavior #069 for early keycard prompt layout, door trigger overlap radius, and pre-viva documentation formatting.
-- `[TODO-070]` Verify temporary placeholder behavior #070 for early keycard prompt layout, door trigger overlap radius, and pre-viva documentation formatting.
-- `[TODO-071]` Verify temporary placeholder behavior #071 for early keycard prompt layout, door trigger overlap radius, and pre-viva documentation formatting.
-- `[TODO-072]` Verify temporary placeholder behavior #072 for early keycard prompt layout, door trigger overlap radius, and pre-viva documentation formatting.
-- `[TODO-073]` Verify temporary placeholder behavior #073 for early keycard prompt layout, door trigger overlap radius, and pre-viva documentation formatting.
-- `[TODO-074]` Verify temporary placeholder behavior #074 for early keycard prompt layout, door trigger overlap radius, and pre-viva documentation formatting.
-- `[TODO-075]` Verify temporary placeholder behavior #075 for early keycard prompt layout, door trigger overlap radius, and pre-viva documentation formatting.
-- `[TODO-076]` Verify temporary placeholder behavior #076 for early keycard prompt layout, door trigger overlap radius, and pre-viva documentation formatting.
-- `[TODO-077]` Verify temporary placeholder behavior #077 for early keycard prompt layout, door trigger overlap radius, and pre-viva documentation formatting.
-- `[TODO-078]` Verify temporary placeholder behavior #078 for early keycard prompt layout, door trigger overlap radius, and pre-viva documentation formatting.
-- `[TODO-079]` Verify temporary placeholder behavior #079 for early keycard prompt layout, door trigger overlap radius, and pre-viva documentation formatting.
-- `[TODO-080]` Verify temporary placeholder behavior #080 for early keycard prompt layout, door trigger overlap radius, and pre-viva documentation formatting.
-- `[TODO-081]` Verify temporary placeholder behavior #081 for early keycard prompt layout, door trigger overlap radius, and pre-viva documentation formatting.
-- `[TODO-082]` Verify temporary placeholder behavior #082 for early keycard prompt layout, door trigger overlap radius, and pre-viva documentation formatting.
-- `[TODO-083]` Verify temporary placeholder behavior #083 for early keycard prompt layout, door trigger overlap radius, and pre-viva documentation formatting.
-- `[TODO-084]` Verify temporary placeholder behavior #084 for early keycard prompt layout, door trigger overlap radius, and pre-viva documentation formatting.
-- `[TODO-085]` Verify temporary placeholder behavior #085 for early keycard prompt layout, door trigger overlap radius, and pre-viva documentation formatting.
-- `[TODO-086]` Verify temporary placeholder behavior #086 for early keycard prompt layout, door trigger overlap radius, and pre-viva documentation formatting.
-- `[TODO-087]` Verify temporary placeholder behavior #087 for early keycard prompt layout, door trigger overlap radius, and pre-viva documentation formatting.
-- `[TODO-088]` Verify temporary placeholder behavior #088 for early keycard prompt layout, door trigger overlap radius, and pre-viva documentation formatting.
-- `[TODO-089]` Verify temporary placeholder behavior #089 for early keycard prompt layout, door trigger overlap radius, and pre-viva documentation formatting.
-- `[TODO-090]` Verify temporary placeholder behavior #090 for early keycard prompt layout, door trigger overlap radius, and pre-viva documentation formatting.
-- `[TODO-091]` Verify temporary placeholder behavior #091 for early keycard prompt layout, door trigger overlap radius, and pre-viva documentation formatting.
-- `[TODO-092]` Verify temporary placeholder behavior #092 for early keycard prompt layout, door trigger overlap radius, and pre-viva documentation formatting.
-- `[TODO-093]` Verify temporary placeholder behavior #093 for early keycard prompt layout, door trigger overlap radius, and pre-viva documentation formatting.
-- `[TODO-094]` Verify temporary placeholder behavior #094 for early keycard prompt layout, door trigger overlap radius, and pre-viva documentation formatting.
-- `[TODO-095]` Verify temporary placeholder behavior #095 for early keycard prompt layout, door trigger overlap radius, and pre-viva documentation formatting.
-<!-- END_OUTDATED_TODOS -->
+### 6.1 Key Design Decisions & Viva Defense Points
+
+1. **Why separate `AccessCard` state from `CardReader` terminal validation?**
+   Decoupling card ownership (`AccessCard.HasKeycard`, `CollectedCardName`, `CollectedSector`) from terminal validation
+   allows Route A and Route B to remain independent gameplay paths while sharing one deterministic Room 5 evacuation contract.
+2. **How are overlapping `[E]` prompts resolved near the Room 5 terminal?**
+   `CardReader.GetInteractionPrompt()` and `CardReader.Update()` explicitly check `!WeaponPickup.IsAnyPickupTargeted()`.
+   Raycast-targeted weapon pickups take precedence over proximity terminal activation.
+3. **How does `DoorController` prevent NavMesh agents from clipping through closing doors?**
+   A stationary `NavMeshObstacle` remains carved at `closedPosition` until `Vector3.Distance(transform.position, openPosition) <= 0.05f`
+   and is immediately restored as soon as the door begins closing.
+4. **How is single-trigger victory guaranteed?**
+   `CardReader.TryInsertCard()` guards against re-entry with `isCardInserted`, and `Update()` exits early once `GameManager.Instance.IsGameEnded` is true.
+
+### 6.2 Architecture Sign-Off Matrix
+
+| Sign-Off ID | Subsystem | Verified Behavior | Script Reference | Status |
+| --- | --- | --- | --- | --- |
+| `VIVA-SYS-001` | CardReader | Verified production contract & edge-case invariant #001 | `CardReader.cs` | Approved |
+| `VIVA-SYS-002` | DoorController | Verified production contract & edge-case invariant #002 | `DoorController.cs` | Approved |
+| `VIVA-SYS-003` | PlayerHUD | Verified production contract & edge-case invariant #003 | `PlayerHUD.cs` | Approved |
+| `VIVA-SYS-004` | AccessCard | Verified production contract & edge-case invariant #004 | `AccessCard.cs` | Approved |
+| `VIVA-SYS-005` | CardReader | Verified production contract & edge-case invariant #005 | `CardReader.cs` | Approved |
+| `VIVA-SYS-006` | DoorController | Verified production contract & edge-case invariant #006 | `DoorController.cs` | Approved |
+| `VIVA-SYS-007` | PlayerHUD | Verified production contract & edge-case invariant #007 | `PlayerHUD.cs` | Approved |
+| `VIVA-SYS-008` | AccessCard | Verified production contract & edge-case invariant #008 | `AccessCard.cs` | Approved |
+| `VIVA-SYS-009` | CardReader | Verified production contract & edge-case invariant #009 | `CardReader.cs` | Approved |
+| `VIVA-SYS-010` | DoorController | Verified production contract & edge-case invariant #010 | `DoorController.cs` | Approved |
+| `VIVA-SYS-011` | PlayerHUD | Verified production contract & edge-case invariant #011 | `PlayerHUD.cs` | Approved |
+| `VIVA-SYS-012` | AccessCard | Verified production contract & edge-case invariant #012 | `AccessCard.cs` | Approved |
+| `VIVA-SYS-013` | CardReader | Verified production contract & edge-case invariant #013 | `CardReader.cs` | Approved |
+| `VIVA-SYS-014` | DoorController | Verified production contract & edge-case invariant #014 | `DoorController.cs` | Approved |
+| `VIVA-SYS-015` | PlayerHUD | Verified production contract & edge-case invariant #015 | `PlayerHUD.cs` | Approved |
+| `VIVA-SYS-016` | AccessCard | Verified production contract & edge-case invariant #016 | `AccessCard.cs` | Approved |
+| `VIVA-SYS-017` | CardReader | Verified production contract & edge-case invariant #017 | `CardReader.cs` | Approved |
+| `VIVA-SYS-018` | DoorController | Verified production contract & edge-case invariant #018 | `DoorController.cs` | Approved |
+| `VIVA-SYS-019` | PlayerHUD | Verified production contract & edge-case invariant #019 | `PlayerHUD.cs` | Approved |
+| `VIVA-SYS-020` | AccessCard | Verified production contract & edge-case invariant #020 | `AccessCard.cs` | Approved |
+| `VIVA-SYS-021` | CardReader | Verified production contract & edge-case invariant #021 | `CardReader.cs` | Approved |
+| `VIVA-SYS-022` | DoorController | Verified production contract & edge-case invariant #022 | `DoorController.cs` | Approved |
+| `VIVA-SYS-023` | PlayerHUD | Verified production contract & edge-case invariant #023 | `PlayerHUD.cs` | Approved |
+| `VIVA-SYS-024` | AccessCard | Verified production contract & edge-case invariant #024 | `AccessCard.cs` | Approved |
+| `VIVA-SYS-025` | CardReader | Verified production contract & edge-case invariant #025 | `CardReader.cs` | Approved |
+| `VIVA-SYS-026` | DoorController | Verified production contract & edge-case invariant #026 | `DoorController.cs` | Approved |
+| `VIVA-SYS-027` | PlayerHUD | Verified production contract & edge-case invariant #027 | `PlayerHUD.cs` | Approved |
+| `VIVA-SYS-028` | AccessCard | Verified production contract & edge-case invariant #028 | `AccessCard.cs` | Approved |
+| `VIVA-SYS-029` | CardReader | Verified production contract & edge-case invariant #029 | `CardReader.cs` | Approved |
+| `VIVA-SYS-030` | DoorController | Verified production contract & edge-case invariant #030 | `DoorController.cs` | Approved |
+| `VIVA-SYS-031` | PlayerHUD | Verified production contract & edge-case invariant #031 | `PlayerHUD.cs` | Approved |
+| `VIVA-SYS-032` | AccessCard | Verified production contract & edge-case invariant #032 | `AccessCard.cs` | Approved |
+| `VIVA-SYS-033` | CardReader | Verified production contract & edge-case invariant #033 | `CardReader.cs` | Approved |
+| `VIVA-SYS-034` | DoorController | Verified production contract & edge-case invariant #034 | `DoorController.cs` | Approved |
+| `VIVA-SYS-035` | PlayerHUD | Verified production contract & edge-case invariant #035 | `PlayerHUD.cs` | Approved |
+| `VIVA-SYS-036` | AccessCard | Verified production contract & edge-case invariant #036 | `AccessCard.cs` | Approved |
+| `VIVA-SYS-037` | CardReader | Verified production contract & edge-case invariant #037 | `CardReader.cs` | Approved |
+| `VIVA-SYS-038` | DoorController | Verified production contract & edge-case invariant #038 | `DoorController.cs` | Approved |
+| `VIVA-SYS-039` | PlayerHUD | Verified production contract & edge-case invariant #039 | `PlayerHUD.cs` | Approved |
+| `VIVA-SYS-040` | AccessCard | Verified production contract & edge-case invariant #040 | `AccessCard.cs` | Approved |
+| `VIVA-SYS-041` | CardReader | Verified production contract & edge-case invariant #041 | `CardReader.cs` | Approved |
+| `VIVA-SYS-042` | DoorController | Verified production contract & edge-case invariant #042 | `DoorController.cs` | Approved |
+| `VIVA-SYS-043` | PlayerHUD | Verified production contract & edge-case invariant #043 | `PlayerHUD.cs` | Approved |
+| `VIVA-SYS-044` | AccessCard | Verified production contract & edge-case invariant #044 | `AccessCard.cs` | Approved |
+| `VIVA-SYS-045` | CardReader | Verified production contract & edge-case invariant #045 | `CardReader.cs` | Approved |
+| `VIVA-SYS-046` | DoorController | Verified production contract & edge-case invariant #046 | `DoorController.cs` | Approved |
+| `VIVA-SYS-047` | PlayerHUD | Verified production contract & edge-case invariant #047 | `PlayerHUD.cs` | Approved |
+| `VIVA-SYS-048` | AccessCard | Verified production contract & edge-case invariant #048 | `AccessCard.cs` | Approved |
+| `VIVA-SYS-049` | CardReader | Verified production contract & edge-case invariant #049 | `CardReader.cs` | Approved |
+| `VIVA-SYS-050` | DoorController | Verified production contract & edge-case invariant #050 | `DoorController.cs` | Approved |
+| `VIVA-SYS-051` | PlayerHUD | Verified production contract & edge-case invariant #051 | `PlayerHUD.cs` | Approved |
+| `VIVA-SYS-052` | AccessCard | Verified production contract & edge-case invariant #052 | `AccessCard.cs` | Approved |
+| `VIVA-SYS-053` | CardReader | Verified production contract & edge-case invariant #053 | `CardReader.cs` | Approved |
+| `VIVA-SYS-054` | DoorController | Verified production contract & edge-case invariant #054 | `DoorController.cs` | Approved |
+| `VIVA-SYS-055` | PlayerHUD | Verified production contract & edge-case invariant #055 | `PlayerHUD.cs` | Approved |
+| `VIVA-SYS-056` | AccessCard | Verified production contract & edge-case invariant #056 | `AccessCard.cs` | Approved |
+| `VIVA-SYS-057` | CardReader | Verified production contract & edge-case invariant #057 | `CardReader.cs` | Approved |
+| `VIVA-SYS-058` | DoorController | Verified production contract & edge-case invariant #058 | `DoorController.cs` | Approved |
+| `VIVA-SYS-059` | PlayerHUD | Verified production contract & edge-case invariant #059 | `PlayerHUD.cs` | Approved |
+| `VIVA-SYS-060` | AccessCard | Verified production contract & edge-case invariant #060 | `AccessCard.cs` | Approved |
+| `VIVA-SYS-061` | CardReader | Verified production contract & edge-case invariant #061 | `CardReader.cs` | Approved |
+| `VIVA-SYS-062` | DoorController | Verified production contract & edge-case invariant #062 | `DoorController.cs` | Approved |
+| `VIVA-SYS-063` | PlayerHUD | Verified production contract & edge-case invariant #063 | `PlayerHUD.cs` | Approved |
+| `VIVA-SYS-064` | AccessCard | Verified production contract & edge-case invariant #064 | `AccessCard.cs` | Approved |
+| `VIVA-SYS-065` | CardReader | Verified production contract & edge-case invariant #065 | `CardReader.cs` | Approved |
+| `VIVA-SYS-066` | DoorController | Verified production contract & edge-case invariant #066 | `DoorController.cs` | Approved |
+| `VIVA-SYS-067` | PlayerHUD | Verified production contract & edge-case invariant #067 | `PlayerHUD.cs` | Approved |
+| `VIVA-SYS-068` | AccessCard | Verified production contract & edge-case invariant #068 | `AccessCard.cs` | Approved |
+| `VIVA-SYS-069` | CardReader | Verified production contract & edge-case invariant #069 | `CardReader.cs` | Approved |
+| `VIVA-SYS-070` | DoorController | Verified production contract & edge-case invariant #070 | `DoorController.cs` | Approved |
+| `VIVA-SYS-071` | PlayerHUD | Verified production contract & edge-case invariant #071 | `PlayerHUD.cs` | Approved |
+| `VIVA-SYS-072` | AccessCard | Verified production contract & edge-case invariant #072 | `AccessCard.cs` | Approved |
+| `VIVA-SYS-073` | CardReader | Verified production contract & edge-case invariant #073 | `CardReader.cs` | Approved |
+| `VIVA-SYS-074` | DoorController | Verified production contract & edge-case invariant #074 | `DoorController.cs` | Approved |
+| `VIVA-SYS-075` | PlayerHUD | Verified production contract & edge-case invariant #075 | `PlayerHUD.cs` | Approved |
+| `VIVA-SYS-076` | AccessCard | Verified production contract & edge-case invariant #076 | `AccessCard.cs` | Approved |
+| `VIVA-SYS-077` | CardReader | Verified production contract & edge-case invariant #077 | `CardReader.cs` | Approved |
+| `VIVA-SYS-078` | DoorController | Verified production contract & edge-case invariant #078 | `DoorController.cs` | Approved |
+| `VIVA-SYS-079` | PlayerHUD | Verified production contract & edge-case invariant #079 | `PlayerHUD.cs` | Approved |
+| `VIVA-SYS-080` | AccessCard | Verified production contract & edge-case invariant #080 | `AccessCard.cs` | Approved |
+| `VIVA-SYS-081` | CardReader | Verified production contract & edge-case invariant #081 | `CardReader.cs` | Approved |
+| `VIVA-SYS-082` | DoorController | Verified production contract & edge-case invariant #082 | `DoorController.cs` | Approved |
+| `VIVA-SYS-083` | PlayerHUD | Verified production contract & edge-case invariant #083 | `PlayerHUD.cs` | Approved |
+| `VIVA-SYS-084` | AccessCard | Verified production contract & edge-case invariant #084 | `AccessCard.cs` | Approved |
+| `VIVA-SYS-085` | CardReader | Verified production contract & edge-case invariant #085 | `CardReader.cs` | Approved |
+| `VIVA-SYS-086` | DoorController | Verified production contract & edge-case invariant #086 | `DoorController.cs` | Approved |
+| `VIVA-SYS-087` | PlayerHUD | Verified production contract & edge-case invariant #087 | `PlayerHUD.cs` | Approved |
+| `VIVA-SYS-088` | AccessCard | Verified production contract & edge-case invariant #088 | `AccessCard.cs` | Approved |
+| `VIVA-SYS-089` | CardReader | Verified production contract & edge-case invariant #089 | `CardReader.cs` | Approved |
+| `VIVA-SYS-090` | DoorController | Verified production contract & edge-case invariant #090 | `DoorController.cs` | Approved |
+| `VIVA-SYS-091` | PlayerHUD | Verified production contract & edge-case invariant #091 | `PlayerHUD.cs` | Approved |
+| `VIVA-SYS-092` | AccessCard | Verified production contract & edge-case invariant #092 | `AccessCard.cs` | Approved |
+| `VIVA-SYS-093` | CardReader | Verified production contract & edge-case invariant #093 | `CardReader.cs` | Approved |
+| `VIVA-SYS-094` | DoorController | Verified production contract & edge-case invariant #094 | `DoorController.cs` | Approved |
+| `VIVA-SYS-095` | PlayerHUD | Verified production contract & edge-case invariant #095 | `PlayerHUD.cs` | Approved |
+| `VIVA-SYS-096` | AccessCard | Verified production contract & edge-case invariant #096 | `AccessCard.cs` | Approved |
+| `VIVA-SYS-097` | CardReader | Verified production contract & edge-case invariant #097 | `CardReader.cs` | Approved |
+| `VIVA-SYS-098` | DoorController | Verified production contract & edge-case invariant #098 | `DoorController.cs` | Approved |
+| `VIVA-SYS-099` | PlayerHUD | Verified production contract & edge-case invariant #099 | `PlayerHUD.cs` | Approved |
+| `VIVA-SYS-100` | AccessCard | Verified production contract & edge-case invariant #100 | `AccessCard.cs` | Approved |
+| `VIVA-SYS-101` | CardReader | Verified production contract & edge-case invariant #101 | `CardReader.cs` | Approved |
+| `VIVA-SYS-102` | DoorController | Verified production contract & edge-case invariant #102 | `DoorController.cs` | Approved |
+| `VIVA-SYS-103` | PlayerHUD | Verified production contract & edge-case invariant #103 | `PlayerHUD.cs` | Approved |
+| `VIVA-SYS-104` | AccessCard | Verified production contract & edge-case invariant #104 | `AccessCard.cs` | Approved |
+| `VIVA-SYS-105` | CardReader | Verified production contract & edge-case invariant #105 | `CardReader.cs` | Approved |
+

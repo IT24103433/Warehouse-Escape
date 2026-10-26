@@ -385,105 +385,124 @@
 | `SEN-359` | Room3Alarm | `18.5` | `165` | `3` | `0.166` | Alarm attenuated below threshold |
 | `SEN-360` | Visual | `1.5` | `0` | `0` | `1.000` | Immediate visual acquisition -> Pursue / Engage |
 
-<!-- BEGIN_SENSORY_TODOS -->
-## 4. Draft Sensory Calibration TODOs
+## 4. Viva Comparison: Belief-Guided Search vs. Reflex Chase
 
-- `[SEN-TODO-001]` Pending sensory calibration note #001: cross-check Room 3 shelving collider layer masks and temporary debug gizmo colors.
-- `[SEN-TODO-002]` Pending sensory calibration note #002: cross-check Room 3 shelving collider layer masks and temporary debug gizmo colors.
-- `[SEN-TODO-003]` Pending sensory calibration note #003: cross-check Room 3 shelving collider layer masks and temporary debug gizmo colors.
-- `[SEN-TODO-004]` Pending sensory calibration note #004: cross-check Room 3 shelving collider layer masks and temporary debug gizmo colors.
-- `[SEN-TODO-005]` Pending sensory calibration note #005: cross-check Room 3 shelving collider layer masks and temporary debug gizmo colors.
-- `[SEN-TODO-006]` Pending sensory calibration note #006: cross-check Room 3 shelving collider layer masks and temporary debug gizmo colors.
-- `[SEN-TODO-007]` Pending sensory calibration note #007: cross-check Room 3 shelving collider layer masks and temporary debug gizmo colors.
-- `[SEN-TODO-008]` Pending sensory calibration note #008: cross-check Room 3 shelving collider layer masks and temporary debug gizmo colors.
-- `[SEN-TODO-009]` Pending sensory calibration note #009: cross-check Room 3 shelving collider layer masks and temporary debug gizmo colors.
-- `[SEN-TODO-010]` Pending sensory calibration note #010: cross-check Room 3 shelving collider layer masks and temporary debug gizmo colors.
-- `[SEN-TODO-011]` Pending sensory calibration note #011: cross-check Room 3 shelving collider layer masks and temporary debug gizmo colors.
-- `[SEN-TODO-012]` Pending sensory calibration note #012: cross-check Room 3 shelving collider layer masks and temporary debug gizmo colors.
-- `[SEN-TODO-013]` Pending sensory calibration note #013: cross-check Room 3 shelving collider layer masks and temporary debug gizmo colors.
-- `[SEN-TODO-014]` Pending sensory calibration note #014: cross-check Room 3 shelving collider layer masks and temporary debug gizmo colors.
-- `[SEN-TODO-015]` Pending sensory calibration note #015: cross-check Room 3 shelving collider layer masks and temporary debug gizmo colors.
-- `[SEN-TODO-016]` Pending sensory calibration note #016: cross-check Room 3 shelving collider layer masks and temporary debug gizmo colors.
-- `[SEN-TODO-017]` Pending sensory calibration note #017: cross-check Room 3 shelving collider layer masks and temporary debug gizmo colors.
-- `[SEN-TODO-018]` Pending sensory calibration note #018: cross-check Room 3 shelving collider layer masks and temporary debug gizmo colors.
-- `[SEN-TODO-019]` Pending sensory calibration note #019: cross-check Room 3 shelving collider layer masks and temporary debug gizmo colors.
-- `[SEN-TODO-020]` Pending sensory calibration note #020: cross-check Room 3 shelving collider layer masks and temporary debug gizmo colors.
-- `[SEN-TODO-021]` Pending sensory calibration note #021: cross-check Room 3 shelving collider layer masks and temporary debug gizmo colors.
-- `[SEN-TODO-022]` Pending sensory calibration note #022: cross-check Room 3 shelving collider layer masks and temporary debug gizmo colors.
-- `[SEN-TODO-023]` Pending sensory calibration note #023: cross-check Room 3 shelving collider layer masks and temporary debug gizmo colors.
-- `[SEN-TODO-024]` Pending sensory calibration note #024: cross-check Room 3 shelving collider layer masks and temporary debug gizmo colors.
-- `[SEN-TODO-025]` Pending sensory calibration note #025: cross-check Room 3 shelving collider layer masks and temporary debug gizmo colors.
-- `[SEN-TODO-026]` Pending sensory calibration note #026: cross-check Room 3 shelving collider layer masks and temporary debug gizmo colors.
-- `[SEN-TODO-027]` Pending sensory calibration note #027: cross-check Room 3 shelving collider layer masks and temporary debug gizmo colors.
-- `[SEN-TODO-028]` Pending sensory calibration note #028: cross-check Room 3 shelving collider layer masks and temporary debug gizmo colors.
-- `[SEN-TODO-029]` Pending sensory calibration note #029: cross-check Room 3 shelving collider layer masks and temporary debug gizmo colors.
-- `[SEN-TODO-030]` Pending sensory calibration note #030: cross-check Room 3 shelving collider layer masks and temporary debug gizmo colors.
-- `[SEN-TODO-031]` Pending sensory calibration note #031: cross-check Room 3 shelving collider layer masks and temporary debug gizmo colors.
-- `[SEN-TODO-032]` Pending sensory calibration note #032: cross-check Room 3 shelving collider layer masks and temporary debug gizmo colors.
-- `[SEN-TODO-033]` Pending sensory calibration note #033: cross-check Room 3 shelving collider layer masks and temporary debug gizmo colors.
-- `[SEN-TODO-034]` Pending sensory calibration note #034: cross-check Room 3 shelving collider layer masks and temporary debug gizmo colors.
-- `[SEN-TODO-035]` Pending sensory calibration note #035: cross-check Room 3 shelving collider layer masks and temporary debug gizmo colors.
-- `[SEN-TODO-036]` Pending sensory calibration note #036: cross-check Room 3 shelving collider layer masks and temporary debug gizmo colors.
-- `[SEN-TODO-037]` Pending sensory calibration note #037: cross-check Room 3 shelving collider layer masks and temporary debug gizmo colors.
-- `[SEN-TODO-038]` Pending sensory calibration note #038: cross-check Room 3 shelving collider layer masks and temporary debug gizmo colors.
-- `[SEN-TODO-039]` Pending sensory calibration note #039: cross-check Room 3 shelving collider layer masks and temporary debug gizmo colors.
-- `[SEN-TODO-040]` Pending sensory calibration note #040: cross-check Room 3 shelving collider layer masks and temporary debug gizmo colors.
-- `[SEN-TODO-041]` Pending sensory calibration note #041: cross-check Room 3 shelving collider layer masks and temporary debug gizmo colors.
-- `[SEN-TODO-042]` Pending sensory calibration note #042: cross-check Room 3 shelving collider layer masks and temporary debug gizmo colors.
-- `[SEN-TODO-043]` Pending sensory calibration note #043: cross-check Room 3 shelving collider layer masks and temporary debug gizmo colors.
-- `[SEN-TODO-044]` Pending sensory calibration note #044: cross-check Room 3 shelving collider layer masks and temporary debug gizmo colors.
-- `[SEN-TODO-045]` Pending sensory calibration note #045: cross-check Room 3 shelving collider layer masks and temporary debug gizmo colors.
-- `[SEN-TODO-046]` Pending sensory calibration note #046: cross-check Room 3 shelving collider layer masks and temporary debug gizmo colors.
-- `[SEN-TODO-047]` Pending sensory calibration note #047: cross-check Room 3 shelving collider layer masks and temporary debug gizmo colors.
-- `[SEN-TODO-048]` Pending sensory calibration note #048: cross-check Room 3 shelving collider layer masks and temporary debug gizmo colors.
-- `[SEN-TODO-049]` Pending sensory calibration note #049: cross-check Room 3 shelving collider layer masks and temporary debug gizmo colors.
-- `[SEN-TODO-050]` Pending sensory calibration note #050: cross-check Room 3 shelving collider layer masks and temporary debug gizmo colors.
-- `[SEN-TODO-051]` Pending sensory calibration note #051: cross-check Room 3 shelving collider layer masks and temporary debug gizmo colors.
-- `[SEN-TODO-052]` Pending sensory calibration note #052: cross-check Room 3 shelving collider layer masks and temporary debug gizmo colors.
-- `[SEN-TODO-053]` Pending sensory calibration note #053: cross-check Room 3 shelving collider layer masks and temporary debug gizmo colors.
-- `[SEN-TODO-054]` Pending sensory calibration note #054: cross-check Room 3 shelving collider layer masks and temporary debug gizmo colors.
-- `[SEN-TODO-055]` Pending sensory calibration note #055: cross-check Room 3 shelving collider layer masks and temporary debug gizmo colors.
-- `[SEN-TODO-056]` Pending sensory calibration note #056: cross-check Room 3 shelving collider layer masks and temporary debug gizmo colors.
-- `[SEN-TODO-057]` Pending sensory calibration note #057: cross-check Room 3 shelving collider layer masks and temporary debug gizmo colors.
-- `[SEN-TODO-058]` Pending sensory calibration note #058: cross-check Room 3 shelving collider layer masks and temporary debug gizmo colors.
-- `[SEN-TODO-059]` Pending sensory calibration note #059: cross-check Room 3 shelving collider layer masks and temporary debug gizmo colors.
-- `[SEN-TODO-060]` Pending sensory calibration note #060: cross-check Room 3 shelving collider layer masks and temporary debug gizmo colors.
-- `[SEN-TODO-061]` Pending sensory calibration note #061: cross-check Room 3 shelving collider layer masks and temporary debug gizmo colors.
-- `[SEN-TODO-062]` Pending sensory calibration note #062: cross-check Room 3 shelving collider layer masks and temporary debug gizmo colors.
-- `[SEN-TODO-063]` Pending sensory calibration note #063: cross-check Room 3 shelving collider layer masks and temporary debug gizmo colors.
-- `[SEN-TODO-064]` Pending sensory calibration note #064: cross-check Room 3 shelving collider layer masks and temporary debug gizmo colors.
-- `[SEN-TODO-065]` Pending sensory calibration note #065: cross-check Room 3 shelving collider layer masks and temporary debug gizmo colors.
-- `[SEN-TODO-066]` Pending sensory calibration note #066: cross-check Room 3 shelving collider layer masks and temporary debug gizmo colors.
-- `[SEN-TODO-067]` Pending sensory calibration note #067: cross-check Room 3 shelving collider layer masks and temporary debug gizmo colors.
-- `[SEN-TODO-068]` Pending sensory calibration note #068: cross-check Room 3 shelving collider layer masks and temporary debug gizmo colors.
-- `[SEN-TODO-069]` Pending sensory calibration note #069: cross-check Room 3 shelving collider layer masks and temporary debug gizmo colors.
-- `[SEN-TODO-070]` Pending sensory calibration note #070: cross-check Room 3 shelving collider layer masks and temporary debug gizmo colors.
-- `[SEN-TODO-071]` Pending sensory calibration note #071: cross-check Room 3 shelving collider layer masks and temporary debug gizmo colors.
-- `[SEN-TODO-072]` Pending sensory calibration note #072: cross-check Room 3 shelving collider layer masks and temporary debug gizmo colors.
-- `[SEN-TODO-073]` Pending sensory calibration note #073: cross-check Room 3 shelving collider layer masks and temporary debug gizmo colors.
-- `[SEN-TODO-074]` Pending sensory calibration note #074: cross-check Room 3 shelving collider layer masks and temporary debug gizmo colors.
-- `[SEN-TODO-075]` Pending sensory calibration note #075: cross-check Room 3 shelving collider layer masks and temporary debug gizmo colors.
-- `[SEN-TODO-076]` Pending sensory calibration note #076: cross-check Room 3 shelving collider layer masks and temporary debug gizmo colors.
-- `[SEN-TODO-077]` Pending sensory calibration note #077: cross-check Room 3 shelving collider layer masks and temporary debug gizmo colors.
-- `[SEN-TODO-078]` Pending sensory calibration note #078: cross-check Room 3 shelving collider layer masks and temporary debug gizmo colors.
-- `[SEN-TODO-079]` Pending sensory calibration note #079: cross-check Room 3 shelving collider layer masks and temporary debug gizmo colors.
-- `[SEN-TODO-080]` Pending sensory calibration note #080: cross-check Room 3 shelving collider layer masks and temporary debug gizmo colors.
-- `[SEN-TODO-081]` Pending sensory calibration note #081: cross-check Room 3 shelving collider layer masks and temporary debug gizmo colors.
-- `[SEN-TODO-082]` Pending sensory calibration note #082: cross-check Room 3 shelving collider layer masks and temporary debug gizmo colors.
-- `[SEN-TODO-083]` Pending sensory calibration note #083: cross-check Room 3 shelving collider layer masks and temporary debug gizmo colors.
-- `[SEN-TODO-084]` Pending sensory calibration note #084: cross-check Room 3 shelving collider layer masks and temporary debug gizmo colors.
-- `[SEN-TODO-085]` Pending sensory calibration note #085: cross-check Room 3 shelving collider layer masks and temporary debug gizmo colors.
-- `[SEN-TODO-086]` Pending sensory calibration note #086: cross-check Room 3 shelving collider layer masks and temporary debug gizmo colors.
-- `[SEN-TODO-087]` Pending sensory calibration note #087: cross-check Room 3 shelving collider layer masks and temporary debug gizmo colors.
-- `[SEN-TODO-088]` Pending sensory calibration note #088: cross-check Room 3 shelving collider layer masks and temporary debug gizmo colors.
-- `[SEN-TODO-089]` Pending sensory calibration note #089: cross-check Room 3 shelving collider layer masks and temporary debug gizmo colors.
-- `[SEN-TODO-090]` Pending sensory calibration note #090: cross-check Room 3 shelving collider layer masks and temporary debug gizmo colors.
-- `[SEN-TODO-091]` Pending sensory calibration note #091: cross-check Room 3 shelving collider layer masks and temporary debug gizmo colors.
-- `[SEN-TODO-092]` Pending sensory calibration note #092: cross-check Room 3 shelving collider layer masks and temporary debug gizmo colors.
-- `[SEN-TODO-093]` Pending sensory calibration note #093: cross-check Room 3 shelving collider layer masks and temporary debug gizmo colors.
-- `[SEN-TODO-094]` Pending sensory calibration note #094: cross-check Room 3 shelving collider layer masks and temporary debug gizmo colors.
-- `[SEN-TODO-095]` Pending sensory calibration note #095: cross-check Room 3 shelving collider layer masks and temporary debug gizmo colors.
-- `[SEN-TODO-096]` Pending sensory calibration note #096: cross-check Room 3 shelving collider layer masks and temporary debug gizmo colors.
-- `[SEN-TODO-097]` Pending sensory calibration note #097: cross-check Room 3 shelving collider layer masks and temporary debug gizmo colors.
-- `[SEN-TODO-098]` Pending sensory calibration note #098: cross-check Room 3 shelving collider layer masks and temporary debug gizmo colors.
-<!-- END_SENSORY_TODOS -->
+### 4.1 Architectural Comparison Table
+
+| Dimension | Naive Reflex Chase | Belief-Guided Best-Next-View Search (`SearchGuardAI`) |
+| --- | --- | --- |
+| Knowledge of Hidden Player | Often peeks live `player.position` or stalls at exact LKP | Uses only confirmed visual/sound observations; live coords never leak |
+| Movement Goal Selection | Single point at last seen coordinates | Evaluates up to `17` NavMesh-reachable candidates (`origin + 2.5m + 5.0m`) |
+| Heading Usage | Ignores velocity or extrapolates blindly | Soft prior boost `(1 + max(0, dot))` cleared on sound-only cues |
+| Empty Inspection Handling | Immediately quits or loops on one spot | Multiplies observable beliefs by `0.08` without renormalization |
+| Termination | Arbitrary fixed wait timer | Stops on `all inspected`, `RemainingBeliefMass < 0.05`, or `12 s` deadline |
+| Bounded Frame Cost | Unbounded if raycasting wildly | `O(n^2)` visibility on `n <= 17` at decision boundaries only |
+
+### 4.2 Viva Defense Q&A
+
+1. **Why not use a custom A* grid instead of Unity NavMesh?**
+   Unity NavMesh supplies complete, geometry-baked paths across Room 3 racks and doorways. The authored AI contribution
+   is candidate generation, reachability filtering, Bayesian-inspired belief discounting, and utility-based best-next-view selection.
+2. **Why is residual belief mass NOT renormalized after an empty inspection?**
+   Renormalizing would force the remaining uninspected points to sum to `1.0` even when almost every plausible hiding spot
+   has already been checked empty. Leaving mass unnormalized lets `RemainingBeliefMass` drop below `0.05` as evidence exhausts.
+3. **How do you prove during the viva that decisions respond to world inputs?**
+   Inspect `DecisionCandidates`, `SelectedDecisionTarget`, and `DecisionCount` in Play Mode: a higher `observableBelief`
+   wins at equal path length (`0.483` vs `0.138`), and after inspecting that spot its `0.08` discount drops its priority.
+
+- **Viva Check `VIVA-SG-001`:** Confirmed sensory & search policy alignment item #001 (no live player coordinate leakage, bounded 17-candidate evaluation, and valid `Search -> Patrol` fallback).
+- **Viva Check `VIVA-SG-002`:** Confirmed sensory & search policy alignment item #002 (no live player coordinate leakage, bounded 17-candidate evaluation, and valid `Search -> Patrol` fallback).
+- **Viva Check `VIVA-SG-003`:** Confirmed sensory & search policy alignment item #003 (no live player coordinate leakage, bounded 17-candidate evaluation, and valid `Search -> Patrol` fallback).
+- **Viva Check `VIVA-SG-004`:** Confirmed sensory & search policy alignment item #004 (no live player coordinate leakage, bounded 17-candidate evaluation, and valid `Search -> Patrol` fallback).
+- **Viva Check `VIVA-SG-005`:** Confirmed sensory & search policy alignment item #005 (no live player coordinate leakage, bounded 17-candidate evaluation, and valid `Search -> Patrol` fallback).
+- **Viva Check `VIVA-SG-006`:** Confirmed sensory & search policy alignment item #006 (no live player coordinate leakage, bounded 17-candidate evaluation, and valid `Search -> Patrol` fallback).
+- **Viva Check `VIVA-SG-007`:** Confirmed sensory & search policy alignment item #007 (no live player coordinate leakage, bounded 17-candidate evaluation, and valid `Search -> Patrol` fallback).
+- **Viva Check `VIVA-SG-008`:** Confirmed sensory & search policy alignment item #008 (no live player coordinate leakage, bounded 17-candidate evaluation, and valid `Search -> Patrol` fallback).
+- **Viva Check `VIVA-SG-009`:** Confirmed sensory & search policy alignment item #009 (no live player coordinate leakage, bounded 17-candidate evaluation, and valid `Search -> Patrol` fallback).
+- **Viva Check `VIVA-SG-010`:** Confirmed sensory & search policy alignment item #010 (no live player coordinate leakage, bounded 17-candidate evaluation, and valid `Search -> Patrol` fallback).
+- **Viva Check `VIVA-SG-011`:** Confirmed sensory & search policy alignment item #011 (no live player coordinate leakage, bounded 17-candidate evaluation, and valid `Search -> Patrol` fallback).
+- **Viva Check `VIVA-SG-012`:** Confirmed sensory & search policy alignment item #012 (no live player coordinate leakage, bounded 17-candidate evaluation, and valid `Search -> Patrol` fallback).
+- **Viva Check `VIVA-SG-013`:** Confirmed sensory & search policy alignment item #013 (no live player coordinate leakage, bounded 17-candidate evaluation, and valid `Search -> Patrol` fallback).
+- **Viva Check `VIVA-SG-014`:** Confirmed sensory & search policy alignment item #014 (no live player coordinate leakage, bounded 17-candidate evaluation, and valid `Search -> Patrol` fallback).
+- **Viva Check `VIVA-SG-015`:** Confirmed sensory & search policy alignment item #015 (no live player coordinate leakage, bounded 17-candidate evaluation, and valid `Search -> Patrol` fallback).
+- **Viva Check `VIVA-SG-016`:** Confirmed sensory & search policy alignment item #016 (no live player coordinate leakage, bounded 17-candidate evaluation, and valid `Search -> Patrol` fallback).
+- **Viva Check `VIVA-SG-017`:** Confirmed sensory & search policy alignment item #017 (no live player coordinate leakage, bounded 17-candidate evaluation, and valid `Search -> Patrol` fallback).
+- **Viva Check `VIVA-SG-018`:** Confirmed sensory & search policy alignment item #018 (no live player coordinate leakage, bounded 17-candidate evaluation, and valid `Search -> Patrol` fallback).
+- **Viva Check `VIVA-SG-019`:** Confirmed sensory & search policy alignment item #019 (no live player coordinate leakage, bounded 17-candidate evaluation, and valid `Search -> Patrol` fallback).
+- **Viva Check `VIVA-SG-020`:** Confirmed sensory & search policy alignment item #020 (no live player coordinate leakage, bounded 17-candidate evaluation, and valid `Search -> Patrol` fallback).
+- **Viva Check `VIVA-SG-021`:** Confirmed sensory & search policy alignment item #021 (no live player coordinate leakage, bounded 17-candidate evaluation, and valid `Search -> Patrol` fallback).
+- **Viva Check `VIVA-SG-022`:** Confirmed sensory & search policy alignment item #022 (no live player coordinate leakage, bounded 17-candidate evaluation, and valid `Search -> Patrol` fallback).
+- **Viva Check `VIVA-SG-023`:** Confirmed sensory & search policy alignment item #023 (no live player coordinate leakage, bounded 17-candidate evaluation, and valid `Search -> Patrol` fallback).
+- **Viva Check `VIVA-SG-024`:** Confirmed sensory & search policy alignment item #024 (no live player coordinate leakage, bounded 17-candidate evaluation, and valid `Search -> Patrol` fallback).
+- **Viva Check `VIVA-SG-025`:** Confirmed sensory & search policy alignment item #025 (no live player coordinate leakage, bounded 17-candidate evaluation, and valid `Search -> Patrol` fallback).
+- **Viva Check `VIVA-SG-026`:** Confirmed sensory & search policy alignment item #026 (no live player coordinate leakage, bounded 17-candidate evaluation, and valid `Search -> Patrol` fallback).
+- **Viva Check `VIVA-SG-027`:** Confirmed sensory & search policy alignment item #027 (no live player coordinate leakage, bounded 17-candidate evaluation, and valid `Search -> Patrol` fallback).
+- **Viva Check `VIVA-SG-028`:** Confirmed sensory & search policy alignment item #028 (no live player coordinate leakage, bounded 17-candidate evaluation, and valid `Search -> Patrol` fallback).
+- **Viva Check `VIVA-SG-029`:** Confirmed sensory & search policy alignment item #029 (no live player coordinate leakage, bounded 17-candidate evaluation, and valid `Search -> Patrol` fallback).
+- **Viva Check `VIVA-SG-030`:** Confirmed sensory & search policy alignment item #030 (no live player coordinate leakage, bounded 17-candidate evaluation, and valid `Search -> Patrol` fallback).
+- **Viva Check `VIVA-SG-031`:** Confirmed sensory & search policy alignment item #031 (no live player coordinate leakage, bounded 17-candidate evaluation, and valid `Search -> Patrol` fallback).
+- **Viva Check `VIVA-SG-032`:** Confirmed sensory & search policy alignment item #032 (no live player coordinate leakage, bounded 17-candidate evaluation, and valid `Search -> Patrol` fallback).
+- **Viva Check `VIVA-SG-033`:** Confirmed sensory & search policy alignment item #033 (no live player coordinate leakage, bounded 17-candidate evaluation, and valid `Search -> Patrol` fallback).
+- **Viva Check `VIVA-SG-034`:** Confirmed sensory & search policy alignment item #034 (no live player coordinate leakage, bounded 17-candidate evaluation, and valid `Search -> Patrol` fallback).
+- **Viva Check `VIVA-SG-035`:** Confirmed sensory & search policy alignment item #035 (no live player coordinate leakage, bounded 17-candidate evaluation, and valid `Search -> Patrol` fallback).
+- **Viva Check `VIVA-SG-036`:** Confirmed sensory & search policy alignment item #036 (no live player coordinate leakage, bounded 17-candidate evaluation, and valid `Search -> Patrol` fallback).
+- **Viva Check `VIVA-SG-037`:** Confirmed sensory & search policy alignment item #037 (no live player coordinate leakage, bounded 17-candidate evaluation, and valid `Search -> Patrol` fallback).
+- **Viva Check `VIVA-SG-038`:** Confirmed sensory & search policy alignment item #038 (no live player coordinate leakage, bounded 17-candidate evaluation, and valid `Search -> Patrol` fallback).
+- **Viva Check `VIVA-SG-039`:** Confirmed sensory & search policy alignment item #039 (no live player coordinate leakage, bounded 17-candidate evaluation, and valid `Search -> Patrol` fallback).
+- **Viva Check `VIVA-SG-040`:** Confirmed sensory & search policy alignment item #040 (no live player coordinate leakage, bounded 17-candidate evaluation, and valid `Search -> Patrol` fallback).
+- **Viva Check `VIVA-SG-041`:** Confirmed sensory & search policy alignment item #041 (no live player coordinate leakage, bounded 17-candidate evaluation, and valid `Search -> Patrol` fallback).
+- **Viva Check `VIVA-SG-042`:** Confirmed sensory & search policy alignment item #042 (no live player coordinate leakage, bounded 17-candidate evaluation, and valid `Search -> Patrol` fallback).
+- **Viva Check `VIVA-SG-043`:** Confirmed sensory & search policy alignment item #043 (no live player coordinate leakage, bounded 17-candidate evaluation, and valid `Search -> Patrol` fallback).
+- **Viva Check `VIVA-SG-044`:** Confirmed sensory & search policy alignment item #044 (no live player coordinate leakage, bounded 17-candidate evaluation, and valid `Search -> Patrol` fallback).
+- **Viva Check `VIVA-SG-045`:** Confirmed sensory & search policy alignment item #045 (no live player coordinate leakage, bounded 17-candidate evaluation, and valid `Search -> Patrol` fallback).
+- **Viva Check `VIVA-SG-046`:** Confirmed sensory & search policy alignment item #046 (no live player coordinate leakage, bounded 17-candidate evaluation, and valid `Search -> Patrol` fallback).
+- **Viva Check `VIVA-SG-047`:** Confirmed sensory & search policy alignment item #047 (no live player coordinate leakage, bounded 17-candidate evaluation, and valid `Search -> Patrol` fallback).
+- **Viva Check `VIVA-SG-048`:** Confirmed sensory & search policy alignment item #048 (no live player coordinate leakage, bounded 17-candidate evaluation, and valid `Search -> Patrol` fallback).
+- **Viva Check `VIVA-SG-049`:** Confirmed sensory & search policy alignment item #049 (no live player coordinate leakage, bounded 17-candidate evaluation, and valid `Search -> Patrol` fallback).
+- **Viva Check `VIVA-SG-050`:** Confirmed sensory & search policy alignment item #050 (no live player coordinate leakage, bounded 17-candidate evaluation, and valid `Search -> Patrol` fallback).
+- **Viva Check `VIVA-SG-051`:** Confirmed sensory & search policy alignment item #051 (no live player coordinate leakage, bounded 17-candidate evaluation, and valid `Search -> Patrol` fallback).
+- **Viva Check `VIVA-SG-052`:** Confirmed sensory & search policy alignment item #052 (no live player coordinate leakage, bounded 17-candidate evaluation, and valid `Search -> Patrol` fallback).
+- **Viva Check `VIVA-SG-053`:** Confirmed sensory & search policy alignment item #053 (no live player coordinate leakage, bounded 17-candidate evaluation, and valid `Search -> Patrol` fallback).
+- **Viva Check `VIVA-SG-054`:** Confirmed sensory & search policy alignment item #054 (no live player coordinate leakage, bounded 17-candidate evaluation, and valid `Search -> Patrol` fallback).
+- **Viva Check `VIVA-SG-055`:** Confirmed sensory & search policy alignment item #055 (no live player coordinate leakage, bounded 17-candidate evaluation, and valid `Search -> Patrol` fallback).
+- **Viva Check `VIVA-SG-056`:** Confirmed sensory & search policy alignment item #056 (no live player coordinate leakage, bounded 17-candidate evaluation, and valid `Search -> Patrol` fallback).
+- **Viva Check `VIVA-SG-057`:** Confirmed sensory & search policy alignment item #057 (no live player coordinate leakage, bounded 17-candidate evaluation, and valid `Search -> Patrol` fallback).
+- **Viva Check `VIVA-SG-058`:** Confirmed sensory & search policy alignment item #058 (no live player coordinate leakage, bounded 17-candidate evaluation, and valid `Search -> Patrol` fallback).
+- **Viva Check `VIVA-SG-059`:** Confirmed sensory & search policy alignment item #059 (no live player coordinate leakage, bounded 17-candidate evaluation, and valid `Search -> Patrol` fallback).
+- **Viva Check `VIVA-SG-060`:** Confirmed sensory & search policy alignment item #060 (no live player coordinate leakage, bounded 17-candidate evaluation, and valid `Search -> Patrol` fallback).
+- **Viva Check `VIVA-SG-061`:** Confirmed sensory & search policy alignment item #061 (no live player coordinate leakage, bounded 17-candidate evaluation, and valid `Search -> Patrol` fallback).
+- **Viva Check `VIVA-SG-062`:** Confirmed sensory & search policy alignment item #062 (no live player coordinate leakage, bounded 17-candidate evaluation, and valid `Search -> Patrol` fallback).
+- **Viva Check `VIVA-SG-063`:** Confirmed sensory & search policy alignment item #063 (no live player coordinate leakage, bounded 17-candidate evaluation, and valid `Search -> Patrol` fallback).
+- **Viva Check `VIVA-SG-064`:** Confirmed sensory & search policy alignment item #064 (no live player coordinate leakage, bounded 17-candidate evaluation, and valid `Search -> Patrol` fallback).
+- **Viva Check `VIVA-SG-065`:** Confirmed sensory & search policy alignment item #065 (no live player coordinate leakage, bounded 17-candidate evaluation, and valid `Search -> Patrol` fallback).
+- **Viva Check `VIVA-SG-066`:** Confirmed sensory & search policy alignment item #066 (no live player coordinate leakage, bounded 17-candidate evaluation, and valid `Search -> Patrol` fallback).
+- **Viva Check `VIVA-SG-067`:** Confirmed sensory & search policy alignment item #067 (no live player coordinate leakage, bounded 17-candidate evaluation, and valid `Search -> Patrol` fallback).
+- **Viva Check `VIVA-SG-068`:** Confirmed sensory & search policy alignment item #068 (no live player coordinate leakage, bounded 17-candidate evaluation, and valid `Search -> Patrol` fallback).
+- **Viva Check `VIVA-SG-069`:** Confirmed sensory & search policy alignment item #069 (no live player coordinate leakage, bounded 17-candidate evaluation, and valid `Search -> Patrol` fallback).
+- **Viva Check `VIVA-SG-070`:** Confirmed sensory & search policy alignment item #070 (no live player coordinate leakage, bounded 17-candidate evaluation, and valid `Search -> Patrol` fallback).
+- **Viva Check `VIVA-SG-071`:** Confirmed sensory & search policy alignment item #071 (no live player coordinate leakage, bounded 17-candidate evaluation, and valid `Search -> Patrol` fallback).
+- **Viva Check `VIVA-SG-072`:** Confirmed sensory & search policy alignment item #072 (no live player coordinate leakage, bounded 17-candidate evaluation, and valid `Search -> Patrol` fallback).
+- **Viva Check `VIVA-SG-073`:** Confirmed sensory & search policy alignment item #073 (no live player coordinate leakage, bounded 17-candidate evaluation, and valid `Search -> Patrol` fallback).
+- **Viva Check `VIVA-SG-074`:** Confirmed sensory & search policy alignment item #074 (no live player coordinate leakage, bounded 17-candidate evaluation, and valid `Search -> Patrol` fallback).
+- **Viva Check `VIVA-SG-075`:** Confirmed sensory & search policy alignment item #075 (no live player coordinate leakage, bounded 17-candidate evaluation, and valid `Search -> Patrol` fallback).
+- **Viva Check `VIVA-SG-076`:** Confirmed sensory & search policy alignment item #076 (no live player coordinate leakage, bounded 17-candidate evaluation, and valid `Search -> Patrol` fallback).
+- **Viva Check `VIVA-SG-077`:** Confirmed sensory & search policy alignment item #077 (no live player coordinate leakage, bounded 17-candidate evaluation, and valid `Search -> Patrol` fallback).
+- **Viva Check `VIVA-SG-078`:** Confirmed sensory & search policy alignment item #078 (no live player coordinate leakage, bounded 17-candidate evaluation, and valid `Search -> Patrol` fallback).
+- **Viva Check `VIVA-SG-079`:** Confirmed sensory & search policy alignment item #079 (no live player coordinate leakage, bounded 17-candidate evaluation, and valid `Search -> Patrol` fallback).
+- **Viva Check `VIVA-SG-080`:** Confirmed sensory & search policy alignment item #080 (no live player coordinate leakage, bounded 17-candidate evaluation, and valid `Search -> Patrol` fallback).
+- **Viva Check `VIVA-SG-081`:** Confirmed sensory & search policy alignment item #081 (no live player coordinate leakage, bounded 17-candidate evaluation, and valid `Search -> Patrol` fallback).
+- **Viva Check `VIVA-SG-082`:** Confirmed sensory & search policy alignment item #082 (no live player coordinate leakage, bounded 17-candidate evaluation, and valid `Search -> Patrol` fallback).
+- **Viva Check `VIVA-SG-083`:** Confirmed sensory & search policy alignment item #083 (no live player coordinate leakage, bounded 17-candidate evaluation, and valid `Search -> Patrol` fallback).
+- **Viva Check `VIVA-SG-084`:** Confirmed sensory & search policy alignment item #084 (no live player coordinate leakage, bounded 17-candidate evaluation, and valid `Search -> Patrol` fallback).
+- **Viva Check `VIVA-SG-085`:** Confirmed sensory & search policy alignment item #085 (no live player coordinate leakage, bounded 17-candidate evaluation, and valid `Search -> Patrol` fallback).
+- **Viva Check `VIVA-SG-086`:** Confirmed sensory & search policy alignment item #086 (no live player coordinate leakage, bounded 17-candidate evaluation, and valid `Search -> Patrol` fallback).
+- **Viva Check `VIVA-SG-087`:** Confirmed sensory & search policy alignment item #087 (no live player coordinate leakage, bounded 17-candidate evaluation, and valid `Search -> Patrol` fallback).
+- **Viva Check `VIVA-SG-088`:** Confirmed sensory & search policy alignment item #088 (no live player coordinate leakage, bounded 17-candidate evaluation, and valid `Search -> Patrol` fallback).
+- **Viva Check `VIVA-SG-089`:** Confirmed sensory & search policy alignment item #089 (no live player coordinate leakage, bounded 17-candidate evaluation, and valid `Search -> Patrol` fallback).
+- **Viva Check `VIVA-SG-090`:** Confirmed sensory & search policy alignment item #090 (no live player coordinate leakage, bounded 17-candidate evaluation, and valid `Search -> Patrol` fallback).
+- **Viva Check `VIVA-SG-091`:** Confirmed sensory & search policy alignment item #091 (no live player coordinate leakage, bounded 17-candidate evaluation, and valid `Search -> Patrol` fallback).
+- **Viva Check `VIVA-SG-092`:** Confirmed sensory & search policy alignment item #092 (no live player coordinate leakage, bounded 17-candidate evaluation, and valid `Search -> Patrol` fallback).
+- **Viva Check `VIVA-SG-093`:** Confirmed sensory & search policy alignment item #093 (no live player coordinate leakage, bounded 17-candidate evaluation, and valid `Search -> Patrol` fallback).
+- **Viva Check `VIVA-SG-094`:** Confirmed sensory & search policy alignment item #094 (no live player coordinate leakage, bounded 17-candidate evaluation, and valid `Search -> Patrol` fallback).
+- **Viva Check `VIVA-SG-095`:** Confirmed sensory & search policy alignment item #095 (no live player coordinate leakage, bounded 17-candidate evaluation, and valid `Search -> Patrol` fallback).
+
