@@ -111,3 +111,7 @@ Confirmed escape terminal activation triggers cleanly only after valid card auth
 ## 2026-10-25 — Review Search Guard memory decay and negative evidence edge cases
 Reviewed edge cases including rapid repeated gunfire, sound-only heading reset, and simultaneous ring occlusion.
 Confirmed negative-evidence discounting consistently shifts priority toward uninspected cover.
+
+## 2026-10-26 — Document viva notes comparing belief-guided search to reflex chase
+Summarized key viva talking points contrasting best-next-view belief search against naive reflex pursuit.
+Highlighted inspectable Decision Candidates telemetry and controlled feature-change reproducibility.
