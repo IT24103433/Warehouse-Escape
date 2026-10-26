@@ -4,6 +4,14 @@
 
 This is a retrospective documentation sequence organized by the requested milestone dates. Git dates label the sequence. Source and scene references use the branch base, and workbook-style waypoint examples use synthetic data. PlayMode cases list expected observations or identify earlier repository evidence.
 
+## Draft viva order
+
+1. Introduce the room labels.
+2. Walk through every aisle.
+3. Explain the colors and probe positions.
+4. Read the candidate fields in their declared order.
+5. Wrap up with a chase replay.
+
 ## 2026-09-28 · Initialize World Builder layout plan and Room 2 patrol scope
 
 Set the documentation boundary at Room 2 patrol and the warehouse navigation connections. Use [layout](WarehouseLayoutSpec.md) for design references and record the distinction between survey fixtures and scene measurements from the start.
@@ -115,3 +123,7 @@ Indexed the existing patrol and route tests and wrote a manual recovery matrix w
 ## 2026-10-25 · Review edge cases for blocked NavMesh recovery and doorway turns
 
 Flagged sampled endpoints across bounds, long corner detours, failed destination submission, and the arrival check's planar-distance fallback for controlled reproduction.
+
+## 2026-10-26 · Refine World Builder and Patrol Guard viva reference notes
+
+Reworked the talk track around the physical route, the candidate gates, the weighted decision, and the visible-player boundary. Kept demonstration inputs alongside the claim each can establish.

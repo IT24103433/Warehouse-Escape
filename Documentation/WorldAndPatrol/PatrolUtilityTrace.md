@@ -245,16 +245,19 @@ Use a pending path or genuine complete path as the comparison control for
 an invalid path. Record when the path was sampled relative to collider and
 NavMesh updates.
 
-## Draft viva outline
+## Viva walkthrough
 
-1. Start by showing the Room 2 aisle diagram.
-2. List every waypoint by array index.
-3. Show east and west crossing times before introducing coverage age.
-4. Review all three state entry events.
-5. Walk through the equal-visibility arithmetic after the route examples.
-6. Show the trigger and then discuss how it affects hidden-player pursuit.
-7. Read the graphics checks from the lighting document.
-8. Mention the existing test class names and what a pending run means.
+| Claim | Demonstration | Evidence to point to |
+| --- | --- | --- |
+| Geometry constrains destinations | Place one candidate inside a navigable aisle and another beyond the safe-side guard boundary | Room predicate, complete-path test and selected-target gizmo |
+| Neglect makes the patrol responsive to coverage | Compare the 30 s / 20 m and 0 s / 1 m cases with equal openness | Controlled utility comparison and arrival timestamp |
+| Path changes can alter ranking | Close a crossing in a fixture, observe a longer detour, then recompute using the same age and visibility | CSV lengths and utility terms |
+| Losing sight changes the information available | Hide at a shelf and move again while concealed | Last seen and investigation target, guard's current state |
+| A pad can alert a guard without visual detection | Trigger it behind cover and wait for the investigation | Trap origin, pursuit state and shooting guard checks |
+
+Narrate the movement layer and the scoring layer separately. Unity supplies
+path queries. The project's code filters candidates, computes a role-specific
+utility and updates memory when the guard arrives.
 
 ## End-to-end example from the waypoint dataset
 
