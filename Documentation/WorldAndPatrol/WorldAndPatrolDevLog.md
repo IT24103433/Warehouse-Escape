@@ -4,13 +4,18 @@
 
 This is a retrospective documentation sequence organized by the requested milestone dates. Git dates label the sequence. Source and scene references use the branch base, and workbook-style waypoint examples use synthetic data. PlayMode cases list expected observations or identify earlier repository evidence.
 
-## Draft viva order
+## Handoff
 
-1. Introduce the room labels.
-2. Walk through every aisle.
-3. Explain the colors and probe positions.
-4. Read the candidate fields in their declared order.
-5. Wrap up with a chase replay.
+| Artifact | What to look up |
+| --- | --- |
+| [Warehouse layout](WarehouseLayoutSpec.md) | Room boundaries, route approaches, fallback anchors and CSV schema |
+| [Waypoint dataset](NavMeshWaypointsDataset.csv) | Synthetic path lengths and visibility with closure scenarios |
+| [Utility trace](PatrolUtilityTrace.md) | Numerical choices, filters, state transitions and viva examples |
+| [Lighting and optimization](LightingAndOptimizationLog.md) | Active bake fields, geometry reviews and verification evidence |
+
+Reference base: `13fbc2296c669e65b2bfc6ffc1165d3bab0b26a2`.
+The dates label a retrospective history on that base. No Unity asset edits,
+new bake, profiler run or fresh PlayMode outcome is recorded by this branch.
 
 ## 2026-09-28 · Initialize World Builder layout plan and Room 2 patrol scope
 
@@ -127,3 +132,7 @@ Flagged sampled endpoints across bounds, long corner detours, failed destination
 ## 2026-10-26 · Refine World Builder and Patrol Guard viva reference notes
 
 Reworked the talk track around the physical route, the candidate gates, the weighted decision, and the visible-player boundary. Kept demonstration inputs alongside the claim each can establish.
+
+## 2026-10-27 · Finalize World Builder and Patrol Guard documentation
+
+Linked the layout, dataset, utility trace and rendering checks. The final handoff distinguishes scene-backed constants, synthetic calculations, and pending runtime evidence.
