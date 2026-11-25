@@ -102,6 +102,9 @@ public class SearchGuardAI : MonoBehaviour, IGuardPerceptionTracker
     public Vector3 LastSeenPosition => lastSeenPosition;
     public Transform[] PatrolWaypoints { get => patrolWaypoints; set => patrolWaypoints = value; }
     public float SearchTimeout { get => searchTimeout; set => searchTimeout = value; }
+    /// <summary>
+    /// Updates the maximum search timeout duration in seconds.
+    /// </summary>
     public void SetSearchTimeout(float timeout) => searchTimeout = timeout;
 
     void Awake()
@@ -180,7 +183,14 @@ public class SearchGuardAI : MonoBehaviour, IGuardPerceptionTracker
         }
     }
 
+    /// <summary>
+    /// Returns true when the guard has confirmed visual line of sight to the player inside Room 3.
+    /// </summary>
     public bool HasConfirmedVisualContact() => canSeePlayer && (playerTransform == null || IsInsideRoom(playerTransform.position));
+
+    /// <summary>
+    /// Returns true while this guard GameObject and AI component remain active in the hierarchy.
+    /// </summary>
     public bool IsGuardActive() => isActiveAndEnabled && gameObject.activeInHierarchy;
 
     void OnEnable()
@@ -275,6 +285,9 @@ public class SearchGuardAI : MonoBehaviour, IGuardPerceptionTracker
     [SerializeField] private Bounds roomBounds = new Bounds(new Vector3(-15.5f, 2.0f, 9.5f), new Vector3(15f, 6f, 19f));
     public Bounds RoomBounds { get => roomBounds; set => roomBounds = value; }
 
+    /// <summary>
+    /// Checks whether a world position lies within the Room 3 Search sector boundaries.
+    /// </summary>
     public bool IsInsideRoom(Vector3 pos)
     {
         // Room 3 bounds (X: -23.0 to -6.5, Z: -1.0 to 18.5)
@@ -369,6 +382,9 @@ public class SearchGuardAI : MonoBehaviour, IGuardPerceptionTracker
         }
     }
 
+    /// <summary>
+    /// Transitions the guard back to Room 3 patrol and resets perception memory.
+    /// </summary>
     public void TransitionToPatrol()
     {
         currentState = SearchGuardState.Patrol;
@@ -379,6 +395,9 @@ public class SearchGuardAI : MonoBehaviour, IGuardPerceptionTracker
         DispatchCurrentWaypoint();
     }
 
+    /// <summary>
+    /// Transitions the guard into active visual pursuit of the player.
+    /// </summary>
     public void TransitionToPursue()
     {
         hasPreviousObservation = false;
@@ -425,6 +444,9 @@ public class SearchGuardAI : MonoBehaviour, IGuardPerceptionTracker
         enemyMovement.Resume();
     }
 
+    /// <summary>
+    /// Transitions to belief-guided search around the last observed position.
+    /// </summary>
     public void TransitionToSearch()
     {
         currentState = SearchGuardState.Search;
