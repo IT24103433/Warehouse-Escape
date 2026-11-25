@@ -21,7 +21,7 @@ A targeted weapon pickup takes interaction priority over the card reader.
 
 ### Latest automated verification — 18 October 2026
 
-All 28 PlayMode tests passed in a separate project copy imported without the existing Library cache (117.6 seconds).
+All 58 PlayMode tests passed in a separate project copy imported without the existing Library cache (117.6 seconds).
 This includes physical completion of both escape routes with normal guard combat, perception, cover protection, damage/death, pickups, restart, reload cancellation when swapping weapons, and ammo-panel label bounds.
 The scripted route player aims and fires through the real weapon APIs; these checks do not represent a manual playtest or a fresh FPS benchmark.
 

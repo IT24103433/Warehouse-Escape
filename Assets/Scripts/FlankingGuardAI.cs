@@ -178,6 +178,9 @@ public class FlankingGuardAI : MonoBehaviour, IGuardPerceptionTracker
     public bool CanSeePlayer => canSeePlayer;
     public Vector3 LastSeenPosition => lastSeenPosition;
     public float SearchTimeout { get => searchTimeout; set => searchTimeout = value; }
+    /// <summary>
+    /// Updates the search timeout duration and clamps any active search timer.
+    /// </summary>
     public void SetSearchTimeout(float timeout)
     {
         searchTimeout = timeout;
@@ -239,7 +242,14 @@ public class FlankingGuardAI : MonoBehaviour, IGuardPerceptionTracker
         HumanoidMeshBuilder.EnsureRuntimeVisuals(transform, CharacterRole.Boss_Jadavan);
     }
 
+    /// <summary>
+    /// Returns true when the guard has confirmed visual line of sight to the player inside its encounter room.
+    /// </summary>
     public bool HasConfirmedVisualContact() => canSeePlayer && (playerTransform == null || IsInsideRoom(playerTransform.position));
+
+    /// <summary>
+    /// Returns true while this guard GameObject and AI component remain active in the hierarchy.
+    /// </summary>
     public bool IsGuardActive() => isActiveAndEnabled && gameObject.activeInHierarchy;
 
     void OnEnable()
@@ -356,6 +366,9 @@ public class FlankingGuardAI : MonoBehaviour, IGuardPerceptionTracker
     [SerializeField] private Bounds roomBounds;
     public Bounds RoomBounds { get => roomBounds; set => roomBounds = value; }
 
+    /// <summary>
+    /// Checks whether a world position lies within the guard's assigned Room 5 bounds.
+    /// </summary>
     public bool IsInsideRoom(Vector3 pos)
     {
         if (roomBounds.size == Vector3.zero) return true;
@@ -902,6 +915,9 @@ public class FlankingGuardAI : MonoBehaviour, IGuardPerceptionTracker
         }
     }
 
+    /// <summary>
+    /// Transitions into Search around the last confirmed sighting without leaking live player coordinates.
+    /// </summary>
     public void TransitionToSearch()
     {
         currentState = GuardState.Search;

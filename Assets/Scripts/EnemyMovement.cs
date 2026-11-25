@@ -48,12 +48,23 @@ public class EnemyMovement : MonoBehaviour
     private bool hasLoggedNavMeshWarning = false;
 
     public NavMeshAgent Agent => agent;
+    /// <summary>
+    /// Returns true if the underlying NavMeshAgent is currently seated on a valid NavMesh surface.
+    /// </summary>
     public bool IsOnNavMesh => agent != null && agent.isOnNavMesh;
     public float RemainingDistance => agent != null && agent.isOnNavMesh ? agent.remainingDistance : Mathf.Infinity;
     public bool PathPending => agent != null && agent.isOnNavMesh && agent.pathPending;
     public bool HasPath => agent != null && agent.isOnNavMesh && agent.hasPath;
     public NavMeshPathStatus PathStatus => agent != null && agent.isOnNavMesh ? agent.pathStatus : NavMeshPathStatus.PathInvalid;
+
+    /// <summary>
+    /// Returns true when the agent holds a non-pending, fully reachable NavMeshPath.
+    /// </summary>
     public bool HasCompletePath => agent != null && agent.isOnNavMesh && !agent.pathPending && agent.hasPath && agent.pathStatus == NavMeshPathStatus.PathComplete;
+
+    /// <summary>
+    /// Returns true when blocked displacement exceeds the configured stuck duration threshold.
+    /// </summary>
     public bool IsStuck => stuckTimer >= stuckDurationThreshold;
 
     public event Action OnStuckRecovered;
