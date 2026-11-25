@@ -182,7 +182,14 @@ public class DefensiveGuardAI : MonoBehaviour, IGuardPerceptionTracker
         HumanoidMeshBuilder.EnsureRuntimeVisuals(transform, CharacterRole.Defensive_Aqqil);
     }
 
+    /// <summary>
+    /// Returns true when the guard has confirmed visual line of sight to the player inside Room 4.
+    /// </summary>
     public bool HasConfirmedVisualContact() => canSeePlayer && (playerTransform == null || IsInsideRoom(playerTransform.position));
+
+    /// <summary>
+    /// Returns true while this guard GameObject and AI component remain active in the hierarchy.
+    /// </summary>
     public bool IsGuardActive() => isActiveAndEnabled && gameObject.activeInHierarchy;
 
     void OnEnable()
@@ -272,6 +279,9 @@ public class DefensiveGuardAI : MonoBehaviour, IGuardPerceptionTracker
         if (headObj != null) cachedEyeTransform = headObj;
     }
 
+    /// <summary>
+    /// Assigns the player transform explicitly for deterministic testing setups.
+    /// </summary>
     public void SetPlayer(Transform player) => playerTransform = player;
 
     [Header("Room Boundaries")]
@@ -279,6 +289,9 @@ public class DefensiveGuardAI : MonoBehaviour, IGuardPerceptionTracker
     [SerializeField] private Bounds roomBounds;
     public Bounds RoomBounds { get => roomBounds; set => roomBounds = value; }
 
+    /// <summary>
+    /// Checks whether a world position lies within the Room 4 Defensive sector bounds.
+    /// </summary>
     public bool IsInsideRoom(Vector3 pos)
     {
         if (roomBounds.size == Vector3.zero) return true;
@@ -399,6 +412,9 @@ public class DefensiveGuardAI : MonoBehaviour, IGuardPerceptionTracker
         if (enemyMovement.SetDestination(destination)) enemyMovement.Resume();
     }
 
+    /// <summary>
+    /// Transitions into tactical pursuit inside the defensive leash around the anchor post.
+    /// </summary>
     public void TransitionToPursueIntruder()
     {
         currentState = DefensiveGuardState.PursueIntruder;
@@ -444,6 +460,9 @@ public class DefensiveGuardAI : MonoBehaviour, IGuardPerceptionTracker
         DispatchInspectionPoint();
     }
 
+    /// <summary>
+    /// Transitions to retreat back to the Room 4 anchor post after leash or sight disengagement.
+    /// </summary>
     public void TransitionToReturnToPost()
     {
         currentState = DefensiveGuardState.ReturnToPost;
@@ -475,6 +494,9 @@ public class DefensiveGuardAI : MonoBehaviour, IGuardPerceptionTracker
         }
     }
 
+    /// <summary>
+    /// Transitions to stationary post guarding and resets transient perception state.
+    /// </summary>
     public void TransitionToGuardingPost()
     {
         currentState = DefensiveGuardState.GuardingPost;

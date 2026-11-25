@@ -3,6 +3,9 @@ using UnityEngine;
 /// <summary>Aqqil: protect the objective while choosing useful shotgun/cover positions.</summary>
 public static class DefenseDecisionPolicy
 {
+    /// <summary>
+    /// Evaluates a tactical defense post using objective proximity, cover, shotgun range, visibility, freshness, and travel cost.
+    /// </summary>
     public static float Score(float objective, float cover, float weaponRange, float visibility,
         float freshness, float pathLength, bool hasThreat)
     {
