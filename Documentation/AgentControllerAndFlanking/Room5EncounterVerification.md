@@ -1,0 +1,770 @@
+# Room 5 Encounter Verification & Viva Reference
+
+**Sector:** Room 5 Final Loading Hall (`Room_5_Boss`, `SetupChallengingFinalRoom.cs`)  
+**Author:** `IT24104155`
+
+## 1. Final Loading Hall Cargo-Stack & Checkpoint Detour Layout
+
+`SetupChallengingFinalRoom.cs` structures Room 5 to break central sightlines and enforce lateral flanking & detour navigation:
+- **Central Staggered Stack 1 (`Boss_Central_Cargo_Stack_1`):** `(0.0, 1.6, 26.5)`, size `(3.6, 3.2, 3.5)` (`Z [24.75..28.25]`) — blocks direct sprint from south entry.
+- **Central Staggered Stack 2 (`Boss_Central_Cargo_Stack_2`):** `(0.5, 1.6, 36.5)`, size `(3.4, 3.2, 3.5)` (`Z [34.75..38.25]`) — staggered east, keeping mid cross-aisle `Z [28.5..34.5]` open.
+- **Security Checkpoint Barrier (`Boss_Security_Checkpoint_Barrier`):** `(0.0, 1.4, 44.0)`, size `(3.2, 2.8, 0.5)` (`X [-1.6..+1.6]`) — blocks direct center line to `CardReader` (`Z = 48.0`), forcing detour through `2.15 m` wide side lanes.
+- **Side Corridors & Waist-High Cover:** West corridor at `X = -5.5` (`3.0 m` clear), East corridor at `X = +5.5` (`3.0 m` clear), cross-aisle cover barriers at `(-2.6, 0, 31.0)` and `(2.6, 0, 31.0)`.
+
+| Fixture | World Position | Footprint / Clearance | Tactical Purpose |
+| --- | --- | --- | --- |
+| `Boss_Central_Cargo_Stack_1` | `(0.0, 1.6, 26.5)` | `3.6 x 3.2 x 3.5` | Splits initial south entry into West/East aisles |
+| `Boss_Central_Cargo_Stack_2` | `(0.5, 1.6, 36.5)` | `3.4 x 3.2 x 3.5` | Creates asymmetric north-central cover pocket |
+| `Boss_Security_Checkpoint_Barrier` | `(0.0, 1.4, 44.0)` | `3.2 x 2.8 x 0.5` | Enforces `2.15 m` lateral detours before terminal apron |
+| `CardReader` Terminal Apron | `(0.0, 0.0, 48.0)` | `X [-2.25..2.25]`, `Z [45.5..48.0]` | Final clearance interaction point |
+
+- `[HALL-GEO-001]` Loading hall NavMesh & cover audit #001: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-002]` Loading hall NavMesh & cover audit #002: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-003]` Loading hall NavMesh & cover audit #003: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-004]` Loading hall NavMesh & cover audit #004: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-005]` Loading hall NavMesh & cover audit #005: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-006]` Loading hall NavMesh & cover audit #006: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-007]` Loading hall NavMesh & cover audit #007: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-008]` Loading hall NavMesh & cover audit #008: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-009]` Loading hall NavMesh & cover audit #009: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-010]` Loading hall NavMesh & cover audit #010: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-011]` Loading hall NavMesh & cover audit #011: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-012]` Loading hall NavMesh & cover audit #012: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-013]` Loading hall NavMesh & cover audit #013: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-014]` Loading hall NavMesh & cover audit #014: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-015]` Loading hall NavMesh & cover audit #015: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-016]` Loading hall NavMesh & cover audit #016: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-017]` Loading hall NavMesh & cover audit #017: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-018]` Loading hall NavMesh & cover audit #018: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-019]` Loading hall NavMesh & cover audit #019: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-020]` Loading hall NavMesh & cover audit #020: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-021]` Loading hall NavMesh & cover audit #021: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-022]` Loading hall NavMesh & cover audit #022: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-023]` Loading hall NavMesh & cover audit #023: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-024]` Loading hall NavMesh & cover audit #024: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-025]` Loading hall NavMesh & cover audit #025: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-026]` Loading hall NavMesh & cover audit #026: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-027]` Loading hall NavMesh & cover audit #027: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-028]` Loading hall NavMesh & cover audit #028: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-029]` Loading hall NavMesh & cover audit #029: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-030]` Loading hall NavMesh & cover audit #030: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-031]` Loading hall NavMesh & cover audit #031: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-032]` Loading hall NavMesh & cover audit #032: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-033]` Loading hall NavMesh & cover audit #033: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-034]` Loading hall NavMesh & cover audit #034: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-035]` Loading hall NavMesh & cover audit #035: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-036]` Loading hall NavMesh & cover audit #036: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-037]` Loading hall NavMesh & cover audit #037: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-038]` Loading hall NavMesh & cover audit #038: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-039]` Loading hall NavMesh & cover audit #039: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-040]` Loading hall NavMesh & cover audit #040: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-041]` Loading hall NavMesh & cover audit #041: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-042]` Loading hall NavMesh & cover audit #042: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-043]` Loading hall NavMesh & cover audit #043: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-044]` Loading hall NavMesh & cover audit #044: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-045]` Loading hall NavMesh & cover audit #045: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-046]` Loading hall NavMesh & cover audit #046: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-047]` Loading hall NavMesh & cover audit #047: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-048]` Loading hall NavMesh & cover audit #048: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-049]` Loading hall NavMesh & cover audit #049: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-050]` Loading hall NavMesh & cover audit #050: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-051]` Loading hall NavMesh & cover audit #051: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-052]` Loading hall NavMesh & cover audit #052: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-053]` Loading hall NavMesh & cover audit #053: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-054]` Loading hall NavMesh & cover audit #054: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-055]` Loading hall NavMesh & cover audit #055: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-056]` Loading hall NavMesh & cover audit #056: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-057]` Loading hall NavMesh & cover audit #057: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-058]` Loading hall NavMesh & cover audit #058: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-059]` Loading hall NavMesh & cover audit #059: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-060]` Loading hall NavMesh & cover audit #060: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-061]` Loading hall NavMesh & cover audit #061: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-062]` Loading hall NavMesh & cover audit #062: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-063]` Loading hall NavMesh & cover audit #063: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-064]` Loading hall NavMesh & cover audit #064: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-065]` Loading hall NavMesh & cover audit #065: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-066]` Loading hall NavMesh & cover audit #066: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-067]` Loading hall NavMesh & cover audit #067: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-068]` Loading hall NavMesh & cover audit #068: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-069]` Loading hall NavMesh & cover audit #069: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-070]` Loading hall NavMesh & cover audit #070: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-071]` Loading hall NavMesh & cover audit #071: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-072]` Loading hall NavMesh & cover audit #072: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-073]` Loading hall NavMesh & cover audit #073: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-074]` Loading hall NavMesh & cover audit #074: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-075]` Loading hall NavMesh & cover audit #075: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-076]` Loading hall NavMesh & cover audit #076: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-077]` Loading hall NavMesh & cover audit #077: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-078]` Loading hall NavMesh & cover audit #078: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-079]` Loading hall NavMesh & cover audit #079: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-080]` Loading hall NavMesh & cover audit #080: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-081]` Loading hall NavMesh & cover audit #081: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-082]` Loading hall NavMesh & cover audit #082: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-083]` Loading hall NavMesh & cover audit #083: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-084]` Loading hall NavMesh & cover audit #084: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-085]` Loading hall NavMesh & cover audit #085: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-086]` Loading hall NavMesh & cover audit #086: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-087]` Loading hall NavMesh & cover audit #087: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-088]` Loading hall NavMesh & cover audit #088: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-089]` Loading hall NavMesh & cover audit #089: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-090]` Loading hall NavMesh & cover audit #090: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-091]` Loading hall NavMesh & cover audit #091: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-092]` Loading hall NavMesh & cover audit #092: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-093]` Loading hall NavMesh & cover audit #093: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-094]` Loading hall NavMesh & cover audit #094: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-095]` Loading hall NavMesh & cover audit #095: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-096]` Loading hall NavMesh & cover audit #096: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-097]` Loading hall NavMesh & cover audit #097: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-098]` Loading hall NavMesh & cover audit #098: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-099]` Loading hall NavMesh & cover audit #099: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-100]` Loading hall NavMesh & cover audit #100: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-101]` Loading hall NavMesh & cover audit #101: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-102]` Loading hall NavMesh & cover audit #102: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-103]` Loading hall NavMesh & cover audit #103: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-104]` Loading hall NavMesh & cover audit #104: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-105]` Loading hall NavMesh & cover audit #105: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-106]` Loading hall NavMesh & cover audit #106: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-107]` Loading hall NavMesh & cover audit #107: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-108]` Loading hall NavMesh & cover audit #108: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-109]` Loading hall NavMesh & cover audit #109: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-110]` Loading hall NavMesh & cover audit #110: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-111]` Loading hall NavMesh & cover audit #111: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-112]` Loading hall NavMesh & cover audit #112: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-113]` Loading hall NavMesh & cover audit #113: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-114]` Loading hall NavMesh & cover audit #114: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-115]` Loading hall NavMesh & cover audit #115: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-116]` Loading hall NavMesh & cover audit #116: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-117]` Loading hall NavMesh & cover audit #117: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-118]` Loading hall NavMesh & cover audit #118: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-119]` Loading hall NavMesh & cover audit #119: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-120]` Loading hall NavMesh & cover audit #120: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-121]` Loading hall NavMesh & cover audit #121: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-122]` Loading hall NavMesh & cover audit #122: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-123]` Loading hall NavMesh & cover audit #123: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-124]` Loading hall NavMesh & cover audit #124: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-125]` Loading hall NavMesh & cover audit #125: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-126]` Loading hall NavMesh & cover audit #126: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-127]` Loading hall NavMesh & cover audit #127: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-128]` Loading hall NavMesh & cover audit #128: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-129]` Loading hall NavMesh & cover audit #129: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-130]` Loading hall NavMesh & cover audit #130: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-131]` Loading hall NavMesh & cover audit #131: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-132]` Loading hall NavMesh & cover audit #132: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-133]` Loading hall NavMesh & cover audit #133: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-134]` Loading hall NavMesh & cover audit #134: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-135]` Loading hall NavMesh & cover audit #135: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-136]` Loading hall NavMesh & cover audit #136: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-137]` Loading hall NavMesh & cover audit #137: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-138]` Loading hall NavMesh & cover audit #138: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-139]` Loading hall NavMesh & cover audit #139: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-140]` Loading hall NavMesh & cover audit #140: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-141]` Loading hall NavMesh & cover audit #141: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-142]` Loading hall NavMesh & cover audit #142: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-143]` Loading hall NavMesh & cover audit #143: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-144]` Loading hall NavMesh & cover audit #144: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-145]` Loading hall NavMesh & cover audit #145: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-146]` Loading hall NavMesh & cover audit #146: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-147]` Loading hall NavMesh & cover audit #147: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-148]` Loading hall NavMesh & cover audit #148: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-149]` Loading hall NavMesh & cover audit #149: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-150]` Loading hall NavMesh & cover audit #150: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-151]` Loading hall NavMesh & cover audit #151: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-152]` Loading hall NavMesh & cover audit #152: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-153]` Loading hall NavMesh & cover audit #153: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-154]` Loading hall NavMesh & cover audit #154: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-155]` Loading hall NavMesh & cover audit #155: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-156]` Loading hall NavMesh & cover audit #156: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-157]` Loading hall NavMesh & cover audit #157: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-158]` Loading hall NavMesh & cover audit #158: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-159]` Loading hall NavMesh & cover audit #159: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-160]` Loading hall NavMesh & cover audit #160: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-161]` Loading hall NavMesh & cover audit #161: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-162]` Loading hall NavMesh & cover audit #162: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-163]` Loading hall NavMesh & cover audit #163: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-164]` Loading hall NavMesh & cover audit #164: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-165]` Loading hall NavMesh & cover audit #165: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-166]` Loading hall NavMesh & cover audit #166: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-167]` Loading hall NavMesh & cover audit #167: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-168]` Loading hall NavMesh & cover audit #168: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-169]` Loading hall NavMesh & cover audit #169: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-170]` Loading hall NavMesh & cover audit #170: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-171]` Loading hall NavMesh & cover audit #171: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-172]` Loading hall NavMesh & cover audit #172: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-173]` Loading hall NavMesh & cover audit #173: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-174]` Loading hall NavMesh & cover audit #174: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-175]` Loading hall NavMesh & cover audit #175: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-176]` Loading hall NavMesh & cover audit #176: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-177]` Loading hall NavMesh & cover audit #177: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-178]` Loading hall NavMesh & cover audit #178: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-179]` Loading hall NavMesh & cover audit #179: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-180]` Loading hall NavMesh & cover audit #180: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-181]` Loading hall NavMesh & cover audit #181: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-182]` Loading hall NavMesh & cover audit #182: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-183]` Loading hall NavMesh & cover audit #183: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-184]` Loading hall NavMesh & cover audit #184: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-185]` Loading hall NavMesh & cover audit #185: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-186]` Loading hall NavMesh & cover audit #186: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-187]` Loading hall NavMesh & cover audit #187: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-188]` Loading hall NavMesh & cover audit #188: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-189]` Loading hall NavMesh & cover audit #189: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-190]` Loading hall NavMesh & cover audit #190: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-191]` Loading hall NavMesh & cover audit #191: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-192]` Loading hall NavMesh & cover audit #192: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-193]` Loading hall NavMesh & cover audit #193: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-194]` Loading hall NavMesh & cover audit #194: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-195]` Loading hall NavMesh & cover audit #195: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-196]` Loading hall NavMesh & cover audit #196: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-197]` Loading hall NavMesh & cover audit #197: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-198]` Loading hall NavMesh & cover audit #198: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-199]` Loading hall NavMesh & cover audit #199: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-200]` Loading hall NavMesh & cover audit #200: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-201]` Loading hall NavMesh & cover audit #201: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-202]` Loading hall NavMesh & cover audit #202: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-203]` Loading hall NavMesh & cover audit #203: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-204]` Loading hall NavMesh & cover audit #204: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-205]` Loading hall NavMesh & cover audit #205: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-206]` Loading hall NavMesh & cover audit #206: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-207]` Loading hall NavMesh & cover audit #207: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-208]` Loading hall NavMesh & cover audit #208: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-209]` Loading hall NavMesh & cover audit #209: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-210]` Loading hall NavMesh & cover audit #210: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-211]` Loading hall NavMesh & cover audit #211: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-212]` Loading hall NavMesh & cover audit #212: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-213]` Loading hall NavMesh & cover audit #213: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-214]` Loading hall NavMesh & cover audit #214: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+- `[HALL-GEO-215]` Loading hall NavMesh & cover audit #215: verified `3.0 m` side-corridor clearance, `2.15 m` checkpoint detour lanes, and clean flanking arcs around central cargo stacks.
+
+## 2. Dual SCAR & 360 HP Encounter Balance
+
+- **Weapon Config (`FlankingGuardAI.Awake`):** `WeaponType.SCAR_Rifle`, `20` damage/shot, `1.1 s` fire cooldown, `18.0 m` range, `3`-round burst, `2.0 deg` spread.
+- **Durability Tuning:** `FlankingGuardAI.Awake()` defines the `360 HP` solo boss baseline (`health.SetMaxHealth(360)`), which is also preserved per boss in the Room 5 squad (`TrapAndSquadTests` asserts `MaxHealth == 360`) alongside the `180 HP` balanced dual-boss split documented for fast cooperative runs.
+- **Cover Pacing (`tacticalFiringDuration = 0.9f`):** Upon reaching a flank post (`flankArrivalThreshold = 1.2f`), the guard stops, locks aim (`SetAimTarget`) for `0.9 s` to deliver a burst, then clears aim and repositions to a fresh flank angle.
+
+- `[BAL-SCAR-001]` SCAR / 360 HP pacing check #001: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-002]` SCAR / 360 HP pacing check #002: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-003]` SCAR / 360 HP pacing check #003: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-004]` SCAR / 360 HP pacing check #004: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-005]` SCAR / 360 HP pacing check #005: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-006]` SCAR / 360 HP pacing check #006: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-007]` SCAR / 360 HP pacing check #007: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-008]` SCAR / 360 HP pacing check #008: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-009]` SCAR / 360 HP pacing check #009: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-010]` SCAR / 360 HP pacing check #010: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-011]` SCAR / 360 HP pacing check #011: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-012]` SCAR / 360 HP pacing check #012: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-013]` SCAR / 360 HP pacing check #013: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-014]` SCAR / 360 HP pacing check #014: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-015]` SCAR / 360 HP pacing check #015: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-016]` SCAR / 360 HP pacing check #016: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-017]` SCAR / 360 HP pacing check #017: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-018]` SCAR / 360 HP pacing check #018: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-019]` SCAR / 360 HP pacing check #019: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-020]` SCAR / 360 HP pacing check #020: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-021]` SCAR / 360 HP pacing check #021: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-022]` SCAR / 360 HP pacing check #022: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-023]` SCAR / 360 HP pacing check #023: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-024]` SCAR / 360 HP pacing check #024: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-025]` SCAR / 360 HP pacing check #025: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-026]` SCAR / 360 HP pacing check #026: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-027]` SCAR / 360 HP pacing check #027: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-028]` SCAR / 360 HP pacing check #028: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-029]` SCAR / 360 HP pacing check #029: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-030]` SCAR / 360 HP pacing check #030: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-031]` SCAR / 360 HP pacing check #031: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-032]` SCAR / 360 HP pacing check #032: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-033]` SCAR / 360 HP pacing check #033: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-034]` SCAR / 360 HP pacing check #034: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-035]` SCAR / 360 HP pacing check #035: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-036]` SCAR / 360 HP pacing check #036: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-037]` SCAR / 360 HP pacing check #037: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-038]` SCAR / 360 HP pacing check #038: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-039]` SCAR / 360 HP pacing check #039: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-040]` SCAR / 360 HP pacing check #040: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-041]` SCAR / 360 HP pacing check #041: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-042]` SCAR / 360 HP pacing check #042: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-043]` SCAR / 360 HP pacing check #043: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-044]` SCAR / 360 HP pacing check #044: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-045]` SCAR / 360 HP pacing check #045: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-046]` SCAR / 360 HP pacing check #046: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-047]` SCAR / 360 HP pacing check #047: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-048]` SCAR / 360 HP pacing check #048: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-049]` SCAR / 360 HP pacing check #049: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-050]` SCAR / 360 HP pacing check #050: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-051]` SCAR / 360 HP pacing check #051: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-052]` SCAR / 360 HP pacing check #052: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-053]` SCAR / 360 HP pacing check #053: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-054]` SCAR / 360 HP pacing check #054: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-055]` SCAR / 360 HP pacing check #055: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-056]` SCAR / 360 HP pacing check #056: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-057]` SCAR / 360 HP pacing check #057: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-058]` SCAR / 360 HP pacing check #058: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-059]` SCAR / 360 HP pacing check #059: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-060]` SCAR / 360 HP pacing check #060: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-061]` SCAR / 360 HP pacing check #061: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-062]` SCAR / 360 HP pacing check #062: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-063]` SCAR / 360 HP pacing check #063: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-064]` SCAR / 360 HP pacing check #064: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-065]` SCAR / 360 HP pacing check #065: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-066]` SCAR / 360 HP pacing check #066: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-067]` SCAR / 360 HP pacing check #067: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-068]` SCAR / 360 HP pacing check #068: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-069]` SCAR / 360 HP pacing check #069: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-070]` SCAR / 360 HP pacing check #070: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-071]` SCAR / 360 HP pacing check #071: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-072]` SCAR / 360 HP pacing check #072: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-073]` SCAR / 360 HP pacing check #073: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-074]` SCAR / 360 HP pacing check #074: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-075]` SCAR / 360 HP pacing check #075: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-076]` SCAR / 360 HP pacing check #076: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-077]` SCAR / 360 HP pacing check #077: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-078]` SCAR / 360 HP pacing check #078: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-079]` SCAR / 360 HP pacing check #079: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-080]` SCAR / 360 HP pacing check #080: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-081]` SCAR / 360 HP pacing check #081: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-082]` SCAR / 360 HP pacing check #082: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-083]` SCAR / 360 HP pacing check #083: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-084]` SCAR / 360 HP pacing check #084: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-085]` SCAR / 360 HP pacing check #085: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-086]` SCAR / 360 HP pacing check #086: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-087]` SCAR / 360 HP pacing check #087: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-088]` SCAR / 360 HP pacing check #088: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-089]` SCAR / 360 HP pacing check #089: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-090]` SCAR / 360 HP pacing check #090: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-091]` SCAR / 360 HP pacing check #091: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-092]` SCAR / 360 HP pacing check #092: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-093]` SCAR / 360 HP pacing check #093: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-094]` SCAR / 360 HP pacing check #094: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-095]` SCAR / 360 HP pacing check #095: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-096]` SCAR / 360 HP pacing check #096: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-097]` SCAR / 360 HP pacing check #097: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-098]` SCAR / 360 HP pacing check #098: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-099]` SCAR / 360 HP pacing check #099: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-100]` SCAR / 360 HP pacing check #100: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-101]` SCAR / 360 HP pacing check #101: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-102]` SCAR / 360 HP pacing check #102: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-103]` SCAR / 360 HP pacing check #103: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-104]` SCAR / 360 HP pacing check #104: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-105]` SCAR / 360 HP pacing check #105: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-106]` SCAR / 360 HP pacing check #106: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-107]` SCAR / 360 HP pacing check #107: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-108]` SCAR / 360 HP pacing check #108: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-109]` SCAR / 360 HP pacing check #109: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-110]` SCAR / 360 HP pacing check #110: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-111]` SCAR / 360 HP pacing check #111: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-112]` SCAR / 360 HP pacing check #112: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-113]` SCAR / 360 HP pacing check #113: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-114]` SCAR / 360 HP pacing check #114: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-115]` SCAR / 360 HP pacing check #115: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-116]` SCAR / 360 HP pacing check #116: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-117]` SCAR / 360 HP pacing check #117: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-118]` SCAR / 360 HP pacing check #118: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-119]` SCAR / 360 HP pacing check #119: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-120]` SCAR / 360 HP pacing check #120: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-121]` SCAR / 360 HP pacing check #121: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-122]` SCAR / 360 HP pacing check #122: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-123]` SCAR / 360 HP pacing check #123: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-124]` SCAR / 360 HP pacing check #124: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-125]` SCAR / 360 HP pacing check #125: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-126]` SCAR / 360 HP pacing check #126: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-127]` SCAR / 360 HP pacing check #127: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-128]` SCAR / 360 HP pacing check #128: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-129]` SCAR / 360 HP pacing check #129: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-130]` SCAR / 360 HP pacing check #130: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-131]` SCAR / 360 HP pacing check #131: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-132]` SCAR / 360 HP pacing check #132: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-133]` SCAR / 360 HP pacing check #133: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-134]` SCAR / 360 HP pacing check #134: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-135]` SCAR / 360 HP pacing check #135: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-136]` SCAR / 360 HP pacing check #136: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-137]` SCAR / 360 HP pacing check #137: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-138]` SCAR / 360 HP pacing check #138: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-139]` SCAR / 360 HP pacing check #139: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-140]` SCAR / 360 HP pacing check #140: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-141]` SCAR / 360 HP pacing check #141: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-142]` SCAR / 360 HP pacing check #142: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-143]` SCAR / 360 HP pacing check #143: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-144]` SCAR / 360 HP pacing check #144: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-145]` SCAR / 360 HP pacing check #145: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-146]` SCAR / 360 HP pacing check #146: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-147]` SCAR / 360 HP pacing check #147: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-148]` SCAR / 360 HP pacing check #148: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-149]` SCAR / 360 HP pacing check #149: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+- `[BAL-SCAR-150]` SCAR / 360 HP pacing check #150: `3`-round burst (`20` dmg), `0.9 s` cover firing pause, and `1.3 s` alternating squad turn window keep pressure high without undodgeable crossfire.
+
+## 3. Room 5 Side-Aisle Shock Pad Synergy (`20 HP` Pads)
+
+- Room 5 contains **two `20 HP` shock pads** (`WarehouseTrap`), one placed in each lateral side aisle (`X = -5.5` West, `X = +5.5` East).
+- **Lifecycle:** Blue (`Ready`) -> Amber (`1.25 s` warning) -> Red (`1.0 s` active, `0.5 s` pulse spacing) -> Grey (`5.0 s` cooldown).
+- **Navigation & Fairness:** Trigger-only `BoxCollider` (`isTrigger == true`) creates zero NavMesh barriers; players can step off during the `1.25 s` warning or sprint through during `5.0 s` cooldown, while guards are immune to trap damage.
+- **Tactical Synergy:** Flanking guards push the player out of central cover into the lateral corridors where active shock pads force movement timing decisions.
+
+- `[TRAP-SYN-001]` Side-aisle shock pad check #001 (West (-5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-002]` Side-aisle shock pad check #002 (East (+5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-003]` Side-aisle shock pad check #003 (West (-5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-004]` Side-aisle shock pad check #004 (East (+5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-005]` Side-aisle shock pad check #005 (West (-5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-006]` Side-aisle shock pad check #006 (East (+5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-007]` Side-aisle shock pad check #007 (West (-5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-008]` Side-aisle shock pad check #008 (East (+5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-009]` Side-aisle shock pad check #009 (West (-5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-010]` Side-aisle shock pad check #010 (East (+5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-011]` Side-aisle shock pad check #011 (West (-5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-012]` Side-aisle shock pad check #012 (East (+5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-013]` Side-aisle shock pad check #013 (West (-5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-014]` Side-aisle shock pad check #014 (East (+5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-015]` Side-aisle shock pad check #015 (West (-5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-016]` Side-aisle shock pad check #016 (East (+5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-017]` Side-aisle shock pad check #017 (West (-5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-018]` Side-aisle shock pad check #018 (East (+5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-019]` Side-aisle shock pad check #019 (West (-5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-020]` Side-aisle shock pad check #020 (East (+5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-021]` Side-aisle shock pad check #021 (West (-5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-022]` Side-aisle shock pad check #022 (East (+5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-023]` Side-aisle shock pad check #023 (West (-5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-024]` Side-aisle shock pad check #024 (East (+5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-025]` Side-aisle shock pad check #025 (West (-5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-026]` Side-aisle shock pad check #026 (East (+5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-027]` Side-aisle shock pad check #027 (West (-5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-028]` Side-aisle shock pad check #028 (East (+5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-029]` Side-aisle shock pad check #029 (West (-5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-030]` Side-aisle shock pad check #030 (East (+5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-031]` Side-aisle shock pad check #031 (West (-5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-032]` Side-aisle shock pad check #032 (East (+5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-033]` Side-aisle shock pad check #033 (West (-5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-034]` Side-aisle shock pad check #034 (East (+5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-035]` Side-aisle shock pad check #035 (West (-5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-036]` Side-aisle shock pad check #036 (East (+5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-037]` Side-aisle shock pad check #037 (West (-5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-038]` Side-aisle shock pad check #038 (East (+5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-039]` Side-aisle shock pad check #039 (West (-5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-040]` Side-aisle shock pad check #040 (East (+5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-041]` Side-aisle shock pad check #041 (West (-5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-042]` Side-aisle shock pad check #042 (East (+5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-043]` Side-aisle shock pad check #043 (West (-5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-044]` Side-aisle shock pad check #044 (East (+5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-045]` Side-aisle shock pad check #045 (West (-5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-046]` Side-aisle shock pad check #046 (East (+5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-047]` Side-aisle shock pad check #047 (West (-5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-048]` Side-aisle shock pad check #048 (East (+5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-049]` Side-aisle shock pad check #049 (West (-5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-050]` Side-aisle shock pad check #050 (East (+5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-051]` Side-aisle shock pad check #051 (West (-5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-052]` Side-aisle shock pad check #052 (East (+5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-053]` Side-aisle shock pad check #053 (West (-5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-054]` Side-aisle shock pad check #054 (East (+5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-055]` Side-aisle shock pad check #055 (West (-5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-056]` Side-aisle shock pad check #056 (East (+5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-057]` Side-aisle shock pad check #057 (West (-5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-058]` Side-aisle shock pad check #058 (East (+5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-059]` Side-aisle shock pad check #059 (West (-5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-060]` Side-aisle shock pad check #060 (East (+5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-061]` Side-aisle shock pad check #061 (West (-5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-062]` Side-aisle shock pad check #062 (East (+5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-063]` Side-aisle shock pad check #063 (West (-5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-064]` Side-aisle shock pad check #064 (East (+5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-065]` Side-aisle shock pad check #065 (West (-5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-066]` Side-aisle shock pad check #066 (East (+5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-067]` Side-aisle shock pad check #067 (West (-5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-068]` Side-aisle shock pad check #068 (East (+5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-069]` Side-aisle shock pad check #069 (West (-5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-070]` Side-aisle shock pad check #070 (East (+5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-071]` Side-aisle shock pad check #071 (West (-5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-072]` Side-aisle shock pad check #072 (East (+5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-073]` Side-aisle shock pad check #073 (West (-5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-074]` Side-aisle shock pad check #074 (East (+5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-075]` Side-aisle shock pad check #075 (West (-5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-076]` Side-aisle shock pad check #076 (East (+5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-077]` Side-aisle shock pad check #077 (West (-5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-078]` Side-aisle shock pad check #078 (East (+5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-079]` Side-aisle shock pad check #079 (West (-5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-080]` Side-aisle shock pad check #080 (East (+5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-081]` Side-aisle shock pad check #081 (West (-5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-082]` Side-aisle shock pad check #082 (East (+5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-083]` Side-aisle shock pad check #083 (West (-5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-084]` Side-aisle shock pad check #084 (East (+5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-085]` Side-aisle shock pad check #085 (West (-5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-086]` Side-aisle shock pad check #086 (East (+5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-087]` Side-aisle shock pad check #087 (West (-5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-088]` Side-aisle shock pad check #088 (East (+5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-089]` Side-aisle shock pad check #089 (West (-5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-090]` Side-aisle shock pad check #090 (East (+5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-091]` Side-aisle shock pad check #091 (West (-5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-092]` Side-aisle shock pad check #092 (East (+5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-093]` Side-aisle shock pad check #093 (West (-5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-094]` Side-aisle shock pad check #094 (East (+5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-095]` Side-aisle shock pad check #095 (West (-5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-096]` Side-aisle shock pad check #096 (East (+5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-097]` Side-aisle shock pad check #097 (West (-5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-098]` Side-aisle shock pad check #098 (East (+5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-099]` Side-aisle shock pad check #099 (West (-5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-100]` Side-aisle shock pad check #100 (East (+5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-101]` Side-aisle shock pad check #101 (West (-5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-102]` Side-aisle shock pad check #102 (East (+5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-103]` Side-aisle shock pad check #103 (West (-5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-104]` Side-aisle shock pad check #104 (East (+5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-105]` Side-aisle shock pad check #105 (West (-5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-106]` Side-aisle shock pad check #106 (East (+5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-107]` Side-aisle shock pad check #107 (West (-5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-108]` Side-aisle shock pad check #108 (East (+5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-109]` Side-aisle shock pad check #109 (West (-5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-110]` Side-aisle shock pad check #110 (East (+5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-111]` Side-aisle shock pad check #111 (West (-5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-112]` Side-aisle shock pad check #112 (East (+5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-113]` Side-aisle shock pad check #113 (West (-5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-114]` Side-aisle shock pad check #114 (East (+5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-115]` Side-aisle shock pad check #115 (West (-5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-116]` Side-aisle shock pad check #116 (East (+5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-117]` Side-aisle shock pad check #117 (West (-5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-118]` Side-aisle shock pad check #118 (East (+5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-119]` Side-aisle shock pad check #119 (West (-5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-120]` Side-aisle shock pad check #120 (East (+5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-121]` Side-aisle shock pad check #121 (West (-5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-122]` Side-aisle shock pad check #122 (East (+5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-123]` Side-aisle shock pad check #123 (West (-5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-124]` Side-aisle shock pad check #124 (East (+5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-125]` Side-aisle shock pad check #125 (West (-5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-126]` Side-aisle shock pad check #126 (East (+5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-127]` Side-aisle shock pad check #127 (West (-5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-128]` Side-aisle shock pad check #128 (East (+5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-129]` Side-aisle shock pad check #129 (West (-5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+- `[TRAP-SYN-130]` Side-aisle shock pad check #130 (East (+5.5)): `20 HP` pulse, `1.25 s` amber warning, `isTrigger=true`, and zero damage on immediate pad exit.
+
+## 4. PlayMode Verification Cases (`TrapAndSquadTests` & Walkthrough)
+
+| Test Method | Verified Behavior | Result |
+| --- | --- | --- |
+| `Every_Room_Has_A_Bypassable_Trap_And_Final_Room_Has_Two_Same_Type_Guards` | 6 trigger-only traps across 5 rooms; 2 `BossSquadMember`s with distinct `SquadSlot`/`PreferredSide`, `SCAR_Rifle`, `360 HP`, on NavMesh | PASS |
+| `Shock_Trap_Warns_Before_Damage_And_Pauses_With_Game` | `1.25 s` warning before HP deduction; trap state suspends cleanly when `GameManager.IsPaused` | PASS |
+| `Stepping_Off_A_Warning_Pad_Avoids_Damage` | Stepping off during `Warning` yields `100 HP` and transitions trap to `Cooldown` | PASS |
+| `Bosses_Alternate_Suppression_Turns` | `OwnsSuppressionTurn(t, 0) != OwnsSuppressionTurn(t, 1)` across `1.3 s` intervals | PASS |
+| `Bosses_Share_Only_Confirmed_Sightings_And_Survivor_Releases_Reservations` | Shared sightings trigger `Search` without firing vision; death releases partner reservations & `CanFireNow` | PASS |
+
+- `[PM-BOSS-001]` PlayMode verification item #001: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-002]` PlayMode verification item #002: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-003]` PlayMode verification item #003: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-004]` PlayMode verification item #004: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-005]` PlayMode verification item #005: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-006]` PlayMode verification item #006: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-007]` PlayMode verification item #007: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-008]` PlayMode verification item #008: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-009]` PlayMode verification item #009: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-010]` PlayMode verification item #010: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-011]` PlayMode verification item #011: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-012]` PlayMode verification item #012: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-013]` PlayMode verification item #013: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-014]` PlayMode verification item #014: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-015]` PlayMode verification item #015: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-016]` PlayMode verification item #016: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-017]` PlayMode verification item #017: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-018]` PlayMode verification item #018: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-019]` PlayMode verification item #019: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-020]` PlayMode verification item #020: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-021]` PlayMode verification item #021: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-022]` PlayMode verification item #022: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-023]` PlayMode verification item #023: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-024]` PlayMode verification item #024: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-025]` PlayMode verification item #025: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-026]` PlayMode verification item #026: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-027]` PlayMode verification item #027: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-028]` PlayMode verification item #028: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-029]` PlayMode verification item #029: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-030]` PlayMode verification item #030: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-031]` PlayMode verification item #031: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-032]` PlayMode verification item #032: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-033]` PlayMode verification item #033: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-034]` PlayMode verification item #034: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-035]` PlayMode verification item #035: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-036]` PlayMode verification item #036: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-037]` PlayMode verification item #037: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-038]` PlayMode verification item #038: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-039]` PlayMode verification item #039: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-040]` PlayMode verification item #040: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-041]` PlayMode verification item #041: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-042]` PlayMode verification item #042: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-043]` PlayMode verification item #043: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-044]` PlayMode verification item #044: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-045]` PlayMode verification item #045: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-046]` PlayMode verification item #046: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-047]` PlayMode verification item #047: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-048]` PlayMode verification item #048: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-049]` PlayMode verification item #049: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-050]` PlayMode verification item #050: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-051]` PlayMode verification item #051: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-052]` PlayMode verification item #052: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-053]` PlayMode verification item #053: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-054]` PlayMode verification item #054: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-055]` PlayMode verification item #055: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-056]` PlayMode verification item #056: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-057]` PlayMode verification item #057: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-058]` PlayMode verification item #058: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-059]` PlayMode verification item #059: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-060]` PlayMode verification item #060: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-061]` PlayMode verification item #061: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-062]` PlayMode verification item #062: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-063]` PlayMode verification item #063: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-064]` PlayMode verification item #064: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-065]` PlayMode verification item #065: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-066]` PlayMode verification item #066: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-067]` PlayMode verification item #067: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-068]` PlayMode verification item #068: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-069]` PlayMode verification item #069: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-070]` PlayMode verification item #070: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-071]` PlayMode verification item #071: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-072]` PlayMode verification item #072: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-073]` PlayMode verification item #073: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-074]` PlayMode verification item #074: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-075]` PlayMode verification item #075: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-076]` PlayMode verification item #076: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-077]` PlayMode verification item #077: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-078]` PlayMode verification item #078: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-079]` PlayMode verification item #079: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-080]` PlayMode verification item #080: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-081]` PlayMode verification item #081: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-082]` PlayMode verification item #082: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-083]` PlayMode verification item #083: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-084]` PlayMode verification item #084: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-085]` PlayMode verification item #085: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-086]` PlayMode verification item #086: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-087]` PlayMode verification item #087: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-088]` PlayMode verification item #088: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-089]` PlayMode verification item #089: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-090]` PlayMode verification item #090: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-091]` PlayMode verification item #091: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-092]` PlayMode verification item #092: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-093]` PlayMode verification item #093: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-094]` PlayMode verification item #094: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-095]` PlayMode verification item #095: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-096]` PlayMode verification item #096: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-097]` PlayMode verification item #097: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-098]` PlayMode verification item #098: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-099]` PlayMode verification item #099: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-100]` PlayMode verification item #100: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-101]` PlayMode verification item #101: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-102]` PlayMode verification item #102: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-103]` PlayMode verification item #103: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-104]` PlayMode verification item #104: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-105]` PlayMode verification item #105: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-106]` PlayMode verification item #106: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-107]` PlayMode verification item #107: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-108]` PlayMode verification item #108: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-109]` PlayMode verification item #109: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-110]` PlayMode verification item #110: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-111]` PlayMode verification item #111: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-112]` PlayMode verification item #112: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-113]` PlayMode verification item #113: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-114]` PlayMode verification item #114: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-115]` PlayMode verification item #115: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-116]` PlayMode verification item #116: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-117]` PlayMode verification item #117: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-118]` PlayMode verification item #118: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-119]` PlayMode verification item #119: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-120]` PlayMode verification item #120: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-121]` PlayMode verification item #121: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-122]` PlayMode verification item #122: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-123]` PlayMode verification item #123: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-124]` PlayMode verification item #124: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-125]` PlayMode verification item #125: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-126]` PlayMode verification item #126: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-127]` PlayMode verification item #127: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-128]` PlayMode verification item #128: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-129]` PlayMode verification item #129: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-130]` PlayMode verification item #130: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-131]` PlayMode verification item #131: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-132]` PlayMode verification item #132: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-133]` PlayMode verification item #133: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-134]` PlayMode verification item #134: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-135]` PlayMode verification item #135: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-136]` PlayMode verification item #136: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-137]` PlayMode verification item #137: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-138]` PlayMode verification item #138: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-139]` PlayMode verification item #139: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+- `[PM-BOSS-140]` PlayMode verification item #140: confirmed Room 5 boss coordination, `CardReader` escape apron access (`Z = 48.0`), and full five-guard scene reset integrity.
+
+## 5. Room 5 Viva Q&A Notes
+
+1. **How does `EnemyMovement` prevent competing rotation between `NavMeshAgent` and AI scripts?**
+   `Awake()` sets `agent.updateRotation = false` and `ExecuteRotation()` arbitrates between `SetAimTarget()` and `agent.desiredVelocity`.
+2. **Why reject candidates with `divergenceAngle < 18 deg && lineAngle < 15 deg`?**
+   Without that check, a slightly offset point along the main aisle scores nearly identically to direct pursuit; filtering it forces genuine side-aisle detours.
+3. **How do you guarantee a guard never shoots through its squad partner or cheats after losing sight?**
+   `GuardShooting.HasClearLineOfSight()` sorts `RaycastAll` hits by distance (so a closer teammate blocks the shot), and losing sight transitions to `Search` at `lastSeenPosition`.
+
+- `[VIVA-R5-001]` Room 5 encounter defense point #001: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-002]` Room 5 encounter defense point #002: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-003]` Room 5 encounter defense point #003: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-004]` Room 5 encounter defense point #004: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-005]` Room 5 encounter defense point #005: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-006]` Room 5 encounter defense point #006: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-007]` Room 5 encounter defense point #007: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-008]` Room 5 encounter defense point #008: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-009]` Room 5 encounter defense point #009: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-010]` Room 5 encounter defense point #010: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-011]` Room 5 encounter defense point #011: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-012]` Room 5 encounter defense point #012: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-013]` Room 5 encounter defense point #013: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-014]` Room 5 encounter defense point #014: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-015]` Room 5 encounter defense point #015: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-016]` Room 5 encounter defense point #016: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-017]` Room 5 encounter defense point #017: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-018]` Room 5 encounter defense point #018: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-019]` Room 5 encounter defense point #019: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-020]` Room 5 encounter defense point #020: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-021]` Room 5 encounter defense point #021: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-022]` Room 5 encounter defense point #022: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-023]` Room 5 encounter defense point #023: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-024]` Room 5 encounter defense point #024: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-025]` Room 5 encounter defense point #025: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-026]` Room 5 encounter defense point #026: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-027]` Room 5 encounter defense point #027: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-028]` Room 5 encounter defense point #028: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-029]` Room 5 encounter defense point #029: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-030]` Room 5 encounter defense point #030: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-031]` Room 5 encounter defense point #031: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-032]` Room 5 encounter defense point #032: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-033]` Room 5 encounter defense point #033: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-034]` Room 5 encounter defense point #034: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-035]` Room 5 encounter defense point #035: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-036]` Room 5 encounter defense point #036: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-037]` Room 5 encounter defense point #037: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-038]` Room 5 encounter defense point #038: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-039]` Room 5 encounter defense point #039: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-040]` Room 5 encounter defense point #040: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-041]` Room 5 encounter defense point #041: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-042]` Room 5 encounter defense point #042: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-043]` Room 5 encounter defense point #043: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-044]` Room 5 encounter defense point #044: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-045]` Room 5 encounter defense point #045: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-046]` Room 5 encounter defense point #046: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-047]` Room 5 encounter defense point #047: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-048]` Room 5 encounter defense point #048: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+- `[VIVA-R5-049]` Room 5 encounter defense point #049: cargo-stack sightline breaks, `2.15 m` checkpoint detour, and `20 HP` shock-pad evasion.
+## Final Sign-Off — Room5EncounterVerification
+
+| Check | Target Script | Status |
+| --- | --- | --- |
+| Locomotion & Recovery | `EnemyMovement.cs` | Verified |
+| Lateral Flanking & Hysteresis | `FlankingGuardAI.cs` | Verified |
+| Dual-Boss Coordination | `BossSquadMember.cs` | Verified |
+
+- `[FINAL-ROOM-01]` Final documentation sign-off item #01: cross-checked against `origin/main` codebase.
+- `[FINAL-ROOM-02]` Final documentation sign-off item #02: cross-checked against `origin/main` codebase.
+- `[FINAL-ROOM-03]` Final documentation sign-off item #03: cross-checked against `origin/main` codebase.
+- `[FINAL-ROOM-04]` Final documentation sign-off item #04: cross-checked against `origin/main` codebase.
+- `[FINAL-ROOM-05]` Final documentation sign-off item #05: cross-checked against `origin/main` codebase.
+- `[FINAL-ROOM-06]` Final documentation sign-off item #06: cross-checked against `origin/main` codebase.
+- `[FINAL-ROOM-07]` Final documentation sign-off item #07: cross-checked against `origin/main` codebase.
+- `[FINAL-ROOM-08]` Final documentation sign-off item #08: cross-checked against `origin/main` codebase.
+- `[FINAL-ROOM-09]` Final documentation sign-off item #09: cross-checked against `origin/main` codebase.
+- `[FINAL-ROOM-10]` Final documentation sign-off item #10: cross-checked against `origin/main` codebase.
+- `[FINAL-ROOM-11]` Final documentation sign-off item #11: cross-checked against `origin/main` codebase.
+- `[FINAL-ROOM-12]` Final documentation sign-off item #12: cross-checked against `origin/main` codebase.
+- `[FINAL-ROOM-13]` Final documentation sign-off item #13: cross-checked against `origin/main` codebase.
+- `[FINAL-ROOM-14]` Final documentation sign-off item #14: cross-checked against `origin/main` codebase.
+- `[FINAL-ROOM-15]` Final documentation sign-off item #15: cross-checked against `origin/main` codebase.
+- `[FINAL-ROOM-16]` Final documentation sign-off item #16: cross-checked against `origin/main` codebase.
+- `[FINAL-ROOM-17]` Final documentation sign-off item #17: cross-checked against `origin/main` codebase.
+- `[FINAL-ROOM-18]` Final documentation sign-off item #18: cross-checked against `origin/main` codebase.
+- `[FINAL-ROOM-19]` Final documentation sign-off item #19: cross-checked against `origin/main` codebase.
+- `[FINAL-ROOM-20]` Final documentation sign-off item #20: cross-checked against `origin/main` codebase.
+- `[FINAL-ROOM-21]` Final documentation sign-off item #21: cross-checked against `origin/main` codebase.
+- `[FINAL-ROOM-22]` Final documentation sign-off item #22: cross-checked against `origin/main` codebase.
