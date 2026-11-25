@@ -246,7 +246,7 @@ public class PlayerGun : MonoBehaviour
     {
         if (gunVisualHolder != null)
         {
-            gunVisualHolder.localPosition = Vector3.Lerp(gunVisualHolder.localPosition, initialGunLocalPos, Time.deltaTime * 14f);
+            gunVisualHolder.localPosition = Vector3.Lerp(gunVisualHolder.localPosition, Input.GetMouseButton(1) ? new Vector3(0f, -.10f, .30f) : initialGunLocalPos, Time.deltaTime * 14f);
             gunVisualHolder.localRotation = Quaternion.Slerp(gunVisualHolder.localRotation, initialGunLocalRot, Time.deltaTime * 14f);
         }
 
@@ -399,7 +399,7 @@ public class PlayerGun : MonoBehaviour
         GuardPerception.ReportSound(transform.position, 34f, SoundType.Gunshot, gameObject);
 
         int pellets = currentWeaponData != null ? currentWeaponData.pelletCount : 6;
-        int dmgPerPellet = currentWeaponData != null ? currentWeaponData.damage : 7;
+        int dmgPerPellet = currentWeaponData != null ? currentWeaponData.damage : 12;
         float spread = currentWeaponData != null ? currentWeaponData.pelletSpread : 4.5f;
         float range = currentWeaponData != null ? currentWeaponData.maxRange : 28f;
 
@@ -460,9 +460,12 @@ public class PlayerGun : MonoBehaviour
         var health = hit.collider.GetComponentInParent<Health>();
         if (health != null && !health.IsPlayer && !health.IsDead)
         {
-            health.TakeDamage(dmg, gameObject);
-            PlaySound(WeaponAudio.GetHitMarkerClip(), 0.9f);
-            PlayerHUD.TriggerHitMarker();
+            int damage=HeadshotDamage.ForHit(health,hit.point,dmg,out bool headshot);
+            if(health.TakeDamage(damage, gameObject))
+            {
+                PlaySound(WeaponAudio.GetHitMarkerClip(), 0.9f);
+                PlayerHUD.TriggerHitMarker(headshot);
+            }
         }
         else
         {

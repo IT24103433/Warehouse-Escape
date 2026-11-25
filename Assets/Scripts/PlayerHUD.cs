@@ -53,7 +53,9 @@ public class PlayerHUD : MonoBehaviour
     private static Sprite cachedMinimapSprite;
 
     private float hitMarkerTimer = 0f;
+    private bool headshotHit;
     private float vignetteAlpha = 0f;
+    public bool Is1080p => is1080p;
     private bool is1080p = false;
     private bool isLowQuality = false;
     private float fpsUpdateTimer = 0f;
@@ -95,10 +97,11 @@ public class PlayerHUD : MonoBehaviour
         }
     }
 
-    public static void TriggerHitMarker()
+    public static void TriggerHitMarker(bool headshot = false)
     {
         if (instance != null)
         {
+            if (headshot || instance.hitMarkerTimer <= 0f) instance.headshotHit = headshot;
             instance.hitMarkerTimer = 0.18f;
         }
     }
@@ -111,6 +114,8 @@ public class PlayerHUD : MonoBehaviour
     void Start()
     {
         FindPlayerReferences();
+        QualitySettings.anisotropicFiltering = AnisotropicFiltering.Enable;
+        QualitySettings.globalTextureMipmapLimit = 0;
         BuildHUDLayout();
 
         if (playerHealth != null)
@@ -119,7 +124,7 @@ public class PlayerHUD : MonoBehaviour
         }
 
         // Default target is 720p as requested, unless started with 1080p parameters
-        bool startAt1080p = false;
+        bool startAt1080p = !Application.isEditor && PlayerPrefs.GetInt("Display1080p", 0) == 1;
         string[] cmdArgs = System.Environment.GetCommandLineArgs();
         for (int i = 0; i < cmdArgs.Length; i++)
         {
@@ -129,7 +134,7 @@ public class PlayerHUD : MonoBehaviour
                 break;
             }
         }
-        if (Screen.width >= 1600) startAt1080p = true;
+        // Default to 720p on first launch; reuse the player's explicit selection later.
         SetResolution(startAt1080p);
 
         CheckForVerificationTrigger();
@@ -932,7 +937,7 @@ public class PlayerHUD : MonoBehaviour
             if (hitMarkerTimer > 0f)
             {
                 hitMarkerTimer -= Time.deltaTime;
-                crosshairHitMarker.color = new Color(1f, 0.2f, 0.2f, Mathf.Clamp01(hitMarkerTimer * 5f));
+                crosshairHitMarker.color = new Color(1f, headshotHit ? .85f : .2f, .2f, Mathf.Clamp01(hitMarkerTimer * 5f));
             }
             else
             {
@@ -965,12 +970,23 @@ public class PlayerHUD : MonoBehaviour
     public void SetResolution(bool to1080p)
     {
         is1080p = to1080p;
+        if (!Application.isEditor) { PlayerPrefs.SetInt("Display1080p", is1080p ? 1 : 0); PlayerPrefs.Save(); }
         int width = is1080p ? 1920 : 1280;
         int height = is1080p ? 1080 : 720;
-        Screen.SetResolution(width, height, FullScreenMode.Windowed);
+        // Keep the Unity editor in its Game view; standalone players fill the monitor.
+        Screen.SetResolution(width, height, Application.isEditor ? FullScreenMode.Windowed : FullScreenMode.FullScreenWindow);
+        if (!Application.isEditor) StartCoroutine(LogDisplayState());
 
         UpdateResolutionText();
         Debug.Log($"[PlayerHUD] Target resolution set to {(is1080p ? "1080p (1920x1080)" : "720p (1280x720)")} | FPS: {currentFps:F1}");
+    }
+
+    private System.Collections.IEnumerator LogDisplayState()
+    {
+        // Resolution/mode changes take effect after the current frame.
+        yield return null;
+        yield return null;
+        Debug.Log($"[Display] Mode={Screen.fullScreenMode} Fullscreen={Screen.fullScreen} Size={Screen.width}x{Screen.height}");
     }
 
     public void ToggleQuality()

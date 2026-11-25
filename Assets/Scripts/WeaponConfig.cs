@@ -100,7 +100,7 @@ public class WeaponData
         {
             type = WeaponType.Combat_Shotgun,
             weaponName = "Combat Shotgun",
-            damage = 7, // 7 per pellet * 6 pellets = 42 max damage point blank
+            damage = 12, // 6 pellets: up to 72 damage before spread/cover
             fireRate = 0.80f,
             magazineCapacity = 8,
             defaultReserve = 24,

@@ -231,6 +231,8 @@ public class HumanoidAnimator : MonoBehaviour
     private void ApplyArticulatedPose(float dt)
     {
         float breath = Mathf.Sin(Time.time * idleBreathingSpeed);
+        var playerMovement = isFirstPersonPlayer ? GetComponentInParent<PlayerMovement>() : null;
+        float crouch = playerMovement != null && playerMovement.IsCrouching ? 1f : 0f;
 
         // 1. Pelvis & Hips (natural subtle sway and vertical dip during stride)
         if (pelvis != null)
@@ -239,7 +241,7 @@ public class HumanoidAnimator : MonoBehaviour
             float hipSwayY = Mathf.Sin(gaitPhase) * 2.2f * moveWeight;
             float hipRollZ = Mathf.Sin(gaitPhase) * 1.2f * moveWeight;
 
-            pelvis.localPosition = pelvisBasePos + Vector3.up * (verticalDip + breath * 0.005f * (1f - moveWeight));
+            pelvis.localPosition = pelvisBasePos + Vector3.up * (verticalDip + breath * 0.005f * (1f - moveWeight) - crouch * .45f);
             pelvis.localRotation = pelvisBaseRot * Quaternion.Euler(0f, hipSwayY, hipRollZ);
         }
 
@@ -268,11 +270,11 @@ public class HumanoidAnimator : MonoBehaviour
         float ankleL = -strideL * 0.42f;
 
         if (thighL != null)
-            thighL.localRotation = thighLBaseRot * Quaternion.Euler(strideL, 0f, 0f);
+            thighL.localRotation = thighLBaseRot * Quaternion.Euler(strideL - crouch * 45f, 0f, 0f);
         if (shinL != null)
-            shinL.localRotation = shinLBaseRot * Quaternion.Euler(kneeFlexL, 0f, 0f);
+            shinL.localRotation = shinLBaseRot * Quaternion.Euler(kneeFlexL + crouch * 90f, 0f, 0f);
         if (footL != null)
-            footL.localRotation = footLBaseRot * Quaternion.Euler(ankleL, 0f, 0f);
+            footL.localRotation = footLBaseRot * Quaternion.Euler(ankleL - crouch * 45f, 0f, 0f);
 
         // Right Leg (opposite phase)
         float strideR = -sinPhase * maxStrideAngle * moveWeight;
@@ -280,11 +282,11 @@ public class HumanoidAnimator : MonoBehaviour
         float ankleR = -strideR * 0.42f;
 
         if (thighR != null)
-            thighR.localRotation = thighRBaseRot * Quaternion.Euler(strideR, 0f, 0f);
+            thighR.localRotation = thighRBaseRot * Quaternion.Euler(strideR - crouch * 45f, 0f, 0f);
         if (shinR != null)
-            shinR.localRotation = shinRBaseRot * Quaternion.Euler(kneeFlexR, 0f, 0f);
+            shinR.localRotation = shinRBaseRot * Quaternion.Euler(kneeFlexR + crouch * 90f, 0f, 0f);
         if (footR != null)
-            footR.localRotation = footRBaseRot * Quaternion.Euler(ankleR, 0f, 0f);
+            footR.localRotation = footRBaseRot * Quaternion.Euler(ankleR - crouch * 45f, 0f, 0f);
 
         // 5. Arms (Left arm swings naturally; Right arm holds weapon tactically if guard has weapon)
         float armSwingL = -sinPhase * maxArmSwingAngle * moveWeight;

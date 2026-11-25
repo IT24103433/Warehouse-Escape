@@ -117,7 +117,7 @@ public class SearchGuardAI : MonoBehaviour, IGuardPerceptionTracker
         {
             health = gameObject.AddComponent<Health>();
             health.CharacterName = "Sanjeevsaran [Search]";
-            health.SetMaxHealth(60);
+            health.SetMaxHealth(180);
         }
 
         var shooting = GetComponent<GuardShooting>();

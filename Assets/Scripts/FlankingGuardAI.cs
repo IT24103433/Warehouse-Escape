@@ -157,6 +157,9 @@ public class FlankingGuardAI : MonoBehaviour, IGuardPerceptionTracker
     private bool isInvestigating = false;
     private bool hasLoggedUnreachableWarning = false;
     private GuardPerceptionMemory perceptionMemory;
+    private BossSquadMember squadMember;
+    private Vector3 lastSquadNavigationGoal;
+    private bool hasSquadNavigationGoal;
     private bool isTacticalFiringPause = false;
     private float tacticalFiringTimer = 0f;
     [SerializeField] private float tacticalFiringDuration = 0.9f;
@@ -212,7 +215,7 @@ public class FlankingGuardAI : MonoBehaviour, IGuardPerceptionTracker
         {
             health = gameObject.AddComponent<Health>();
             health.CharacterName = "CHIEF ENFORCER JADAVAN [BOSS]";
-            health.SetMaxHealth(160);
+            health.SetMaxHealth(360);
         }
 
         var shooting = GetComponent<GuardShooting>();
@@ -251,6 +254,7 @@ public class FlankingGuardAI : MonoBehaviour, IGuardPerceptionTracker
 
     void Start()
     {
+        squadMember = GetComponent<BossSquadMember>();
         FindPlayerReference();
         TransitionToPatrol();
     }
@@ -704,6 +708,8 @@ public class FlankingGuardAI : MonoBehaviour, IGuardPerceptionTracker
 
         // 2. Sample, Path, Filter, and Score Candidates
         FlankCandidate selectedCandidate = null;
+        FlankCandidate preferredSquadCandidate = null;
+        float bestSquadScore = Mathf.Infinity;
         float bestScore = Mathf.Infinity;
 
         foreach (var c in currentCandidates)
@@ -784,6 +790,7 @@ public class FlankingGuardAI : MonoBehaviour, IGuardPerceptionTracker
             // Primary factors: path length, approach angle penalty (prefer 70-110 deg lateral flank), divergence reward
             float angleDeviationFrom90 = Mathf.Abs(c.approachAngle - 90f);
             float score = c.pathLength + (angleDeviationFrom90 * 0.05f);
+            if (squadMember != null) score += squadMember.FlankPenalty(hit.position, c.side);
 
             // Hysteresis: apply bonus (reduced cost) to currently chosen flank side to prevent jitter
             if (currentFlankSide != FlankSide.None && c.side == currentFlankSide)
@@ -792,6 +799,11 @@ public class FlankingGuardAI : MonoBehaviour, IGuardPerceptionTracker
             }
 
             c.score = score;
+            if (squadMember != null && c.side == squadMember.PreferredSide && score < bestSquadScore)
+            {
+                bestSquadScore = score;
+                preferredSquadCandidate = c;
+            }
 
             if (score < bestScore)
             {
@@ -800,6 +812,8 @@ public class FlankingGuardAI : MonoBehaviour, IGuardPerceptionTracker
             }
         }
 
+        // Reserve opposite sides when viable; retain a reachable fallback if a side is blocked.
+        if (preferredSquadCandidate != null) selectedCandidate = preferredSquadCandidate;
         if (selectedCandidate != null)
         {
             bestTarget = selectedCandidate.navMeshPosition;
@@ -874,6 +888,20 @@ public class FlankingGuardAI : MonoBehaviour, IGuardPerceptionTracker
     /// Dispatches agent to investigate the last confirmed position.
     /// Does NOT read the hidden player's live position.
     /// </summary>
+    public void ReceiveSquadObservation(Vector3 point)
+    {
+        if (canSeePlayer || !IsInsideRoom(point)) return;
+        bool changed = !hasSquadNavigationGoal || Vector3.Distance(lastSquadNavigationGoal, point) > 2f;
+        lastSeenPosition = point;
+        // A report supplies a search goal, never visual confirmation or firing authority.
+        if (currentState == GuardState.Patrol || (currentState == GuardState.Search && changed))
+        {
+            lastSquadNavigationGoal = point;
+            hasSquadNavigationGoal = true;
+            TransitionToSearch();
+        }
+    }
+
     public void TransitionToSearch()
     {
         currentState = GuardState.Search;
